@@ -1,9 +1,33 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 const Hero = () => {
+  // Remove Lovable edit information on page load
+  useEffect(() => {
+    // Find and remove any Lovable edit information that might appear
+    const removeLovableBadge = () => {
+      const lovableBadge = document.querySelector('.lovable-badge');
+      if (lovableBadge) {
+        lovableBadge.remove();
+      }
+    };
+
+    // Run on component mount and also set up an observer for any dynamically added elements
+    removeLovableBadge();
+    
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach(() => {
+        removeLovableBadge();
+      });
+    });
+    
+    observer.observe(document.body, { childList: true, subtree: true });
+    
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section className="relative min-h-screen flex items-center gradient-bg">
       <div className="container-custom pt-20 md:pt-20">
