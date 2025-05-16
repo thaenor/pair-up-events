@@ -35,7 +35,7 @@ const Hero = () => {
               </Button>
             </div>
           </div>
-          <div className="relative h-[400px] md:h-[500px] mt-4 sm:mt-32 md:mt-0 animate-fade-in flex items-center justify-center" style={{ animationDelay: '0.5s' }}>
+          <div className="relative h-[400px] md:h-[500px] -mt-60 sm:mt-32 md:mt-0 animate-fade-in flex items-center justify-center" style={{ animationDelay: '0.5s' }}>
             <img 
               src="/lovable-uploads/d708028b-2d35-41b1-996e-d0c30bbad73a.png" 
               alt="Pair Up Events logo" 
