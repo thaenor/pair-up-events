@@ -15,7 +15,6 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <RemoveLovableBadge />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
