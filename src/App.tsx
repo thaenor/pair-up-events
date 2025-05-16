@@ -10,32 +10,6 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Function to remove any Lovable badge that might appear
-const RemoveLovableBadge = () => {
-  useEffect(() => {
-    const removeBadge = () => {
-      const badges = document.querySelectorAll('.lovable-badge, [class*="lovable"]');
-      badges.forEach(badge => {
-        badge.remove();
-      });
-    };
-
-    // Initial removal
-    removeBadge();
-    
-    // Set up observer to watch for dynamically added elements
-    const observer = new MutationObserver(() => {
-      removeBadge();
-    });
-    
-    observer.observe(document.body, { childList: true, subtree: true });
-    
-    return () => observer.disconnect();
-  }, []);
-
-  return null;
-};
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
