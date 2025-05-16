@@ -17,9 +17,15 @@ const steps = [
   },
   {
     icon: <MapPin className="w-12 h-12 text-pairup-cream" />,
-    title: "Meet Up",
-    description: "Connect with another pair at the agreed location and enjoy!",
-    logo: true
+    title: <div className="flex items-center gap-2">
+            Meet Up
+            <img 
+              src="/lovable-uploads/d708028b-2d35-41b1-996e-d0c30bbad73a.png"
+              alt="Pair Up Events logo"
+              className="w-8 h-8 object-contain"
+            />
+          </div>,
+    description: "Connect with another pair at the agreed location and enjoy!"
   }
 ];
 
@@ -42,13 +48,6 @@ const HowItWorks = () => {
             >
               <div className="mb-6">
                 {step.icon}
-                {step.logo && (
-                  <img 
-                    src="/lovable-uploads/d708028b-2d35-41b1-996e-d0c30bbad73a.png"
-                    alt="Pair Up Events logo"
-                    className="w-12 h-12 mt-2"
-                  />
-                )}
               </div>
               <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
               <p className="text-pairup-cream/80">{step.description}</p>

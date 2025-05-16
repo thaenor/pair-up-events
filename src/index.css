@@ -53,10 +53,12 @@
 
   body {
     @apply bg-pairup-darkBlue text-pairup-cream font-sans;
+    font-family: 'Manrope', sans-serif;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display font-semibold;
+    font-family: 'Outfit', sans-serif;
+    @apply font-semibold;
   }
 }
 
@@ -67,6 +69,29 @@
   
   .btn-secondary {
     @apply bg-pairup-yellow text-pairup-darkBlue font-medium px-6 py-3 rounded-full hover:opacity-90 transition-opacity;
+  }
+  
+  .btn-gradient {
+    @apply text-pairup-darkBlue font-medium px-6 py-3 rounded-full relative overflow-hidden;
+    background: linear-gradient(90deg, #27E9F3 0%, #FECC08 100%);
+    transition: all 0.3s ease;
+  }
+  
+  .btn-gradient:hover {
+    background-size: 200% 100%;
+    animation: wave-animation 1s infinite linear;
+  }
+  
+  @keyframes wave-animation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
   
   .section-padding {
