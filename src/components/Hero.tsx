@@ -20,14 +20,14 @@ const Hero = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
-                className="btn-primary flex items-center gap-2"
+                className="btn-primary flex items-center gap-2 rounded-[5px]"
                 onClick={() => document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 Create an Event
                 <ArrowRight size={18} />
               </Button>
               <Button 
-                className="bg-pairup-yellow text-pairup-darkBlue font-medium px-6 py-3 rounded-full hover:opacity-90 transition-opacity flex items-center gap-2"
+                className="bg-pairup-yellow text-pairup-darkBlue font-medium px-6 py-3 rounded-[5px] hover:opacity-90 transition-opacity flex items-center gap-2"
                 onClick={() => document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 Browse through existing events

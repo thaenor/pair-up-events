@@ -64,17 +64,42 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-pairup-cyan text-pairup-darkBlue font-medium px-6 py-3 rounded-full hover:opacity-90 transition-opacity;
+    @apply bg-pairup-cyan text-pairup-darkBlue font-medium px-6 py-3 rounded-[5px] hover:opacity-90 transition-opacity;
   }
   
   .btn-secondary {
-    @apply bg-pairup-yellow text-pairup-darkBlue font-medium px-6 py-3 rounded-full hover:opacity-90 transition-opacity;
+    @apply bg-pairup-yellow text-pairup-darkBlue font-medium px-6 py-3 rounded-[5px] hover:opacity-90 transition-opacity;
   }
   
   .btn-gradient {
-    @apply text-pairup-darkBlue font-medium px-6 py-3 rounded-full relative overflow-hidden;
+    @apply text-pairup-darkBlue font-medium px-6 py-3 rounded-[5px] relative overflow-hidden;
     background: linear-gradient(90deg, #27E9F3 0%, #FECC08 100%);
     transition: all 0.3s ease;
+  }
+  
+  .btn-gradient-outline {
+    @apply relative text-pairup-cream font-medium px-6 py-3 rounded-[5px] bg-transparent border-2 border-transparent;
+  }
+  
+  .btn-gradient-outline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 5px;
+    padding: 2px;
+    background: linear-gradient(90deg, #27E9F3 0%, #FECC08 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  
+  .btn-gradient-outline:hover::before {
+    background-size: 200% 100%;
+    animation: wave-animation 1s infinite linear;
   }
   
   .btn-gradient:hover {

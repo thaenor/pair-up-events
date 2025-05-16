@@ -23,7 +23,7 @@ const Navbar = () => {
           <a href="#early-access" className="text-pairup-cream hover:text-pairup-yellow transition-colors">Early Access</a>
         </div>
         <div>
-          <Button className="btn-primary" onClick={() => document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' })}>
+          <Button className="btn-primary rounded-[5px]" onClick={() => document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' })}>
             Get Started
           </Button>
         </div>

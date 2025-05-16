@@ -42,11 +42,11 @@ const EarlyAccess = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-pairup-darkBlue border-pairup-cyan/30 placeholder:text-pairup-cream/50 text-pairup-cream"
+                className="bg-pairup-darkBlue border-pairup-cyan/30 placeholder:text-pairup-cream/50 text-pairup-cream rounded-[5px]"
               />
               <Button 
                 type="submit" 
-                className="btn-gradient whitespace-nowrap" 
+                className="btn-gradient-outline whitespace-nowrap" 
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Subscribing..." : "Get Early Access"}
