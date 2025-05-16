@@ -6,28 +6,28 @@ import { ArrowRight } from "lucide-react";
 const Hero = () => {
   return (
     <section className="relative min-h-screen flex items-center gradient-bg">
-      <div className="container-custom pt-20">
+      <div className="container-custom pt-20 md:pt-20">
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
+          <div className="animate-fade-in mt-16 sm:mt-64 md:mt-0" style={{ animationDelay: '0.2s' }}>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
               <span className="text-pairup-cyan font-bold">Grab your friend</span> 
               <br />
               <span className="text-pairup-yellow font-normal">and meet another pair.</span>
             </h1>
             <p className="text-lg md:text-xl mb-8 text-pairup-cream/90 max-w-lg">
-              Break your routine with spontaneous social adventures. 
+              Break your routine with social adventures. 
               Experience a fresh 4-way dynamic while staying with someone you trust.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
-                className="btn-primary flex items-center gap-2 rounded-[5px]"
+                className="btn-primary inline-flex w-auto items-center gap-2 rounded-[5px]"
                 onClick={() => document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 Create an Event
                 <ArrowRight size={18} />
               </Button>
               <Button 
-                className="bg-pairup-yellow text-pairup-darkBlue font-medium px-6 py-3 rounded-[5px] hover:opacity-90 transition-opacity flex items-center gap-2"
+                className="bg-pairup-yellow inline-flex w-auto text-pairup-darkBlue font-medium px-6 py-3 rounded-[5px] hover:opacity-90 transition-opacity items-center gap-2"
                 onClick={() => document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 Browse through existing events
@@ -35,7 +35,7 @@ const Hero = () => {
               </Button>
             </div>
           </div>
-          <div className="relative h-[400px] md:h-[500px] animate-fade-in flex items-center justify-center" style={{ animationDelay: '0.5s' }}>
+          <div className="relative h-[400px] md:h-[500px] mt-8 sm:mt-32 md:mt-0 animate-fade-in flex items-center justify-center" style={{ animationDelay: '0.5s' }}>
             <img 
               src="/lovable-uploads/d708028b-2d35-41b1-996e-d0c30bbad73a.png" 
               alt="Pair Up Events logo" 

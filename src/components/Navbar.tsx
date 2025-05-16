@@ -12,7 +12,7 @@ const Navbar = () => {
             alt="Pair Up Events logo" 
             className="w-8 h-8 object-contain"
           />
-          <span className="text-2xl font-bold">
+          <span className="text-base font-bold">
             <span className="text-pairup-cyan">Pair</span>
             <span className="text-pairup-yellow">Up Events</span>
           </span>
