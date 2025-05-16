@@ -30,7 +30,7 @@ const EarlyAccess = () => {
           <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Get Early Access</h2>
             <p className="text-lg text-pairup-cream/80 max-w-2xl mx-auto">
-              Be the first to know when we launch. Sign up for exclusive updates and early access.
+              Be the first to know when we launch. Sign up now to receive exclusive updates, sneak peeks, and priority access to Pair Up Events.
             </p>
           </div>
           
@@ -38,7 +38,7 @@ const EarlyAccess = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Input
                 type="email"
-                placeholder="Your email address"
+                placeholder="Enter your E-Mail address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -53,7 +53,7 @@ const EarlyAccess = () => {
               </Button>
             </div>
             <p className="text-xs text-center mt-4 text-pairup-cream/60">
-              We respect your privacy. Unsubscribe at any time.
+              We respect your privacy. No spam, unsubscribe anytime.
             </p>
           </form>
         </div>
