@@ -27,10 +27,10 @@ const Hero = () => {
                 <ArrowRight size={18} />
               </Button>
               <Button 
-                className="btn-secondary flex items-center gap-2"
+                className="bg-pairup-yellow text-pairup-darkBlue font-medium px-6 py-3 rounded-full hover:opacity-90 transition-opacity flex items-center gap-2"
                 onClick={() => document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' })}
               >
-                Join an Event
+                Browse through existing events
                 <ArrowRight size={18} />
               </Button>
             </div>

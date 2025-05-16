@@ -10,9 +10,12 @@ const Navbar = () => {
           <img 
             src="/lovable-uploads/d708028b-2d35-41b1-996e-d0c30bbad73a.png" 
             alt="Pair Up Events logo" 
-            className="w-8 h-8"
+            className="w-8 h-8 object-contain"
           />
-          <span className="text-2xl font-bold text-pairup-cyan">Pair Up Events</span>
+          <span className="text-2xl font-bold">
+            <span className="text-pairup-cyan">Pair</span>
+            <span className="text-pairup-yellow">Up Events</span>
+          </span>
         </div>
         <div className="hidden md:flex items-center space-x-6">
           <a href="#how-it-works" className="text-pairup-cream hover:text-pairup-yellow transition-colors">How It Works</a>
