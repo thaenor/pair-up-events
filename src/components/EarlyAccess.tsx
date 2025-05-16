@@ -46,7 +46,7 @@ const EarlyAccess = () => {
               />
               <Button 
                 type="submit" 
-                className="btn-gradient-outline whitespace-nowrap" 
+                className="btn-gradient whitespace-nowrap" 
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Subscribing..." : "Get Early Access"}
