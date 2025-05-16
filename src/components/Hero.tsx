@@ -20,14 +20,14 @@ const Hero = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
-                className="btn-primary inline-flex w-auto items-center gap-2 rounded-[5px]"
+                className="btn-primary inline-flex w-fit items-center gap-2 rounded-[5px]"
                 onClick={() => document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 Create an Event
                 <ArrowRight size={18} />
               </Button>
               <Button 
-                className="bg-pairup-yellow inline-flex w-auto text-pairup-darkBlue font-medium px-6 py-3 rounded-[5px] hover:opacity-90 transition-opacity items-center gap-2"
+                className="bg-pairup-yellow inline-flex w-fit text-pairup-darkBlue font-medium px-6 py-3 rounded-[5px] hover:opacity-90 transition-opacity items-center gap-2"
                 onClick={() => document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 Browse through existing events
@@ -35,7 +35,7 @@ const Hero = () => {
               </Button>
             </div>
           </div>
-          <div className="relative h-[400px] md:h-[500px] mt-8 sm:mt-32 md:mt-0 animate-fade-in flex items-center justify-center" style={{ animationDelay: '0.5s' }}>
+          <div className="relative h-[400px] md:h-[500px] mt-4 sm:mt-32 md:mt-0 animate-fade-in flex items-center justify-center" style={{ animationDelay: '0.5s' }}>
             <img 
               src="/lovable-uploads/d708028b-2d35-41b1-996e-d0c30bbad73a.png" 
               alt="Pair Up Events logo" 
