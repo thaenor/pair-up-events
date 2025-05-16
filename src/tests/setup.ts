@@ -7,10 +7,21 @@ Element.prototype.scrollIntoView = vi.fn();
 
 // Mock Intersection Observer
 global.IntersectionObserver = class IntersectionObserver {
-  constructor() {}
-  observe() { return null; }
-  unobserve() { return null; }
-  disconnect() { return null; }
+  root = null;
+  rootMargin = "0px";
+  thresholds = [0];
+  
+  constructor(callback: IntersectionObserverCallback) {
+    // Store the callback but don't use it in this mock
+    this._callback = callback;
+  }
+  
+  private _callback: IntersectionObserverCallback = () => {};
+  
+  observe() { return; }
+  unobserve() { return; }
+  disconnect() { return; }
+  takeRecords(): IntersectionObserverEntry[] { return []; }
 };
 
 // Mock window.matchMedia
