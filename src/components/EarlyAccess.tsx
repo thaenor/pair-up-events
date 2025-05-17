@@ -16,7 +16,7 @@ const EarlyAccess = () => {
           <div className="flex justify-center">
             <iframe 
               width="540" 
-              height="305" 
+              height="500" 
               src="https://sibforms.com/serve/MUIFAFA_wdOtwzC77EVYV2YK4qwHFzv-utl_RbWWYj-yzfLN0OxhXsudKVR3GwAsRRMUe08RU9WIbOZSyKuCPrsNvdFDc1i-HPbeXtVhsJlbJLXeoFFuMWqF4Usx_Ju-6wUHfWP8aZMoOhpWrcOHhJ22Blnr1fXoEKSJ7y3BXdqCFtLcDbYHydMjvjxyggpTOYZZf_RDe0kjQLxR" 
               frameBorder="0" 
               scrolling="auto" 
