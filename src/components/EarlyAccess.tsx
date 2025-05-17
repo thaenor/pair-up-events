@@ -6,6 +6,17 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { Mail } from "lucide-react";
 
+// Add TypeScript declarations for window properties
+declare global {
+  interface Window {
+    REQUIRED_CODE_ERROR_MESSAGE: string;
+    LOCALE: string;
+    EMAIL_INVALID_MESSAGE: string;
+    REQUIRED_ERROR_MESSAGE: string;
+    GENERIC_INVALID_MESSAGE: string;
+  }
+}
+
 const EarlyAccess = () => {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
