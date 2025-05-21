@@ -2,6 +2,8 @@
 import React from 'react';
 
 const EarlyAccess = () => {
+
+  const iframeURL = 'https://sibforms.com/serve/MUIFADvijRNIEIcY8qaaiuKbDQSnhlg-D6-GifTKawJvNfWFGs9SbEWqS2IBwjtIQwmzWoSZ-g1VKRhd1gkzMqhpCTB26AlmGeGFJ5IX7h5AjTrgpBB6fYHPOJwqyg4l362UkLpk4Rqk9UHcztd6sIzcByTmy2fv0QXqN-9vNBNe32pEY7MVxHPub4i6XckZINJSVzTDX9O_dlXZ';
   return (
     <section id="early-access" className="section-padding bg-pairup-darkBlueAlt">
       <div className="container-custom max-w-4xl">
@@ -17,7 +19,7 @@ const EarlyAccess = () => {
             <iframe 
               width="540" 
               height="500" 
-              src="https://sibforms.com/serve/MUIFAFo86o8m1dUA5h9fubiMgBylsd3hXZ2V84DZFBHKfOv1CQTVCyTPeSuGxCQLsmCH1h_7DtFdP-ojcaR5ysflP67noxbtzCkKcL7Ku58USyCwgObIqgPOUhWEtR4CMz60dcDGWN3lTjp-MHIxVowiTLctkITSFAJp9penlJ8KxHvzdBtSa1j5R_sF_ge6aYwVbxJXDK1dgAbD" 
+              src={iframeURL} 
               frameBorder="0" 
               scrolling="auto" 
               allowFullScreen 
