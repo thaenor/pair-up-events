@@ -2,7 +2,7 @@ import React from 'react';
 
 const EarlyAccess = () => {
 
-  const iframeURL = 'https://sibforms.com/serve/MUIFADvijRNIEIcY8qaaiuKbDQSnhlg-D6-GifTKawJvNfWFGs9SbEWqS2IBwjtIQwmzWoSZ-g1VKRhd1gkzMqhpCTB26AlmGeGFJ5IX7h5AjTrgpBB6fYHPOJwqyg4l362UkLpk4Rqk9UHcztd6sIzcByTmy2fv0QXqN-9vNBNe32pEY7MVxHPub4i6XckZINJSVzTDX9O_dlXZ';
+  const iframeURL = 'https://sibforms.com/serve/MUIFAFLqsAW47gnNrDXUCqzyVXOATXu7PjahHmeb1AqYEwx7SxJMvu3yKUNMqQm9aiODyeTqHUWA7IklRCduPdiy26zsDtyuOczp56P4PpZKrU2kP8i9yHQP8l6cGp8v4xR3Gbujes1E7lAYjg4MCCSGL2EeIElUR64t6PJncqwNlP2cUiShr_0E-jx3FzqHd5rK5u3jXRXM8J_P';
   return (
     <section id="early-access" className="section-padding bg-pairup-darkBlueAlt">
       <div className="container-custom max-w-4xl">
@@ -32,4 +32,4 @@ const EarlyAccess = () => {
   );
 }
 
-export default EarlyAccess;
+export default EarlyAccess
