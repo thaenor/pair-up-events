@@ -10,11 +10,11 @@
     --background: 198 29% 15%;
     --foreground: 45 78% 88%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 198 29% 15%;
+    --card: 198 29% 15%;
+    --card-foreground: 45 78% 88%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 198 29% 15%;
+    --popover: 198 29% 15%;
+    --popover-foreground: 45 78% 88%;
 
     --primary: 183 90% 55%;
     --primary-foreground: 198 29% 15%;
@@ -45,12 +45,6 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
-
-    /* Custom PairUp Colors */
-    --pairup-dark-blue: #1A2A33;
-    --pairup-cyan: #27E9F3;
-    --pairup-yellow: #FECC08;
-    --pairup-cream: #F5E6C8;
   }
 
   * {
@@ -58,7 +52,7 @@
   }
 
   body {
-    @apply bg-[#1A2A33] text-[#F5E6C8] font-sans;
+    @apply bg-pairup-darkBlue text-pairup-cream font-sans;
     font-family: 'Manrope', sans-serif;
   }
 
@@ -70,10 +64,76 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-[#27E9F3] text-[#1A2A33] font-medium px-6 py-3 rounded-md hover:opacity-90 transition-opacity;
+    @apply bg-pairup-cyan text-pairup-darkBlue font-medium px-6 py-3 rounded-[5px] hover:opacity-90 transition-opacity;
   }
   
   .btn-secondary {
-    @apply bg-[#FECC08] text-[#1A2A33] font-medium px-6 py-3 rounded-md hover:opacity-90 transition-opacity;
+    @apply bg-pairup-yellow text-pairup-darkBlue font-medium px-6 py-3 rounded-[5px] hover:opacity-90 transition-opacity;
+  }
+  
+  .btn-gradient {
+    @apply relative text-pairup-darkBlue font-medium rounded-[5px] overflow-hidden;
+    padding: 1rem 3rem;
+    background: linear-gradient(90deg, #27E9F3 0%, #FECC08 100%);
+    background-size: 100% 100%;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-gradient-outline {
+    @apply relative text-pairup-cream font-medium px-6 py-3 rounded-[5px] bg-transparent border-2 border-transparent;
+  }
+  
+  .btn-gradient-outline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 5px;
+    padding: 2px;
+    background: linear-gradient(90deg, #27E9F3 0%, #FECC08 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  
+  .btn-gradient-outline:hover::before {
+    background-size: 200% 100%;
+    animation: wave-animation 1s infinite linear;
+  }
+  
+  .btn-gradient:hover {
+    background-size: 200% 100%;
+    animation: wave-animation 1s infinite linear;
+  }
+  
+  @keyframes wave-animation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+  .section-padding {
+    @apply py-16 md:py-24 px-4 md:px-8;
+  }
+  
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .gradient-bg {
+    @apply bg-gradient-to-br from-pairup-darkBlue to-pairup-darkBlueAlt;
+  }
+  
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
   }
 }
