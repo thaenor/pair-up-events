@@ -1,5 +1,6 @@
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
+import { screen } from '@testing-library/dom';
 import { describe, expect, it, vi } from 'vitest';
 import Hero from '@/components/Hero';
 
