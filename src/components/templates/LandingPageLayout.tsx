@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Navigation from '../organisms/Navigation';
-import Footer from '../Footer';
+import Footer from '../organisms/Footer';
 
 interface LandingPageLayoutProps {
   children: React.ReactNode;

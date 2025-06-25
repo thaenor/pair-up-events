@@ -25,7 +25,7 @@ const benefits = [
   }
 ];
 
-const Benefits = () => {
+const BenefitsSection = () => {
   return (
     <section id="benefits" className="section-padding gradient-bg">
       <div className="container-custom">
@@ -51,6 +51,6 @@ const Benefits = () => {
       </div>
     </section>
   );
-}
+};
 
-export default Benefits;
+export default BenefitsSection;

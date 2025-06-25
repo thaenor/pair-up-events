@@ -1,8 +1,9 @@
+
 import React from 'react';
 
-const EarlyAccess = () => {
-
+const EarlyAccessSection = () => {
   const iframeURL = 'https://sibforms.com/serve/MUIFAFLqsAW47gnNrDXUCqzyVXOATXu7PjahHmeb1AqYEwx7SxJMvu3yKUNMqQm9aiODyeTqHUWA7IklRCduPdiy26zsDtyuOczp56P4PpZKrU2kP8i9yHQP8l6cGp8v4xR3Gbujes1E7lAYjg4MCCSGL2EeIElUR64t6PJncqwNlP2cUiShr_0E-jx3FzqHd5rK5u3jXRXM8J_P';
+  
   return (
     <section id="early-access" className="section-padding bg-pairup-darkBlueAlt">
       <div className="container-custom max-w-4xl">
@@ -30,6 +31,6 @@ const EarlyAccess = () => {
       </div>
     </section>
   );
-}
+};
 
-export default EarlyAccess
+export default EarlyAccessSection;

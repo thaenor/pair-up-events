@@ -1,8 +1,12 @@
-import LandingPageLayout from '@/components/templates/LandingPageLayout';
-import HeroSection from '@/components/organisms/HeroSection';
-import HowItWorks from '@/components/HowItWorks';
-import Benefits from '@/components/Benefits';
-import EarlyAccess from '@/components/EarlyAccess';
+
+import React from 'react';
+import { 
+  LandingPageLayout, 
+  HeroSection, 
+  HowItWorksSection, 
+  BenefitsSection, 
+  EarlyAccessSection 
+} from '@/components';
 
 const Index = () => {
   const handleCreateEvent = () => {
@@ -19,9 +23,9 @@ const Index = () => {
         onCreateEvent={handleCreateEvent}
         onBrowseEvents={handleBrowseEvents}
       />
-      <HowItWorks />
-      <Benefits />
-      <EarlyAccess />
+      <HowItWorksSection />
+      <BenefitsSection />
+      <EarlyAccessSection />
     </LandingPageLayout>
   );
 };

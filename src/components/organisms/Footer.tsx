@@ -1,5 +1,6 @@
 
 import React from 'react';
+import Logo from '../atoms/Logo';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -9,10 +10,7 @@ const Footer = () => {
       <div className="container-custom">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-6 md:mb-0">
-            <div className="text-2xl font-bold">
-              <span className="text-pairup-cyan">Pair</span>
-              <span className="text-pairup-yellow">Up Events</span>
-            </div>
+            <Logo size="md" />
             <p className="text-sm text-pairup-cream/70 mt-2">You and your friend meet another pair for a shared activity</p>
           </div>
           
@@ -52,6 +50,6 @@ const Footer = () => {
       </div>
     </footer>
   );
-}
+};
 
 export default Footer;

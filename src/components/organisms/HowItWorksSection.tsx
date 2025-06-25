@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Users, Calendar, MapPin } from "lucide-react";
+import Logo from '../atoms/Logo';
 
 const steps = [
   {
@@ -19,17 +20,13 @@ const steps = [
     icon: <MapPin className="w-12 h-12 text-pairup-cream" />,
     title: <div className="flex items-center gap-2">
             Meet Up
-            <img 
-              src="/lovable-uploads/d708028b-2d35-41b1-996e-d0c30bbad73a.png"
-              alt="Pair Up Events logo"
-              className="w-8 h-8 object-contain"
-            />
+            <Logo size="sm" showText={false} />
           </div>,
     description: "Connect with another pair at the agreed location and enjoy!"
   }
 ];
 
-const HowItWorks = () => {
+const HowItWorksSection = () => {
   return (
     <section id="how-it-works" className="section-padding bg-pairup-darkBlueAlt">
       <div className="container-custom">
@@ -57,6 +54,6 @@ const HowItWorks = () => {
       </div>
     </section>
   );
-}
+};
 
-export default HowItWorks;
+export default HowItWorksSection;
