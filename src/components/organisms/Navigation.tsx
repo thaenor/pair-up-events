@@ -10,7 +10,7 @@ interface NavigationProps {
   onLogout?: () => void;
 }
 
-const Navigation: React.FC<NavigationProps> = ({ 
+const Navigation: React.FC<NavigationProps> = ({
   isLoggedIn = false,
   onGetStarted,
   onLogin,
@@ -21,8 +21,8 @@ const Navigation: React.FC<NavigationProps> = ({
   return (
     <nav className="py-4 w-full absolute top-0 left-0 z-10">
       <div className="container-custom flex items-center justify-between">
-        <Logo />
-        
+        <Logo size='md' />
+
         <div className="hidden md:flex items-center space-x-6">
           <a href="#how-it-works" className="text-pairup-cream hover:text-pairup-yellow transition-colors">
             How It Works
@@ -34,7 +34,7 @@ const Navigation: React.FC<NavigationProps> = ({
             Early Access
           </a>
         </div>
-        
+
         <div className="flex items-center gap-4">
           {isLoggedIn ? (
             <Button variant="secondary" onClick={onLogout}>
