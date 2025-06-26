@@ -6,7 +6,7 @@ const EarlyAccessSection = () => {
   
   return (
     <section id="early-access" className="py-16 md:py-24 px-4 md:px-8 bg-pairup-darkBlueAlt">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-gradient-to-br from-pairup-darkBlue to-pairup-darkBlueAlt p-12 rounded-3xl backdrop-blur-sm">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold mb-4">Get Early Access</h2>
