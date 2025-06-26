@@ -31,8 +31,8 @@ const HowItWorksSection = () => {
   return (
     <section id="how-it-works" className={`${tokens.layout.section} ${tokens.bg.darkAlt}`}>
       <div className={tokens.layout.container}>
-        <div className="text-center mb-16">
-          <h2 className={`${tokens.text.xxxl} font-bold mb-4`}>How Pair Up Works</h2>
+        <div className={`text-center ${tokens.gap.xxl}`}>
+          <h2 className={`${tokens.text.xxxl} font-bold ${tokens.gap.lg}`}>How Pair Up Works</h2>
           <p className={`${tokens.text.lg} text-pairup-cream/80 max-w-2xl mx-auto`}>
             Our platform makes it easy to expand your social circle in a comfortable, low-pressure way
           </p>
@@ -44,7 +44,7 @@ const HowItWorksSection = () => {
               key={index} 
               className={`${tokens.bg.cardDark} ${tokens.spacing.lg} ${tokens.radius.xxl} ${tokens.effects.cardHover}`}
             >
-              <div className="mb-6">
+              <div className={tokens.gap.xl}>
                 {step.icon}
               </div>
               <h3 className={`${tokens.text.xl} font-semibold mb-3`}>{step.title}</h3>

@@ -2,6 +2,7 @@
 import React from 'react';
 import ErrorBoundary from '../atoms/ErrorBoundary';
 import LoadingState from '../molecules/LoadingState';
+import { tokens } from '@/lib/tokens';
 
 interface SafeContainerProps {
   children: React.ReactNode;
@@ -24,7 +25,7 @@ const SafeContainer: React.FC<SafeContainerProps> = ({
 }) => {
   return (
     <ErrorBoundary level={errorLevel} onError={onError}>
-      <div className={className}>
+      <div className={`${className || ''}`}>
         {isLoading ? (
           <LoadingState 
             message={loadingMessage} 

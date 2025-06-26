@@ -2,6 +2,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 import Button from './Button';
+import { tokens } from '@/lib/tokens';
 
 interface Props {
   children: ReactNode;
@@ -43,26 +44,26 @@ class ErrorBoundary extends Component<Props, State> {
       
       return (
         <div className={`
-          flex flex-col items-center justify-center p-6 
-          ${level === 'page' ? 'min-h-screen bg-pairup-darkBlue' : ''}
-          ${level === 'section' ? 'min-h-[200px] rounded-lg border border-border bg-card' : ''}
-          ${level === 'component' ? 'min-h-[100px] rounded border border-border/50 bg-muted/50' : ''}
+          ${tokens.layout.flexCenter} flex-col ${tokens.spacing.md} 
+          ${level === 'page' ? `min-h-screen ${tokens.bg.dark}` : ''}
+          ${level === 'section' ? `min-h-[200px] ${tokens.radius.lg} border border-border bg-card` : ''}
+          ${level === 'component' ? `min-h-[100px] ${tokens.radius.md} border border-border/50 bg-muted/50` : ''}
         `}>
           <AlertTriangle className={`
-            text-destructive mb-4
-            ${level === 'page' ? 'h-12 w-12' : ''}
-            ${level === 'section' ? 'h-8 w-8' : ''}
-            ${level === 'component' ? 'h-6 w-6' : ''}
+            text-destructive ${tokens.gap.lg}
+            ${level === 'page' ? tokens.size.xl : ''}
+            ${level === 'section' ? tokens.size.lg : ''}
+            ${level === 'component' ? tokens.size.md : ''}
           `} />
           <h3 className={`
-            font-semibold text-foreground mb-2
-            ${level === 'page' ? 'text-2xl' : ''}
-            ${level === 'section' ? 'text-lg' : ''}
-            ${level === 'component' ? 'text-base' : ''}
+            font-semibold text-foreground ${tokens.gap.sm}
+            ${level === 'page' ? tokens.text.xxl : ''}
+            ${level === 'section' ? tokens.text.lg : ''}
+            ${level === 'component' ? tokens.text.md : ''}
           `}>
             Something went wrong
           </h3>
-          <p className="text-muted-foreground text-center mb-4 max-w-md">
+          <p className={`text-muted-foreground text-center ${tokens.gap.lg} max-w-md`}>
             {level === 'page' && 'We encountered an unexpected error. Please try refreshing the page.'}
             {level === 'section' && 'This section failed to load properly.'}
             {level === 'component' && 'This component encountered an error.'}
@@ -71,9 +72,9 @@ class ErrorBoundary extends Component<Props, State> {
             variant="outline"
             size={level === 'component' ? 'sm' : 'md'}
             onClick={this.handleRetry}
-            className="gap-2"
+            className={tokens.gap.sm}
           >
-            <RefreshCw className="h-4 w-4" />
+            <RefreshCw className={tokens.size.sm} />
             Try Again
           </Button>
         </div>

@@ -17,7 +17,6 @@ const Navigation: React.FC<NavigationProps> = ({
   onLogin,
   onLogout
 }) => {
-  console.log('Navigation rendered with isLoggedIn:', isLoggedIn);
 
   return (
     <nav className="py-4 w-full absolute top-0 left-0 z-10">

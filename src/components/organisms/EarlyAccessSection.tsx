@@ -9,8 +9,8 @@ const EarlyAccessSection = () => {
     <section id="early-access" className={`${tokens.layout.section} ${tokens.bg.darkAlt}`}>
       <div className={`${tokens.layout.container} max-w-4xl`}>
         <div className={`${tokens.bg.gradient} ${tokens.spacing.xl} ${tokens.radius.xxxl} backdrop-blur-sm`}>
-          <div className="text-center mb-8">
-            <h2 className={`${tokens.text.xxxl} font-bold mb-4`}>Get Early Access</h2>
+          <div className={`text-center ${tokens.gap.xxl}`}>
+            <h2 className={`${tokens.text.xxxl} font-bold ${tokens.gap.lg}`}>Get Early Access</h2>
             <p className={`${tokens.text.lg} text-pairup-cream/80 max-w-2xl mx-auto`}>
               Be the first to know when we launch. Sign up now to receive exclusive updates, sneak peeks, and priority access to Pair Up Events.
             </p>

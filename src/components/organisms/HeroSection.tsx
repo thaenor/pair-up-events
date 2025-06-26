@@ -14,7 +14,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   onCreateEvent,
   onBrowseEvents
 }) => {
-  console.log('HeroSection rendered');
 
   return (
     <section className={`relative min-h-screen ${tokens.layout.flexCenter} ${tokens.bg.gradient}`}>

@@ -2,6 +2,7 @@
 import React from 'react';
 import ErrorBoundary from '../atoms/ErrorBoundary';
 import LoadingState from '../molecules/LoadingState';
+import { tokens } from '@/lib/tokens';
 
 interface PageWrapperProps {
   children: React.ReactNode;
@@ -26,7 +27,7 @@ const PageWrapper: React.FC<PageWrapperProps> = ({
 
   return (
     <ErrorBoundary level="page" onError={handleError}>
-      <div className={className}>
+      <div className={`${tokens.layout.container} ${className || ''}`}>
         {isLoading ? (
           <LoadingState 
             message={loadingMessage} 
