@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { Users, Calendar, MapPin } from "lucide-react";
 import Logo from '../atoms/Logo';
 

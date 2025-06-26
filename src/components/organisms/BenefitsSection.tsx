@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { Calendar, Users, MapPin, Map } from "lucide-react";
 
 const benefits = [
