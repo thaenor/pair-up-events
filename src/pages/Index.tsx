@@ -5,7 +5,8 @@ import {
   HeroSection, 
   HowItWorksSection, 
   BenefitsSection, 
-  EarlyAccessSection 
+  EarlyAccessSection,
+  PageWrapper
 } from '@/components';
 
 const Index = () => {
@@ -18,15 +19,17 @@ const Index = () => {
   };
 
   return (
-    <LandingPageLayout>
-      <HeroSection
-        onCreateEvent={handleCreateEvent}
-        onBrowseEvents={handleBrowseEvents}
-      />
-      <HowItWorksSection />
-      <BenefitsSection />
-      <EarlyAccessSection />
-    </LandingPageLayout>
+    <PageWrapper>
+      <LandingPageLayout>
+        <HeroSection
+          onCreateEvent={handleCreateEvent}
+          onBrowseEvents={handleBrowseEvents}
+        />
+        <HowItWorksSection />
+        <BenefitsSection />
+        <EarlyAccessSection />
+      </LandingPageLayout>
+    </PageWrapper>
   );
 };
 
