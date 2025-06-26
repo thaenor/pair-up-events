@@ -7,7 +7,6 @@ import {
   ToastTitle,
   ToastViewport,
 } from "@/components/atoms/toast"
-import { tokens } from "@/lib/tokens"
 
 export function Toaster() {
   const { toasts } = useToast()
@@ -17,7 +16,7 @@ export function Toaster() {
       {toasts.map(function ({ id, title, description, action, ...props }) {
         return (
           <Toast key={id} {...props}>
-            <div className={`grid ${tokens.gap.xs}`}>
+            <div className="grid gap-1">
               {title && <ToastTitle>{title}</ToastTitle>}
               {description && (
                 <ToastDescription>{description}</ToastDescription>

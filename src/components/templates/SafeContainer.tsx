@@ -2,7 +2,6 @@
 import React from 'react';
 import ErrorBoundary from '../atoms/ErrorBoundary';
 import LoadingState from '../molecules/LoadingState';
-import { tokens } from '@/lib/tokens';
 
 interface SafeContainerProps {
   children: React.ReactNode;
