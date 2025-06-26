@@ -2,24 +2,19 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { tokens, type SizeToken } from '@/lib/tokens';
 
 interface LoadingSpinnerProps {
-  size?: 'sm' | 'md' | 'lg';
+  size?: SizeToken;
   className?: string;
 }
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ size = 'md', className }) => {
-  const sizeClasses = {
-    sm: 'h-4 w-4',
-    md: 'h-6 w-6',
-    lg: 'h-8 w-8'
-  };
-
   return (
     <Loader2 
       className={cn(
         'animate-spin text-pairup-cyan',
-        sizeClasses[size],
+        tokens.size[size],
         className
       )} 
     />

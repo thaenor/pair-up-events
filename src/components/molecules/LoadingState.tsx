@@ -2,11 +2,12 @@
 import React from 'react';
 import LoadingSpinner from '../atoms/LoadingSpinner';
 import { cn } from '@/lib/utils';
+import { tokens, type SizeToken, type TextToken } from '@/lib/tokens';
 
 interface LoadingStateProps {
   message?: string;
   type?: 'page' | 'section' | 'component' | 'inline';
-  size?: 'sm' | 'md' | 'lg';
+  size?: SizeToken;
   className?: string;
 }
 
@@ -23,11 +24,12 @@ const LoadingState: React.FC<LoadingStateProps> = ({
     inline: 'py-4'
   };
 
-  const textClasses = {
-    page: 'text-lg',
-    section: 'text-base',
-    component: 'text-sm',
-    inline: 'text-sm'
+  // Map loading state types to appropriate text sizes
+  const textSizeMap: Record<typeof type, TextToken> = {
+    page: 'lg',
+    section: 'md',
+    component: 'sm',
+    inline: 'sm'
   };
 
   return (
@@ -39,7 +41,7 @@ const LoadingState: React.FC<LoadingStateProps> = ({
       <LoadingSpinner size={size} />
       <p className={cn(
         'text-muted-foreground font-medium',
-        textClasses[type]
+        tokens.text[textSizeMap[type]]
       )}>
         {message}
       </p>

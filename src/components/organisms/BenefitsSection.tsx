@@ -1,25 +1,26 @@
 
 import React from 'react';
 import { Calendar, Users, MapPin, Map } from "lucide-react";
+import { tokens } from '@/lib/tokens';
 
 const benefits = [
   {
-    icon: <Users className="w-12 h-12 text-pairup-yellow" />,
+    icon: <Users className={`${tokens.size.xl} text-pairup-yellow`} />,
     title: "Experience a Fresh 4-Way Dynamic",
     description: "Meet two new people together with your friend, creating balanced and comfortable social energy"
   },
   {
-    icon: <Calendar className="w-12 h-12 text-pairup-yellow" />,
+    icon: <Calendar className={`${tokens.size.xl} text-pairup-yellow`} />,
     title: "Break Your Routine",
     description: "Step out of your comfort zone with spontaneous social adventures and new experiences"
   },
   {
-    icon: <MapPin className="w-12 h-12 text-pairup-yellow" />,
+    icon: <MapPin className={`${tokens.size.xl} text-pairup-yellow`} />,
     title: "Feel Safe and Open",
     description: "Explore new energies and connections while staying with someone you trust"
   },
   {
-    icon: <Map className="w-12 h-12 text-pairup-yellow" />,
+    icon: <Map className={`${tokens.size.xl} text-pairup-yellow`} />,
     title: "Grow Your Social Circle",
     description: "Expand your network through curated, shared experiences in your city"
   }

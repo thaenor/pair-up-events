@@ -49,7 +49,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
           </div>
           <div className="relative h-[400px] md:h-[500px] -mt-40 sm:mt-32 md:mt-0 animate-fade-in flex items-center justify-center" style={{ animationDelay: '0.5s' }}>
-            <Logo size="xlg" showText={false} />
+            <Logo size="hero" showText={false} />
           </div>
         </div>
       </div>

@@ -2,22 +2,23 @@
 import React from 'react';
 import { Users, Calendar, MapPin } from "lucide-react";
 import Logo from '../atoms/Logo';
+import { tokens } from '@/lib/tokens';
 
 const steps = [
   {
-    icon: <Calendar className="w-12 h-12 text-pairup-cream" />,
+    icon: <Calendar className={`${tokens.size.xl} text-pairup-cream`} />,
     title: <span>
              <span className="text-pairup-cyan">Create</span> or <span className="text-pairup-yellow">Join</span>
            </span>,
     description: "Create your own event or browse existing ones in your area"
   },
   {
-    icon: <Users className="w-12 h-12 text-pairup-cream" />,
+    icon: <Users className={`${tokens.size.xl} text-pairup-cream`} />,
     title: "Find a Friend",
     description: "Start by selecting one friend to join your pair-up adventure"
   },
   {
-    icon: <MapPin className="w-12 h-12 text-pairup-cream" />,
+    icon: <MapPin className={`${tokens.size.xl} text-pairup-cream`} />,
     title: <div className="flex items-center gap-2">
             Meet Up
             <Logo size="sm" showText={false} />

@@ -1,23 +1,23 @@
 
 import React from 'react';
+import { tokens, type SizeToken, type TextToken } from '@/lib/tokens';
 
 interface LogoProps {
-  size?: 'sm' | 'md' | 'lg' | 'xlg';
+  size?: SizeToken;
   showText?: boolean;
 }
 
 const Logo: React.FC<LogoProps> = ({ size = 'md', showText = true }) => {
-  const sizeClasses = {
-    sm: 'w-6 h-6',
-    md: 'w-8 h-8 object-contain',
-    lg: 'w-12 h-12',
-    xlg: "w-64 h-64 md:w-80 md:h-80 object-contain"
-  };
-
-  const textSizeClasses = {
-    sm: 'text-sm',
-    md: 'text-base',
-    lg: 'text-xl'
+  // Map logo sizes to appropriate text sizes
+  const textSizeMap: Record<SizeToken, TextToken> = {
+    xs: 'xs',
+    sm: 'sm',
+    md: 'md',
+    lg: 'lg',
+    xl: 'xl',
+    xxl: 'xxl',
+    xxxl: 'xxxl',
+    hero: 'hero'
   };
 
   return (
@@ -25,10 +25,10 @@ const Logo: React.FC<LogoProps> = ({ size = 'md', showText = true }) => {
       <img
         src="/lovable-uploads/d708028b-2d35-41b1-996e-d0c30bbad73a.png"
         alt="Pair Up Events logo"
-        className={sizeClasses[size]}
+        className={`${tokens.size[size]} object-contain`}
       />
       {showText && (
-        <span className={`${textSizeClasses[size]} font-bold`}>
+        <span className={`${tokens.text[textSizeMap[size]]} font-bold`}>
           <span className="text-pairup-cyan">Pair</span>
           <span className="text-pairup-yellow">Up Events</span>
         </span>
