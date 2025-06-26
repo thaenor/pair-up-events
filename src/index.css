@@ -63,22 +63,6 @@
 }
 
 @layer components {
-  .section-padding {
-    @apply py-16 md:py-24 px-4 md:px-8;
-  }
-  
-  .container-custom {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
-  }
-  
-  .gradient-bg {
-    @apply bg-gradient-to-br from-pairup-darkBlue to-pairup-darkBlueAlt;
-  }
-  
-  .card-hover {
-    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
-  }
-
   @keyframes wave-animation {
     0% {
       background-position: 0% 50%;

@@ -54,6 +54,8 @@ export const tokens = {
     md: 'rounded-md',
     lg: 'rounded-lg',
     xl: 'rounded-xl',
+    xxl: 'rounded-2xl',
+    xxxl: 'rounded-3xl',
     full: 'rounded-full'
   },
 
@@ -62,6 +64,25 @@ export const tokens = {
     fast: 'duration-150',
     normal: 'duration-300',
     slow: 'duration-500'
+  },
+
+  // Responsive breakpoints for consistent usage
+  breakpoints: {
+    mobile: 'sm:',
+    tablet: 'md:',
+    desktop: 'lg:',
+    wide: 'xl:'
+  },
+
+  // Common layout patterns
+  layout: {
+    section: 'py-16 md:py-24 px-4 md:px-8',
+    container: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8',
+    grid2: 'grid md:grid-cols-2 gap-8',
+    grid3: 'grid md:grid-cols-3 gap-8',
+    grid4: 'grid md:grid-cols-4 gap-8',
+    flexCenter: 'flex items-center justify-center',
+    flexBetween: 'flex items-center justify-between'
   },
 
   // Brand colors (already defined in Tailwind config)
@@ -79,7 +100,17 @@ export const tokens = {
     secondary: 'bg-pairup-yellow',
     tertiary: 'bg-pairup-cream',
     dark: 'bg-pairup-darkBlue',
-    darkAlt: 'bg-pairup-darkBlueAlt'
+    darkAlt: 'bg-pairup-darkBlueAlt',
+    gradient: 'bg-gradient-to-br from-pairup-darkBlue to-pairup-darkBlueAlt',
+    cardDark: 'bg-pairup-darkBlue/50',
+    cardLight: 'bg-pairup-darkBlue/30'
+  },
+
+  // Common transitions and effects
+  effects: {
+    cardHover: 'transition-all duration-300 hover:shadow-lg hover:-translate-y-1',
+    fadeIn: 'animate-fade-in',
+    slideIn: 'animate-slide-in'
   }
 } as const;
 
@@ -90,8 +121,11 @@ export type SpacingToken = keyof typeof tokens.spacing;
 export type GapToken = keyof typeof tokens.gap;
 export type RadiusToken = keyof typeof tokens.radius;
 export type DurationToken = keyof typeof tokens.duration;
+export type BreakpointToken = keyof typeof tokens.breakpoints;
+export type LayoutToken = keyof typeof tokens.layout;
 export type ColorToken = keyof typeof tokens.colors;
 export type BgToken = keyof typeof tokens.bg;
+export type EffectToken = keyof typeof tokens.effects;
 
 // Helper function to get token values
 export const getToken = {
@@ -101,6 +135,9 @@ export const getToken = {
   gap: (size: GapToken) => tokens.gap[size],
   radius: (size: RadiusToken) => tokens.radius[size],
   duration: (duration: DurationToken) => tokens.duration[duration],
+  breakpoint: (breakpoint: BreakpointToken) => tokens.breakpoints[breakpoint],
+  layout: (layout: LayoutToken) => tokens.layout[layout],
   color: (color: ColorToken) => tokens.colors[color],
-  bg: (bg: BgToken) => tokens.bg[bg]
+  bg: (bg: BgToken) => tokens.bg[bg],
+  effect: (effect: EffectToken) => tokens.effects[effect]
 };
