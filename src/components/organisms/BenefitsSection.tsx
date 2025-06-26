@@ -1,26 +1,25 @@
 
 import React from 'react';
 import { Calendar, Users, MapPin, Map } from "lucide-react";
-import { tokens } from '@/lib/tokens';
 
 const benefits = [
   {
-    icon: <Users className={`${tokens.size.xl} ${tokens.colors.secondary}`} />,
+    icon: <Users className="h-12 w-12 text-pairup-yellow" />,
     title: "Experience a Fresh 4-Way Dynamic",
     description: "Meet two new people together with your friend, creating balanced and comfortable social energy"
   },
   {
-    icon: <Calendar className={`${tokens.size.xl} ${tokens.colors.secondary}`} />,
+    icon: <Calendar className="h-12 w-12 text-pairup-yellow" />,
     title: "Break Your Routine",
     description: "Step out of your comfort zone with spontaneous social adventures and new experiences"
   },
   {
-    icon: <MapPin className={`${tokens.size.xl} ${tokens.colors.secondary}`} />,
+    icon: <MapPin className="h-12 w-12 text-pairup-yellow" />,
     title: "Feel Safe and Open",
     description: "Explore new energies and connections while staying with someone you trust"
   },
   {
-    icon: <Map className={`${tokens.size.xl} ${tokens.colors.secondary}`} />,
+    icon: <Map className="h-12 w-12 text-pairup-yellow" />,
     title: "Grow Your Social Circle",
     description: "Expand your network through curated, shared experiences in your city"
   }
@@ -28,23 +27,23 @@ const benefits = [
 
 const BenefitsSection = () => {
   return (
-    <section id="benefits" className={`${tokens.layout.section} ${tokens.bg.gradient}`}>
-      <div className={tokens.layout.container}>
+    <section id="benefits" className="py-16 md:py-24 px-4 md:px-8 bg-gradient-to-br from-pairup-darkBlue to-pairup-darkBlueAlt">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className={`${tokens.text.xxxl} font-bold mb-4`}>Why Pair Up?</h2>
-          <p className={`${tokens.text.lg} text-pairup-cream/80 max-w-2xl mx-auto`}>
+          <h2 className="text-3xl font-bold mb-4">Why Pair Up?</h2>
+          <p className="text-lg text-pairup-cream/80 max-w-2xl mx-auto">
             We're reimagining how people meet and connect, making it more comfortable and meaningful
           </p>
         </div>
         
-        <div className={tokens.layout.grid2}>
+        <div className="grid md:grid-cols-2 gap-8">
           {benefits.map((benefit, index) => (
             <div 
               key={index} 
-              className={`${tokens.bg.cardLight} ${tokens.spacing.lg} ${tokens.radius.xxl} backdrop-blur-sm ${tokens.effects.cardHover}`}
+              className="bg-pairup-darkBlue/30 p-8 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
             >
               <div className="mb-6">{benefit.icon}</div>
-              <h3 className={`${tokens.text.xl} font-semibold mb-3`}>{benefit.title}</h3>
+              <h3 className="text-xl font-semibold mb-3">{benefit.title}</h3>
               <p className="text-pairup-cream/80">{benefit.description}</p>
             </div>
           ))}

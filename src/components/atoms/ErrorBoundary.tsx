@@ -43,10 +43,10 @@ class ErrorBoundary extends Component<Props, State> {
       
       return (
         <div className={`
-          flex flex-col items-center justify-center p-6 
+          flex items-center justify-center flex-col p-6 
           ${level === 'page' ? 'min-h-screen bg-pairup-darkBlue' : ''}
           ${level === 'section' ? 'min-h-[200px] rounded-lg border border-border bg-card' : ''}
-          ${level === 'component' ? 'min-h-[100px] rounded border border-border/50 bg-muted/50' : ''}
+          ${level === 'component' ? 'min-h-[100px] rounded-md border border-border/50 bg-muted/50' : ''}
         `}>
           <AlertTriangle className={`
             text-destructive mb-4

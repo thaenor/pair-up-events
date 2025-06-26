@@ -2,7 +2,6 @@
 import React from 'react';
 import Logo from '../atoms/Logo';
 import Button from '../atoms/Button';
-import { tokens } from '@/lib/tokens';
 
 interface NavigationProps {
   isLoggedIn?: boolean;
@@ -17,26 +16,25 @@ const Navigation: React.FC<NavigationProps> = ({
   onLogin,
   onLogout
 }) => {
-  console.log('Navigation rendered with isLoggedIn:', isLoggedIn);
 
   return (
     <nav className="py-4 w-full absolute top-0 left-0 z-10">
-      <div className={`${tokens.layout.container} ${tokens.layout.flexBetween}`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         <Logo size='md' />
 
-        <div className={`hidden md:flex items-center ${tokens.gap.xl}`}>
-          <a href="#how-it-works" className={`text-pairup-cream hover:text-pairup-yellow ${tokens.duration.normal}`}>
+        <div className="hidden md:flex items-center gap-6">
+          <a href="#how-it-works" className="text-pairup-cream hover:text-pairup-yellow duration-300">
             How It Works
           </a>
-          <a href="#benefits" className={`text-pairup-cream hover:text-pairup-yellow ${tokens.duration.normal}`}>
+          <a href="#benefits" className="text-pairup-cream hover:text-pairup-yellow duration-300">
             Benefits
           </a>
-          <a href="#early-access" className={`text-pairup-cream hover:text-pairup-yellow ${tokens.duration.normal}`}>
+          <a href="#early-access" className="text-pairup-cream hover:text-pairup-yellow duration-300">
             Early Access
           </a>
         </div>
 
-        <div className={`${tokens.layout.flexCenter} ${tokens.gap.lg}`}>
+        <div className="flex items-center justify-center gap-4">
           {isLoggedIn ? (
             <Button variant="secondary" onClick={onLogout}>
               Logout

@@ -14,7 +14,6 @@ const LandingPageLayout: React.FC<LandingPageLayoutProps> = ({
   showNavigation = true, 
   showFooter = true 
 }) => {
-  console.log('LandingPageLayout rendered');
 
   const handleGetStarted = () => {
     document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' });

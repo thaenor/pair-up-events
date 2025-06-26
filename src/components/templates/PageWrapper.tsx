@@ -26,7 +26,7 @@ const PageWrapper: React.FC<PageWrapperProps> = ({
 
   return (
     <ErrorBoundary level="page" onError={handleError}>
-      <div className={className}>
+      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${className || ''}`}>
         {isLoading ? (
           <LoadingState 
             message={loadingMessage} 

@@ -24,7 +24,7 @@ const SafeContainer: React.FC<SafeContainerProps> = ({
 }) => {
   return (
     <ErrorBoundary level={errorLevel} onError={onError}>
-      <div className={className}>
+      <div className={`${className || ''}`}>
         {isLoading ? (
           <LoadingState 
             message={loadingMessage} 
