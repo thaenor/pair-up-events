@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Button from '../atoms/Button';
 import Logo from '../atoms/Logo';
@@ -54,7 +53,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
       </div>
 
       <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex justify-center">
-        <a href="#how-it-works" className="animate-bounce">
+        <a href="#how-it-works" className="animate-bounce" tabIndex={-1} aria-hidden="true">
           <div className="w-8 h-12 border-2 border-pairup-cream/50 rounded-full flex justify-center">
             <div className="w-2 h-2 bg-pairup-cream/50 rounded-full mt-2"></div>
           </div>

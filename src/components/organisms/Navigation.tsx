@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Logo from '../atoms/Logo';
 import Button from '../atoms/Button';
@@ -18,18 +17,18 @@ const Navigation: React.FC<NavigationProps> = ({
 }) => {
 
   return (
-    <nav className="py-4 w-full absolute top-0 left-0 z-10">
+    <nav className="py-4 w-full absolute top-0 left-0 z-10" aria-label="Main navigation">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         <Logo size='md' />
 
         <div className="hidden md:flex items-center gap-6">
-          <a href="#how-it-works" className="text-pairup-cream hover:text-pairup-yellow duration-300">
+          <a href="#how-it-works" className="text-pairup-cream hover:text-pairup-yellow duration-300" aria-label="Learn how Pair Up Events works">
             How It Works
           </a>
-          <a href="#benefits" className="text-pairup-cream hover:text-pairup-yellow duration-300">
+          <a href="#benefits" className="text-pairup-cream hover:text-pairup-yellow duration-300" aria-label="View the benefits of Pair Up Events">
             Benefits
           </a>
-          <a href="#early-access" className="text-pairup-cream hover:text-pairup-yellow duration-300">
+          <a href="#early-access" className="text-pairup-cream hover:text-pairup-yellow duration-300" aria-label="Sign up for early access to Pair Up Events">
             Early Access
           </a>
         </div>
