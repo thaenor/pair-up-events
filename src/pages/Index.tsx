@@ -1,4 +1,5 @@
 
+import { useNavigate } from 'react-router-dom';
 import { 
   LandingPageLayout, 
   HeroSection, 
@@ -9,8 +10,10 @@ import {
 } from '@/components';
 
 const Index = () => {
+  const navigate = useNavigate();
+
   const handleCreateEvent = () => {
-    document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' });
+    navigate('/create');
   };
 
   const handleBrowseEvents = () => {

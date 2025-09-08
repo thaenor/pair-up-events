@@ -8,6 +8,7 @@ import ErrorBoundary from "@/components/atoms/ErrorBoundary";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AuthPage from "./pages/auth";
+import CreateEventPage from "./pages/create";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,6 +32,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/create" element={<CreateEventPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
