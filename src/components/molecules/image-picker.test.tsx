@@ -20,6 +20,10 @@ describe('ImagePicker', () => {
     vi.spyOn(window, 'FileReader').mockImplementation(() => mockFileReaderInstance);
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('renders a file input', () => {
     render(<ImagePicker onImageChange={vi.fn()} />);
     expect(screen.getByTestId('mock-file-input')).toBeInTheDocument();
@@ -36,7 +40,9 @@ describe('ImagePicker', () => {
     });
 
     // Manually trigger onloadend
-    (window.FileReader as vi.MockedClass<typeof FileReader>).mock.results[0].value.onloadend();
+    await act(async () => {
+      (window.FileReader as vi.MockedClass<typeof FileReader>).mock.results[0].value.onloadend();
+    });
 
     const img = await screen.findByAltText('Preview');
     expect(img).toBeInTheDocument();
@@ -54,7 +60,9 @@ describe('ImagePicker', () => {
     });
 
     // Manually trigger onloadend
-    (window.FileReader as vi.MockedClass<typeof FileReader>).mock.results[0].value.onloadend();
+    await act(async () => {
+      (window.FileReader as vi.MockedClass<typeof FileReader>).mock.results[0].value.onloadend();
+    });
 
     expect(mockOnImageChange).toHaveBeenCalledTimes(1);
     expect(mockOnImageChange).toHaveBeenCalledWith(mockFile);
@@ -71,7 +79,9 @@ describe('ImagePicker', () => {
     await act(async () => {
       fireEvent.change(input, { target: { files: [mockFile] } });
     });
-    (window.FileReader as vi.MockedClass<typeof FileReader>).mock.results[0].value.onloadend();
+    await act(async () => {
+      (window.FileReader as vi.MockedClass<typeof FileReader>).mock.results[0].value.onloadend();
+    });
     await screen.findByAltText('Preview');
 
     // Clear the input

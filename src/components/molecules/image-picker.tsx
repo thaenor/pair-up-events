@@ -2,7 +2,11 @@ import { ChangeEvent, useState } from 'react';
 
 import { Input } from '@/components/ui/input';
 
-export function ImagePicker({ onImageChange }: { onImageChange: (file: File | null) => void }) {
+export type ImagePickerProps = {
+  onImageChange: (file: File | null) => void;
+};
+
+export const ImagePicker: React.FC<ImagePickerProps> = ({ onImageChange }) => {
   const [preview, setPreview] = useState<string | null>(null);
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {

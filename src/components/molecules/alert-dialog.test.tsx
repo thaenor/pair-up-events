@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -54,6 +54,7 @@ describe('AlertDialog Components', () => {
       <AlertDialog open>
         <AlertDialogContent>
           <AlertDialogTitle>Content Title</AlertDialogTitle>
+          <AlertDialogDescription>Content description for accessibility.</AlertDialogDescription>
           <div>Content</div>
         </AlertDialogContent>
       </AlertDialog>
@@ -69,6 +70,7 @@ describe('AlertDialog Components', () => {
           <AlertDialogHeader>
             <div>Header Content</div>
           </AlertDialogHeader>
+          <AlertDialogDescription>Header description for accessibility.</AlertDialogDescription>
         </AlertDialogContent>
       </AlertDialog>
     );
@@ -80,6 +82,7 @@ describe('AlertDialog Components', () => {
       <AlertDialog open>
         <AlertDialogContent>
           <AlertDialogTitle>Footer Title</AlertDialogTitle>
+          <AlertDialogDescription>Footer description for accessibility.</AlertDialogDescription>
           <AlertDialogFooter>
             <div>Footer Content</div>
           </AlertDialogFooter>
@@ -94,6 +97,7 @@ describe('AlertDialog Components', () => {
       <AlertDialog open>
         <AlertDialogContent>
           <AlertDialogTitle>Title Text</AlertDialogTitle>
+          <AlertDialogDescription>Title description for accessibility.</AlertDialogDescription>
         </AlertDialogContent>
       </AlertDialog>
     );
@@ -104,6 +108,7 @@ describe('AlertDialog Components', () => {
     render(
       <AlertDialog open>
         <AlertDialogContent>
+          <AlertDialogTitle>Title Text</AlertDialogTitle>
           <AlertDialogDescription>Description Text</AlertDialogDescription>
         </AlertDialogContent>
       </AlertDialog>
