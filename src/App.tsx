@@ -2,7 +2,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-// import AuthPage from "./pages/auth";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import AuthPage from "./pages/auth";
 
 const App = () => (
     <BrowserRouter>

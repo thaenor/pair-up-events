@@ -1,4 +1,3 @@
-/*
 import React from 'react';
 
 export type AuthLayoutProps = {
@@ -26,4 +25,3 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ left }) => {
     </div>
   );
 };
-*/
