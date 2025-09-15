@@ -19,7 +19,7 @@ const steps = [
     icon: <MapPin className="h-12 w-12 text-pairup-cream" />,
     title: <div className="flex items-center justify-center gap-2">
             Meet Up
-            <Logo size="sm" showText={false} />
+            <Logo size="xxl" showText={false} />
           </div>,
     description: "Connect with another pair at the agreed location and enjoy!"
   }
