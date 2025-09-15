@@ -1,23 +1,15 @@
-
-import { useNavigate } from 'react-router-dom';
-import { 
-  LandingPageLayout, 
-  HeroSection, 
-  HowItWorksSection, 
-  BenefitsSection, 
+import {
+  BenefitsSection,
   EarlyAccessSection,
+  HeroSection,
+  HowItWorksSection,
+  LandingPageLayout,
   PageWrapper
 } from '@/components';
 
 const Index = () => {
-  const navigate = useNavigate();
-
   const handleCreateEvent = () => {
-    navigate('/create');
-  };
-
-  const handleBrowseEvents = () => {
-    document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' });
+    window.location.href = 'https://forms.google.com';
   };
 
   return (
@@ -25,7 +17,6 @@ const Index = () => {
       <LandingPageLayout>
         <HeroSection
           onCreateEvent={handleCreateEvent}
-          onBrowseEvents={handleBrowseEvents}
         />
         <HowItWorksSection />
         <BenefitsSection />

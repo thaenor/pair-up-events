@@ -1,3 +1,4 @@
+/*
 import React from 'react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -22,3 +23,4 @@ export const SocialAuthButton: React.FC<SocialAuthButtonProps> = ({ icon, label,
     </button>
   );
 };
+*/

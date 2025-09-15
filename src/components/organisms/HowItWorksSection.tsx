@@ -1,5 +1,5 @@
+import { Calendar, MapPin,Users } from "lucide-react";
 
-import { Users, Calendar, MapPin } from "lucide-react";
 import Logo from '../atoms/Logo';
 
 const steps = [
@@ -35,11 +35,11 @@ const HowItWorksSection = () => {
             Our platform makes it easy to expand your social circle in a comfortable, low-pressure way
           </p>
         </div>
-        
+
         <div className="grid md:grid-cols-3 gap-8">
           {steps.map((step, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className="bg-pairup-darkBlue/50 p-8 rounded-2xl transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
             >
               <div className="mb-6">

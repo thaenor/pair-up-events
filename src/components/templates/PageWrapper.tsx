@@ -1,14 +1,10 @@
-
 import React from 'react';
-import ErrorBoundary from '../atoms/ErrorBoundary';
-import LoadingState from '../molecules/LoadingState';
 
 interface PageWrapperProps {
   children: React.ReactNode;
   isLoading?: boolean;
   loadingMessage?: string;
   className?: string;
-  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
 }
 
 const PageWrapper: React.FC<PageWrapperProps> = ({
@@ -16,28 +12,21 @@ const PageWrapper: React.FC<PageWrapperProps> = ({
   isLoading = false,
   loadingMessage = 'Loading page...',
   className,
-  onError
 }) => {
-  const handleError = (error: Error, errorInfo: React.ErrorInfo) => {
-    // Log to your error reporting service here
-    console.error('Page Error:', error, errorInfo);
-    onError?.(error, errorInfo);
-  };
 
   return (
-    <ErrorBoundary level="page" onError={handleError}>
       <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${className || ''}`}>
         {isLoading ? (
-          <LoadingState 
-            message={loadingMessage} 
-            type="page" 
-            size="lg"
-          />
+          <div className="min-h-screen bg-pairup-darkBlue flex flex-col items-center justify-center gap-3">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pairup-cyan"></div>
+            <p className="text-muted-foreground font-medium text-lg">
+              {loadingMessage}
+            </p>
+          </div>
         ) : (
           children
         )}
       </div>
-    </ErrorBoundary>
   );
 };
 

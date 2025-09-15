@@ -1,7 +1,8 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
 import LoadingState from './LoadingState';
-import LoadingSpinner from '../atoms/LoadingSpinner';
+
 
 // Mock the LoadingSpinner component
 vi.mock('../atoms/LoadingSpinner', () => ({

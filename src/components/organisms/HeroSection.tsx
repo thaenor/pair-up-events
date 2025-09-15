@@ -1,16 +1,14 @@
-import React from 'react';
-import Button from '../atoms/Button';
-import Logo from '../atoms/Logo';
 import { ArrowRight } from "lucide-react";
+import React from 'react';
+
+import Logo from '../atoms/Logo';
 
 interface HeroSectionProps {
   onCreateEvent?: () => void;
-  onBrowseEvents?: () => void;
 }
 
 const HeroSection: React.FC<HeroSectionProps> = ({
   onCreateEvent,
-  onBrowseEvents
 }) => {
 
   return (
@@ -28,22 +26,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({
               Experience a fresh 4-way dynamic while staying with someone you trust.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                variant="primary"
-                className="inline-flex w-fit items-center gap-2"
+              <button
+                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[5px] font-medium transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 px-6 py-3 text-base bg-pairup-cyan text-pairup-darkBlue hover:opacity-90 inline-flex w-fit items-center gap-2"
                 onClick={onCreateEvent}
               >
                 Create an Event
                 <ArrowRight size={18} />
-              </Button>
-              <Button
-                variant="secondary"
-                className="inline-flex w-fit items-center gap-2"
-                onClick={onBrowseEvents}
-              >
-                Browse Events
-                <ArrowRight size={18} />
-              </Button>
+              </button>
             </div>
           </div>
           <div className="relative h-[400px] md:h-[500px] -mt-40 sm:mt-32 md:mt-0 animate-fade-in flex items-center justify-center" style={{ animationDelay: '0.5s' }}>

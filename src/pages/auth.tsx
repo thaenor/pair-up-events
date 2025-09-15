@@ -1,6 +1,5 @@
 import { AuthLayout } from '@/components/templates/auth-layout';
 import { SocialAuthButton } from '@/components/molecules/social-auth-button';
-import Button from '@/components/atoms/Button';
 import { Mail, Apple, Facebook } from 'lucide-react';
 
 const AuthPage = () => {
@@ -23,9 +22,9 @@ const AuthPage = () => {
           <span className="px-2 bg-[#1A2833] text-gray-400">or</span>
         </div>
       </div>
-      <Button className="w-full bg-[#F2E8D8] text-[#1A2833] hover:bg-opacity-90">
+      <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[5px] font-medium transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 px-6 py-3 text-base w-full bg-[#F2E8D8] text-[#1A2833] hover:bg-opacity-90">
         Login to my account
-      </Button>
+      </button>
     </div>
   );
 

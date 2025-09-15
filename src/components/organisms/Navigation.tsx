@@ -1,19 +1,13 @@
 import React from 'react';
+
 import Logo from '../atoms/Logo';
-import Button from '../atoms/Button';
 
 interface NavigationProps {
-  isLoggedIn?: boolean;
   onGetStarted?: () => void;
-  onLogin?: () => void;
-  onLogout?: () => void;
 }
 
 const Navigation: React.FC<NavigationProps> = ({
-  isLoggedIn = false,
   onGetStarted,
-  onLogin,
-  onLogout
 }) => {
 
   return (
@@ -33,21 +27,15 @@ const Navigation: React.FC<NavigationProps> = ({
           </a>
         </div>
 
-        <div className="flex items-center justify-center gap-4">
-          {isLoggedIn ? (
-            <Button variant="secondary" onClick={onLogout}>
-              Logout
-            </Button>
-          ) : (
+        <div className="flex items-center justify-center gap-4 mr-4">
             <>
-              <Button variant="outline" onClick={onLogin}>
-                Login
-              </Button>
-              <Button variant="primary" onClick={onGetStarted}>
+              <button
+                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[5px] font-medium transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 px-6 py-3 text-base bg-pairup-cyan text-pairup-darkBlue hover:opacity-90"
+                onClick={onGetStarted}
+              >
                 Get Started
-              </Button>
+              </button>
             </>
-          )}
         </div>
       </div>
     </nav>

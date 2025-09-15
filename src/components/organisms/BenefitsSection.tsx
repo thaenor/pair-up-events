@@ -1,5 +1,5 @@
 
-import { Calendar, Users, MapPin, Map } from "lucide-react";
+import { Calendar, Map,MapPin, Users } from "lucide-react";
 
 const benefits = [
   {

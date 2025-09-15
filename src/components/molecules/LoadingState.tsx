@@ -1,7 +1,9 @@
 
 import React from 'react';
-import LoadingSpinner from '../atoms/LoadingSpinner';
+
 import { cn } from '@/lib/utils';
+
+import LoadingSpinner from '../atoms/LoadingSpinner';
 
 interface LoadingStateProps {
   message?: string;
