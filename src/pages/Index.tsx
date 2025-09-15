@@ -8,14 +8,10 @@ import {
 } from "@/components";
 
 const Index = () => {
-    const handleCreateEvent = () => {
-        window.location.href = "https://forms.google.com";
-    };
-
     return (
         <PageWrapper>
             <LandingPageLayout>
-                <HeroSection onCreateEvent={handleCreateEvent} />
+                <HeroSection />
                 <HowItWorksSection />
                 <BenefitsSection />
                 <EarlyAccessSection />
