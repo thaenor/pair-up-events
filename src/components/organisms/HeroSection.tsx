@@ -25,7 +25,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onCreateEvent }) => {
                                 and meet another pair.
                             </span>
                         </h1>
-                        <p className="text-lg mb-8 text-pairup-cream/90 max-w-lg">
+                        <p className="text-xl mb-8 text-pairup-cream/90 max-w-lg">
                             Break your routine with social adventures.
                             Experience a fresh 4-way dynamic while staying with
                             someone you trust.
