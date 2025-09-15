@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi, type MockedFunction } from "vitest";
 
 import NotFound from "./NotFound";
 
@@ -14,8 +14,12 @@ vi.mock("react-router-dom", async () => {
 
 describe("NotFound Page", () => {
     beforeEach(() => {
-        (useLocation as jest.Mock).mockReturnValue({
+        (useLocation as MockedFunction<typeof useLocation>).mockReturnValue({
             pathname: "/some-random-path",
+            state: null,
+            key: "test-key",
+            search: "",
+            hash: "",
         });
         // Mock window.location.href
         Object.defineProperty(window, "location", {

@@ -5,7 +5,7 @@ import LoadingState from "./LoadingState";
 
 // Mock the LoadingSpinner component
 vi.mock("../atoms/LoadingSpinner", () => ({
-    default: vi.fn(({ size }) => (
+    default: vi.fn(({ size }: { size?: string }) => (
         <div data-testid="loading-spinner" data-size={size}></div>
     )),
 }));

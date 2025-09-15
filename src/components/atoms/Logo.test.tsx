@@ -49,7 +49,7 @@ describe("Logo", () => {
             "h-64 w-64 md:h-80 md:w-80"
         );
 
-        rerender(<Logo size="invalid" />); // Test default case
+        rerender(<Logo size={"invalid" as any} />); // Test default case
         expect(screen.getByAltText("Pair Up Events logo")).toHaveClass(
             "h-6 w-6"
         );
@@ -88,7 +88,7 @@ describe("Logo", () => {
             "text-4xl md:text-5xl lg:text-6xl"
         );
 
-        rerender(<Logo size="invalid" showText={true} />); // Test default case
+        rerender(<Logo size={"invalid" as any} showText={true} />); // Test default case
         expect(screen.getByText("Pair").parentElement).toHaveClass("text-base");
     });
 
