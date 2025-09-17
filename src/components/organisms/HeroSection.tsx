@@ -26,14 +26,14 @@ const HeroSection: React.FC<HeroSectionProps> = () => {
                             </span>
                         </h1>
                         <p className="text-xl mb-8 text-pairup-cream/90 max-w-lg">
-                            Some activities are better as a group of 4.<br /> 
-                            Create your listing and connect with like-minded 
+                            Some activities are better as a group of 4.<br />
+                            Create your listing and connect with like-minded
                             duos to meet up for shared experiences.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4">
                             <button
                                 className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[5px] font-medium transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 px-6 py-3 text-base bg-pairup-cyan text-pairup-darkBlue hover:opacity-90 inline-flex w-fit items-center gap-2"
-                                onClick={() => {window.location.href = "https://forms.google.com";}}
+                                onClick={() => {document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' });}}
                             >
                                 Create an new listing
                                 <ArrowRight size={18} />
