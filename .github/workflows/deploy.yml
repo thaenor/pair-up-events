@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy to pairup-events.com
 
 on:
   push:
@@ -51,7 +51,7 @@ jobs:
   build:
     name: Build Static Site
     needs: quality
-    if: if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
