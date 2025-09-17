@@ -13,7 +13,7 @@ const HeroSection: React.FC<HeroSectionProps> = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 md:pt-20">
                 <div className="grid md:grid-cols-2 gap-6 items-center">
                     <div
-                        className="animate-fade-in mt-16 sm:mt-64 md:mt-0"
+                        className="animate-fade-in mt-16 sm:mt-64 md:mt-0 relative z-10"
                         style={{ animationDelay: "0.2s" }}
                     >
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
@@ -35,7 +35,7 @@ const HeroSection: React.FC<HeroSectionProps> = () => {
                                 className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[5px] font-medium transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 px-6 py-3 text-base bg-pairup-cyan text-pairup-darkBlue hover:opacity-90 inline-flex w-fit items-center gap-2"
                                 onClick={() => {document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' });}}
                             >
-                                Create an new listing
+                                Create a new listing
                                 <ArrowRight size={18} />
                             </button>
                             <button
