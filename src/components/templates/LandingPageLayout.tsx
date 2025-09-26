@@ -21,7 +21,7 @@ const LandingPageLayout: React.FC<LandingPageLayoutProps> = ({
     };
 
     return (
-        <div className="min-h-screen bg-pairup-darkBlue">
+        <div className="min-h-screen bg-pairup-cream">
             {showNavigation && <Navigation onGetStarted={handleGetStarted} />}
             <main>{children}</main>
             {showFooter && <Footer />}
