@@ -1,33 +1,27 @@
 import { Calendar, MapPin, Users } from "lucide-react";
 
-import Logo from "../atoms/Logo";
-
 const steps = [
     {
-        icon: <Calendar className="h-12 w-12 text-pairup-cream" />,
+        icon: <Calendar className="h-12 w-12 text-pairup-darkblue" />,
         title: (
             <span>
-                <span className="text-pairup-cyan">Create</span> or{" "}
-                <span className="text-pairup-yellow">Join</span>
+                <span className="text-pairup-darkblue">Create</span> or{" "}
+                <span className="text-pairup-darkblue">Join</span>
             </span>
         ),
         description:
             "Create your own event or browse existing ones in your area",
     },
     {
-        icon: <Users className="h-12 w-12 text-pairup-cream" />,
+        icon: <Users className="h-12 w-12 text-pairup-darkblue" />,
         title: "Find a Friend",
         description:
             "Start by selecting one friend to join your pair-up adventure",
     },
     {
-        icon: <MapPin className="h-12 w-12 text-pairup-cream" />,
-        title: (
-            <div className="flex items-center justify-center gap-2">
-                Meet Up
-                <Logo size="xxl" showText={false} />
-            </div>
-        ),
+        //TODO: add <Logo size="xl" showText={false} />
+        icon: <MapPin className="h-12 w-12 text-pairup-darkblue" />,
+        title: 'Meet Up',
         description:
             "Connect with another pair at the agreed location and enjoy!",
     },
@@ -37,7 +31,7 @@ const HowItWorksSection = () => {
     return (
         <section
             id="how-it-works"
-            className="py-16 md:py-24 px-4 md:px-8 bg-pairup-darkBlueAlt"
+            className="py-16 md:py-24 px-4 md:px-8 bg-transparent"
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-16">
@@ -54,13 +48,13 @@ const HowItWorksSection = () => {
                     {steps.map((step, index) => (
                         <div
                             key={index}
-                            className="bg-pairup-darkBlue/50 p-8 rounded-2xl transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+                            className="bg-white/30 p-8 rounded-2xl transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
                         >
                             <div className="mb-6">{step.icon}</div>
                             <h3 className="text-xl font-semibold mb-3">
                                 {step.title}
                             </h3>
-                            <p className="text-pairup-cream/80">
+                            <p className="text-pairup-darkBlue/80">
                                 {step.description}
                             </p>
                         </div>

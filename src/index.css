@@ -52,7 +52,7 @@
   }
 
   body {
-    @apply bg-pairup-darkBlue text-pairup-cream font-sans;
+    @apply bg-pairup-cream text-pairup-darkBlue font-sans;
     font-family: 'outfit', sans-serif;
   }
 

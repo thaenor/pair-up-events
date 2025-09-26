@@ -12,7 +12,7 @@ export interface NavigationProps {
 const Navigation: React.FC<NavigationProps> = ({ onGetStarted }) => {
     return (
         <nav
-            className="py-4 w-full absolute top-0 left-0 z-10"
+            className="py-4 w-full absolute top-0 left-0 z-10 bg-pairup-darkBlue shadow-2xl"
             aria-label="Main navigation"
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
@@ -29,7 +29,6 @@ const Navigation: React.FC<NavigationProps> = ({ onGetStarted }) => {
                     <a
                         href="#benefits"
                         className="text-pairup-cream hover:text-pairup-yellow duration-300"
-                        aria-label="View the benefits of Pair Up Events"
                     >
                         Benefits
                     </a>
