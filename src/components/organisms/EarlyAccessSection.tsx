@@ -21,7 +21,7 @@ const EarlyAccessSection = () => {
 
                     <div className="flex items-center justify-center">
                         <iframe
-                            width="540"
+                            width="600"
                             height="500"
                             src={iframeURL}
                             frameBorder="0"
@@ -31,7 +31,6 @@ const EarlyAccessSection = () => {
                                 display: "block",
                                 marginLeft: "auto",
                                 marginRight: "auto",
-                                maxWidth: "100%",
                             }}
                             title="Brevo Subscription Form"
                         ></iframe>
