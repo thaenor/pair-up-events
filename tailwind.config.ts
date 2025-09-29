@@ -125,6 +125,12 @@ export default {
 			fontFamily: {
 				sans: ['Inter', 'sans-serif'],
 				display: ['Poppins', 'sans-serif']
+			},
+			transitionProperty: {
+				// Enables the utility class `transition-shadow`
+				shadow: 'box-shadow',
+				// Optional combo if you ever want to animate both box-shadow and opacity together: `transition-shadow-opacity`
+				'shadow-opacity': 'box-shadow, opacity'
 			}
 		}
 	},
