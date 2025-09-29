@@ -38,7 +38,7 @@ const HowItWorksSection = () => {
                     <h2 className="text-3xl font-bold mb-4">
                         How it Works
                     </h2>
-                    <p className="text-lg text-pairup-darkblue/80 max-w-2xl mx-auto">
+                    <p className="text-lg text-pairup-darkBlue/80 max-w-2xl mx-auto">
                         Our platform makes it easy to expand your social circle
                         in a comfortable, low-pressure way
                     </p>
