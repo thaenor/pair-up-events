@@ -29,7 +29,7 @@ const HeroSection: React.FC<HeroSectionProps> = () => {
                             Create your listing and connect with like-minded
                             duos to meet up for shared experiences.
                         </p>
-                        <div className="flex flex-col sm:flex-row gap-4">
+                        <div className="flex flex-col items-center sm:items-start sm:flex-row gap-4">
                             <a
                                 id="create-listing-btn"
                                 href="https://forms.gle/F6xptEXPLA8wEpTp7"
