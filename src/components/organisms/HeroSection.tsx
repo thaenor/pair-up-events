@@ -31,16 +31,18 @@ const HeroSection: React.FC<HeroSectionProps> = () => {
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4">
                             <a
+                                id="create-listing-btn"
                                 href="https://forms.gle/F6xptEXPLA8wEpTp7"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[5px] font-medium transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 px-6 py-3 text-base bg-pairup-cyan text-pairup-darkBlue hover:opacity-90 inline-flex w-fit items-center gap-2 border-2 border-pairup-darkBlue"
+                                className="btn-cta btn-cta--cyan"
                             >
                                 Create a new listing
                                 <ArrowRight size={18} />
                             </a>
                             <button
-                                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[5px] font-medium transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 px-6 py-3 text-base bg-pairup-yellow text-pairup-darkBlue hover:opacity-90 inline-flex w-fit items-center gap-2 border-2 border-pairup-darkBlue"
+                                id="search-listing-btn"
+                                className="btn-cta btn-cta--yellow"
                                 onClick={() => { document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' }); }}
                             >
                                 Search for existing listings
