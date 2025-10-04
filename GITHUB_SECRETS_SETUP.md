@@ -1,0 +1,64 @@
+# GitHub Secrets Setup for Firebase
+
+## Step 1: Access Repository Settings
+
+1. Go to your repository on **GitHub.com**
+2. Click on **"Settings"** tab (top navigation)
+3. In the left sidebar, click **"Secrets and variables"**
+4. Click **"Actions"**
+
+## Step 2: Add Firebase Secrets
+
+Click **"New repository secret"** for each of these:
+
+### Secret 1: Firebase API Key
+- **Name**: `VITE_FIREBASE_API_KEY`
+- **Value**: Your Firebase API key (from Firebase Console → Project Settings → Web App)
+
+### Secret 2: Firebase Auth Domain
+- **Name**: `VITE_FIREBASE_AUTH_DOMAIN`
+- **Value**: `your-project-id.firebaseapp.com` (replace with your actual project ID)
+
+### Secret 3: Firebase Project ID
+- **Name**: `VITE_FIREBASE_PROJECT_ID`
+- **Value**: Your Firebase project ID (from Firebase Console)
+
+## Step 3: Verify Setup
+
+After adding all secrets, you should see:
+- ✅ `VITE_FIREBASE_API_KEY`
+- ✅ `VITE_FIREBASE_AUTH_DOMAIN`
+- ✅ `VITE_FIREBASE_PROJECT_ID`
+
+## Step 4: Test Deployment
+
+1. Push your changes to the `main` branch
+2. Go to **"Actions"** tab in your repository
+3. Watch the deployment workflow run
+4. Check that the build step includes your environment variables
+
+## Security Notes
+
+- ✅ Secrets are encrypted and only accessible during workflow runs
+- ✅ Secrets are not visible in logs or pull requests
+- ✅ Only repository admins can manage secrets
+- ✅ Each secret is masked in workflow logs
+
+## Troubleshooting
+
+### Build Fails with "Missing Firebase environment variables"
+- Double-check secret names match exactly (case-sensitive)
+- Ensure all 3 secrets are added
+- Verify secret values are correct
+
+### Firebase Authentication Not Working in Production
+- Check that your Firebase project allows your domain
+- Verify OAuth redirect URIs include your production domain
+- Ensure Firebase project is properly configured
+
+## Next Steps
+
+Once secrets are set up:
+1. Your deployment will automatically use Firebase
+2. OAuth will work in production
+3. No need to manually set environment variables

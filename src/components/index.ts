@@ -1,6 +1,10 @@
 // Atoms
 export { default as LoadingSpinner } from "./atoms/LoadingSpinner";
 
+// Molecules
+export { default as OAuthButton } from "./molecules/oauth-button";
+export { SocialAuthButton } from "./molecules/social-auth-button";
+
 // Organisms
 export { default as BenefitsSection } from "./organisms/BenefitsSection";
 export { default as EarlyAccessSection } from "./organisms/EarlyAccessSection";
