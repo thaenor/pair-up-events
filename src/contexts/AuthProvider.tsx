@@ -4,6 +4,7 @@ import {
   createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
   onAuthStateChanged,
+  sendEmailVerification,
   User
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -58,9 +59,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signUpWithEmail = async (email: string, password: string) => {
     try {
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+      // Send email verification after successful registration
+      if (userCredential.user) {
+        await sendEmailVerification(userCredential.user);
+      }
     } catch (error: unknown) {
       handleAuthError(error, 'Sign up');
+      throw error;
+    }
+  };
+
+  // Send email verification
+  const sendEmailVerificationToUser = async () => {
+    try {
+      if (!auth.currentUser) {
+        throw new Error('No user is currently signed in');
+      }
+      setAuthState(prev => ({ ...prev, loading: true, error: null }));
+      await sendEmailVerification(auth.currentUser);
+    } catch (error: unknown) {
+      handleAuthError(error, 'Send email verification');
       throw error;
     }
   };
@@ -85,6 +105,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     ...authState,
     signInWithEmail,
     signUpWithEmail,
+    sendEmailVerification: sendEmailVerificationToUser,
     signOut,
     clearError,
   };

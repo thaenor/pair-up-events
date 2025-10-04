@@ -8,7 +8,7 @@ export interface FormData {
   confirmPassword: string;
 }
 
-export interface FormErrors {
+export interface FormErrors extends Record<string, string | undefined> {
   email?: string;
   password?: string;
   confirmPassword?: string;
