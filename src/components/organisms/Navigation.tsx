@@ -19,12 +19,8 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
 
     const handleGetStarted = useCallback(() => {
         if (user) {
-            // User is logged in, show success message and redirect to dashboard
-            // For now, we'll use a simple approach - in a real app, you'd use toast notifications
-            console.log('User is logged in, redirecting to dashboard...');
-            // TODO: Replace with proper toast notification
-            // toast.success('Welcome back! Redirecting to dashboard...');
-            navigate('/dashboard'); // Assuming you have a dashboard route
+            // User is logged in, redirect to early access form
+            window.location.href = 'https://forms.gle/F6xptEXPLA8wEpTp7';
         } else {
             // User is not logged in, redirect to signup
             navigate('/signup');
@@ -37,9 +33,7 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
             await signOut();
             // TODO: Replace with proper toast notification
             // toast.success('Logged out successfully');
-            console.log('Logged out successfully');
-        } catch (error) {
-            console.error('Logout failed:', error);
+        } catch () {
             // TODO: Replace with proper toast notification
             // toast.error('Logout failed. Please try again.');
         } finally {

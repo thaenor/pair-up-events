@@ -4,19 +4,16 @@ import {
     HeroSection,
     HowItWorksSection,
     LandingPageLayout,
-    PageWrapper,
 } from "@/components";
 
 const Index = () => {
     return (
-        <PageWrapper>
-            <LandingPageLayout>
-                <HeroSection />
-                <HowItWorksSection />
-                <BenefitsSection />
-                <EarlyAccessSection />
-            </LandingPageLayout>
-        </PageWrapper>
+        <LandingPageLayout>
+            <HeroSection />
+            <HowItWorksSection />
+            <BenefitsSection />
+            <EarlyAccessSection />
+        </LandingPageLayout>
     );
 };
 
