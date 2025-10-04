@@ -2,17 +2,21 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import AuthPage from "./pages/auth";
+import { AuthProvider } from "./contexts/AuthProvider";
 
 const App = () => (
-    <BrowserRouter>
-        <Routes>
-            <Route path="/" element={<Index />} />
-            {/* <Route path="/auth" element={<AuthPage />} /> */}
+    <AuthProvider>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/login" element={<AuthPage />} />
 
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-        </Routes>
-    </BrowserRouter>
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+            </Routes>
+        </BrowserRouter>
+    </AuthProvider>
 );
 
 export default App;

@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 import Logo from "../atoms/Logo";
+import { useAuth } from "@/hooks/useAuth";
 
 export interface NavigationProps {
     isLoggedIn?: boolean;
@@ -9,7 +11,27 @@ export interface NavigationProps {
     onLogout?: () => void;
 }
 
-const Navigation: React.FC<NavigationProps> = ({ onGetStarted }) => {
+const Navigation: React.FC<NavigationProps> = () => {
+    const navigate = useNavigate();
+    const { user, signOut } = useAuth();
+
+    const handleGetStarted = () => {
+        if (user) {
+            // User is logged in, redirect to dashboard or profile
+            navigate('/dashboard');
+        } else {
+            // User is not logged in, redirect to login
+            navigate('/login');
+        }
+    };
+
+    const handleLogout = async () => {
+        try {
+            await signOut();
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
+    };
     return (
         <nav
             className="py-4 w-full absolute top-0 left-0 z-10 bg-pairup-darkBlue shadow-2xl"
@@ -42,14 +64,28 @@ const Navigation: React.FC<NavigationProps> = ({ onGetStarted }) => {
                 </div>
 
                 <div className="flex items-center justify-center gap-4 mr-4">
-                    <>
+                    {user ? (
+                        // User is logged in
+                        <>
+                            <span className="text-pairup-cream text-sm">
+                                Welcome, {user.displayName || user.email}
+                            </span>
+                            <button
+                                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[5px] font-medium transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 px-6 py-3 text-base bg-pairup-cyan text-pairup-darkBlue hover:opacity-90"
+                                onClick={handleLogout}
+                            >
+                                Logout
+                            </button>
+                        </>
+                    ) : (
+                        // User is not logged in
                         <button
                             className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[5px] font-medium transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 px-6 py-3 text-base bg-pairup-cyan text-pairup-darkBlue hover:opacity-90"
-                            onClick={onGetStarted}
+                            onClick={handleGetStarted}
                         >
                             Get Started
                         </button>
-                    </>
+                    )}
                 </div>
             </div>
         </nav>
