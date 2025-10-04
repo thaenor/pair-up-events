@@ -4,6 +4,7 @@ export { default as LoadingSpinner } from "./atoms/LoadingSpinner";
 // Molecules
 export { default as OAuthButton } from "./molecules/oauth-button";
 export { SocialAuthButton } from "./molecules/social-auth-button";
+export { default as EmailSignupForm } from "./molecules/email-signup-form";
 
 // Organisms
 export { default as BenefitsSection } from "./organisms/BenefitsSection";
@@ -16,3 +17,6 @@ export { default as Navigation } from "./organisms/Navigation";
 // Templates
 export { default as LandingPageLayout } from "./templates/LandingPageLayout";
 export { default as PageWrapper } from "./templates/PageWrapper";
+
+// Error Handling
+export { default as ErrorBoundary } from "./ErrorBoundary";

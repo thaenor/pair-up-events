@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Logo from "../atoms/Logo";
 import { useAuth } from "@/hooks/useAuth";
+import LoadingSpinner from "../atoms/LoadingSpinner";
 
 export interface NavigationProps {
     isLoggedIn?: boolean;
@@ -11,27 +12,41 @@ export interface NavigationProps {
     onLogout?: () => void;
 }
 
-const Navigation: React.FC<NavigationProps> = () => {
+const Navigation: React.FC<NavigationProps> = React.memo(() => {
     const navigate = useNavigate();
     const { user, signOut } = useAuth();
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-    const handleGetStarted = () => {
+    const handleGetStarted = useCallback(() => {
         if (user) {
-            // User is logged in, redirect to dashboard or profile
-            navigate('/dashboard');
+            // User is logged in, show success message and redirect to dashboard
+            // For now, we'll use a simple approach - in a real app, you'd use toast notifications
+            console.log('User is logged in, redirecting to dashboard...');
+            // TODO: Replace with proper toast notification
+            // toast.success('Welcome back! Redirecting to dashboard...');
+            navigate('/dashboard'); // Assuming you have a dashboard route
         } else {
-            // User is not logged in, redirect to login
-            navigate('/login');
+            // User is not logged in, redirect to signup
+            navigate('/signup');
         }
-    };
+    }, [user, navigate]);
 
-    const handleLogout = async () => {
+    const handleLogout = useCallback(async () => {
+        setIsLoggingOut(true);
         try {
             await signOut();
+            // TODO: Replace with proper toast notification
+            // toast.success('Logged out successfully');
+            console.log('Logged out successfully');
         } catch (error) {
             console.error('Logout failed:', error);
+            // TODO: Replace with proper toast notification
+            // toast.error('Logout failed. Please try again.');
+        } finally {
+            setIsLoggingOut(false);
         }
-    };
+    }, [signOut]);
+
     return (
         <nav
             className="py-4 w-full absolute top-0 left-0 z-10 bg-pairup-darkBlue shadow-2xl"
@@ -51,6 +66,7 @@ const Navigation: React.FC<NavigationProps> = () => {
                     <a
                         href="#benefits"
                         className="text-pairup-cream hover:text-pairup-yellow duration-300"
+                        aria-label="Learn about the benefits of Pair Up Events"
                     >
                         Benefits
                     </a>
@@ -73,8 +89,17 @@ const Navigation: React.FC<NavigationProps> = () => {
                             <button
                                 className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[5px] font-medium transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 px-6 py-3 text-base bg-pairup-cyan text-pairup-darkBlue hover:opacity-90"
                                 onClick={handleLogout}
+                                disabled={isLoggingOut}
+                                aria-label="Logout from your account"
                             >
-                                Logout
+                                {isLoggingOut ? (
+                                    <>
+                                        <LoadingSpinner size="sm" className="mr-2" />
+                                        Logging out...
+                                    </>
+                                ) : (
+                                    'Logout'
+                                )}
                             </button>
                         </>
                     ) : (
@@ -82,6 +107,7 @@ const Navigation: React.FC<NavigationProps> = () => {
                         <button
                             className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[5px] font-medium transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 px-6 py-3 text-base bg-pairup-cyan text-pairup-darkBlue hover:opacity-90"
                             onClick={handleGetStarted}
+                            aria-label="Get started with Pair Up Events"
                         >
                             Get Started
                         </button>
@@ -90,6 +116,8 @@ const Navigation: React.FC<NavigationProps> = () => {
             </div>
         </nav>
     );
-};
+});
+
+Navigation.displayName = 'Navigation';
 
 export default Navigation;

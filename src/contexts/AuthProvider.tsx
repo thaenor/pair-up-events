@@ -1,4 +1,4 @@
-import React, { useEffect, useState, ReactNode } from 'react';
+import React, { useEffect, useState, ReactNode, useMemo } from 'react';
 import {
   signInWithPopup,
   signInWithEmailAndPassword,
@@ -13,6 +13,7 @@ import {
 import { auth } from '@/lib/firebase';
 import { AuthContextType, AuthState, OAuthProvider as OAuthProviderType } from '@/lib/firebase/types';
 import { AuthContext } from './AuthContext';
+import { createAuthErrorHandler } from '@/utils/authErrorHandler';
 
 // AuthProvider component
 interface AuthProviderProps {
@@ -25,6 +26,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     loading: true,
     error: null,
   });
+
+  // Centralized error handler
+  const handleAuthError = useMemo(
+    () => createAuthErrorHandler(setAuthState),
+    []
+  );
 
   // Set up auth state listener
   useEffect(() => {
@@ -61,12 +68,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       await signInWithPopup(auth, provider);
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Authentication failed';
-      setAuthState(prev => ({
-        ...prev,
-        loading: false,
-        error: errorMessage,
-      }));
+      handleAuthError(error, 'Authentication');
       throw error;
     }
   };
@@ -92,12 +94,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Sign in failed';
-      setAuthState(prev => ({
-        ...prev,
-        loading: false,
-        error: errorMessage,
-      }));
+      handleAuthError(error, 'Sign in');
       throw error;
     }
   };
@@ -108,12 +105,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
       await createUserWithEmailAndPassword(auth, email, password);
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Sign up failed';
-      setAuthState(prev => ({
-        ...prev,
-        loading: false,
-        error: errorMessage,
-      }));
+      handleAuthError(error, 'Sign up');
       throw error;
     }
   };
@@ -124,12 +116,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
       await firebaseSignOut(auth);
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Sign out failed';
-      setAuthState(prev => ({
-        ...prev,
-        loading: false,
-        error: errorMessage,
-      }));
+      handleAuthError(error, 'Sign out');
       throw error;
     }
   };
