@@ -51,6 +51,10 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-pairup-cream text-pairup-darkBlue font-sans;
     font-family: 'outfit', sans-serif;
