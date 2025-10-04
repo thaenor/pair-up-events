@@ -2,12 +2,12 @@ import { ArrowRight } from "lucide-react";
 import React from "react";
 
 interface HeroSectionProps {
-    onCreateEvent?: () => void;
+    onGetStarted?: () => void;
 }
 
-const HeroSection: React.FC<HeroSectionProps> = () => {
+const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
     return (
-    <section className="relative min-h-screen flex items-center justify-center bg-pairup-cream md:mt-0">
+        <section className="relative min-h-screen flex items-center justify-center bg-pairup-cream md:mt-0">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 md:pt-20">
                 <div className="grid md:grid-cols-2 gap-6 items-center">
                     <div
@@ -43,14 +43,16 @@ const HeroSection: React.FC<HeroSectionProps> = () => {
                             <button
                                 id="search-listing-btn"
                                 className="btn-cta btn-cta--yellow"
-                                onClick={() => { document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' }); }}
+                                onClick={() => onGetStarted?.()}
                             >
                                 Search for existing listings
                                 <ArrowRight size={18} />
                             </button>
                         </div>
                     </div>
-                    <div id="hero-image" className="relative w-full -mt-24 sm:-mt-10 md:mt-0 mt-10 animate-fade-in flex items-center justify-center"
+                    <div
+                        id="hero-image"
+                        className="relative w-full -mt-24 sm:-mt-10 md:mt-0 mt-10 animate-fade-in flex items-center justify-center"
                         style={{ animationDelay: "0.5s" }}
                     >
                         <picture className="w-full max-w-2xl">
@@ -67,7 +69,10 @@ const HeroSection: React.FC<HeroSectionProps> = () => {
                 </div>
             </div>
 
-            <div id="bouncy-thing" className="hidden md:flex absolute bottom-10 left-1/2 transform -translate-x-1/2 justify-center">
+            <div
+                id="bouncy-thing"
+                className="hidden md:flex absolute bottom-10 left-1/2 transform -translate-x-1/2 justify-center"
+            >
                 <a
                     href="#how-it-works"
                     className="animate-bounce"

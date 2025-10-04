@@ -2,25 +2,25 @@ import { Calendar, Map, MapPin, Users } from "lucide-react";
 
 const benefits = [
     {
-        icon: <Users className="h-12 w-12 text-pairup-darkblue" />,
+        icon: <Users className="h-12 w-12 text-pairup-darkBlue" />,
         title: "Experience a Fresh 4-Way Dynamic",
         description:
             "Meet two new people together with your friend, creating balanced and comfortable social energy",
     },
     {
-        icon: <Calendar className="h-12 w-12 text-pairup-darkblue" />,
+        icon: <Calendar className="h-12 w-12 text-pairup-darkBlue" />,
         title: "Break Your Routine",
         description:
             "Step out of your comfort zone with spontaneous social adventures and new experiences",
     },
     {
-        icon: <MapPin className="h-12 w-12 text-pairup-darkblue" />,
+        icon: <MapPin className="h-12 w-12 text-pairup-darkBlue" />,
         title: "Feel Safe and Open",
         description:
             "Explore new energies and connections while staying with someone you trust",
     },
     {
-        icon: <Map className="h-12 w-12 text-pairup-darkblue" />,
+        icon: <Map className="h-12 w-12 text-pairup-darkBlue" />,
         title: "Grow Your Social Circle",
         description:
             "Expand your network through curated, shared experiences in your city",
@@ -52,7 +52,7 @@ const BenefitsSection = () => {
                             <h3 className="text-xl font-semibold mb-3 text-pairup-darkBlue">
                                 {benefit.title}
                             </h3>
-                            <p className="text-pairup-darkblue/80">
+                            <p className="text-pairup-darkBlue/80">
                                 {benefit.description}
                             </p>
                         </div>

@@ -7,22 +7,18 @@ interface LandingPageLayoutProps {
     children: React.ReactNode;
     showNavigation?: boolean;
     showFooter?: boolean;
+    onGetStarted?: () => void;
 }
 
 const LandingPageLayout: React.FC<LandingPageLayoutProps> = ({
     children,
     showNavigation = true,
     showFooter = true,
+    onGetStarted,
 }) => {
-    const handleGetStarted = () => {
-        document
-            .getElementById("early-access")
-            ?.scrollIntoView({ behavior: "smooth" });
-    };
-
     return (
         <div className="min-h-screen bg-pairup-cream">
-            {showNavigation && <Navigation onGetStarted={handleGetStarted} />}
+            {showNavigation && <Navigation onGetStarted={onGetStarted} />}
             <main>{children}</main>
             {showFooter && <Footer />}
         </div>

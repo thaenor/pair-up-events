@@ -1,5 +1,7 @@
 import React from "react";
 
+import LoadingState from "../molecules/LoadingState";
+
 interface PageWrapperProps {
     children: React.ReactNode;
     isLoading?: boolean;
@@ -11,20 +13,11 @@ const PageWrapper: React.FC<PageWrapperProps> = ({
     isLoading = false,
     loadingMessage = "Loading page...",
 }) => {
-    return (
-        <div>
-            {isLoading ? (
-                <div className="min-h-screen bg-pairup-darkBlue flex flex-col items-center justify-center gap-3">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pairup-cyan"></div>
-                    <p className="text-muted-foreground font-medium text-lg">
-                        {loadingMessage}
-                    </p>
-                </div>
-            ) : (
-                children
-            )}
-        </div>
-    );
+    if (isLoading) {
+        return <LoadingState type="page" message={loadingMessage} />;
+    }
+
+    return <>{children}</>;
 };
 
 export default PageWrapper;

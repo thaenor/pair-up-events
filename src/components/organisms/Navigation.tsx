@@ -3,10 +3,7 @@ import React from "react";
 import Logo from "../atoms/Logo";
 
 export interface NavigationProps {
-    isLoggedIn?: boolean;
     onGetStarted?: () => void;
-    onLogin?: () => void;
-    onLogout?: () => void;
 }
 
 const Navigation: React.FC<NavigationProps> = ({ onGetStarted }) => {
@@ -42,14 +39,13 @@ const Navigation: React.FC<NavigationProps> = ({ onGetStarted }) => {
                 </div>
 
                 <div className="flex items-center justify-center gap-4 mr-4">
-                    <>
-                        <button
-                            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[5px] font-medium transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 px-6 py-3 text-base bg-pairup-cyan text-pairup-darkBlue hover:opacity-90"
-                            onClick={onGetStarted}
-                        >
-                            Get Started
-                        </button>
-                    </>
+                    <button
+                        className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[5px] font-medium transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 px-6 py-3 text-base bg-pairup-cyan text-pairup-darkBlue hover:opacity-90"
+                        onClick={onGetStarted}
+                        type="button"
+                    >
+                        Get Started
+                    </button>
                 </div>
             </div>
         </nav>

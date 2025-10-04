@@ -2,25 +2,25 @@ import { Calendar, MapPin, Users } from "lucide-react";
 
 const steps = [
     {
-        icon: <Calendar className="h-12 w-12 text-pairup-darkblue" />,
+        icon: <Calendar className="h-12 w-12 text-pairup-darkBlue" />,
         title: (
             <span>
-                <span className="text-pairup-darkblue">Create</span> or{" "}
-                <span className="text-pairup-darkblue">Join</span>
+                <span className="text-pairup-darkBlue">Create</span> or{" "}
+                <span className="text-pairup-darkBlue">Join</span>
             </span>
         ),
         description:
             "Create your own event or browse existing ones in your area",
     },
     {
-        icon: <Users className="h-12 w-12 text-pairup-darkblue" />,
+        icon: <Users className="h-12 w-12 text-pairup-darkBlue" />,
         title: "Find a Friend",
         description:
             "Start by selecting one friend to join your pair-up adventure",
     },
     {
         //TODO: add <Logo size="xl" showText={false} />
-        icon: <MapPin className="h-12 w-12 text-pairup-darkblue" />,
+        icon: <MapPin className="h-12 w-12 text-pairup-darkBlue" />,
         title: 'Meet Up',
         description:
             "Connect with another pair at the agreed location and enjoy!",
