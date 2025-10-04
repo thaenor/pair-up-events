@@ -33,10 +33,9 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
             await signOut();
             // TODO: Replace with proper toast notification
             // toast.success('Logged out successfully');
-        } catch () {
-            // TODO: Replace with proper toast notification
-            // toast.error('Logout failed. Please try again.');
-        } finally {
+        }
+            // TODO: handle error with proper toast notification
+         finally {
             setIsLoggingOut(false);
         }
     }, [signOut]);
