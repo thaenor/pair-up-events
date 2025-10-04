@@ -30,21 +30,18 @@ const EarlyAccessSection = React.forwardRef<HTMLElement, EarlyAccessSectionProps
                             </p>
                         </div>
 
-                        <div className="flex items-center justify-center">
-                            <iframe
-                                width="600"
-                                height="500"
-                                src={iframeURL}
-                                frameBorder="0"
-                                scrolling="auto"
-                                allowFullScreen
-                                style={{
-                                    display: "block",
-                                    marginLeft: "auto",
-                                    marginRight: "auto",
-                                }}
-                                title="Brevo Subscription Form"
-                            ></iframe>
+                        <div className="mx-auto w-full max-w-3xl">
+                            <div className="relative w-full overflow-hidden rounded-2xl shadow-lg">
+                                <div className="relative w-full aspect-[6/5]">
+                                    <iframe
+                                        src={iframeURL}
+                                        title="Brevo Subscription Form"
+                                        allowFullScreen
+                                        scrolling="auto"
+                                        className="absolute inset-0 h-full w-full rounded-2xl border-0"
+                                    ></iframe>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -21,7 +21,7 @@ const Footer = () => {
                             <ul className="space-y-2 text-sm">
                                 <li>
                                     <a
-                                        href="#"
+                                        href="#how-it-works"
                                         className="text-pairup-cream/70 hover:text-pairup-cream duration-300"
                                     >
                                         How it Works
@@ -29,18 +29,18 @@ const Footer = () => {
                                 </li>
                                 <li>
                                     <a
-                                        href="#"
+                                        href="#benefits"
                                         className="text-pairup-cream/70 hover:text-pairup-cream duration-300"
                                     >
-                                        Create an Event
+                                        Benefits
                                     </a>
                                 </li>
                                 <li>
                                     <a
-                                        href="#"
+                                        href="#early-access"
                                         className="text-pairup-cream/70 hover:text-pairup-cream duration-300"
                                     >
-                                        Join an Event
+                                        Early Access
                                     </a>
                                 </li>
                             </ul>
@@ -53,24 +53,26 @@ const Footer = () => {
                             <ul className="space-y-2 text-sm">
                                 <li>
                                     <a
-                                        href="#"
+                                        href="#headline-cta"
                                         className="text-pairup-cream/70 hover:text-pairup-cream duration-300"
                                     >
-                                        About Us
+                                        About Pair Up
                                     </a>
                                 </li>
                                 <li>
                                     <a
-                                        href="#"
+                                        href="mailto:hello@pairupevents.com"
                                         className="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                                        aria-label="Email Pair Up Events"
                                     >
                                         Contact
                                     </a>
                                 </li>
                                 <li>
                                     <a
-                                        href="#"
+                                        href="mailto:hello@pairupevents.com?subject=Careers%20at%20Pair%20Up%20Events"
                                         className="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                                        aria-label="Email Pair Up Events about career opportunities"
                                     >
                                         Careers
                                     </a>
@@ -85,24 +87,27 @@ const Footer = () => {
                             <ul className="space-y-2 text-sm">
                                 <li>
                                     <a
-                                        href="#"
+                                        href="mailto:privacy@pairupevents.com?subject=Privacy%20Policy%20Request"
                                         className="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                                        aria-label="Request the privacy policy via email"
                                     >
                                         Privacy Policy
                                     </a>
                                 </li>
                                 <li>
                                     <a
-                                        href="#"
+                                        href="mailto:legal@pairupevents.com?subject=Terms%20of%20Service%20Inquiry"
                                         className="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                                        aria-label="Request the terms of service via email"
                                     >
                                         Terms of Service
                                     </a>
                                 </li>
                                 <li>
                                     <a
-                                        href="#"
+                                        href="mailto:privacy@pairupevents.com?subject=Cookie%20Policy%20Inquiry"
                                         className="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                                        aria-label="Request the cookie policy via email"
                                     >
                                         Cookie Policy
                                     </a>
