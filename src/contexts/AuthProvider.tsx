@@ -13,6 +13,7 @@ import { auth } from '@/lib/firebase';
 import { AuthContextType, AuthState } from '@/lib/firebase/types';
 import { AuthContext } from './AuthContext';
 import { createAuthErrorHandler } from '@/utils/authErrorHandler';
+import { setSentryUser, clearSentryUser, addSentryBreadcrumb } from '@/lib/sentry';
 
 // AuthProvider component
 interface AuthProviderProps {
@@ -40,6 +41,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         loading: false,
         error: null,
       });
+
+      // Update Sentry user context
+      if (user) {
+        setSentryUser({
+          uid: user.uid,
+          email: user.email || undefined,
+        });
+        addSentryBreadcrumb('User signed in', 'auth', {
+          userId: user.uid,
+          email: user.email,
+        });
+      } else {
+        clearSentryUser();
+        addSentryBreadcrumb('User signed out', 'auth');
+      }
     });
 
     return () => unsubscribe();
@@ -50,8 +66,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signInWithEmail = async (email: string, password: string) => {
     try {
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
+      addSentryBreadcrumb('Sign in attempt', 'auth', { email });
       await signInWithEmailAndPassword(auth, email, password);
+      addSentryBreadcrumb('Sign in successful', 'auth', { email });
     } catch (error: unknown) {
+      addSentryBreadcrumb('Sign in failed', 'auth', { email, error: error instanceof Error ? error.message : 'Unknown error' });
       handleAuthError(error, 'Sign in');
       throw error;
     }
@@ -61,13 +80,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signUpWithEmail = async (email: string, password: string) => {
     try {
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
+      addSentryBreadcrumb('Sign up attempt', 'auth', { email });
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
       // Send email verification after successful registration
       if (userCredential.user) {
         await sendEmailVerification(userCredential.user);
+        addSentryBreadcrumb('Email verification sent', 'auth', { email, userId: userCredential.user.uid });
       }
+      addSentryBreadcrumb('Sign up successful', 'auth', { email, userId: userCredential.user?.uid });
     } catch (error: unknown) {
+      addSentryBreadcrumb('Sign up failed', 'auth', { email, error: error instanceof Error ? error.message : 'Unknown error' });
       handleAuthError(error, 'Sign up');
       throw error;
     }

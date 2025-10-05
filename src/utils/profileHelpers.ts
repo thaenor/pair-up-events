@@ -1,6 +1,7 @@
 import { toast } from 'sonner';
 
 import { PROFILE_MESSAGES } from '@/constants/profile';
+import { logError } from '@/utils/logger';
 
 /**
  * Formats a timestamp into a readable date string
@@ -16,7 +17,11 @@ export const formatDate = (timestamp: string | number | Date | undefined): strin
       day: 'numeric'
     });
   } catch (error) {
-    console.error('Error formatting date:', error);
+    logError('Error formatting date', error, {
+      component: 'profileHelpers',
+      action: 'formatDate',
+      additionalData: { timestamp }
+    });
     return 'Invalid date';
   }
 };
@@ -49,14 +54,22 @@ export const shareOrCopyToClipboard = async (shareData: ShareData): Promise<void
     await navigator.clipboard.writeText(shareData.text || '');
     toast.success(PROFILE_MESSAGES.INVITE_FRIEND.SUCCESS_COPY);
   } catch (error) {
-    console.error('Share failed:', error);
+    logError('Share failed', error, {
+      component: 'profileHelpers',
+      action: 'shareOrCopyToClipboard',
+      additionalData: { shareData }
+    });
 
     // Final fallback
     try {
       await navigator.clipboard.writeText(shareData.text || '');
       toast.success(PROFILE_MESSAGES.INVITE_FRIEND.SUCCESS_COPY);
     } catch (clipboardError) {
-      console.error('Clipboard fallback failed:', clipboardError);
+      logError('Clipboard fallback failed', clipboardError, {
+        component: 'profileHelpers',
+        action: 'shareOrCopyToClipboard',
+        additionalData: { shareData, fallbackAttempt: true }
+      });
       toast.error('Unable to share or copy to clipboard');
       throw new Error('Unable to share or copy to clipboard');
     }

@@ -2,14 +2,18 @@ import { Home } from "lucide-react";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
+import { logWarning } from '@/utils/logger';
+
 const NotFound = () => {
     const location = useLocation();
 
     useEffect(() => {
-        // Log 404 errors for monitoring (in production, send to error reporting service)
-        if (process.env.NODE_ENV === "development") {
-            console.warn(`404 Error: Route not found - ${location.pathname}`);
-        }
+        // Log 404 errors for monitoring
+        logWarning(`404 Error: Route not found - ${location.pathname}`, {
+            component: 'NotFound',
+            action: 'routeNotFound',
+            additionalData: { pathname: location.pathname, search: location.search }
+        });
     }, [location.pathname]);
 
     return (

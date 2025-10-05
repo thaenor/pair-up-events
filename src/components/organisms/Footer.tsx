@@ -1,10 +1,12 @@
 import type { MouseEvent } from "react";
+import { Link } from "react-router-dom";
 
 import Logo from "../atoms/Logo";
 
 type FooterLink = {
     label: string;
-    targetId: string;
+    targetId?: string;
+    href?: string;
     ariaLabel: string;
 };
 
@@ -57,13 +59,13 @@ const footerLinkGroups: Array<{
         links: [
             {
                 label: "Privacy Policy",
-                targetId: "early-access",
-                ariaLabel: "Review our upcoming privacy details in the Early Access section",
+                href: "/privacy-policy",
+                ariaLabel: "Review our privacy policy and data handling practices",
             },
             {
                 label: "Terms of Service",
-                targetId: "how-it-works",
-                ariaLabel: "Understand how the service works in the How it Works section",
+                href: "/terms-of-service",
+                ariaLabel: "Read our terms of service and user agreement",
             },
             {
                 label: "Cookie Policy",
@@ -107,19 +109,29 @@ const Footer = () => {
                                 <ul className="space-y-2 text-sm">
                                     {group.links.map((link) => (
                                         <li key={`${group.heading}-${link.label}`}>
-                                            <a
-                                                href={`#${link.targetId}`}
-                                                onClick={(event) =>
-                                                    handleLinkClick(
-                                                        event,
-                                                        link.targetId,
-                                                    )
-                                                }
-                                                aria-label={link.ariaLabel}
-                                                className="text-pairup-cream/70 hover:text-pairup-cream duration-300"
-                                            >
-                                                {link.label}
-                                            </a>
+                                            {link.href ? (
+                                                <Link
+                                                    to={link.href}
+                                                    aria-label={link.ariaLabel}
+                                                    className="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                                                >
+                                                    {link.label}
+                                                </Link>
+                                            ) : (
+                                                <a
+                                                    href={`#${link.targetId}`}
+                                                    onClick={(event) =>
+                                                        handleLinkClick(
+                                                            event,
+                                                            link.targetId!,
+                                                        )
+                                                    }
+                                                    aria-label={link.ariaLabel}
+                                                    className="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                                                >
+                                                    {link.label}
+                                                </a>
+                                            )}
                                         </li>
                                     ))}
                                 </ul>

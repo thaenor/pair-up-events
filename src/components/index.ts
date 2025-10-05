@@ -1,5 +1,7 @@
 // Atoms
 export { default as LoadingSpinner } from "./atoms/LoadingSpinner";
+export { default as SectionErrorBoundary } from "./atoms/section-error-boundary";
+export { default as SkipLink } from "./atoms/skip-link";
 
 // Molecules
 export { default as EmailSignupForm } from "./molecules/email-signup-form";

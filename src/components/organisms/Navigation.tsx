@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import Logo from "../atoms/Logo";
 import LoadingSpinner from "../atoms/LoadingSpinner";
 import { useAuth } from "@/hooks/useAuth";
+import { logError } from "@/utils/logger";
 
 export interface NavigationProps {
     isLoggedIn?: boolean;
@@ -34,7 +35,11 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
             await signOut();
             toast.success('Logged out successfully');
         } catch (error) {
-            console.error('Logout failed:', error);
+            logError('Logout failed', error, {
+                component: 'Navigation',
+                action: 'signOut',
+                userId: user?.uid
+            });
             toast.error('Failed to log out. Please try again.');
         } finally {
             setIsLoggingOut(false);
@@ -49,25 +54,28 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
                 <Logo size="md" />
 
-                <div className="hidden md:flex items-center gap-6">
+                <div className="hidden md:flex items-center gap-6" role="menubar">
                     <a
                         href="#how-it-works"
-                        className="text-pairup-cream hover:text-pairup-yellow duration-300"
+                        className="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
                         aria-label="Learn how Pair Up Events works"
+                        role="menuitem"
                     >
                         How It Works
                     </a>
                     <a
                         href="#benefits"
-                        className="text-pairup-cream hover:text-pairup-yellow duration-300"
+                        className="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
                         aria-label="Learn about the benefits of Pair Up Events"
+                        role="menuitem"
                     >
                         Benefits
                     </a>
                     <a
                         href="#early-access"
-                        className="text-pairup-cream hover:text-pairup-yellow duration-300"
+                        className="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
                         aria-label="Sign up for early access to Pair Up Events"
+                        role="menuitem"
                     >
                         Early Access
                     </a>
@@ -77,7 +85,7 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
                     {user ? (
                         // User is logged in
                         <>
-                            <span className="text-pairup-cream text-sm">
+                            <span className="text-pairup-cream text-sm" aria-live="polite">
                                 Welcome, {user.displayName || user.email}
                             </span>
                             <button
@@ -88,8 +96,8 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
                             >
                                 {isLoggingOut ? (
                                     <>
-                                        <LoadingSpinner size="sm" className="mr-2" />
-                                        Logging out...
+                                        <LoadingSpinner size="sm" className="mr-2" aria-hidden="true" />
+                                        <span aria-live="polite">Logging out...</span>
                                     </>
                                 ) : (
                                     'Logout'

@@ -4,15 +4,19 @@ import {
     HeroSection,
     HowItWorksSection,
     LandingPageLayout,
+    SkipLink,
 } from "@/components";
 
 const Index = () => {
     return (
         <LandingPageLayout>
-            <HeroSection />
-            <HowItWorksSection />
-            <BenefitsSection />
-            <EarlyAccessSection />
+            <SkipLink targetId="main-content" />
+            <main id="main-content" role="main" aria-label="PairUp Events main content">
+                <HeroSection />
+                <HowItWorksSection />
+                <BenefitsSection />
+                <EarlyAccessSection />
+            </main>
         </LandingPageLayout>
     );
 };

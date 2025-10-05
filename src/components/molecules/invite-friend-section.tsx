@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 
 import { PROFILE_MESSAGES } from '@/constants/profile';
 import { createInviteMessage, shareOrCopyToClipboard } from '@/utils/profileHelpers';
+import { logError } from '@/utils/logger';
 
 const InviteFriendSection: React.FC = React.memo(() => {
   const handleInviteFriend = useCallback(async () => {
@@ -18,7 +19,11 @@ const InviteFriendSection: React.FC = React.memo(() => {
     try {
       await shareOrCopyToClipboard(shareData);
     } catch (error) {
-      console.error('Share failed:', error);
+      logError('Share failed', error, {
+        component: 'InviteFriendSection',
+        action: 'shareOrCopyToClipboard',
+        additionalData: { shareData }
+      });
       toast.error('Unable to share. Please try again.');
     }
   }, []);

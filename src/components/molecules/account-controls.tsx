@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import LoadingSpinner from '@/components/atoms/LoadingSpinner';
 import { useAuth } from '@/hooks/useAuth';
 import { PROFILE_MESSAGES } from '@/constants/profile';
+import { logError } from '@/utils/logger';
 
 export type AccountControlsProps = {
   user: User;
@@ -23,7 +24,11 @@ const AccountControls: React.FC<AccountControlsProps> = React.memo(({ user }) =>
       await signOut();
       navigate('/');
     } catch (error) {
-      console.error('Sign out failed:', error);
+      logError('Sign out failed', error, {
+        component: 'AccountControls',
+        action: 'signOut',
+        userId: user?.uid
+      });
     }
   }, [signOut, navigate]);
 
@@ -35,7 +40,12 @@ const AccountControls: React.FC<AccountControlsProps> = React.memo(({ user }) =>
       await sendPasswordReset(user.email);
       toast.success(PROFILE_MESSAGES.ALERTS.PASSWORD_RESET_SUCCESS);
     } catch (error) {
-      console.error('Password reset failed:', error);
+      logError('Password reset failed', error, {
+        component: 'AccountControls',
+        action: 'sendPasswordReset',
+        userId: user?.uid,
+        additionalData: { email: user.email }
+      });
       toast.error(PROFILE_MESSAGES.ALERTS.PASSWORD_RESET_ERROR);
     } finally {
       setIsResettingPassword(false);
@@ -54,7 +64,12 @@ const AccountControls: React.FC<AccountControlsProps> = React.memo(({ user }) =>
       toast.success(PROFILE_MESSAGES.ALERTS.ACCOUNT_DELETE_SUCCESS);
       navigate('/');
     } catch (error) {
-      console.error('Account deletion failed:', error);
+      logError('Account deletion failed', error, {
+        component: 'AccountControls',
+        action: 'deleteUserAccount',
+        userId: user?.uid,
+        additionalData: { email: user.email }
+      });
       toast.error(PROFILE_MESSAGES.ALERTS.ACCOUNT_DELETE_ERROR);
     } finally {
       setIsDeleting(false);
