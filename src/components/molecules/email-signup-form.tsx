@@ -1,7 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
+import { Link } from 'react-router-dom';
+
 import LoadingSpinner from '@/components/atoms/LoadingSpinner';
+import { useAuth } from '@/hooks/useAuth';
 import { useFormState } from '@/hooks/useFormState';
 import { useFormValidation, FormData } from '@/hooks/useFormValidation';
 
@@ -256,6 +258,19 @@ const EmailSignupForm: React.FC = React.memo(() => {
               'Create Account & Continue'
             )}
           </button>
+
+          {/* Sign In Link */}
+          <div className="text-center">
+            <p className="text-sm text-gray-400">
+              Already have an account?{' '}
+              <Link
+                to="/login"
+                className="text-pairup-cyan hover:underline font-medium"
+              >
+                Sign in here
+              </Link>
+            </p>
+          </div>
 
           {/* Terms and Privacy */}
           <p className="text-xs text-gray-400 text-center">

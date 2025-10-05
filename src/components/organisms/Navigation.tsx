@@ -19,8 +19,8 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
 
     const handleGetStarted = useCallback(() => {
         if (user) {
-            // User is logged in, redirect to early access form
-            window.location.href = 'https://forms.gle/F6xptEXPLA8wEpTp7';
+            // User is logged in, redirect to profile page
+            navigate('/profile');
         } else {
             // User is not logged in, redirect to signup
             navigate('/signup');

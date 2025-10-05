@@ -5,6 +5,8 @@ import {
   signOut as firebaseSignOut,
   onAuthStateChanged,
   sendEmailVerification,
+  sendPasswordResetEmail,
+  deleteUser,
   User
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -96,6 +98,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // Send password reset email
+  const sendPasswordReset = async (email: string) => {
+    try {
+      setAuthState(prev => ({ ...prev, loading: true, error: null }));
+      await sendPasswordResetEmail(auth, email);
+    } catch (error: unknown) {
+      handleAuthError(error, 'Send password reset');
+      throw error;
+    }
+  };
+
+  // Delete user account
+  const deleteUserAccount = async () => {
+    try {
+      if (!auth.currentUser) {
+        throw new Error('No user is currently signed in');
+      }
+      setAuthState(prev => ({ ...prev, loading: true, error: null }));
+      await deleteUser(auth.currentUser);
+    } catch (error: unknown) {
+      handleAuthError(error, 'Delete account');
+      throw error;
+    }
+  };
+
   // Clear error
   const clearError = () => {
     setAuthState(prev => ({ ...prev, error: null }));
@@ -106,6 +133,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     signInWithEmail,
     signUpWithEmail,
     sendEmailVerification: sendEmailVerificationToUser,
+    sendPasswordReset,
+    deleteUserAccount,
     signOut,
     clearError,
   };
