@@ -24,25 +24,140 @@ It serves as the foundation for consistent interface design, component hierarchy
 ---
 
 ## 🚀 **1. Product Overview**
+Pair Up Events is a social event platform that allows two pairs of people to connect and meet through shared activities.
+Each "pair" represents two users who join the platform together (friends, couple, family duo, etc.).
+The core system enables users to create, share, and join events, encouraging real-world interaction through fun, curiosity-driven activities.
 
 **Goal:**
-Pair Up Events helps people **create, share, and join social events effortlessly**, reducing friction in coordination and communication.
-It combines event discovery, lightweight messaging, and user-friendly invites into a unified, mobile-optimized experience.
+The goal of Pair Up Events is to facilitate real-world social connections by matching pairs of users who want to attend or host events together.
+
+Functional objectives:
+
+Enable users to create, browse, and join events with minimal friction.
+
+Connect two pairs based on shared interests, location, and availability.
+
+Encourage activity-based, non-romantic interactions.
+
+Support event discovery, lightweight in-app messaging, and invitations in one unified experience.
+
+Provide a mobile-first, responsive platform emphasizing usability and clarity.
+
+Outcome goal:
+Increase the number of meaningful real-world interactions by matching pairs for curated or user-created activities.
 
 **Key Differentiator:**
-Unlike traditional event apps, Pair Up focuses on **micro-events and spontaneous social coordination**, with features such as
-real-time notifications, privacy-first sharing, and seamless PWA usability.
+2-Meets-2 Model
+
+Core matching logic connects two pairs (2x2) instead of individuals or large groups.
+
+This structure creates more comfortable and balanced social encounters.
+
+Reduces awkwardness and encourages natural group conversation.
+
+User-Driven Event Creation
+
+Users can choose from platform-recommended events (based on interest tags) or create their own custom events.
+
+Event creators define activity type, location, date/time, and capacity (2 pairs).
+
+Excitement and Exploration Focus
+
+The system promotes events that encourage learning, discovery, movement, or play.
+
+No dating or networking focus — only curiosity-driven social engagement.
+
+Inclusive Pair Types
+
+Supported pair types:
+
+Friends
+
+Couples
+
+Family pairs (parent-child, siblings, twins, etc.)
+
+Roommates or colleagues
+
+Matching logic remains pair-based, not individual-based.
 
 **Target Users:**
-- Social individuals who want to meet up casually
-- Event hosts who organize recurring or small-group events
-- Friends or colleagues coordinating get-togethers
+| User Segment                    | Description                                          | Motivation                          |
+| ------------------------------- | ---------------------------------------------------- | ----------------------------------- |
+| **Young Professionals (20–35)** | People seeking new experiences outside their routine | Fun, novelty, social discovery      |
+| **Friends or Couples**          | Duos looking to meet others with similar energy      | Shared adventures, mutual interests |
+| **Expats & Newcomers**          | People integrating into a new city or culture        | Authentic, local experiences        |
+| **Families & Themed Pairs**     | Parent-child, siblings, twins, etc.                  | Playful learning and shared bonding |
+| **Activity Enthusiasts**        | Users who enjoy active, experiential socializing     | Real-world engagement               |
 
 **Primary Use Cases:**
-- Creating and sharing a small event (e.g., “Dinner with friends”)
-- Joining an event via a link or invite
-- Chatting with event members before and after
-- Receiving real-time updates and notifications
+**Use Case 1: Join an Existing Event**
+
+Actors: Pair (two registered users)
+Flow:
+
+Pair logs in.
+
+Pair browses curated or user-generated events filtered by activity type, distance, and date.
+
+Pair selects an event.
+
+If the event has one open slot for another pair → Join request is sent.
+
+If accepted, the two pairs are matched.
+
+In-app chat and event details become available.
+
+After event completion, both pairs can rate the experience and optionally connect for future events.
+
+
+**Use Case 2: Create a New Event**
+
+Actors: User A (First person of the event creating pair)
+Flow:
+
+User A clicks “Create Event.”
+
+System prompts for:
+
+Activity name or tag (e.g., hiking, cooking, Walk around the park)
+
+Description
+
+Location
+
+Date and time
+
+What type of pair does the event creating pair want to meet.
+
+Event only get created, once user A invites his pair (user B) and user B accepts the invite. 
+
+System publishes event to the event feed.
+
+Other pairs can browse and request to join.
+
+Host pair can accept or reject requests.
+
+Once two pairs are confirmed → event status = “Matched.”
+
+
+**Use Case 3: Discovery & Inspiration**
+
+Actors: Any user
+Flow:
+
+User opens “Explore” tab.
+
+System displays recommended activities based on:
+
+Past preferences and ratings
+
+Geolocation
+
+Trending activities
+
+User can directly create a similar event from a suggestion.
+Note: For all interactions on the platform, users need to be registered. 
 
 **Supported Platforms:**
 - Web (PWA-first, responsive)
@@ -57,18 +172,21 @@ real-time notifications, privacy-first sharing, and seamless PWA usability.
 2. **Speed** — Optimize for performance and perceived speed.
 3. **Trust** — Transparent feedback, privacy emphasis, and safety by design.
 4. **Delight** — Micro-interactions, animated feedback, and a friendly tone.
-5. **Accessibility** — Inclusive design meeting WCAG 2.1 AA standards.
+5. **Accessibility** — Inclusive design meeting WCAG 2.2 AAA standards.
 6. **Scalability** — Components and tokens should adapt as features expand.
 
 ---
 
 ## 👥 **3. User Personas**
 
-| Persona | Description | Goals | Pain Points |
-|----------|--------------|--------|--------------|
-| **The Organizer** | Regularly creates events and manages participants. | Quickly set up and share events, manage attendees, and get confirmations. | Manual coordination and message overload. |
-| **The Attendee** | Participates in events and wants easy communication. | Discover and join events easily, receive clear updates. | Clunky signup flows, lack of timely notifications. |
-| **The Explorer** | Browses for events nearby or trending. | Discover interesting meetups and join spontaneously. | Overwhelmed by irrelevant listings or complex UIs. |
+| **Persona Name** | **Profile Summary** | **Example Pair** | **Goals** | **Pain Points** |
+|------------------|--------------------|------------------|------------|-----------------|
+| **1. The Curious Duo (Friends)** | Two friends in their mid-20s who love exploring new activities and meeting interesting people. They seek spontaneous, real-world experiences beyond typical nightlife or dating apps. | Lena (25, graphic designer) & Amira (26, student) | - Discover unique, local activities beyond bars or parties.<br>- Meet other friendly pairs to expand their social circle.<br>- Plan and coordinate fun weekends easily.<br>- Feel safe and comfortable meeting new people as a pair. | - Existing social apps focus on dating or large groups.<br>- Event platforms feel impersonal or cluttered.<br>- Hard to find events matching both friends’ interests.<br>- Time wasted on planning across multiple apps. |
+| **2. The Adventurous Couple** | A couple in their late 20s–30s who want to add novelty to their shared time together. They’re not seeking romance elsewhere but want to connect with other couples for shared adventures or creative activities. | Marco (31, engineer) & Sophie (29, marketing manager) | - Discover other couples with similar energy.<br>- Find creative weekend ideas and new activities.<br>- Host or join double-date-style experiences naturally. | - Hard to meet other couples organically.<br>- Most couple apps focus on parenting or advice, not social fun.<br>- Organizing meetups feels like too much effort. |
+| **3. The Newcomer Pair (Expats or New Locals)** | Two friends or flatmates who have moved to a new city and want to build a social circle. They’re eager to meet locals through authentic, low-pressure experiences. | Carlos (27, architect) & Diego (28, product designer) | - Meet locals naturally.<br>- Explore the city through shared activities.<br>- Build a genuine, lasting social circle. | - Cultural and language barriers make meeting people hard.<br>- Local event options feel impersonal or untrustworthy.<br>- Fear of attending large or mismatched events. |
+| **4. The Parent & Child Duo** | A parent with a young child seeking social, family-oriented meetups where the **child is the main focus**. The parent’s goal is to connect with other parents while giving their child social experiences with peers. | Julia (34, mother) & Mia (8, daughter) | - Find playdates or family events where children can interact.<br>- Connect with other parents in similar life stages.<br>- Discover weekend or outdoor activities for kids.<br>- Create lasting friendships through shared family time. | - Most family platforms are child-focused but lack parent-to-parent socialization.<br>- Hard to find age-matching children for playdates.<br>- Scheduling or safety concerns with unfamiliar families.<br>- Limited family events outside playgrounds or schools. |
+| **5. The Sibling / Twin Duo** | Two siblings or twins looking to meet **other sibling pairs** for unique “duo-to-duo” experiences. They’re curious about connecting with others who share similar family dynamics or sibling energy. | Anna (24) & Lara (24), identical twins | - Meet other twins or siblings for group activities.<br>- Explore “duo energy” through team or partner-based events.<br>- Create a sense of community around sibling experiences.<br>- Participate in playful or competitive pair events (e.g., escape rooms, sports, trivia). | - Very few opportunities to meet other sibling pairs.<br>- Mainstream events aren’t designed for “pair identity.”<br>- Hard to find experiences celebrating sibling connection.<br>- Lack of platforms promoting twin/sibling meetups. |
+
 
 ---
 
