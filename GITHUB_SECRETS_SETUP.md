@@ -23,12 +23,17 @@ Click **"New repository secret"** for each of these:
 - **Name**: `VITE_FIREBASE_PROJECT_ID`
 - **Value**: Your Firebase project ID (from Firebase Console)
 
+### Secret 4: Sentry DSN (Error Tracking)
+- **Name**: `VITE_SENTRY_DSN`
+- **Value**: Your Sentry DSN (from Sentry.io → Project Settings → Client Keys)
+
 ## Step 3: Verify Setup
 
 After adding all secrets, you should see:
 - ✅ `VITE_FIREBASE_API_KEY`
 - ✅ `VITE_FIREBASE_AUTH_DOMAIN`
 - ✅ `VITE_FIREBASE_PROJECT_ID`
+- ✅ `VITE_SENTRY_DSN`
 
 ## Step 4: Test Deployment
 
@@ -48,7 +53,7 @@ After adding all secrets, you should see:
 
 ### Build Fails with "Missing Firebase environment variables"
 - Double-check secret names match exactly (case-sensitive)
-- Ensure all 3 secrets are added
+- Ensure all 4 secrets are added (Firebase + Sentry)
 - Verify secret values are correct
 
 ### Firebase Authentication Not Working in Production
@@ -61,4 +66,5 @@ After adding all secrets, you should see:
 Once secrets are set up:
 1. Your deployment will automatically use Firebase
 2. OAuth will work in production
-3. No need to manually set environment variables
+3. Error tracking with Sentry will be enabled
+4. No need to manually set environment variables

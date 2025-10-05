@@ -9,7 +9,7 @@ import * as Sentry from '@sentry/react';
 // Only initialize Sentry in production
 if (import.meta.env.MODE === 'production') {
   Sentry.init({
-  dsn: 'https://bc9ebef41062e3801e18efd4ce15a3e7@o4510134039805952.ingest.de.sentry.io/4510134041903184',
+  dsn: import.meta.env.VITE_SENTRY_DSN,
 
   // Set environment
   environment: import.meta.env.MODE || 'development',

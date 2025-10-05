@@ -54,11 +54,11 @@ Pair Up Events is a marketing site and authentication experience for a social pl
    ```bash
    npm install
    ```
-2. Copy the environment template and provide your Firebase credentials:
+2. Copy the environment template and provide your credentials:
    ```bash
    cp .env.example .env.local
    ```
-3. Update `.env.local` with the Firebase values for your project. See [FIREBASE_SETUP.md](./FIREBASE_SETUP.md) for step-by-step guidance, including OAuth redirect configuration.
+3. Update `.env.local` with the Firebase and Sentry values for your project. See [FIREBASE_SETUP.md](./FIREBASE_SETUP.md) for step-by-step guidance, including OAuth redirect configuration.
 
 ### Running the app
 
@@ -97,8 +97,9 @@ CI pipelines expect all three commands to pass.
 ## Deployment Notes
 
 - Ensure Firebase Authentication is configured for the providers exposed in the UI.
-- Provide the required Firebase environment variables in your deployment platform.
+- Provide the required Firebase and Sentry environment variables in your deployment platform.
 - If you customise the early access form, update `src/lib/config.ts` with the new Brevo embed URL.
+- See [GITHUB_SECRETS_SETUP.md](./GITHUB_SECRETS_SETUP.md) for detailed deployment configuration.
 
 With the prerequisites in place, you can iterate on the Pair Up Events experience or extend it with additional routes and Firebase-backed functionality.
 
