@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Toaster } from "sonner";
 
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -21,6 +22,12 @@ const App = () => (
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                 </Routes>
+                <Toaster
+                    position="top-right"
+                    expand={true}
+                    richColors={true}
+                    closeButton={true}
+                />
             </BrowserRouter>
         </AuthProvider>
     </ErrorBoundary>

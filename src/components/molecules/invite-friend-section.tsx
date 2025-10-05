@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { Share2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { PROFILE_MESSAGES } from '@/constants/profile';
 import { createInviteMessage, shareOrCopyToClipboard } from '@/utils/profileHelpers';
@@ -18,7 +19,7 @@ const InviteFriendSection: React.FC = React.memo(() => {
       await shareOrCopyToClipboard(shareData);
     } catch (error) {
       console.error('Share failed:', error);
-      alert('Unable to share. Please try again.');
+      toast.error('Unable to share. Please try again.');
     }
   }, []);
 

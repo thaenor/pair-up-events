@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { toast } from 'sonner';
 
 import LoadingSpinner from '@/components/atoms/LoadingSpinner';
 import { useAuth } from '@/hooks/useAuth';
@@ -54,8 +55,10 @@ const EmailSignupForm: React.FC = React.memo(() => {
     try {
       await signUpWithEmail(formData.email, formData.password);
       setRegistrationSuccess(true);
+      toast.success('Account created successfully! Please check your email to verify your account.');
     } catch (error) {
       console.error('Sign up failed:', error);
+      // Error is already handled by AuthProvider and displayed in the UI
     }
   }, [formData, validateForm, setAllErrors, signUpWithEmail]);
 

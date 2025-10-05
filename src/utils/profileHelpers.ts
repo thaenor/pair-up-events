@@ -1,3 +1,5 @@
+import { toast } from 'sonner';
+
 import { PROFILE_MESSAGES } from '@/constants/profile';
 
 /**
@@ -45,16 +47,17 @@ export const shareOrCopyToClipboard = async (shareData: ShareData): Promise<void
 
     // Fallback: copy to clipboard
     await navigator.clipboard.writeText(shareData.text || '');
-    alert(PROFILE_MESSAGES.INVITE_FRIEND.SUCCESS_COPY);
+    toast.success(PROFILE_MESSAGES.INVITE_FRIEND.SUCCESS_COPY);
   } catch (error) {
     console.error('Share failed:', error);
 
     // Final fallback
     try {
       await navigator.clipboard.writeText(shareData.text || '');
-      alert(PROFILE_MESSAGES.INVITE_FRIEND.SUCCESS_COPY);
+      toast.success(PROFILE_MESSAGES.INVITE_FRIEND.SUCCESS_COPY);
     } catch (clipboardError) {
       console.error('Clipboard fallback failed:', clipboardError);
+      toast.error('Unable to share or copy to clipboard');
       throw new Error('Unable to share or copy to clipboard');
     }
   }

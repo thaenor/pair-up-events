@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 import LoadingSpinner from '@/components/atoms/LoadingSpinner';
 import { useAuth } from '@/hooks/useAuth';
@@ -71,10 +72,12 @@ const EmailLoginForm: React.FC = React.memo(() => {
 
     try {
       await signInWithEmail(formData.email, formData.password);
+      toast.success('Welcome back! You have been signed in successfully.');
       // Redirect to profile page after successful login
       navigate('/profile');
     } catch (error) {
       console.error('Sign in failed:', error);
+      // Error is already handled by AuthProvider and displayed in the UI
     }
   }, [formData, setAllErrors, signInWithEmail, navigate]);
 

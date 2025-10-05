@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { User } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { Key, LogOut, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 import LoadingSpinner from '@/components/atoms/LoadingSpinner';
 import { useAuth } from '@/hooks/useAuth';
@@ -32,10 +33,10 @@ const AccountControls: React.FC<AccountControlsProps> = React.memo(({ user }) =>
     setIsResettingPassword(true);
     try {
       await sendPasswordReset(user.email);
-      alert(PROFILE_MESSAGES.ALERTS.PASSWORD_RESET_SUCCESS);
+      toast.success(PROFILE_MESSAGES.ALERTS.PASSWORD_RESET_SUCCESS);
     } catch (error) {
       console.error('Password reset failed:', error);
-      alert(PROFILE_MESSAGES.ALERTS.PASSWORD_RESET_ERROR);
+      toast.error(PROFILE_MESSAGES.ALERTS.PASSWORD_RESET_ERROR);
     } finally {
       setIsResettingPassword(false);
     }
@@ -50,11 +51,11 @@ const AccountControls: React.FC<AccountControlsProps> = React.memo(({ user }) =>
     setIsDeleting(true);
     try {
       await deleteUserAccount();
-      alert(PROFILE_MESSAGES.ALERTS.ACCOUNT_DELETE_SUCCESS);
+      toast.success(PROFILE_MESSAGES.ALERTS.ACCOUNT_DELETE_SUCCESS);
       navigate('/');
     } catch (error) {
       console.error('Account deletion failed:', error);
-      alert(PROFILE_MESSAGES.ALERTS.ACCOUNT_DELETE_ERROR);
+      toast.error(PROFILE_MESSAGES.ALERTS.ACCOUNT_DELETE_ERROR);
     } finally {
       setIsDeleting(false);
     }
