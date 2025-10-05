@@ -30,7 +30,7 @@ const AccountControls: React.FC<AccountControlsProps> = React.memo(({ user }) =>
         userId: user?.uid
       });
     }
-  }, [signOut, navigate]);
+  }, [signOut, navigate, user?.uid]);
 
   const handleResetPassword = useCallback(async () => {
     if (!user?.email) return;

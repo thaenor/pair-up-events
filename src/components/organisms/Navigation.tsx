@@ -44,7 +44,7 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
         } finally {
             setIsLoggingOut(false);
         }
-    }, [signOut]);
+    }, [signOut, user?.uid]);
 
     return (
         <nav

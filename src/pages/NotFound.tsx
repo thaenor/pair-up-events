@@ -14,7 +14,7 @@ const NotFound = () => {
             action: 'routeNotFound',
             additionalData: { pathname: location.pathname, search: location.search }
         });
-    }, [location.pathname]);
+    }, [location.pathname, location.search]);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-pairup-darkBlue">
