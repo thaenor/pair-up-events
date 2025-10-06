@@ -47,7 +47,7 @@ const App = () => {
       });
 
       return () => {
-        window.cancelIdleCallback?.(idleId);
+        window.cancelIdleCallback(idleId);
       };
     }
 

@@ -34,9 +34,13 @@ const SentryBoundary = ({ children }: SentryBoundaryProps) => {
 
     let isMounted = true;
 
-    void getSentry().then((module) => {
+    getSentry().then((module) => {
       if (isMounted) {
         setSentryModule(module);
+      }
+    }).catch((error) => {
+      if (import.meta.env.DEV) {
+        console.error('Error loading Sentry in SentryBoundary:', error);
       }
     });
 

@@ -31,7 +31,8 @@ const loadSentry = async (): Promise<typeof import('@sentry/react') | null> => {
       if (import.meta.env.DEV) {
         console.error('Failed to load Sentry', error);
       }
-      sentryPromise = null;
+      // Don't set sentryPromise to null to avoid race conditions
+      // The promise will resolve to null, and subsequent calls will reuse this resolved promise
       return null;
     });
 
@@ -84,11 +85,15 @@ const withSentry = (
     return;
   }
 
-  void loadSentry().then((Sentry) => {
+  loadSentry().then((Sentry) => {
     if (!Sentry) {
       return;
     }
     callback(Sentry);
+  }).catch((error) => {
+    if (import.meta.env.DEV) {
+      console.error('Error in withSentry callback:', error);
+    }
   });
 };
 
@@ -97,7 +102,11 @@ export const initializeSentry = () => {
     return;
   }
 
-  void loadSentry();
+  loadSentry().catch((error) => {
+    if (import.meta.env.DEV) {
+      console.error('Error initializing Sentry:', error);
+    }
+  });
 };
 
 export const getSentry = () => loadSentry();
