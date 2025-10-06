@@ -191,4 +191,14 @@ export const useScrollToElement = () => {
   };
 };
 
+export const __dangerousResetScrollCachesForTest = () => {
+  if (!isTestEnvironment) {
+    return;
+  }
+
+  globalElementRegistry.clear();
+  fallbackElementCache.clear();
+  pendingScrollRequests.clear();
+};
+
 export default useScrollToElement;
