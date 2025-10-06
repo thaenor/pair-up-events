@@ -87,12 +87,10 @@ Design references are available inside [`Designs/`](./Designs/).
 Always ensure that linting, tests, and builds succeed before opening a pull request:
 
 ```bash
-npm run lint -- --fix
-npm test
-npm run build
+npm run ci
 ```
 
-CI pipelines expect all three commands to pass.
+This single command runs all quality checks (linting, testing, and building) that CI pipelines expect to pass. Use this command every time you make changes to validate everything is working as expected.
 
 ## Deployment Notes
 
@@ -135,10 +133,8 @@ This document defines the operational protocol for the Gemini AI code agent. Adh
 2. **Readability First:** Code MUST be written for humans first, machines second. Prioritize clarity, simplicity, and maintainability.
 3. **Adhere to Existing Patterns:** Replicate existing conventions. Consistency is key.
 4. **Self-Correction & Review:** After any code modification, act as a strict code reviewer. Critically assess your own changes.
-5. **Automated Verification:** ALWAYS run the following commands and resolve *all* reported issues before considering a task complete:
-   * `npm run lint -- --fix`
-   * `npm test`
-   * `npm run build`
+5. **Automated Verification:** ALWAYS run the following command and resolve *all* reported issues before considering a task complete:
+   * `npm run ci`
 
 ---
 
