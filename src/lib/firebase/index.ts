@@ -34,7 +34,7 @@ export const getFirebaseAuth = async (): Promise<Auth> => {
   authPromise = Promise.all([getFirebaseApp(), loadAuthModule()]).then(([app, authModule]) => {
     const authInstance = authModule.getAuth(app);
 
-    if (import.meta.env.DEV && typeof authModule.connectAuthEmulator === 'function') {
+    if (import.meta.env.DEV) {
       // Uncomment this block if you want to use Firebase emulators
       // authModule.connectAuthEmulator(authInstance, "http://localhost:9099");
     }
