@@ -55,7 +55,7 @@ const Logo: React.FC<LogoProps> = ({ size = "md", showText = true }) => {
     return (
         <div className="flex items-center gap-2">
             <img
-                src="/lovable-uploads/d708028b-2d35-41b1-996e-d0c30bbad73a.png"
+                src="/PUE_logo_transparent.png"
                 alt="Pair Up Events logo"
                 className={`${getSizeClasses()} object-contain`}
             />
