@@ -1,6 +1,5 @@
 import type { MouseEvent } from "react";
 import { Link } from "react-router-dom";
-import { useScrollToElement } from "@/hooks/useScrollToElement";
 
 import Logo from "../atoms/Logo";
 
@@ -78,14 +77,15 @@ const footerLinkGroups: Array<{
 ];
 
 const Footer = () => {
-    const { scrollToElement } = useScrollToElement();
-
     const handleLinkClick = (
         event: MouseEvent<HTMLAnchorElement>,
         targetId: string,
     ) => {
         event.preventDefault();
-        scrollToElement(targetId, { block: "start" });
+        document.getElementById(targetId)?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
     };
 
     return (

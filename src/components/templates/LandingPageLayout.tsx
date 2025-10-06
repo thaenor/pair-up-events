@@ -2,8 +2,6 @@ import React from "react";
 
 import Footer from "../organisms/Footer";
 import Navigation from "../organisms/Navigation";
-import { useScrollToElement } from "@/hooks/useScrollToElement";
-
 interface LandingPageLayoutProps {
     children: React.ReactNode;
     showNavigation?: boolean;
@@ -15,10 +13,11 @@ const LandingPageLayout: React.FC<LandingPageLayoutProps> = ({
     showNavigation = true,
     showFooter = true,
 }) => {
-    const { scrollToElement } = useScrollToElement();
-
     const handleGetStarted = () => {
-        scrollToElement("early-access");
+        document.getElementById("early-access")?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
     };
 
     return (

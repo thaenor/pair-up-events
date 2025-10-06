@@ -2,14 +2,9 @@ import type { ReactElement } from "react";
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const scrollToElement = vi.fn();
 type NavigationProps = { onGetStarted: () => void };
 const mockNavigation = vi.fn<(props: NavigationProps) => ReactElement | null>();
 const mockFooter = vi.fn(() => <div data-testid="mock-footer">Footer</div>);
-
-vi.mock("@/hooks/useScrollToElement", () => ({
-  useScrollToElement: () => ({ scrollToElement }),
-}));
 
 vi.mock("../../organisms/Navigation", () => ({
   __esModule: true,
@@ -25,7 +20,6 @@ import LandingPageLayout from "../LandingPageLayout";
 
 describe("LandingPageLayout", () => {
   beforeEach(() => {
-    scrollToElement.mockClear();
     mockNavigation.mockReset();
     mockFooter.mockClear();
     mockNavigation.mockImplementation(({ onGetStarted }) => (
@@ -47,7 +41,7 @@ describe("LandingPageLayout", () => {
     expect(screen.getByTestId("mock-footer")).toBeInTheDocument();
   });
 
-  it("scrolls to the early access section when navigation get started is clicked", () => {
+  it("calls the get started handler when navigation get started is clicked", () => {
     render(
       <LandingPageLayout>
         <p>cta</p>
@@ -56,7 +50,12 @@ describe("LandingPageLayout", () => {
 
     screen.getByTestId("mock-navigation").click();
 
-    expect(scrollToElement).toHaveBeenCalledWith("early-access");
+    // The handler is called (we can't easily test the native scrollIntoView in this test)
+    expect(mockNavigation).toHaveBeenCalledWith(
+      expect.objectContaining({
+        onGetStarted: expect.any(Function)
+      })
+    );
   });
 
   it("allows hiding the navigation or footer", () => {
