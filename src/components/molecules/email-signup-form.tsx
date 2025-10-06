@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import LoadingSpinner from '@/components/atoms/LoadingSpinner';
@@ -11,6 +11,7 @@ import { useFormValidation, FormData } from '@/hooks/useFormValidation';
 const EmailSignupForm: React.FC = React.memo(() => {
   const { signUpWithEmail, loading, error, clearError } = useAuth();
   const { validateForm } = useFormValidation();
+  const navigate = useNavigate();
 
   const { formData, errors, updateField, setAllErrors, clearFieldError } = useFormState<FormData & Record<string, unknown>>({
     email: '',
@@ -56,10 +57,12 @@ const EmailSignupForm: React.FC = React.memo(() => {
       await signUpWithEmail(formData.email, formData.password);
       setRegistrationSuccess(true);
       toast.success('Account created successfully! Please check your email to verify your account.');
+      // Redirect to profile page after successful registration
+      navigate('/profile');
     } catch {
       // Error is already handled by AuthProvider and displayed in the UI
     }
-  }, [formData, validateForm, setAllErrors, signUpWithEmail]);
+  }, [formData, validateForm, setAllErrors, signUpWithEmail, navigate]);
 
   // Toggle password visibility
   const togglePasswordVisibility = useCallback(() => {
