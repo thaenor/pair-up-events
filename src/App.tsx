@@ -1,6 +1,7 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
 import * as Sentry from "@sentry/react";
+import { useEffect } from "react";
 
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -13,10 +14,29 @@ import { AuthProvider } from "./contexts/AuthProvider";
 import ErrorBoundary from "./components/ErrorBoundary";
 import "./lib/sentry"; // Initialize Sentry
 
+// Component to handle GitHub Pages 404 redirects
+const GitHubPagesRedirect = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    // Check if we're on a GitHub Pages redirect URL (/?/path)
+    if (location.pathname === '/' && location.search.startsWith('/?/')) {
+      const path = location.search.slice(3).replace(/~and~/g, '&');
+      const newPath = path.split('&')[0]; // Remove query params for now
+
+      // Replace the current URL with the correct path
+      window.history.replaceState(null, '', newPath);
+    }
+  }, [location]);
+
+  return null;
+};
+
 const App = () => {
   const appContent = (
     <AuthProvider>
       <BrowserRouter future={{ v7_relativeSplatPath: true }}>
+        <GitHubPagesRedirect />
         <ErrorBoundary>
           <Routes>
             <Route path="/" element={<Index />} />
