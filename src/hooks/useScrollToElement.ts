@@ -1,3 +1,4 @@
+import { logError } from '@/utils/logger';
 import { useCallback, useRef } from 'react';
 
 /**
@@ -26,7 +27,11 @@ export const useScrollToElement = () => {
         ...options,
       });
     } else {
-      console.warn(`Element with id "${id}" not found in registered elements`);
+      logError(`Element with id "${id}" not found in registered elements`, null, {
+        component: 'useScrollToElement',
+        action: 'scrollToElement',
+        additionalData: { id },
+      });
     }
   }, []);
 

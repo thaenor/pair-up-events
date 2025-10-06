@@ -206,7 +206,7 @@ const EmailSignupForm: React.FC = React.memo(() => {
                   errors.password ? 'border-red-500' : 'border-gray-500'
                 }`}
                 aria-invalid={!!errors.password}
-                aria-describedby={errors.password ? 'password-error' : 'password-help'}
+                aria-describedby={errors.password ? 'password-error password-help' : 'password-help'}
                 aria-required="true"
                 placeholder="Create a password"
                 disabled={loading}
@@ -255,7 +255,7 @@ const EmailSignupForm: React.FC = React.memo(() => {
                   errors.confirmPassword ? 'border-red-500' : 'border-gray-500'
                 }`}
                 aria-invalid={!!errors.confirmPassword}
-                aria-describedby={errors.confirmPassword ? 'confirm-password-error' : 'confirm-password-help'}
+                aria-describedby={errors.confirmPassword ? 'confirm-password-error confirm-password-help' : 'confirm-password-help'}
                 aria-required="true"
                 placeholder="Confirm your password"
                 disabled={loading}

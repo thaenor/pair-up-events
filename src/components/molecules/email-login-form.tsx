@@ -112,10 +112,13 @@ const EmailLoginForm: React.FC = React.memo(() => {
               errors.email ? 'border-red-500' : 'border-gray-500'
             }`}
             aria-invalid={!!errors.email}
-            aria-describedby={errors.email ? 'email-error' : undefined}
+            aria-describedby={errors.email ? 'email-error email-help' : 'email-help'}
             placeholder="Enter your email"
             disabled={loading}
           />
+        </div>
+        <div id="email-help" className="sr-only">
+          Enter your email address to sign in
         </div>
         {errors.email && (
           <p id="email-error" className="text-red-400 text-sm" role="alert">
@@ -142,7 +145,7 @@ const EmailLoginForm: React.FC = React.memo(() => {
               errors.password ? 'border-red-500' : 'border-gray-500'
             }`}
             aria-invalid={!!errors.password}
-            aria-describedby={errors.password ? 'password-error' : undefined}
+            aria-describedby={errors.password ? 'password-error password-help' : 'password-help'}
             placeholder="Enter your password"
             disabled={loading}
           />
@@ -160,6 +163,9 @@ const EmailLoginForm: React.FC = React.memo(() => {
               <Eye className="h-5 w-5 text-gray-400 hover:text-white transition-colors" />
             )}
           </button>
+        </div>
+        <div id="password-help" className="sr-only">
+          Enter your password to sign in
         </div>
         {errors.password && (
           <p id="password-error" className="text-red-400 text-sm" role="alert">
