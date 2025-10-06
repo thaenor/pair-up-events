@@ -71,7 +71,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       addSentryBreadcrumb('Sign in successful', 'auth', { email });
     } catch (error: unknown) {
       addSentryBreadcrumb('Sign in failed', 'auth', { email, error: error instanceof Error ? error.message : 'Unknown error' });
-      handleAuthError(error, 'Sign in');
+      handleAuthError(error);
       throw error;
     }
   };
@@ -91,7 +91,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       addSentryBreadcrumb('Sign up successful', 'auth', { email, userId: userCredential.user?.uid });
     } catch (error: unknown) {
       addSentryBreadcrumb('Sign up failed', 'auth', { email, error: error instanceof Error ? error.message : 'Unknown error' });
-      handleAuthError(error, 'Sign up');
+      handleAuthError(error);
       throw error;
     }
   };
@@ -105,7 +105,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
       await sendEmailVerification(auth.currentUser);
     } catch (error: unknown) {
-      handleAuthError(error, 'Send email verification');
+      handleAuthError(error);
       throw error;
     }
   };
@@ -116,7 +116,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
       await firebaseSignOut(auth);
     } catch (error: unknown) {
-      handleAuthError(error, 'Sign out');
+      handleAuthError(error);
       throw error;
     }
   };
@@ -127,7 +127,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
       await sendPasswordResetEmail(auth, email);
     } catch (error: unknown) {
-      handleAuthError(error, 'Send password reset');
+      handleAuthError(error);
       throw error;
     }
   };
@@ -141,7 +141,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
       await deleteUser(auth.currentUser);
     } catch (error: unknown) {
-      handleAuthError(error, 'Delete account');
+      handleAuthError(error);
       throw error;
     }
   };

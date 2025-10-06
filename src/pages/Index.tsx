@@ -6,16 +6,25 @@ import {
     LandingPageLayout,
     SkipLink,
 } from "@/components";
+import { useScrollToElement } from "@/hooks/useScrollToElement";
 
 const Index = () => {
+    const { scrollToElement, createElementRef } = useScrollToElement();
+
+    const handleScrollToEarlyAccess = () => {
+        scrollToElement("early-access");
+    };
+
     return (
         <LandingPageLayout>
             <SkipLink targetId="main-content" />
             <main id="main-content" role="main" aria-label="PairUp Events main content">
-                <HeroSection />
+                <HeroSection onScrollToEarlyAccess={handleScrollToEarlyAccess} />
                 <HowItWorksSection />
                 <BenefitsSection />
-                <EarlyAccessSection />
+                <div ref={createElementRef("early-access")}>
+                    <EarlyAccessSection />
+                </div>
             </main>
         </LandingPageLayout>
     );
