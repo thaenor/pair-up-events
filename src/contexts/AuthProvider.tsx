@@ -1,10 +1,10 @@
-import React, { useEffect, useState, ReactNode, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, ReactNode, useCallback } from 'react';
 import type { User, Unsubscribe } from 'firebase/auth';
 
 import { loadAuthResources } from '@/lib/firebase';
 import { AuthContextType, AuthState } from '@/lib/firebase/types';
 import { AuthContext } from './AuthContext';
-import { createAuthErrorHandler } from '@/utils/authErrorHandler';
+import { getAuthErrorMessage } from '@/utils/authErrorMessages';
 import { setSentryUser, clearSentryUser, addSentryBreadcrumb } from '@/lib/sentry';
 
 // AuthProvider component
@@ -20,9 +20,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   });
 
   // Centralized error handler
-  const handleAuthError = useMemo(
-    () => createAuthErrorHandler(setAuthState),
-    []
+  const handleAuthError = useCallback(
+    (error: unknown) => {
+      // Use user-friendly error messages instead of raw Firebase errors
+      const errorMessage = getAuthErrorMessage(error);
+      setAuthState(prev => ({
+        ...prev,
+        loading: false,
+        error: errorMessage,
+      }));
+      return errorMessage;
+    },
+    [] // setAuthState is stable, so no dependencies needed
   );
 
   const ensureAuthResources = useCallback(() => loadAuthResources(), []);

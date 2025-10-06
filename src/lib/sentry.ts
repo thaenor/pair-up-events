@@ -9,16 +9,27 @@ interface SentryContext {
 
 let sentryPromise: Promise<typeof import('@sentry/react') | null> | null = null;
 let sentryInitialized = false;
+let isInitializing = false;
 
 const loadSentry = async (): Promise<typeof import('@sentry/react') | null> => {
   if (!import.meta.env.PROD) {
     return null;
   }
 
+  // If we already have a promise, return it
   if (sentryPromise) {
     return sentryPromise;
   }
 
+  // If we're already initializing, wait for the current initialization to complete
+  if (isInitializing) {
+    // Wait a bit and try again
+    await new Promise(resolve => setTimeout(resolve, 10));
+    return loadSentry();
+  }
+
+  // Set the lock and create the promise
+  isInitializing = true;
   sentryPromise = import('@sentry/react')
     .then((Sentry) => {
       if (!sentryInitialized) {
@@ -34,6 +45,10 @@ const loadSentry = async (): Promise<typeof import('@sentry/react') | null> => {
       // Don't set sentryPromise to null to avoid race conditions
       // The promise will resolve to null, and subsequent calls will reuse this resolved promise
       return null;
+    })
+    .finally(() => {
+      // Always release the lock when done
+      isInitializing = false;
     });
 
   return sentryPromise;
