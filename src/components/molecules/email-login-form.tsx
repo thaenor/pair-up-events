@@ -6,7 +6,6 @@ import { toast } from 'sonner';
 import LoadingSpinner from '@/components/atoms/LoadingSpinner';
 import { useAuth } from '@/hooks/useAuth';
 import { useFormState } from '@/hooks/useFormState';
-import { logError } from '@/utils/logger';
 
 type LoginFormData = {
   email: string;
@@ -77,11 +76,6 @@ const EmailLoginForm: React.FC = React.memo(() => {
       // Redirect to profile page after successful login
       navigate('/profile');
     } catch (error) {
-      logError('Sign in failed', error, {
-        component: 'EmailLoginForm',
-        action: 'signInWithEmail',
-        additionalData: { email: formData.email }
-      });
       // Error is already handled by AuthProvider and displayed in the UI
     }
   }, [formData, setAllErrors, signInWithEmail, navigate]);

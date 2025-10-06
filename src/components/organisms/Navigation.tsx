@@ -5,7 +5,6 @@ import { toast } from "sonner";
 import Logo from "../atoms/Logo";
 import LoadingSpinner from "../atoms/LoadingSpinner";
 import { useAuth } from "@/hooks/useAuth";
-import { logError } from "@/utils/logger";
 
 export interface NavigationProps {
     isLoggedIn?: boolean;
@@ -31,19 +30,15 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
 
     const handleLogout = useCallback(async () => {
         setIsLoggingOut(true);
-        try {
-            await signOut();
-            toast.success('Logged out successfully');
-        } catch (error) {
-            logError('Logout failed', error, {
-                component: 'Navigation',
-                action: 'signOut',
-                userId: user?.uid
-            });
-            toast.error('Failed to log out. Please try again.');
-        } finally {
-            setIsLoggingOut(false);
-        }
+    try {
+        await signOut();
+        toast.success('Logged out successfully');
+    } catch (error) {
+        // Error is handled by AuthProvider and will be caught by ErrorBoundary if needed
+        toast.error('Failed to log out. Please try again.');
+    } finally {
+        setIsLoggingOut(false);
+    }
     }, [signOut, user?.uid]);
 
     return (

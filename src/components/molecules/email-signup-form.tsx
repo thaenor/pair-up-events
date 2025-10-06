@@ -7,7 +7,6 @@ import LoadingSpinner from '@/components/atoms/LoadingSpinner';
 import { useAuth } from '@/hooks/useAuth';
 import { useFormState } from '@/hooks/useFormState';
 import { useFormValidation, FormData } from '@/hooks/useFormValidation';
-import { logError } from '@/utils/logger';
 
 const EmailSignupForm: React.FC = React.memo(() => {
   const { signUpWithEmail, loading, error, clearError } = useAuth();
@@ -58,11 +57,6 @@ const EmailSignupForm: React.FC = React.memo(() => {
       setRegistrationSuccess(true);
       toast.success('Account created successfully! Please check your email to verify your account.');
     } catch (error) {
-      logError('Sign up failed', error, {
-        component: 'EmailSignupForm',
-        action: 'signUpWithEmail',
-        additionalData: { email: formData.email }
-      });
       // Error is already handled by AuthProvider and displayed in the UI
     }
   }, [formData, validateForm, setAllErrors, signUpWithEmail]);
