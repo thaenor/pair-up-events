@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import InviteFriendSection from "./invite-friend-section";
+import InviteFriendSection from "../invite-friend-section";
 
 const mockCreateInviteMessage = vi.fn(() => "Join us at PairUp! {URL}");
 const mockShareOrCopyToClipboard = vi.fn();

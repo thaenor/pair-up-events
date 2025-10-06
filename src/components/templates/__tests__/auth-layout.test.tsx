@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { AuthLayout } from "./auth-layout";
+import { AuthLayout } from "../auth-layout";
 
 describe("AuthLayout", () => {
   it("renders provided left content", () => {

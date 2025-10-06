@@ -2,8 +2,8 @@ import { act, render, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useContext } from "react";
 
-import { AuthProvider } from "./AuthProvider";
-import { AuthContext } from "./AuthContext";
+import { AuthProvider } from "../AuthProvider";
+import { AuthContext } from "../AuthContext";
 import type { AuthContextType } from "@/lib/firebase/types";
 
 const mockAuth = vi.hoisted(() => ({

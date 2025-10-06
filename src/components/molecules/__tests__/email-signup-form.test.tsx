@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, useNavigate } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi, type MockedFunction } from "vitest";
 
-import EmailSignupForm from "./email-signup-form";
+import EmailSignupForm from "../email-signup-form";
 
 const mockSignUpWithEmail = vi.fn();
 const mockClearError = vi.fn();

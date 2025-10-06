@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, useNavigate } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi, type MockedFunction } from "vitest";
 
-import AccountControls from "./account-controls";
+import AccountControls from "../account-controls";
 
 const mockSignOut = vi.fn();
 const mockSendPasswordReset = vi.fn();

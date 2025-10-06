@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, useNavigate } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi, type MockedFunction } from "vitest";
 
-import Navigation from "./Navigation";
+import Navigation from "../Navigation";
 
 type AuthState = {
   user: { email?: string; displayName?: string } | null;

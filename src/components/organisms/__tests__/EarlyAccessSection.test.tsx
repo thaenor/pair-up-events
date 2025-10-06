@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import EarlyAccessSection from "./EarlyAccessSection";
+import EarlyAccessSection from "../EarlyAccessSection";
 import { iframeURL } from "@/lib/config";
 
 describe("EarlyAccessSection", () => {

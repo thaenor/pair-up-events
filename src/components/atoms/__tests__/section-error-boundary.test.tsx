@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import SectionErrorBoundary from "./section-error-boundary";
+import SectionErrorBoundary from "../section-error-boundary";
 
 const mockErrorBoundary = vi.fn((props: any) => {
   return <div data-testid="mock-error-boundary">{props.children}</div>;
@@ -9,7 +9,7 @@ const mockErrorBoundary = vi.fn((props: any) => {
 
 let lastProps: any;
 
-vi.mock("../ErrorBoundary", () => ({
+vi.mock("../../ErrorBoundary", () => ({
   __esModule: true,
   default: (props: any) => {
     lastProps = props;

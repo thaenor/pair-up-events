@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import HeroSection from "./HeroSection";
+import HeroSection from "../HeroSection";
 
 describe("HeroSection", () => {
   it("renders the primary CTA link", () => {

@@ -1,7 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import BenefitsSection from "./BenefitsSection";
+import BenefitsSection from "../BenefitsSection";
 
 describe("BenefitsSection", () => {
   it("lists each core benefit with title and description", () => {

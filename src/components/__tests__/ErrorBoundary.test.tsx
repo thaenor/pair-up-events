@@ -30,7 +30,7 @@ vi.mock("@sentry/react", () => ({
   replayIntegration: vi.fn(),
 }));
 
-import ErrorBoundary from "./ErrorBoundary";
+import ErrorBoundary from "../ErrorBoundary";
 
 describe("ErrorBoundary", () => {
   beforeEach(() => {

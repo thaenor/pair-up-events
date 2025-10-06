@@ -9,17 +9,17 @@ vi.mock("@/hooks/useScrollToElement", () => ({
   useScrollToElement: () => ({ scrollToElement }),
 }));
 
-vi.mock("../organisms/Navigation", () => ({
+vi.mock("../../organisms/Navigation", () => ({
   __esModule: true,
   default: (props: any) => mockNavigation(props),
 }));
 
-vi.mock("../organisms/Footer", () => ({
+vi.mock("../../organisms/Footer", () => ({
   __esModule: true,
   default: () => mockFooter(),
 }));
 
-import LandingPageLayout from "./LandingPageLayout";
+import LandingPageLayout from "../LandingPageLayout";
 
 describe("LandingPageLayout", () => {
   beforeEach(() => {

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import type { AuthState } from "@/lib/firebase/types";
 
-import { createAuthErrorHandler } from "./authErrorHandler";
+import { createAuthErrorHandler } from "../authErrorHandler";
 
 const createStateMock = () => {
   const setState = vi.fn();

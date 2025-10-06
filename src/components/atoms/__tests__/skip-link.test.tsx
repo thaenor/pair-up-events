@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import SkipLink from "./skip-link";
+import SkipLink from "../skip-link";
 
 describe("SkipLink", () => {
   it("renders the default label and target", () => {

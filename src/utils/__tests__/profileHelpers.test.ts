@@ -5,7 +5,7 @@ import {
   createInviteMessage,
   formatDate,
   shareOrCopyToClipboard
-} from "./profileHelpers";
+} from "../profileHelpers";
 
 const mockToastSuccess = vi.fn();
 const mockToastError = vi.fn();

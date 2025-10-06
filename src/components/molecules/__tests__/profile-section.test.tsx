@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import ProfileSection from "./profile-section";
+import ProfileSection from "../profile-section";
 
 const mockFormatDate = vi.fn((value: unknown) => `formatted-${String(value)}`);
 

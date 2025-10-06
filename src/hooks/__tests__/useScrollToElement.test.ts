@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { useScrollToElement } from "./useScrollToElement";
+import { useScrollToElement } from "../useScrollToElement";
 
 const mockLogError = vi.fn();
 

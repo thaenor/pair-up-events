@@ -1,7 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import HowItWorksSection from "./HowItWorksSection";
+import HowItWorksSection from "../HowItWorksSection";
 
 describe("HowItWorksSection", () => {
   it("explains the three step flow", () => {
