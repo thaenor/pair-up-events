@@ -1,4 +1,4 @@
-import { User } from 'firebase/auth';
+import type { User } from 'firebase/auth';
 
 // Re-export Firebase types for convenience
 export type { User } from 'firebase/auth';

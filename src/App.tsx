@@ -1,18 +1,19 @@
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
-import * as Sentry from "@sentry/react";
-import { useEffect } from "react";
+import { Suspense, lazy, useEffect } from "react";
 
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import AuthPage from "./pages/auth";
-import LoginPage from "./pages/login";
-import ProfilePage from "./pages/profile";
-import TermsOfServicePage from "./pages/terms-of-service";
-import PrivacyPolicyPage from "./pages/privacy-policy";
 import { AuthProvider } from "./contexts/AuthProvider";
 import ErrorBoundary from "./components/ErrorBoundary";
-import "./lib/sentry"; // Initialize Sentry
+import SentryBoundary from "./components/SentryBoundary";
+import { initializeSentry } from "./lib/sentry";
+
+const IndexPage = lazy(() => import("./pages/Index"));
+const NotFoundPage = lazy(() => import("./pages/NotFound"));
+const AuthPage = lazy(() => import("./pages/auth"));
+const LoginPage = lazy(() => import("./pages/login"));
+const ProfilePage = lazy(() => import("./pages/profile"));
+const TermsOfServicePage = lazy(() => import("./pages/terms-of-service"));
+const PrivacyPolicyPage = lazy(() => import("./pages/privacy-policy"));
 
 // Component to handle GitHub Pages 404 redirects
 const GitHubPagesRedirect = () => {
@@ -33,23 +34,57 @@ const GitHubPagesRedirect = () => {
 };
 
 const App = () => {
+  useEffect(() => {
+    if (!import.meta.env.PROD || typeof window === 'undefined') {
+      return;
+    }
+
+    const supportsIdle = typeof window.requestIdleCallback === 'function';
+
+    if (supportsIdle) {
+      const idleId = window.requestIdleCallback(() => {
+        initializeSentry();
+      });
+
+      return () => {
+        window.cancelIdleCallback?.(idleId);
+      };
+    }
+
+    const timeout = window.setTimeout(() => {
+      initializeSentry();
+    }, 2000);
+
+    return () => {
+      window.clearTimeout(timeout);
+    };
+  }, []);
+
   const appContent = (
     <AuthProvider>
       <BrowserRouter future={{ v7_relativeSplatPath: true }}>
         <GitHubPagesRedirect />
         <ErrorBoundary>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/signup" element={<AuthPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/terms-of-service" element={<TermsOfServicePage />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-            <Route path="/404" element={<NotFound />} />
+          <Suspense
+            fallback={(
+              <div className="min-h-screen flex items-center justify-center bg-pairup-darkBlue text-pairup-cream">
+                Loading...
+              </div>
+            )}
+          >
+            <Routes>
+              <Route path="/" element={<IndexPage />} />
+              <Route path="/signup" element={<AuthPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+              <Route path="/404" element={<NotFoundPage />} />
 
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Suspense>
           <Toaster
             position="top-right"
             expand={true}
@@ -61,29 +96,7 @@ const App = () => {
     </AuthProvider>
   );
 
-  // Only wrap with Sentry error boundary in production
-  if (import.meta.env.MODE === 'production') {
-    return (
-      <Sentry.ErrorBoundary fallback={({ resetError }) => (
-        <div className="min-h-screen flex items-center justify-center bg-pairup-darkBlue">
-          <div className="text-center max-w-md p-4">
-            <h1 className="text-2xl font-bold text-white mb-4">Something went wrong</h1>
-            <p className="text-pairup-cream mb-6">We're sorry, but something unexpected happened.</p>
-            <button
-              onClick={resetError}
-              className="px-6 py-3 bg-pairup-cyan text-pairup-darkBlue font-medium rounded-lg hover:bg-pairup-cyan/90 transition-colors"
-            >
-              Try again
-            </button>
-          </div>
-        </div>
-      )}>
-        {appContent}
-      </Sentry.ErrorBoundary>
-    );
-  }
-
-  return appContent;
+  return <SentryBoundary>{appContent}</SentryBoundary>;
 };
 
 export default App;

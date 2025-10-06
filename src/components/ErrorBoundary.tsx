@@ -1,8 +1,8 @@
 import React from 'react';
-import * as Sentry from '@sentry/react';
 import { useNavigate } from 'react-router-dom';
 
 import { logError } from '@/utils/logger';
+import { captureSentryException } from '@/lib/sentry';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -43,20 +43,17 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
       }
     });
 
-    // Report to Sentry in production
-    if (import.meta.env.MODE === 'production') {
-      Sentry.withScope((scope) => {
-        scope.setTag('errorBoundary', true);
-        scope.setContext('errorInfo', {
-          componentStack: errorInfo.componentStack,
-        });
-        scope.setContext('browser', {
+    captureSentryException(error, {
+      component: 'ErrorBoundary',
+      action: 'componentDidCatch',
+      additionalData: {
+        errorInfo,
+        browser: {
           userAgent: navigator.userAgent,
           url: window.location.href,
-        });
-        Sentry.captureException(error);
-      });
-    }
+        },
+      },
+    });
 
     // Call custom error handler if provided
     if (onError) {

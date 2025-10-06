@@ -1,15 +1,7 @@
-import React, { useEffect, useState, ReactNode, useMemo } from 'react';
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut as firebaseSignOut,
-  onAuthStateChanged,
-  sendEmailVerification,
-  sendPasswordResetEmail,
-  deleteUser,
-  User
-} from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import React, { useEffect, useState, ReactNode, useMemo, useCallback } from 'react';
+import type { User, Unsubscribe } from 'firebase/auth';
+
+import { loadAuthResources } from '@/lib/firebase';
 import { AuthContextType, AuthState } from '@/lib/firebase/types';
 import { AuthContext } from './AuthContext';
 import { createAuthErrorHandler } from '@/utils/authErrorHandler';
@@ -33,129 +25,156 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     []
   );
 
+  const ensureAuthResources = useCallback(() => loadAuthResources(), []);
+
   // Set up auth state listener
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
-      setAuthState({
-        user,
-        loading: false,
-        error: null,
+    let unsubscribe: Unsubscribe | undefined;
+    let isMounted = true;
+
+    ensureAuthResources()
+      .then(({ authModule, auth }) => {
+        if (!isMounted) {
+          return;
+        }
+
+        unsubscribe = authModule.onAuthStateChanged(auth, (user: User | null) => {
+          setAuthState({
+            user,
+            loading: false,
+            error: null,
+          });
+
+          // Update Sentry user context
+          if (user) {
+            setSentryUser({
+              uid: user.uid,
+              email: user.email || undefined,
+            });
+            addSentryBreadcrumb('User signed in', 'auth', {
+              userId: user.uid,
+              email: user.email,
+            });
+          } else {
+            clearSentryUser();
+            addSentryBreadcrumb('User signed out', 'auth');
+          }
+        });
+      })
+      .catch((error: unknown) => {
+        handleAuthError(error);
       });
 
-      // Update Sentry user context
-      if (user) {
-        setSentryUser({
-          uid: user.uid,
-          email: user.email || undefined,
-        });
-        addSentryBreadcrumb('User signed in', 'auth', {
-          userId: user.uid,
-          email: user.email,
-        });
-      } else {
-        clearSentryUser();
-        addSentryBreadcrumb('User signed out', 'auth');
+    return () => {
+      isMounted = false;
+      if (unsubscribe) {
+        unsubscribe();
       }
-    });
+    };
+  }, [ensureAuthResources, handleAuthError]);
 
-    return () => unsubscribe();
-  }, []);
-
-
-  // Sign in with email and password
-  const signInWithEmail = async (email: string, password: string) => {
+  const runWithAuth = async <T,>(callback: (
+    resources: Awaited<ReturnType<typeof ensureAuthResources>>
+  ) => Promise<T>) => {
     try {
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
-      addSentryBreadcrumb('Sign in attempt', 'auth', { email });
-      await signInWithEmailAndPassword(auth, email, password);
-      addSentryBreadcrumb('Sign in successful', 'auth', { email });
+      const resources = await ensureAuthResources();
+      return await callback(resources);
     } catch (error: unknown) {
-      addSentryBreadcrumb('Sign in failed', 'auth', { email, error: error instanceof Error ? error.message : 'Unknown error' });
       handleAuthError(error);
       throw error;
     } finally {
       setAuthState(prev => ({ ...prev, loading: false }));
+    }
+  };
+
+  // Sign in with email and password
+  const signInWithEmail = async (email: string, password: string) => {
+    addSentryBreadcrumb('Sign in attempt', 'auth', { email });
+    try {
+      await runWithAuth(async ({ authModule, auth }) => {
+        await authModule.signInWithEmailAndPassword(auth, email, password);
+      });
+      addSentryBreadcrumb('Sign in successful', 'auth', { email });
+    } catch (error) {
+      const errorDetails = error instanceof Error ? { error: error.message } : undefined;
+      addSentryBreadcrumb('Sign in failed', 'auth', {
+        email,
+        ...errorDetails,
+      });
+      throw error;
     }
   };
 
   // Sign up with email and password
   const signUpWithEmail = async (email: string, password: string) => {
-    try {
-      setAuthState(prev => ({ ...prev, loading: true, error: null }));
-      addSentryBreadcrumb('Sign up attempt', 'auth', { email });
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    addSentryBreadcrumb('Sign up attempt', 'auth', { email });
 
-      // Send email verification after successful registration
-      if (userCredential.user) {
-        await sendEmailVerification(userCredential.user);
-        addSentryBreadcrumb('Email verification sent', 'auth', { email, userId: userCredential.user.uid });
-      }
-      addSentryBreadcrumb('Sign up successful', 'auth', { email, userId: userCredential.user?.uid });
-    } catch (error: unknown) {
-      addSentryBreadcrumb('Sign up failed', 'auth', { email, error: error instanceof Error ? error.message : 'Unknown error' });
-      handleAuthError(error);
+    try {
+      await runWithAuth(async ({ authModule, auth }) => {
+        const userCredential = await authModule.createUserWithEmailAndPassword(auth, email, password);
+
+        if (userCredential.user) {
+          await authModule.sendEmailVerification(userCredential.user);
+          addSentryBreadcrumb('Email verification sent', 'auth', {
+            email,
+            userId: userCredential.user.uid,
+          });
+        }
+
+        addSentryBreadcrumb('Sign up successful', 'auth', {
+          email,
+          userId: userCredential.user?.uid,
+        });
+      });
+    } catch (error) {
+      const errorDetails = error instanceof Error ? { error: error.message } : undefined;
+      addSentryBreadcrumb('Sign up failed', 'auth', {
+        email,
+        ...errorDetails,
+      });
       throw error;
-    } finally {
-      setAuthState(prev => ({ ...prev, loading: false }));
     }
   };
 
   // Send email verification
   const sendEmailVerificationToUser = async () => {
-    try {
-      if (!auth.currentUser) {
+    await runWithAuth(async ({ authModule, auth }) => {
+      const currentUser = auth.currentUser;
+
+      if (!currentUser) {
         throw new Error('No user is currently signed in');
       }
-      setAuthState(prev => ({ ...prev, loading: true, error: null }));
-      await sendEmailVerification(auth.currentUser);
-    } catch (error: unknown) {
-      handleAuthError(error);
-      throw error;
-    } finally {
-      setAuthState(prev => ({ ...prev, loading: false }));
-    }
+
+      await authModule.sendEmailVerification(currentUser);
+    });
   };
 
   // Sign out
   const signOut = async () => {
-    try {
-      setAuthState(prev => ({ ...prev, loading: true, error: null }));
-      await firebaseSignOut(auth);
-    } catch (error: unknown) {
-      handleAuthError(error);
-      throw error;
-    } finally {
-      setAuthState(prev => ({ ...prev, loading: false }));
-    }
+    await runWithAuth(async ({ authModule, auth }) => {
+      await authModule.signOut(auth);
+    });
   };
 
   // Send password reset email
   const sendPasswordReset = async (email: string) => {
-    try {
-      setAuthState(prev => ({ ...prev, loading: true, error: null }));
-      await sendPasswordResetEmail(auth, email);
-    } catch (error: unknown) {
-      handleAuthError(error);
-      throw error;
-    } finally {
-      setAuthState(prev => ({ ...prev, loading: false }));
-    }
+    await runWithAuth(async ({ authModule, auth }) => {
+      await authModule.sendPasswordResetEmail(auth, email);
+    });
   };
 
   // Delete user account
   const deleteUserAccount = async () => {
-    try {
-      if (!auth.currentUser) {
+    await runWithAuth(async ({ authModule, auth }) => {
+      const currentUser = auth.currentUser;
+
+      if (!currentUser) {
         throw new Error('No user is currently signed in');
       }
-      setAuthState(prev => ({ ...prev, loading: true, error: null }));
-      await deleteUser(auth.currentUser);
-    } catch (error: unknown) {
-      handleAuthError(error);
-      throw error;
-    } finally {
-      setAuthState(prev => ({ ...prev, loading: false }));
-    }
+
+      await authModule.deleteUser(currentUser);
+    });
   };
 
   // Clear error

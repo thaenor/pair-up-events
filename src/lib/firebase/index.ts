@@ -1,21 +1,51 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import type { Auth } from 'firebase/auth';
+import type { FirebaseApp } from 'firebase/app';
+
 import { firebaseConfig, validateFirebaseConfig } from './config';
 
-// Validate configuration before initializing
-validateFirebaseConfig();
+let appPromise: Promise<FirebaseApp> | null = null;
+let authPromise: Promise<Auth> | null = null;
+let authModulePromise: Promise<typeof import('firebase/auth')> | null = null;
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const getFirebaseApp = async (): Promise<FirebaseApp> => {
+  if (appPromise) {
+    return appPromise;
+  }
 
-// Initialize Firebase Authentication and get a reference to the service
-export const auth = getAuth(app);
+  validateFirebaseConfig();
+  appPromise = import('firebase/app').then(({ initializeApp }) => initializeApp(firebaseConfig));
+  return appPromise;
+};
 
-// Connect to emulators in development
-if (import.meta.env.DEV) {
-  // Uncomment these lines if you want to use Firebase emulators for development
-  // import { connectAuthEmulator } from 'firebase/auth';
-  // connectAuthEmulator(auth, "http://localhost:9099");
-}
+export const loadAuthModule = async () => {
+  if (authModulePromise) {
+    return authModulePromise;
+  }
 
-export default app;
+  authModulePromise = import('firebase/auth');
+  return authModulePromise;
+};
+
+export const getFirebaseAuth = async (): Promise<Auth> => {
+  if (authPromise) {
+    return authPromise;
+  }
+
+  authPromise = Promise.all([getFirebaseApp(), loadAuthModule()]).then(([app, authModule]) => {
+    const authInstance = authModule.getAuth(app);
+
+    if (import.meta.env.DEV && typeof authModule.connectAuthEmulator === 'function') {
+      // Uncomment this block if you want to use Firebase emulators
+      // authModule.connectAuthEmulator(authInstance, "http://localhost:9099");
+    }
+
+    return authInstance;
+  });
+
+  return authPromise;
+};
+
+export const loadAuthResources = async () => {
+  const [authModule, auth] = await Promise.all([loadAuthModule(), getFirebaseAuth()]);
+  return { authModule, auth };
+};

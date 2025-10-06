@@ -1,98 +1,128 @@
-import * as Sentry from '@sentry/react';
+import type * as SentryTypes from '@sentry/react';
 
-/**
- * Sentry configuration and initialization
- * Provides error tracking, performance monitoring, and user feedback
- * Only enabled in production environment
- */
-
-// Only initialize Sentry in production
-if (import.meta.env.MODE === 'production') {
-  Sentry.init({
-  dsn: import.meta.env.VITE_SENTRY_DSN,
-
-  // Set environment
-  environment: import.meta.env.MODE || 'development',
-
-  // Performance monitoring
-  tracesSampleRate: import.meta.env.MODE === 'production' ? 0.1 : 1.0,
-
-  // Session replay (only in production for privacy)
-  replaysSessionSampleRate: import.meta.env.MODE === 'production' ? 0.1 : 0,
-  replaysOnErrorSampleRate: import.meta.env.MODE === 'production' ? 1.0 : 0,
-
-  // Release tracking
-  release: import.meta.env.VITE_APP_VERSION || '1.0.0',
-
-  // Before sending event (filter sensitive data)
-  beforeSend(event) {
-    // Filter out non-error events in development
-    if (import.meta.env.MODE === 'development' && event.level !== 'error') {
-      return null;
-    }
-
-    // Remove sensitive data
-    if (event.user) {
-      // Keep user ID but remove email for privacy
-      event.user = {
-        id: event.user.id,
-        // Don't include email in production
-        ...(import.meta.env.MODE === 'development' && { email: event.user.email })
-      };
-    }
-
-    return event;
-  },
-
-  // Integration configuration
-  integrations: [
-    Sentry.browserTracingIntegration(),
-    Sentry.replayIntegration({
-      // Mask sensitive elements
-      maskAllText: false,
-      blockAllMedia: false,
-    }),
-  ],
-
-  // Error filtering
-  ignoreErrors: [
-    // Ignore common browser errors that aren't actionable
-    'ResizeObserver loop limit exceeded',
-    'Non-Error promise rejection captured',
-    'Network request failed',
-    'Loading chunk',
-    'ChunkLoadError',
-  ],
-  });
+interface SentryContext {
+  component?: string;
+  action?: string;
+  userId?: string;
+  additionalData?: Record<string, unknown>;
 }
 
-/**
- * Set user context for error tracking
- * Only works when Sentry is initialized (production)
- */
+let sentryPromise: Promise<typeof import('@sentry/react') | null> | null = null;
+let sentryInitialized = false;
+
+const loadSentry = async (): Promise<typeof import('@sentry/react') | null> => {
+  if (!import.meta.env.PROD) {
+    return null;
+  }
+
+  if (sentryPromise) {
+    return sentryPromise;
+  }
+
+  sentryPromise = import('@sentry/react')
+    .then((Sentry) => {
+      if (!sentryInitialized) {
+        initializeWithConfig(Sentry);
+        sentryInitialized = true;
+      }
+      return Sentry;
+    })
+    .catch((error) => {
+      if (import.meta.env.DEV) {
+        console.error('Failed to load Sentry', error);
+      }
+      sentryPromise = null;
+      return null;
+    });
+
+  return sentryPromise;
+};
+
+const initializeWithConfig = (Sentry: typeof SentryTypes) => {
+  Sentry.init({
+    dsn: import.meta.env.VITE_SENTRY_DSN,
+    environment: import.meta.env.MODE || 'development',
+    tracesSampleRate: import.meta.env.PROD ? 0.1 : 1.0,
+    replaysSessionSampleRate: import.meta.env.PROD ? 0.1 : 0,
+    replaysOnErrorSampleRate: import.meta.env.PROD ? 1.0 : 0,
+    release: import.meta.env.VITE_APP_VERSION || '1.0.0',
+    beforeSend(event) {
+      if (import.meta.env.DEV && event.level !== 'error') {
+        return null;
+      }
+
+      if (event.user) {
+        event.user = {
+          id: event.user.id,
+          ...(import.meta.env.DEV && { email: event.user.email }),
+        };
+      }
+
+      return event;
+    },
+    integrations: [
+      Sentry.browserTracingIntegration(),
+      Sentry.replayIntegration({
+        maskAllText: false,
+        blockAllMedia: false,
+      }),
+    ],
+    ignoreErrors: [
+      'ResizeObserver loop limit exceeded',
+      'Non-Error promise rejection captured',
+      'Network request failed',
+      'Loading chunk',
+      'ChunkLoadError',
+    ],
+  });
+};
+
+const withSentry = (
+  callback: (Sentry: typeof SentryTypes) => void,
+) => {
+  if (!import.meta.env.PROD) {
+    return;
+  }
+
+  void loadSentry().then((Sentry) => {
+    if (!Sentry) {
+      return;
+    }
+    callback(Sentry);
+  });
+};
+
+export const initializeSentry = () => {
+  if (!import.meta.env.PROD) {
+    return;
+  }
+
+  void loadSentry();
+};
+
+export const getSentry = () => loadSentry();
+
 export const setSentryUser = (user: { uid: string; email?: string }) => {
-  if (import.meta.env.MODE === 'production') {
+  withSentry((Sentry) => {
     Sentry.setUser({
       id: user.uid,
       email: user.email,
     });
-  }
+  });
 };
 
-/**
- * Clear user context (on logout)
- */
 export const clearSentryUser = () => {
-  if (import.meta.env.MODE === 'production') {
+  withSentry((Sentry) => {
     Sentry.setUser(null);
-  }
+  });
 };
 
-/**
- * Add breadcrumb for user actions
- */
-export const addSentryBreadcrumb = (message: string, category: string, data?: Record<string, unknown>) => {
-  if (import.meta.env.MODE === 'production') {
+export const addSentryBreadcrumb = (
+  message: string,
+  category: string,
+  data?: Record<string, unknown>,
+) => {
+  withSentry((Sentry) => {
     Sentry.addBreadcrumb({
       message,
       category,
@@ -100,22 +130,14 @@ export const addSentryBreadcrumb = (message: string, category: string, data?: Re
       data,
       timestamp: Date.now() / 1000,
     });
-  }
+  });
 };
 
-/**
- * Capture exception with context
- */
 export const captureSentryException = (
   error: Error,
-  context?: {
-    component?: string;
-    action?: string;
-    userId?: string;
-    additionalData?: Record<string, unknown>;
-  }
+  context?: SentryContext,
 ) => {
-  if (import.meta.env.MODE === 'production') {
+  withSentry((Sentry) => {
     Sentry.withScope((scope) => {
       if (context?.component) {
         scope.setTag('component', context.component);
@@ -132,23 +154,15 @@ export const captureSentryException = (
 
       Sentry.captureException(error);
     });
-  }
+  });
 };
 
-/**
- * Capture message with context
- */
 export const captureSentryMessage = (
   message: string,
   level: 'info' | 'warning' | 'error' = 'info',
-  context?: {
-    component?: string;
-    action?: string;
-    userId?: string;
-    additionalData?: Record<string, unknown>;
-  }
+  context?: SentryContext,
 ) => {
-  if (import.meta.env.MODE === 'production') {
+  withSentry((Sentry) => {
     Sentry.withScope((scope) => {
       if (context?.component) {
         scope.setTag('component', context.component);
@@ -165,7 +179,6 @@ export const captureSentryMessage = (
 
       Sentry.captureMessage(message, level);
     });
-  }
+  });
 };
 
-export default Sentry;
