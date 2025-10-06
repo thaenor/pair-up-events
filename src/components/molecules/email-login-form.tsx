@@ -75,7 +75,7 @@ const EmailLoginForm: React.FC = React.memo(() => {
       toast.success('Welcome back! You have been signed in successfully.');
       // Redirect to profile page after successful login
       navigate('/profile');
-    } catch (error) {
+    } catch {
       // Error is already handled by AuthProvider and displayed in the UI
     }
   }, [formData, setAllErrors, signInWithEmail, navigate]);

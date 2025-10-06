@@ -33,13 +33,13 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
     try {
         await signOut();
         toast.success('Logged out successfully');
-    } catch (error) {
+    } catch {
         // Error is handled by AuthProvider and will be caught by ErrorBoundary if needed
         toast.error('Failed to log out. Please try again.');
     } finally {
         setIsLoggingOut(false);
     }
-    }, [signOut, user?.uid]);
+    }, [signOut]);
 
     return (
         <nav

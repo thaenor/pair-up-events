@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { MemoryRouter, useLocation } from "react-router-dom";
+import { MemoryRouter, useLocation, useNavigate } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi, type MockedFunction } from "vitest";
 
 import NotFound from "./NotFound";
@@ -9,10 +9,13 @@ vi.mock("react-router-dom", async () => {
     return {
         ...actual,
         useLocation: vi.fn(),
+        useNavigate: vi.fn(),
     };
 });
 
 describe("NotFound Page", () => {
+    const mockNavigate = vi.fn();
+
     beforeEach(() => {
         (useLocation as MockedFunction<typeof useLocation>).mockReturnValue({
             pathname: "/some-random-path",
@@ -21,11 +24,8 @@ describe("NotFound Page", () => {
             search: "",
             hash: "",
         });
-        // Mock window.location.href
-        Object.defineProperty(window, "location", {
-            writable: true,
-            value: { href: "" },
-        });
+        (useNavigate as MockedFunction<typeof useNavigate>).mockReturnValue(mockNavigate);
+        mockNavigate.mockClear();
     });
 
     it("renders the 404 error message", () => {
@@ -50,6 +50,6 @@ describe("NotFound Page", () => {
             </MemoryRouter>
         );
         fireEvent.click(screen.getByText("Return Home"));
-        expect(window.location.href).toBe("/");
+        expect(mockNavigate).toHaveBeenCalledWith("/");
     });
 });

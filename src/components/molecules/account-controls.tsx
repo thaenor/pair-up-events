@@ -23,10 +23,10 @@ const AccountControls: React.FC<AccountControlsProps> = React.memo(({ user }) =>
     try {
       await signOut();
       navigate('/');
-    } catch (error) {
+    } catch {
       // Error is handled by AuthProvider and will be caught by ErrorBoundary if needed
     }
-  }, [signOut, navigate, user?.uid]);
+  }, [signOut, navigate]);
 
   const handleResetPassword = useCallback(async () => {
     if (!user?.email) return;
@@ -35,7 +35,7 @@ const AccountControls: React.FC<AccountControlsProps> = React.memo(({ user }) =>
     try {
       await sendPasswordReset(user.email);
       toast.success(PROFILE_MESSAGES.ALERTS.PASSWORD_RESET_SUCCESS);
-    } catch (error) {
+    } catch {
       // Error is handled by AuthProvider and will be caught by ErrorBoundary if needed
       toast.error(PROFILE_MESSAGES.ALERTS.PASSWORD_RESET_ERROR);
     } finally {
@@ -56,7 +56,7 @@ const AccountControls: React.FC<AccountControlsProps> = React.memo(({ user }) =>
       await deleteUserAccount();
       toast.success(PROFILE_MESSAGES.ALERTS.ACCOUNT_DELETE_SUCCESS);
       navigate('/');
-    } catch (error) {
+    } catch {
       // Error is handled by AuthProvider and will be caught by ErrorBoundary if needed
       toast.error(PROFILE_MESSAGES.ALERTS.ACCOUNT_DELETE_ERROR);
     } finally {

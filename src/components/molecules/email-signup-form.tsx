@@ -56,7 +56,7 @@ const EmailSignupForm: React.FC = React.memo(() => {
       await signUpWithEmail(formData.email, formData.password);
       setRegistrationSuccess(true);
       toast.success('Account created successfully! Please check your email to verify your account.');
-    } catch (error) {
+    } catch {
       // Error is already handled by AuthProvider and displayed in the UI
     }
   }, [formData, validateForm, setAllErrors, signUpWithEmail]);
