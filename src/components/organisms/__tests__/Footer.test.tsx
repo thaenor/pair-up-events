@@ -4,17 +4,12 @@ import { MemoryRouter } from "react-router-dom";
 
 import Footer from "../Footer";
 
-const scrollToElement = vi.fn();
-
-vi.mock("@/hooks/useScrollToElement", () => ({
-  useScrollToElement: () => ({
-    scrollToElement,
-  }),
-}));
-
 describe("Footer", () => {
   beforeEach(() => {
-    scrollToElement.mockClear();
+    // Mock document.getElementById for testing
+    vi.spyOn(document, 'getElementById').mockReturnValue({
+      scrollIntoView: vi.fn()
+    } as HTMLElement);
   });
 
   it("renders navigation groups and legal links", () => {
@@ -35,6 +30,11 @@ describe("Footer", () => {
   });
 
   it("smooth scrolls to the target section when internal links are clicked", () => {
+    const mockScrollIntoView = vi.fn();
+    vi.spyOn(document, 'getElementById').mockReturnValue({
+      scrollIntoView: mockScrollIntoView
+    } as HTMLElement);
+
     render(
       <MemoryRouter>
         <Footer />
@@ -47,6 +47,10 @@ describe("Footer", () => {
 
     fireEvent.click(joinLink);
 
-    expect(scrollToElement).toHaveBeenCalledWith("early-access", { block: "start" });
+    expect(document.getElementById).toHaveBeenCalledWith("early-access");
+    expect(mockScrollIntoView).toHaveBeenCalledWith({
+      behavior: 'smooth',
+      block: 'start'
+    });
   });
 });

@@ -6,13 +6,13 @@ import {
     LandingPageLayout,
     SkipLink,
 } from "@/components";
-import { useScrollToElement } from "@/hooks/useScrollToElement";
 
 const Index = () => {
-    const { scrollToElement, createElementRef } = useScrollToElement();
-
     const handleScrollToEarlyAccess = () => {
-        scrollToElement("early-access");
+        document.getElementById("early-access")?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
     };
 
     return (
@@ -22,9 +22,7 @@ const Index = () => {
                 <HeroSection onScrollToEarlyAccess={handleScrollToEarlyAccess} />
                 <HowItWorksSection />
                 <BenefitsSection />
-                <div ref={createElementRef("early-access")}>
-                    <EarlyAccessSection />
-                </div>
+                <EarlyAccessSection />
             </main>
         </LandingPageLayout>
     );
