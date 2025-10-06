@@ -15,9 +15,9 @@ import "./lib/sentry"; // Initialize Sentry
 
 const App = () => {
   const appContent = (
-    <ErrorBoundary>
-      <AuthProvider>
-        <BrowserRouter future={{ v7_relativeSplatPath: true }}>
+    <AuthProvider>
+      <BrowserRouter future={{ v7_relativeSplatPath: true }}>
+        <ErrorBoundary>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/signup" element={<AuthPage />} />
@@ -36,9 +36,9 @@ const App = () => {
             richColors={true}
             closeButton={true}
           />
-        </BrowserRouter>
-      </AuthProvider>
-    </ErrorBoundary>
+        </ErrorBoundary>
+      </BrowserRouter>
+    </AuthProvider>
   );
 
   // Only wrap with Sentry error boundary in production
