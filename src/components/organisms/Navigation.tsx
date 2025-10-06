@@ -1,9 +1,10 @@
 import React, { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 import Logo from "../atoms/Logo";
-import { useAuth } from "@/hooks/useAuth";
 import LoadingSpinner from "../atoms/LoadingSpinner";
+import { useAuth } from "@/hooks/useAuth";
 
 export interface NavigationProps {
     isLoggedIn?: boolean;
@@ -19,8 +20,8 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
 
     const handleGetStarted = useCallback(() => {
         if (user) {
-            // User is logged in, redirect to early access form
-            window.location.href = 'https://forms.gle/F6xptEXPLA8wEpTp7';
+            // User is logged in, redirect to profile page
+            navigate('/profile');
         } else {
             // User is not logged in, redirect to signup
             navigate('/signup');
@@ -29,15 +30,15 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
 
     const handleLogout = useCallback(async () => {
         setIsLoggingOut(true);
-        try {
-            await signOut();
-            // TODO: Replace with proper toast notification
-            // toast.success('Logged out successfully');
-        }
-            // TODO: handle error with proper toast notification
-         finally {
-            setIsLoggingOut(false);
-        }
+    try {
+        await signOut();
+        toast.success('Logged out successfully');
+    } catch {
+        // Error is handled by AuthProvider and will be caught by ErrorBoundary if needed
+        toast.error('Failed to log out. Please try again.');
+    } finally {
+        setIsLoggingOut(false);
+    }
     }, [signOut]);
 
     return (
@@ -48,25 +49,28 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
                 <Logo size="md" />
 
-                <div className="hidden md:flex items-center gap-6">
+                <div className="hidden md:flex items-center gap-6" role="menubar">
                     <a
                         href="#how-it-works"
-                        className="text-pairup-cream hover:text-pairup-yellow duration-300"
+                        className="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
                         aria-label="Learn how Pair Up Events works"
+                        role="menuitem"
                     >
                         How It Works
                     </a>
                     <a
                         href="#benefits"
-                        className="text-pairup-cream hover:text-pairup-yellow duration-300"
+                        className="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
                         aria-label="Learn about the benefits of Pair Up Events"
+                        role="menuitem"
                     >
                         Benefits
                     </a>
                     <a
                         href="#early-access"
-                        className="text-pairup-cream hover:text-pairup-yellow duration-300"
+                        className="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
                         aria-label="Sign up for early access to Pair Up Events"
+                        role="menuitem"
                     >
                         Early Access
                     </a>
@@ -76,7 +80,7 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
                     {user ? (
                         // User is logged in
                         <>
-                            <span className="text-pairup-cream text-sm">
+                            <span className="text-pairup-cream text-sm" aria-live="polite">
                                 Welcome, {user.displayName || user.email}
                             </span>
                             <button
@@ -87,8 +91,8 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
                             >
                                 {isLoggingOut ? (
                                     <>
-                                        <LoadingSpinner size="sm" className="mr-2" />
-                                        Logging out...
+                                        <LoadingSpinner size="sm" className="mr-2" aria-hidden="true" />
+                                        <span aria-live="polite">Logging out...</span>
                                     </>
                                 ) : (
                                     'Logout'

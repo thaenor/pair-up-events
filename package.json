@@ -9,10 +9,11 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest",
-    "coverage": "vitest run --coverage"
+    "test": "vitest run",
+    "ci": "npm run build && npm run lint && npm run test"
   },
   "dependencies": {
+    "@sentry/react": "^10.17.0",
     "clsx": "^2.1.1",
     "firebase": "^12.3.0",
     "jsdom": "^26.1.0",
@@ -20,6 +21,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.2",
+    "sonner": "^2.0.7",
     "tailwind-merge": "^2.5.2"
   },
   "devDependencies": {

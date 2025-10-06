@@ -54,11 +54,11 @@ Pair Up Events is a marketing site and authentication experience for a social pl
    ```bash
    npm install
    ```
-2. Copy the environment template and provide your Firebase credentials:
+2. Copy the environment template and provide your credentials:
    ```bash
    cp .env.example .env.local
    ```
-3. Update `.env.local` with the Firebase values for your project. See [FIREBASE_SETUP.md](./FIREBASE_SETUP.md) for step-by-step guidance, including OAuth redirect configuration.
+3. Update `.env.local` with the Firebase and Sentry values for your project. See [FIREBASE_SETUP.md](./FIREBASE_SETUP.md) for step-by-step guidance, including OAuth redirect configuration.
 
 ### Running the app
 
@@ -87,18 +87,17 @@ Design references are available inside [`Designs/`](./Designs/).
 Always ensure that linting, tests, and builds succeed before opening a pull request:
 
 ```bash
-npm run lint -- --fix
-npm test
-npm run build
+npm run ci
 ```
 
-CI pipelines expect all three commands to pass.
+This single command runs all quality checks (linting, testing, and building) that CI pipelines expect to pass. Use this command every time you make changes to validate everything is working as expected.
 
 ## Deployment Notes
 
 - Ensure Firebase Authentication is configured for the providers exposed in the UI.
-- Provide the required Firebase environment variables in your deployment platform.
+- Provide the required Firebase and Sentry environment variables in your deployment platform.
 - If you customise the early access form, update `src/lib/config.ts` with the new Brevo embed URL.
+- See [GITHUB_SECRETS_SETUP.md](./GITHUB_SECRETS_SETUP.md) for detailed deployment configuration.
 
 With the prerequisites in place, you can iterate on the Pair Up Events experience or extend it with additional routes and Firebase-backed functionality.
 
@@ -134,10 +133,8 @@ This document defines the operational protocol for the Gemini AI code agent. Adh
 2. **Readability First:** Code MUST be written for humans first, machines second. Prioritize clarity, simplicity, and maintainability.
 3. **Adhere to Existing Patterns:** Replicate existing conventions. Consistency is key.
 4. **Self-Correction & Review:** After any code modification, act as a strict code reviewer. Critically assess your own changes.
-5. **Automated Verification:** ALWAYS run the following commands and resolve *all* reported issues before considering a task complete:
-   * `npm run lint -- --fix`
-   * `npm test`
-   * `npm run build`
+5. **Automated Verification:** ALWAYS run the following command and resolve *all* reported issues before considering a task complete:
+   * `npm run ci`
 
 ---
 

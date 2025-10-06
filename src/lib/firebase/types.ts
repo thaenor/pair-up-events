@@ -15,6 +15,8 @@ export interface AuthContextType extends AuthState {
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signUpWithEmail: (email: string, password: string) => Promise<void>;
   sendEmailVerification: () => Promise<void>;
+  sendPasswordReset: (email: string) => Promise<void>;
+  deleteUserAccount: () => Promise<void>;
   signOut: () => Promise<void>;
   clearError: () => void;
 }

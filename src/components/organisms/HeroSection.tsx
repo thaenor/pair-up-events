@@ -3,11 +3,15 @@ import React from "react";
 
 interface HeroSectionProps {
     onCreateEvent?: () => void;
+    onScrollToEarlyAccess?: () => void;
 }
 
-const HeroSection: React.FC<HeroSectionProps> = () => {
+const HeroSection: React.FC<HeroSectionProps> = ({ onScrollToEarlyAccess }) => {
     return (
-    <section className="relative min-h-screen flex items-center justify-center bg-pairup-cream md:mt-0">
+    <section
+        className="relative min-h-screen flex items-center justify-center bg-pairup-cream md:mt-0"
+        aria-labelledby="hero-heading"
+    >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 md:pt-20">
                 <div className="grid md:grid-cols-2 gap-6 items-center">
                     <div
@@ -15,7 +19,10 @@ const HeroSection: React.FC<HeroSectionProps> = () => {
                         className="animate-fade-in mt-16 sm:mt-64 md:mt-0 relative z-10"
                         style={{ animationDelay: "0.2s" }}
                     >
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                        <h1
+                            id="hero-heading"
+                            className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
+                        >
                             <span className="text-pairup-darkBlue font-bold">
                                 Grab your friend
                             </span>
@@ -43,7 +50,7 @@ const HeroSection: React.FC<HeroSectionProps> = () => {
                             <button
                                 id="search-listing-btn"
                                 className="btn-cta btn-cta--yellow"
-                                onClick={() => { document.getElementById('early-access')?.scrollIntoView({ behavior: 'smooth' }); }}
+                                onClick={onScrollToEarlyAccess}
                             >
                                 Search for existing listings
                                 <ArrowRight size={18} />
