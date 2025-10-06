@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { User } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { Key, LogOut, Trash2, AlertTriangle } from 'lucide-react';
@@ -135,9 +136,9 @@ const AccountControls: React.FC<AccountControlsProps> = React.memo(({ user }) =>
       </div>
 
       {/* Delete Account Confirmation Modal */}
-      {showDeleteConfirmation && (
+      {showDeleteConfirmation && createPortal(
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4"
           onClick={handleDeleteAccountCancel}
           role="dialog"
           aria-modal="true"
@@ -200,7 +201,8 @@ const AccountControls: React.FC<AccountControlsProps> = React.memo(({ user }) =>
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

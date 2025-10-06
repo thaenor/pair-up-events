@@ -319,17 +319,6 @@ const EmailSignupForm: React.FC = React.memo(() => {
             </p>
           </div>
 
-          {/* Terms and Privacy */}
-          <p className="text-xs text-gray-400 text-center">
-            By creating an account, you agree to our{' '}
-            <Link to="/terms-of-service" className="text-pairup-cyan hover:underline">
-              Terms of Service
-            </Link>{' '}
-            and{' '}
-            <Link to="/privacy-policy" className="text-pairup-cyan hover:underline">
-              Privacy Policy
-            </Link>
-          </p>
         </>
       )}
     </form>

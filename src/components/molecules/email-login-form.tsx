@@ -13,7 +13,7 @@ type LoginFormData = {
 };
 
 const EmailLoginForm: React.FC = React.memo(() => {
-  const { signInWithEmail, loading, error, clearError } = useAuth();
+  const { signInWithEmail, sendPasswordReset, loading, error, clearError } = useAuth();
   const navigate = useNavigate();
 
   // Simple validation for login form
@@ -84,6 +84,29 @@ const EmailLoginForm: React.FC = React.memo(() => {
   const togglePasswordVisibility = useCallback(() => {
     setShowPassword(prev => !prev);
   }, []);
+
+  // Handle password reset
+  const handlePasswordReset = useCallback(async (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    if (!formData.email) {
+      toast.error('Please enter your email address first');
+      return;
+    }
+
+    // Basic email validation
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+
+    try {
+      await sendPasswordReset(formData.email);
+      toast.success('Password reset email sent! Please check your inbox.');
+    } catch {
+      // Error is already handled by AuthProvider and displayed in the UI
+    }
+  }, [formData.email, sendPasswordReset]);
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-6">
@@ -200,6 +223,21 @@ const EmailLoginForm: React.FC = React.memo(() => {
           >
             Create one here
           </Link>
+        </p>
+      </div>
+
+      {/* Password Reset Link */}
+      <div className="text-center">
+        <p className="text-sm text-gray-400">
+          Forgot your password?{' '}
+          <button
+            type="button"
+            onClick={handlePasswordReset}
+            className="text-pairup-cyan hover:underline font-medium bg-transparent border-none p-0 cursor-pointer"
+            disabled={loading}
+          >
+            Reset it here
+          </button>
         </p>
       </div>
     </form>

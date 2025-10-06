@@ -73,6 +73,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       addSentryBreadcrumb('Sign in failed', 'auth', { email, error: error instanceof Error ? error.message : 'Unknown error' });
       handleAuthError(error);
       throw error;
+    } finally {
+      setAuthState(prev => ({ ...prev, loading: false }));
     }
   };
 
@@ -93,6 +95,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       addSentryBreadcrumb('Sign up failed', 'auth', { email, error: error instanceof Error ? error.message : 'Unknown error' });
       handleAuthError(error);
       throw error;
+    } finally {
+      setAuthState(prev => ({ ...prev, loading: false }));
     }
   };
 
@@ -107,6 +111,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error: unknown) {
       handleAuthError(error);
       throw error;
+    } finally {
+      setAuthState(prev => ({ ...prev, loading: false }));
     }
   };
 
@@ -118,6 +124,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error: unknown) {
       handleAuthError(error);
       throw error;
+    } finally {
+      setAuthState(prev => ({ ...prev, loading: false }));
     }
   };
 
@@ -129,6 +137,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error: unknown) {
       handleAuthError(error);
       throw error;
+    } finally {
+      setAuthState(prev => ({ ...prev, loading: false }));
     }
   };
 
@@ -143,6 +153,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error: unknown) {
       handleAuthError(error);
       throw error;
+    } finally {
+      setAuthState(prev => ({ ...prev, loading: false }));
     }
   };
 
