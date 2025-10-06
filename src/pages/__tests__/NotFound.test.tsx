@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter, useLocation, useNavigate } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi, type MockedFunction } from "vitest";
 
-import NotFound from "./NotFound";
+import NotFound from "../NotFound";
 
 vi.mock("react-router-dom", async () => {
     const actual = await vi.importActual("react-router-dom");

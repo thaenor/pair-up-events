@@ -109,7 +109,11 @@ const EmailLoginForm: React.FC = React.memo(() => {
   }, [formData.email, sendPasswordReset]);
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-6">
+    <form
+      onSubmit={handleSubmit}
+      className="w-full max-w-sm space-y-6"
+      data-testid="login-form"
+    >
       {/* Info Note */}
       <div className="bg-pairup-cyan/10 border border-pairup-cyan/30 rounded-md p-3 mb-4">
         <p className="text-sm text-pairup-cream">
@@ -138,13 +142,19 @@ const EmailLoginForm: React.FC = React.memo(() => {
             aria-describedby={errors.email ? 'email-error email-help' : 'email-help'}
             placeholder="Enter your email"
             disabled={loading}
+            data-testid="login-email-input"
           />
         </div>
         <div id="email-help" className="sr-only">
           Enter your email address to sign in
         </div>
         {errors.email && (
-          <p id="email-error" className="text-red-400 text-sm" role="alert">
+          <p
+            id="email-error"
+            className="text-red-400 text-sm"
+            role="alert"
+            data-testid="login-email-error"
+          >
             {errors.email}
           </p>
         )}
@@ -171,6 +181,7 @@ const EmailLoginForm: React.FC = React.memo(() => {
             aria-describedby={errors.password ? 'password-error password-help' : 'password-help'}
             placeholder="Enter your password"
             disabled={loading}
+            data-testid="login-password-input"
           />
           <button
             type="button"
@@ -179,6 +190,7 @@ const EmailLoginForm: React.FC = React.memo(() => {
             disabled={loading}
             aria-label={showPassword ? 'Hide password' : 'Show password'}
             aria-pressed={showPassword}
+            data-testid="login-password-toggle"
           >
             {showPassword ? (
               <EyeOff className="h-5 w-5 text-gray-400 hover:text-white transition-colors" />
@@ -191,7 +203,12 @@ const EmailLoginForm: React.FC = React.memo(() => {
           Enter your password to sign in
         </div>
         {errors.password && (
-          <p id="password-error" className="text-red-400 text-sm" role="alert">
+          <p
+            id="password-error"
+            className="text-red-400 text-sm"
+            role="alert"
+            data-testid="login-password-error"
+          >
             {errors.password}
           </p>
         )}
@@ -202,6 +219,7 @@ const EmailLoginForm: React.FC = React.memo(() => {
         type="submit"
         disabled={loading}
         className="w-full flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-pairup-darkBlue bg-pairup-cyan hover:bg-pairup-cyan/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pairup-cyan disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        data-testid="login-submit-button"
       >
         {loading ? (
           <>
@@ -220,6 +238,7 @@ const EmailLoginForm: React.FC = React.memo(() => {
           <Link
             to="/signup"
             className="text-pairup-cyan hover:underline font-medium"
+            data-testid="login-signup-link"
           >
             Create one here
           </Link>
@@ -235,6 +254,7 @@ const EmailLoginForm: React.FC = React.memo(() => {
             onClick={handlePasswordReset}
             className="text-pairup-cyan hover:underline font-medium bg-transparent border-none p-0 cursor-pointer"
             disabled={loading}
+            data-testid="password-reset-button"
           >
             Reset it here
           </button>

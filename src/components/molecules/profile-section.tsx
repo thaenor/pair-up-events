@@ -10,7 +10,10 @@ export type ProfileSectionProps = {
 
 const ProfileSection: React.FC<ProfileSectionProps> = React.memo(({ user }) => {
   return (
-    <div className="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg p-6 mb-8">
+    <div
+      className="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg p-6 mb-8"
+      data-testid="profile-section"
+    >
       <h3 className="text-lg font-semibold text-pairup-darkBlue mb-4 flex items-center">
         <UserIcon className="h-5 w-5 mr-2 text-pairup-cyan" />
         Account Information
@@ -21,7 +24,9 @@ const ProfileSection: React.FC<ProfileSectionProps> = React.memo(({ user }) => {
           <Mail className="h-5 w-5 mr-3 text-gray-600" />
           <div>
             <p className="text-sm text-gray-600">Email</p>
-            <p className="text-pairup-darkBlue">{user.email}</p>
+            <p className="text-pairup-darkBlue" data-testid="profile-email">
+              {user.email}
+            </p>
           </div>
         </div>
 
@@ -29,7 +34,12 @@ const ProfileSection: React.FC<ProfileSectionProps> = React.memo(({ user }) => {
           <Calendar className="h-5 w-5 mr-3 text-gray-600" />
           <div>
             <p className="text-sm text-gray-600">Account Created</p>
-            <p className="text-pairup-darkBlue">{formatDate(user.metadata?.creationTime)}</p>
+            <p
+              className="text-pairup-darkBlue"
+              data-testid="profile-created-at"
+            >
+              {formatDate(user.metadata?.creationTime)}
+            </p>
           </div>
         </div>
 
@@ -38,7 +48,12 @@ const ProfileSection: React.FC<ProfileSectionProps> = React.memo(({ user }) => {
             <Calendar className="h-5 w-5 mr-3 text-gray-600" />
             <div>
               <p className="text-sm text-gray-600">Last Sign In</p>
-              <p className="text-pairup-darkBlue">{formatDate(user.metadata.lastSignInTime)}</p>
+              <p
+                className="text-pairup-darkBlue"
+                data-testid="profile-last-sign-in"
+              >
+                {formatDate(user.metadata.lastSignInTime)}
+              </p>
             </div>
           </div>
         )}
