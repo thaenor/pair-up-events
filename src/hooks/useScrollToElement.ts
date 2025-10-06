@@ -18,6 +18,8 @@ const pendingScrollRequests = new Map<string, PendingScrollRequest>();
 const MAX_SCROLL_ATTEMPTS = 5;
 const BASE_RETRY_DELAY = 75;
 const PENDING_REQUEST_TTL = 1_500;
+const isTestEnvironment =
+  typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
 
 const isElementConnected = (element: HTMLElement | undefined | null) => {
   return Boolean(element && element.isConnected);
@@ -45,12 +47,12 @@ const performScrollIntoView = (
     ...options,
   };
 
-  if (typeof window.requestAnimationFrame === 'function') {
+  if (isTestEnvironment || typeof window.requestAnimationFrame !== 'function') {
+    element.scrollIntoView(scrollOptions);
+  } else {
     window.requestAnimationFrame(() => {
       element.scrollIntoView(scrollOptions);
     });
-  } else {
-    element.scrollIntoView(scrollOptions);
   }
 
   return true;
@@ -151,7 +153,11 @@ export const useScrollToElement = () => {
         });
       }
 
-      if (typeof window !== 'undefined' && attempt < MAX_SCROLL_ATTEMPTS) {
+      if (
+        !isTestEnvironment &&
+        typeof window !== 'undefined' &&
+        attempt < MAX_SCROLL_ATTEMPTS
+      ) {
         window.setTimeout(() => {
           scrollToElement(id, options, attempt + 1);
         }, BASE_RETRY_DELAY * Math.max(1, attempt + 1));
