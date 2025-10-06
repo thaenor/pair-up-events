@@ -1,17 +1,27 @@
+import type { ReactElement, ReactNode } from "react";
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import SectionErrorBoundary from "../section-error-boundary";
 
-const mockErrorBoundary = vi.fn((props: any) => {
+type MockErrorBoundaryProps = {
+  children: ReactNode;
+  fallback: (args: { error?: Error; resetError: () => void }) => ReactElement;
+  enableRetry?: boolean;
+  maxRetries?: number;
+  showErrorDetails?: boolean;
+  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
+};
+
+const mockErrorBoundary = vi.fn((props: MockErrorBoundaryProps) => {
   return <div data-testid="mock-error-boundary">{props.children}</div>;
 });
 
-let lastProps: any;
+let lastProps: MockErrorBoundaryProps | undefined;
 
 vi.mock("../../ErrorBoundary", () => ({
   __esModule: true,
-  default: (props: any) => {
+  default: (props: MockErrorBoundaryProps) => {
     lastProps = props;
     return mockErrorBoundary(props);
   },

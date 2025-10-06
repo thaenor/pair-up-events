@@ -1,8 +1,10 @@
+import type { ReactElement } from "react";
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const scrollToElement = vi.fn();
-const mockNavigation = vi.fn();
+type NavigationProps = { onGetStarted: () => void };
+const mockNavigation = vi.fn<(props: NavigationProps) => ReactElement | null>();
 const mockFooter = vi.fn(() => <div data-testid="mock-footer">Footer</div>);
 
 vi.mock("@/hooks/useScrollToElement", () => ({
@@ -11,7 +13,7 @@ vi.mock("@/hooks/useScrollToElement", () => ({
 
 vi.mock("../../organisms/Navigation", () => ({
   __esModule: true,
-  default: (props: any) => mockNavigation(props),
+  default: (props: NavigationProps) => mockNavigation(props),
 }));
 
 vi.mock("../../organisms/Footer", () => ({
@@ -26,7 +28,7 @@ describe("LandingPageLayout", () => {
     scrollToElement.mockClear();
     mockNavigation.mockReset();
     mockFooter.mockClear();
-    mockNavigation.mockImplementation(({ onGetStarted }: { onGetStarted: () => void }) => (
+    mockNavigation.mockImplementation(({ onGetStarted }) => (
       <button data-testid="mock-navigation" onClick={onGetStarted}>
         Navigation
       </button>
