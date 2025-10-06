@@ -46,7 +46,7 @@ export const canUseWebShare = (shareData: ShareData): boolean => {
 export const shareOrCopyToClipboard = async (shareData: ShareData): Promise<void> => {
   try {
     if (canUseWebShare(shareData)) {
-      await navigator.share!(shareData);
+      await navigator.share?.(shareData);
       return;
     }
 
