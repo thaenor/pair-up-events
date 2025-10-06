@@ -43,6 +43,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onScrollToEarlyAccess }) => {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="btn-cta btn-cta--cyan"
+                                data-testid="create-listing-link"
                             >
                                 Create a new listing
                                 <ArrowRight size={18} />
@@ -51,6 +52,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onScrollToEarlyAccess }) => {
                                 id="search-listing-btn"
                                 className="btn-cta btn-cta--yellow"
                                 onClick={onScrollToEarlyAccess}
+                                data-testid="search-listings-button"
                             >
                                 Search for existing listings
                                 <ArrowRight size={18} />

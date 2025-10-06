@@ -96,7 +96,10 @@ const AccountControls: React.FC<AccountControlsProps> = React.memo(({ user }) =>
   }, [showDeleteConfirmation, isDeleting]);
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg p-6 mb-8">
+    <div
+      className="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg p-6 mb-8"
+      data-testid="account-controls"
+    >
       <h3 className="text-lg font-semibold text-pairup-darkBlue mb-4">Account Controls</h3>
 
       <div className="space-y-4">
@@ -104,6 +107,7 @@ const AccountControls: React.FC<AccountControlsProps> = React.memo(({ user }) =>
           onClick={handleResetPassword}
           disabled={isResettingPassword}
           className="w-full flex items-center justify-center px-4 py-3 border border-pairup-cyan text-pairup-cyan rounded-lg hover:bg-pairup-cyan/10 focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          data-testid="account-controls-reset-password"
         >
           {isResettingPassword ? (
             <LoadingSpinner size="sm" className="mr-2" />
@@ -116,6 +120,7 @@ const AccountControls: React.FC<AccountControlsProps> = React.memo(({ user }) =>
         <button
           onClick={handleSignOut}
           className="w-full flex items-center justify-center px-4 py-3 border border-gray-500 text-gray-600 rounded-lg hover:bg-gray-500/10 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+          data-testid="account-controls-sign-out"
         >
           <LogOut className="h-4 w-4 mr-2" />
           Sign Out
@@ -125,6 +130,7 @@ const AccountControls: React.FC<AccountControlsProps> = React.memo(({ user }) =>
           onClick={handleDeleteAccountClick}
           disabled={isDeleting}
           className="w-full flex items-center justify-center px-4 py-3 border border-red-500 text-red-600 rounded-lg hover:bg-red-500/10 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          data-testid="account-controls-delete"
         >
           {isDeleting ? (
             <LoadingSpinner size="sm" className="mr-2" />
@@ -144,11 +150,13 @@ const AccountControls: React.FC<AccountControlsProps> = React.memo(({ user }) =>
           aria-modal="true"
           aria-labelledby="delete-account-title"
           aria-describedby="delete-account-description"
+          data-testid="delete-confirmation-overlay"
         >
           <div
             className="bg-white rounded-xl shadow-2xl max-w-md w-full p-8 mx-4 transform transition-all duration-200 scale-100"
             onClick={(e) => e.stopPropagation()}
             tabIndex={-1}
+            data-testid="delete-confirmation-modal"
           >
             {/* Modal Header */}
             <div className="flex items-center mb-6">
@@ -179,6 +187,7 @@ const AccountControls: React.FC<AccountControlsProps> = React.memo(({ user }) =>
                 onClick={handleDeleteAccountCancel}
                 disabled={isDeleting}
                 className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
+                data-testid="delete-confirmation-cancel"
               >
                 Cancel
               </button>
@@ -186,6 +195,7 @@ const AccountControls: React.FC<AccountControlsProps> = React.memo(({ user }) =>
                 onClick={handleDeleteAccountConfirm}
                 disabled={isDeleting}
                 className="flex-1 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium flex items-center justify-center"
+                data-testid="delete-confirmation-confirm"
               >
                 {isDeleting ? (
                   <>

@@ -79,6 +79,7 @@ const EmailSignupForm: React.FC = React.memo(() => {
       className="w-full max-w-sm space-y-6"
       aria-label="Create your PairUp Events account"
       noValidate
+      data-testid="signup-form"
     >
       {/* Success Message */}
       {registrationSuccess && (
@@ -87,6 +88,7 @@ const EmailSignupForm: React.FC = React.memo(() => {
           role="alert"
           aria-live="polite"
           aria-atomic="true"
+          data-testid="signup-success"
         >
           <div className="flex items-center">
             <div className="flex-shrink-0">
@@ -179,13 +181,19 @@ const EmailSignupForm: React.FC = React.memo(() => {
                 placeholder="Enter your email"
                 disabled={loading}
                 autoComplete="email"
+                data-testid="signup-email-input"
               />
             </div>
             <div id="email-help" className="sr-only">
               Enter a valid email address for your account
             </div>
             {errors.email && (
-              <p id="email-error" className="text-red-400 text-sm" role="alert">
+              <p
+                id="email-error"
+                className="text-red-400 text-sm"
+                role="alert"
+                data-testid="signup-email-error"
+              >
                 {errors.email}
               </p>
             )}
@@ -214,6 +222,7 @@ const EmailSignupForm: React.FC = React.memo(() => {
                 placeholder="Create a password"
                 disabled={loading}
                 autoComplete="new-password"
+                data-testid="signup-password-input"
               />
               <button
                 type="button"
@@ -222,6 +231,7 @@ const EmailSignupForm: React.FC = React.memo(() => {
                 disabled={loading}
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
                 aria-pressed={showPassword}
+                data-testid="signup-password-toggle"
               >
                 {showPassword ? (
                   <EyeOff className="h-5 w-5 text-gray-400 hover:text-white transition-colors" aria-hidden="true" />
@@ -234,7 +244,12 @@ const EmailSignupForm: React.FC = React.memo(() => {
               Password must be at least 8 characters with uppercase, lowercase, and numbers
             </div>
             {errors.password && (
-              <p id="password-error" className="text-red-400 text-sm" role="alert">
+              <p
+                id="password-error"
+                className="text-red-400 text-sm"
+                role="alert"
+                data-testid="signup-password-error"
+              >
                 {errors.password}
               </p>
             )}
@@ -263,6 +278,7 @@ const EmailSignupForm: React.FC = React.memo(() => {
                 placeholder="Confirm your password"
                 disabled={loading}
                 autoComplete="new-password"
+                data-testid="signup-confirm-password-input"
               />
               <button
                 type="button"
@@ -271,6 +287,7 @@ const EmailSignupForm: React.FC = React.memo(() => {
                 disabled={loading}
                 aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
                 aria-pressed={showConfirmPassword}
+                data-testid="signup-confirm-password-toggle"
               >
                 {showConfirmPassword ? (
                   <EyeOff className="h-5 w-5 text-gray-400 hover:text-white transition-colors" aria-hidden="true" />
@@ -283,7 +300,12 @@ const EmailSignupForm: React.FC = React.memo(() => {
               Re-enter your password to confirm it matches
             </div>
             {errors.confirmPassword && (
-              <p id="confirm-password-error" className="text-red-400 text-sm" role="alert">
+              <p
+                id="confirm-password-error"
+                className="text-red-400 text-sm"
+                role="alert"
+                data-testid="signup-confirm-password-error"
+              >
                 {errors.confirmPassword}
               </p>
             )}
@@ -295,6 +317,7 @@ const EmailSignupForm: React.FC = React.memo(() => {
             disabled={loading}
             className="w-full flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-pairup-darkBlue bg-pairup-cyan hover:bg-pairup-cyan/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pairup-cyan disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             aria-describedby="submit-help"
+            data-testid="signup-submit-button"
           >
             {loading ? (
               <>
