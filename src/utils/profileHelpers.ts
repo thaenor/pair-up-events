@@ -37,7 +37,7 @@ export const createInviteMessage = (): string => {
  * Checks if the Web Share API is available and can share the given data
  */
 export const canUseWebShare = (shareData: ShareData): boolean => {
-  return !!(navigator.share && navigator.canShare?.(shareData));
+  return !!(navigator.share && typeof navigator.canShare === 'function' && navigator.canShare(shareData));
 };
 
 /**
