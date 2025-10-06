@@ -4,7 +4,7 @@
 This review captures the immediate hardening completed during this task and additional recommendations for operating the application securely in production. The scope covered the static entry point, client-side authentication flows, and third-party integrations such as Google Tag Manager (GTM) and Firebase Authentication.
 
 ## Hardening Completed
-- **Content Security Policy (CSP):** Added a restrictive CSP that limits all resource types to trusted origins, blocks plugin usage, enforces same-origin framing rules, and upgrades insecure requests. This mitigates the risk of XSS, clickjacking, and mixed-content issues.
+- **Content Security Policy (CSP):** Added a restrictive CSP that limits all resource types to trusted origins, blocks plugin usage, enforces same-origin framing rules, and (in production builds) upgrades insecure requests. This mitigates the risk of XSS, clickjacking, and mixed-content issues without breaking the HTTP-only local development workflow.
 - **Externalized GTM bootstrap script:** Moved the GTM initialization into a standalone asset that can be governed by the CSP without falling back to `unsafe-inline` permissions.
 - **Strict referrer policy:** Ensures that only the origin is shared with third-party destinations, reducing leakage of sensitive route information.
 
