@@ -90,74 +90,161 @@ Matching logic remains pair-based, not individual-based.
 | **Families & Themed Pairs**     | Parent-child, siblings, twins, etc.                  | Playful learning and shared bonding |
 | **Activity Enthusiasts**        | Users who enjoy active, experiential socializing     | Real-world engagement               |
 
-**Primary Use Cases:**
-**Use Case 1: Join an Existing Event**
+# 🤝 Pair Up Events — Primary Use Cases
 
-Actors: Pair (two registered users)
-Flow:
+Pair Up Events is a web platform that connects two pairs (duos) of people to attend events or experiences together.  
+The core user experience is centered around **exploring**, **creating**, **joining**, and **chatting** around shared experiences.  
+There are no individual participants — every confirmed event involves **two duos (four people total)**.
 
-Pair logs in.
+---
 
-Pair browses curated or user-generated events filtered by activity type, distance, and date.
+## 👥 User Roles
 
-Pair selects an event.
+| Label | Description |
+|--------|--------------|
+| **User A** | Creator of a new event or experience. Starts the process by choosing an activity idea, location, and date. |
+| **User B** | The first invited user who joins User A’s event to form a confirmed duo. |
+| **User C** | A user who discovers a live event (created by A + B) through the Explore page and decides to join it with their own duo. |
+| **User D** | The partner of User C — confirms participation, finalizing the group of four. |
 
-If the event has one open slot for another pair → Join request is sent.
+Each confirmed event = **1 Duo (A+B)** + **1 Duo (C+D)**.
 
-If accepted, the two pairs are matched.
+---
 
-In-app chat and event details become available.
+## 🧩 Primary Use Cases
 
-After event completion, both pairs can rate the experience and optionally connect for future events.
+### **Use Case 1 — Explore Experiences**
+- Users (logged-in or logged-out) browse activity cards in their city.
+- Two types of cards exist:
+  1. **Default PairUp Templates** → inspire users to create a new event.
+  2. **User-Created Events** → represent real events by existing duos.
+- Logged-out users see blurred date and location details and are prompted to sign up.
 
+**Goal:** Inspire new sign-ups and encourage event creation.
 
-**Use Case 2: Create a New Event**
+---
 
-Actors: User A (First person of the event creating pair)
-Flow:
+### **Use Case 2 — Create an Event (User A Flow)**
+1. User A chooses a default template or starts from scratch.
+2. Completes event form (activity, date, city, vibe, etc.).
+3. Invites a partner (User B) via a unique link.
+4. Event appears in **Pending** state until User B accepts.
+5. Once User B confirms → Event becomes **Live** and visible in Explore.
 
-User A clicks “Create Event.”
+**Goal:** Enable User A to easily create an activity and form a duo.
 
-System prompts for:
+---
 
-Activity name or tag (e.g., hiking, cooking, Walk around the park)
+### **Use Case 3 — Join an Event as Duo (User C + D Flow)**
+1. User C discovers a live event (A+B) in Explore.
+2. Sends a “Join Request” for their duo.
+3. Invites their own partner (User D) via link.
+4. First User D to accept → pair is locked (C+D confirmed).
+5. A+B receive a notification to accept or decline.
+6. Once approved → event becomes confirmed and visible to all 4 participants.
 
-Description
+**Goal:** Allow new duos to join live experiences and form complete event groups.
 
-Location
+---
 
-Date and time
+### **Use Case 4 — Event Confirmation and Group Chat**
+- When both duos (A+B and C+D) are confirmed, a **group chat** is automatically created.
+- All four participants can communicate to plan details.
+- Chat includes a built-in **report** feature for users or events.
 
-What type of pair does the event creating pair want to meet.
+**Goal:** Facilitate safe, easy coordination and connection between participants.
 
-Event only get created, once user A invites his pair (user B) and user B accepts the invite. 
+---
 
-System publishes event to the event feed.
+### **Use Case 5 — Event Completion and Feedback**
+- After the event date passes:
+  - System prompts all participants to rate the other duo and leave feedback.
+  - Message displayed in chat:
 
-Other pairs can browse and request to join.
+    > “Hope you had a great experience! 🌟  
+    > You can rate the other duo and leave a short comment.  
+    > Want to keep this chat open or archive it? Archived chats will be muted.”
 
-Host pair can accept or reject requests.
+- Users can **keep** or **archive** chats:
+  - Archived chats move under “Past Events” (collapsible section).
+  - Notifications muted but chat remains accessible.
+  - Chats can be reopened at any time.
 
-Once two pairs are confirmed → event status = “Matched.”
+**Goal:** Close the loop after the event, collect feedback, and maintain a positive post-event experience.
 
+---
 
-**Use Case 3: Discovery & Inspiration**
+### **Use Case 6 — Automatic Chat Lifecycle**
+- Chats inactive for **30 days** automatically move to “Archived.”
+- This keeps the chat list clean while preserving history.
+- Users can reopen archived chats at any time.
 
-Actors: Any user
-Flow:
+**Goal:** Maintain a tidy interface and support natural social rhythm.
 
-User opens “Explore” tab.
+---
 
-System displays recommended activities based on:
+### **Use Case 7 — Reporting and Moderation**
+- Users can report:
+  - An event  
+  - Another user  
+- Accessible from:
+  - Direct chat
+  - Event detail page
+  - User profile
+- Reports include category selection (harassment, spam, etc.) and optional comments.
+- Reports are sent to the moderation system for internal review.
 
-Past preferences and ratings
+**Goal:** Provide safety, trust, and accountability across all interactions.
 
-Geolocation
+---
 
-Trending activities
+### **Use Case 8 — Notifications**
+Triggered across web and email:
+- Event invites (B and D)
+- Join requests (A+B)
+- Confirmations, acceptances, declines
+- Event reminders (24h before)
+- Chat messages
+- Feedback prompts (after event)
+- System updates (cancellations, reports)
 
-User can directly create a similar event from a suggestion.
-Note: For all interactions on the platform, users need to be registered. 
+**Goal:** Keep users informed about event progress and communication updates.
+
+---
+
+### **Use Case 9 — Profile and Settings**
+- Users manage profile info, language, and privacy preferences.
+- Access support, guides, and feedback.
+- Log out and data privacy options included.
+
+**Goal:** Provide users control, personalization, and transparency.
+
+---
+
+## ⚙️ Platform Characteristics
+
+- **Platform Type:** Web (desktop + mobile browser responsive)
+- **Access Levels:**  
+  - Logged-out users → limited visibility (blurred details)  
+  - Logged-in users → full access  
+- **Moderation:**  
+  - Self-service creation (no manual approval, similar to Meetup)  
+  - Admin dashboard for user/event reports  
+- **Data Fencing:**  
+  - Location & date blurred for logged-out users (city visible)  
+  - Clear “Visible to logged-in users” indicator improves UX transparency  
+
+---
+
+**Summary:**
+Pair Up Events enables users to:
+1. Discover experiences in their city.  
+2. Create or join an event as a duo.  
+3. Meet another duo to share that experience.  
+4. Chat, rate, and optionally stay connected afterward — all within a safe, intuitive flow.
+
+---
+
 
 **Supported Platforms:**
 - Web (PWA-first, responsive)
@@ -194,26 +281,324 @@ Note: For all interactions on the platform, users need to be registered.
 
 ### Core Journeys
 
-**Event Creation Flow:**
-1. Click “Create Event.”
-2. Fill in title, date, and location.
-3. Add optional image or description.
-4. Share invite link or directly invite users.
-5. Receive confirmation updates via toast notifications and push.
+# 🌍 Pair Up Events — Complete User Journey & Flow (Web Platform)
 
-**Joining an Event:**
-1. Open shared invite link.
-2. Preview event details and participants.
-3. Tap “Join Event.”
-4. Get confirmation and added to the group chat.
+## 🧭 Primary Navigation (for logged-in users)
+1. **Explore** — Browse and search events  
+2. **Events** — Manage created and joined events  
+3. **Chat** — Interact with other duos  
+4. **Profile** — Edit user info, access settings & feedback  
 
-**Chat / Coordination:**
-- Each event auto-generates a group thread.
-- Supports emoji reactions, location sharing, and quick updates.
+---
 
-**Notifications & Feedback:**
-- Toast notifications for success/error.
-- Push or web notifications for time changes or confirmations.
+## 🧱 1. Landing Page (Logged-out Users)
+
+### Main Goals
+- Inspire users to explore events.
+- Convert visitors to sign-ups.
+
+### Visible Elements
+- **Search bar:** Search by city.  
+- **Activity cards:**
+  - Image + title  
+  - Date → “Visible to logged-in users” (blurred)  
+  - Location → City visible, exact place blurred  
+  - If user-created: “Created by [Firstname]”  
+  - If default listing: “Create this experience” button  
+  - If user-created: “View event” button  
+  - **Share button:** Always functional  
+
+### Interactions
+| Action | Behavior |
+|--------|-----------|
+| Click any CTA | Redirects to sign-up page |
+| Click Share | Copies event link |
+
+---
+
+## 🧩 2. Sign-Up Flow
+
+### Methods
+- Facebook  
+- Apple  
+- Google  
+- Email + password  
+
+After sign-up → redirected to **Profile page (first-time setup)**.
+
+---
+
+## 🧍‍♀️ 3. Profile Page
+
+### Fields
+- Profile picture  
+- First name  
+- Age  
+- Gender  
+- “Fun fact about me”  
+- “I like”  
+- “I dislike”  
+- “Hobbies”  
+
+### Extended Navigation
+Accessible via burger menu:
+- Settings  
+- Privacy Policy  
+- Location  
+- Language  
+- Support Center  
+- Feedback  
+- Guide  
+- Log out  
+
+---
+
+## 🔍 4. Explore Page (Logged-in Users)
+
+### Search Functionality
+- Filter by **City only** (v1).
+- Shows:
+  - Default PairUp templates  
+  - Real (live) events created by user duos  
+
+### Card Types
+
+#### A. Default PairUp Templates
+- No duo yet (only concept)
+- **CTA:** “Create this experience”  
+- Opens pre-filled “Create Event” form  
+- **Share:** Always functional  
+
+#### B. Real User-Created Events
+- Duo confirmed (User A + B)
+- **CTA:** “View event”  
+- **Share:** Always functional  
+- Date & location → blurred (“Visible to logged-in users”)
+
+### Event Card Interactions
+| User State | Interaction | Behavior |
+|-------------|--------------|-----------|
+| Logged out | Any interaction | Redirects to Sign Up |
+| Logged in | Click CTA | Opens event details |
+| Logged in | Click Share | Copies link |
+
+---
+
+## 🎟️ 5. Events Page
+
+### State A: Empty
+> “No events yet. Create your first experience!”  
+[**CTA → Create Event**]
+
+---
+
+### Create Event Flow
+
+#### Page 1: Event Details
+- Upload image  
+- Activity (text input/dropdown)  
+- Date (exact or flexible + comment)  
+- Suggested location (city + place)  
+- Country  
+- Cost indicator (optional)  
+- **Next → Who do you want to meet?**
+
+#### Page 2: Who do you want to meet?
+- Duo type (Friends, Couples, etc.)  
+- Preferred age range  
+- Preferred gender  
+- Desired vibe(s):  
+  - Adventurous  
+  - Chill & Relaxed  
+  - Funny & Playful  
+  - Curious & Open-Minded  
+  - Outgoing & Social  
+  - Creative  
+  - Foodies  
+  - Active & Sporty  
+  - Culture Lovers  
+  - Family-Friendly  
+  - Organizers  
+  - Nightlife Lovers  
+  - Mindful & Calm  
+
+#### Duo Info
+- Who is your duo? (names)  
+- Relationship type  
+- Comfortable languages  
+- Duo vibe (multi-select)  
+- Connection intention:
+  - Just making new friends  
+  - Sharing an experience  
+  - Networking  
+  - Open to romantic sparks  
+  - Just curious  
+
+#### Final Step
+> “Copy link and invite your duo to join this event.”  
+[**Copy Invite Link**]
+
+User A → Event appears in **Events tab (Pending)**.
+
+---
+
+## 🔗 6. Invite Flow
+
+- User A can share the link with multiple potential User Bs.  
+- **First to accept** = official User B.  
+- Later invitees see:
+  > “This event already has a duo. Create this as a new experience and make it your own!”  
+  [**CTA → Create this experience**]
+
+---
+
+## ✅ 7. Event Confirmation Flow
+
+### When User B accepts
+- Event = **Live**  
+- Notifications:
+  - Browser  
+  - In-app  
+  - Email  
+
+### When User B declines
+- User A notified  
+- Option to invite another duo (auto-filled form)
+
+---
+
+## 🌍 8. User C (Joining a Live Event)
+
+- Sees listings in Explore (city-based)  
+- Blurred date & location until logged in  
+- CTA: “View event” → triggers sign-up if not logged in  
+
+### Event Details (for User C)
+- Full details visible  
+- “Request to join” → invite their duo (User D)  
+- First D to accept = confirmed pair  
+- Request sent to A + B  
+
+### User A + B Review
+- Notification + alert  
+- Can approve or decline  
+
+If approved →  
+> “🎉 The 4 of you are going to [activity-name]!”  
+Chat auto-created.
+
+---
+
+## 💬 9. Chat System Flow
+
+### Chat Creation
+- Trigger: Event confirmed (A+B+C+D)  
+- System message:
+  > “Welcome [A], [B], [C], and [D]! Has anyone done this activity before? 😊”  
+
+**Chat Features**
+- Text + emojis (files optional later)
+- Report user/event
+- Mute notifications
+
+---
+
+### Chat Navigation
+
+#### A. Active Chats
+- List of active event chats:
+  - Activity name  
+  - City  
+  - Last message preview (bold if unread)  
+  - Timestamp  
+
+**Empty State:**
+> “No active chats yet. Start exploring or create a new experience here!”  
+[**CTA → Create Experience**]
+
+#### B. Archived Chats (collapsible)
+- Label: “Past Events ▼”
+- Collapsed by default  
+
+Each archived chat shows:
+- Activity name  
+- **Date (dimmed)** → visually lighter text = past event indicator  
+- Last message preview  
+- **Button:** “Reopen chat”
+
+**Reopen Chat →**
+- Moves to *Active Chats*  
+- Notifications reactivated  
+- Full message history visible
+
+---
+
+### After Event Completion
+- System message:
+  > “Hope you had a great experience! 🌟  
+  > You can rate the other duo and leave a short comment.  
+  > Want to keep this chat open or archive it? Archived chats will be muted.”
+
+**Buttons:**
+- Keep Chat Open → stays active  
+- Archive Chat → moves to “Past Events,” muted  
+
+*Archiving is silent (no notification to others).*
+
+---
+
+### Automatic Archiving (Soft Expiration)
+- Chats inactive for **30 days** → auto-archived  
+- Keeps chat overview tidy  
+- Archived chats always retrievable  
+- No notifications sent
+
+---
+
+### Before Event
+Chat tab visible but empty.  
+> “No active chats yet. Start exploring or create a new experience here!”
+
+---
+
+## ⚠️ 10. Reporting System
+
+### Users can report:
+- An **event**
+- An **individual user**
+
+**Flow:**
+1. Click “Report”  
+2. Choose reason (harassment, spam, etc.)  
+3. Optional comment  
+4. Sent to moderation dashboard  
+5. Confirmation message:
+   > “Thanks for letting us know — our team will review this shortly.”
+
+---
+
+## 🔔 11. Notifications
+
+- Bell icon → new invites, confirmations, updates  
+- Browser push notifications for changes  
+- Email for confirmed matches + reminders  
+
+---
+
+## 🗂️ 12. System States Overview
+
+| State | Description | Visibility |
+|--------|--------------|-------------|
+| Logged out | Sees blurred events | Landing page |
+| Logged in, no events | Explore + empty Events & Chat | All tabs visible |
+| Event pending | A created event, B not yet joined | Events tab |
+| Event live | A+B confirmed | Explore & Events |
+| Event joined | A+B+C+D confirmed | Chat active |
+| Event completed | Past event date | Archive prompt |
+| Chat inactive 30+ days | Auto-archived | “Past Events” section |
+| Reported | Hidden for reporter, flagged for moderation | Admin only |
+
+---
 
 ---
 
