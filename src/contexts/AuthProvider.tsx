@@ -40,7 +40,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }));
       return errorMessage;
     },
-    [] // setAuthState is stable, so no dependencies needed
+    [setAuthState] // Explicitly include setAuthState for clarity and maintainability
   );
 
   // Set up auth state listener
