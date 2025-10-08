@@ -4,7 +4,7 @@
  * Integrates with Sentry for production error tracking
  */
 
-import { captureSentryException, captureSentryMessage } from '@/lib/sentry';
+import { captureException, captureMessage } from '@/lib/sentry';
 
 export enum LogLevel {
   ERROR = 'error',
@@ -33,13 +33,11 @@ class Logger {
       console.error('🚨 [ERROR]', logData);
     }
 
-    // Send to Sentry only in production
-    if (!this.isDevelopment) {
-      if (error instanceof Error) {
-        captureSentryException(error, context);
-      } else {
-        captureSentryMessage(message, 'error', context);
-      }
+    // Send to Sentry (environment filtering handled by Sentry config)
+    if (error instanceof Error) {
+      captureException(error);
+    } else {
+      captureMessage(message, 'error');
     }
   }
 
@@ -53,10 +51,8 @@ class Logger {
       console.warn('⚠️ [WARN]', logData);
     }
 
-    // Send warnings to Sentry only in production
-    if (!this.isDevelopment) {
-      captureSentryMessage(message, 'warning', context);
-    }
+    // Send warnings to Sentry (environment filtering handled by Sentry config)
+    captureMessage(message, 'warning');
   }
 
   /**

@@ -1,21 +1,18 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { firebaseConfig, validateFirebaseConfig } from './config';
+import { firebaseConfig } from './config';
 
-// Validate configuration before initializing
-validateFirebaseConfig();
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-// Initialize Firebase Authentication and get a reference to the service
+// Initialize Firebase immediately and synchronously
+export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
-// Connect to emulators in development
-if (import.meta.env.DEV) {
-  // Uncomment these lines if you want to use Firebase emulators for development
-  // import { connectAuthEmulator } from 'firebase/auth';
-  // connectAuthEmulator(auth, "http://localhost:9099");
-}
-
-export default app;
+// Re-export all auth functions we need
+export {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  sendPasswordResetEmail,
+  signOut,
+  deleteUser,
+  onAuthStateChanged,
+} from 'firebase/auth';

@@ -20,35 +20,24 @@ const mockDeleteUser = vi.fn();
 
 let authObserver: ((user: unknown) => void) | undefined;
 
-vi.mock("firebase/auth", async () => {
-  const actual = await vi.importActual<typeof import("firebase/auth")>("firebase/auth");
-  return {
-    ...actual,
-    signInWithEmailAndPassword: (...args: unknown[]) => mockSignInWithEmailAndPassword(...args),
-    createUserWithEmailAndPassword: (...args: unknown[]) => mockCreateUserWithEmailAndPassword(...args),
-    signOut: (...args: unknown[]) => mockSignOut(...args),
-    onAuthStateChanged: (...args: unknown[]) => {
-      authObserver = args[1] as (user: unknown) => void;
-      return mockOnAuthStateChanged(...args);
-    },
-    sendEmailVerification: (...args: unknown[]) => mockSendEmailVerification(...args),
-    sendPasswordResetEmail: (...args: unknown[]) => mockSendPasswordResetEmail(...args),
-    deleteUser: (...args: unknown[]) => mockDeleteUser(...args),
-  };
-});
-
-const mockSetSentryUser = vi.fn();
-const mockClearSentryUser = vi.fn();
-const mockAddSentryBreadcrumb = vi.fn();
+const mockSetUser = vi.fn();
 
 vi.mock("@/lib/firebase", () => ({
   auth: mockAuth,
+  signInWithEmailAndPassword: (...args: unknown[]) => mockSignInWithEmailAndPassword(...args),
+  createUserWithEmailAndPassword: (...args: unknown[]) => mockCreateUserWithEmailAndPassword(...args),
+  signOut: (...args: unknown[]) => mockSignOut(...args),
+  onAuthStateChanged: (...args: unknown[]) => {
+    authObserver = args[1] as (user: unknown) => void;
+    return mockOnAuthStateChanged(...args);
+  },
+  sendEmailVerification: (...args: unknown[]) => mockSendEmailVerification(...args),
+  sendPasswordResetEmail: (...args: unknown[]) => mockSendPasswordResetEmail(...args),
+  deleteUser: (...args: unknown[]) => mockDeleteUser(...args),
 }));
 
 vi.mock("@/lib/sentry", () => ({
-  setSentryUser: (...args: unknown[]) => mockSetSentryUser(...args),
-  clearSentryUser: () => mockClearSentryUser(),
-  addSentryBreadcrumb: (...args: unknown[]) => mockAddSentryBreadcrumb(...args),
+  setUser: (...args: unknown[]) => mockSetUser(...args),
 }));
 
 const TestConsumer = () => {
@@ -83,9 +72,7 @@ describe("AuthProvider", () => {
     mockSendEmailVerification.mockReset();
     mockSendPasswordResetEmail.mockReset();
     mockDeleteUser.mockReset();
-    mockSetSentryUser.mockReset();
-    mockClearSentryUser.mockReset();
-    mockAddSentryBreadcrumb.mockReset();
+    mockSetUser.mockReset();
   });
 
   const resolveAuth = async (user: unknown) => {
@@ -106,19 +93,14 @@ describe("AuthProvider", () => {
       expect(TestConsumer.latest?.loading).toBe(false);
       expect(TestConsumer.latest?.user).toEqual({ uid: "123", email: "member@pairup.events" });
     });
-    expect(mockSetSentryUser).toHaveBeenCalledWith({ uid: "123", email: "member@pairup.events" });
-    expect(mockAddSentryBreadcrumb).toHaveBeenCalledWith("User signed in", "auth", {
-      userId: "123",
-      email: "member@pairup.events",
-    });
+    expect(mockSetUser).toHaveBeenCalledWith({ id: "123", email: "member@pairup.events" });
 
     await resolveAuth(null);
 
     await waitFor(() => {
       expect(TestConsumer.latest?.user).toBeNull();
     });
-    expect(mockClearSentryUser).toHaveBeenCalled();
-    expect(mockAddSentryBreadcrumb).toHaveBeenCalledWith("User signed out", "auth");
+    expect(mockSetUser).toHaveBeenCalledWith(null);
   });
 
   it("signs in with email and toggles loading state", async () => {
@@ -136,12 +118,6 @@ describe("AuthProvider", () => {
       "hello@pairup.events",
       "password123"
     );
-    expect(mockAddSentryBreadcrumb).toHaveBeenCalledWith("Sign in attempt", "auth", {
-      email: "hello@pairup.events",
-    });
-    expect(mockAddSentryBreadcrumb).toHaveBeenCalledWith("Sign in successful", "auth", {
-      email: "hello@pairup.events",
-    });
     expect(TestConsumer.latest?.loading).toBe(false);
     expect(TestConsumer.latest?.error).toBeNull();
   });
@@ -168,11 +144,6 @@ describe("AuthProvider", () => {
         "Invalid email or password. Please check your credentials and try again."
       );
     });
-    expect(mockAddSentryBreadcrumb).toHaveBeenCalledWith(
-      "Sign in failed",
-      "auth",
-      expect.objectContaining({ email: "oops@pairup.events" })
-    );
 
     act(() => {
       TestConsumer.latest!.clearError();
@@ -198,19 +169,6 @@ describe("AuthProvider", () => {
       "password"
     );
     expect(mockSendEmailVerification).toHaveBeenCalledWith(newUser);
-    expect(mockAddSentryBreadcrumb).toHaveBeenCalledWith("Sign up attempt", "auth", {
-      email: "new@pairup.events",
-    });
-    expect(mockAddSentryBreadcrumb).toHaveBeenCalledWith(
-      "Email verification sent",
-      "auth",
-      expect.objectContaining({ email: "new@pairup.events", userId: "456" })
-    );
-    expect(mockAddSentryBreadcrumb).toHaveBeenCalledWith(
-      "Sign up successful",
-      "auth",
-      expect.objectContaining({ email: "new@pairup.events", userId: "456" })
-    );
   });
 
   it("blocks email verification when no user is signed in", async () => {

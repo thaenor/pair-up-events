@@ -1,19 +1,20 @@
-import React, { useEffect, useState, ReactNode, useMemo } from 'react';
+import React, { useEffect, useState, ReactNode, useCallback } from 'react';
+import type { User } from 'firebase/auth';
+
 import {
+  auth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signOut as firebaseSignOut,
-  onAuthStateChanged,
   sendEmailVerification,
   sendPasswordResetEmail,
+  signOut,
   deleteUser,
-  User
-} from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+  onAuthStateChanged
+} from '@/lib/firebase';
 import { AuthContextType, AuthState } from '@/lib/firebase/types';
 import { AuthContext } from './AuthContext';
-import { createAuthErrorHandler } from '@/utils/authErrorHandler';
-import { setSentryUser, clearSentryUser, addSentryBreadcrumb } from '@/lib/sentry';
+import { getAuthErrorMessage } from '@/utils/authErrorMessages';
+import { setUser } from '@/lib/sentry';
 
 // AuthProvider component
 interface AuthProviderProps {
@@ -28,14 +29,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   });
 
   // Centralized error handler
-  const handleAuthError = useMemo(
-    () => createAuthErrorHandler(setAuthState),
-    []
+  const handleAuthError = useCallback(
+    (error: unknown) => {
+      // Use user-friendly error messages instead of raw Firebase errors
+      const errorMessage = getAuthErrorMessage(error);
+      setAuthState(prev => ({
+        ...prev,
+        loading: false,
+        error: errorMessage,
+      }));
+      return errorMessage;
+    },
+    [setAuthState] // Explicitly include setAuthState for clarity and maintainability
   );
 
   // Set up auth state listener
   useEffect(() => {
+    let isMounted = true;
+
     const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
+      if (!isMounted) {
+        return;
+      }
+
       setAuthState({
         user,
         loading: false,
@@ -44,21 +60,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       // Update Sentry user context
       if (user) {
-        setSentryUser({
-          uid: user.uid,
+        setUser({
+          id: user.uid,
           email: user.email || undefined,
         });
-        addSentryBreadcrumb('User signed in', 'auth', {
-          userId: user.uid,
-          email: user.email,
-        });
       } else {
-        clearSentryUser();
-        addSentryBreadcrumb('User signed out', 'auth');
+        setUser(null);
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, []);
 
 
@@ -66,11 +80,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signInWithEmail = async (email: string, password: string) => {
     try {
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
-      addSentryBreadcrumb('Sign in attempt', 'auth', { email });
       await signInWithEmailAndPassword(auth, email, password);
-      addSentryBreadcrumb('Sign in successful', 'auth', { email });
     } catch (error: unknown) {
-      addSentryBreadcrumb('Sign in failed', 'auth', { email, error: error instanceof Error ? error.message : 'Unknown error' });
       handleAuthError(error);
       throw error;
     } finally {
@@ -82,17 +93,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signUpWithEmail = async (email: string, password: string) => {
     try {
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
-      addSentryBreadcrumb('Sign up attempt', 'auth', { email });
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-      // Send email verification after successful registration
       if (userCredential.user) {
         await sendEmailVerification(userCredential.user);
-        addSentryBreadcrumb('Email verification sent', 'auth', { email, userId: userCredential.user.uid });
       }
-      addSentryBreadcrumb('Sign up successful', 'auth', { email, userId: userCredential.user?.uid });
     } catch (error: unknown) {
-      addSentryBreadcrumb('Sign up failed', 'auth', { email, error: error instanceof Error ? error.message : 'Unknown error' });
       handleAuthError(error);
       throw error;
     } finally {
@@ -103,11 +109,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Send email verification
   const sendEmailVerificationToUser = async () => {
     try {
-      if (!auth.currentUser) {
+      setAuthState(prev => ({ ...prev, loading: true, error: null }));
+      const currentUser = auth.currentUser;
+
+      if (!currentUser) {
         throw new Error('No user is currently signed in');
       }
-      setAuthState(prev => ({ ...prev, loading: true, error: null }));
-      await sendEmailVerification(auth.currentUser);
+
+      await sendEmailVerification(currentUser);
     } catch (error: unknown) {
       handleAuthError(error);
       throw error;
@@ -117,10 +126,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   // Sign out
-  const signOut = async () => {
+  const signOutUser = async () => {
     try {
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
-      await firebaseSignOut(auth);
+      await signOut(auth);
     } catch (error: unknown) {
       handleAuthError(error);
       throw error;
@@ -145,11 +154,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Delete user account
   const deleteUserAccount = async () => {
     try {
-      if (!auth.currentUser) {
+      setAuthState(prev => ({ ...prev, loading: true, error: null }));
+      const currentUser = auth.currentUser;
+
+      if (!currentUser) {
         throw new Error('No user is currently signed in');
       }
-      setAuthState(prev => ({ ...prev, loading: true, error: null }));
-      await deleteUser(auth.currentUser);
+
+      await deleteUser(currentUser);
     } catch (error: unknown) {
       handleAuthError(error);
       throw error;
@@ -170,7 +182,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     sendEmailVerification: sendEmailVerificationToUser,
     sendPasswordReset,
     deleteUserAccount,
-    signOut,
+    signOut: signOutUser,
     clearError,
   };
 
