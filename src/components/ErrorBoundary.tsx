@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { logError } from '@/utils/logger';
-import { captureSentryException } from '@/lib/sentry';
+import { captureException } from '@/lib/sentry';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -43,17 +43,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
       }
     });
 
-    captureSentryException(error, {
-      component: 'ErrorBoundary',
-      action: 'componentDidCatch',
-      additionalData: {
-        errorInfo,
-        browser: {
-          userAgent: navigator.userAgent,
-          url: window.location.href,
-        },
-      },
-    });
+    captureException(error);
 
     // Call custom error handler if provided
     if (onError) {

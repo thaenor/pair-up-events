@@ -17,6 +17,7 @@ vi.mock("@/utils/logger", () => ({
 }));
 
 vi.mock("@sentry/react", () => ({
+  init: vi.fn(),
   withScope: (callback: (scope: Record<string, unknown>) => void) => {
     callback({
       setTag: vi.fn(),
@@ -26,6 +27,7 @@ vi.mock("@sentry/react", () => ({
   },
   captureException: vi.fn(),
   captureMessage: vi.fn(),
+  setUser: vi.fn(),
   browserTracingIntegration: vi.fn(),
   replayIntegration: vi.fn(),
 }));

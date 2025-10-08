@@ -1,11 +1,9 @@
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
-import { Suspense, lazy, useEffect } from "react";
+import { Suspense, lazy } from "react";
 
 import { AuthProvider } from "./contexts/AuthProvider";
 import ErrorBoundary from "./components/ErrorBoundary";
-import SentryBoundary from "./components/SentryBoundary";
-import { initializeSentry } from "./lib/sentry";
 
 const IndexPage = lazy(() => import("./pages/Index"));
 const NotFoundPage = lazy(() => import("./pages/NotFound"));
@@ -34,31 +32,6 @@ const GitHubPagesRedirect = () => {
 };
 
 const App = () => {
-  useEffect(() => {
-    if (!import.meta.env.PROD || typeof window === 'undefined') {
-      return;
-    }
-
-    const supportsIdle = typeof window.requestIdleCallback === 'function';
-
-    if (supportsIdle) {
-      const idleId = window.requestIdleCallback(() => {
-        initializeSentry();
-      });
-
-      return () => {
-        window.cancelIdleCallback(idleId);
-      };
-    }
-
-    const timeout = window.setTimeout(() => {
-      initializeSentry();
-    }, 2000);
-
-    return () => {
-      window.clearTimeout(timeout);
-    };
-  }, []);
 
   const appContent = (
     <AuthProvider>
@@ -96,7 +69,7 @@ const App = () => {
     </AuthProvider>
   );
 
-  return <SentryBoundary>{appContent}</SentryBoundary>;
+  return appContent;
 };
 
 export default App;

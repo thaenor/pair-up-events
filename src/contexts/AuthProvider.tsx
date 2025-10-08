@@ -5,7 +5,7 @@ import { loadAuthResources } from '@/lib/firebase';
 import { AuthContextType, AuthState } from '@/lib/firebase/types';
 import { AuthContext } from './AuthContext';
 import { getAuthErrorMessage } from '@/utils/authErrorMessages';
-import { setSentryUser, clearSentryUser, addSentryBreadcrumb } from '@/lib/sentry';
+import { setUser } from '@/lib/sentry';
 
 // AuthProvider component
 interface AuthProviderProps {
@@ -56,17 +56,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
           // Update Sentry user context
           if (user) {
-            setSentryUser({
-              uid: user.uid,
+            setUser({
+              id: user.uid,
               email: user.email || undefined,
             });
-            addSentryBreadcrumb('User signed in', 'auth', {
-              userId: user.uid,
-              email: user.email,
-            });
           } else {
-            clearSentryUser();
-            addSentryBreadcrumb('User signed out', 'auth');
+            setUser(null);
           }
         });
       })
@@ -99,51 +94,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Sign in with email and password
   const signInWithEmail = async (email: string, password: string) => {
-    addSentryBreadcrumb('Sign in attempt', 'auth', { email });
-    try {
-      await runWithAuth(async ({ authModule, auth }) => {
-        await authModule.signInWithEmailAndPassword(auth, email, password);
-      });
-      addSentryBreadcrumb('Sign in successful', 'auth', { email });
-    } catch (error) {
-      const errorDetails = error instanceof Error ? { error: error.message } : undefined;
-      addSentryBreadcrumb('Sign in failed', 'auth', {
-        email,
-        ...errorDetails,
-      });
-      throw error;
-    }
+    await runWithAuth(async ({ authModule, auth }) => {
+      await authModule.signInWithEmailAndPassword(auth, email, password);
+    });
   };
 
   // Sign up with email and password
   const signUpWithEmail = async (email: string, password: string) => {
-    addSentryBreadcrumb('Sign up attempt', 'auth', { email });
+    await runWithAuth(async ({ authModule, auth }) => {
+      const userCredential = await authModule.createUserWithEmailAndPassword(auth, email, password);
 
-    try {
-      await runWithAuth(async ({ authModule, auth }) => {
-        const userCredential = await authModule.createUserWithEmailAndPassword(auth, email, password);
-
-        if (userCredential.user) {
-          await authModule.sendEmailVerification(userCredential.user);
-          addSentryBreadcrumb('Email verification sent', 'auth', {
-            email,
-            userId: userCredential.user.uid,
-          });
-        }
-
-        addSentryBreadcrumb('Sign up successful', 'auth', {
-          email,
-          userId: userCredential.user?.uid,
-        });
-      });
-    } catch (error) {
-      const errorDetails = error instanceof Error ? { error: error.message } : undefined;
-      addSentryBreadcrumb('Sign up failed', 'auth', {
-        email,
-        ...errorDetails,
-      });
-      throw error;
-    }
+      if (userCredential.user) {
+        await authModule.sendEmailVerification(userCredential.user);
+      }
+    });
   };
 
   // Send email verification
