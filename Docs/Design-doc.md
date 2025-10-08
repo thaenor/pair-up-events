@@ -23,7 +23,7 @@ It serves as the foundation for consistent interface design, component hierarchy
 
 ---
 
-## 🚀 **1. Product Overview**
+# 🚀 **1. Product Overview**
 Pair Up Events is a social event platform that allows two pairs of people to connect and meet through shared activities.
 Each "pair" represents two users who join the platform together (friends, couple, family duo, etc.).
 The core system enables users to create, share, and join events, encouraging real-world interaction through fun, curiosity-driven activities.
@@ -90,7 +90,7 @@ Matching logic remains pair-based, not individual-based.
 | **Families & Themed Pairs**     | Parent-child, siblings, twins, etc.                  | Playful learning and shared bonding |
 | **Activity Enthusiasts**        | Users who enjoy active, experiential socializing     | Real-world engagement               |
 
-# 🤝 Pair Up Events — Primary Use Cases
+## 🤝 Pair Up Events — Primary Use Cases
 
 Pair Up Events is a web platform that connects two pairs (duos) of people to attend events or experiences together.  
 The core user experience is centered around **exploring**, **creating**, **joining**, and **chatting** around shared experiences.  
@@ -253,7 +253,7 @@ Pair Up Events enables users to:
 
 ---
 
-## 💡 **2. Design Principles**
+# 💡 **2. Design Principles**
 
 1. **Clarity** — Every screen should communicate its purpose at a glance.
 2. **Speed** — Optimize for performance and perceived speed.
@@ -264,7 +264,7 @@ Pair Up Events enables users to:
 
 ---
 
-## 👥 **3. User Personas**
+# 👥 **3. User Personas**
 
 | **Persona Name** | **Profile Summary** | **Example Pair** | **Goals** | **Pain Points** |
 |------------------|--------------------|------------------|------------|-----------------|
@@ -277,12 +277,10 @@ Pair Up Events enables users to:
 
 ---
 
-## 🗺️ **4. User Journey & Flows**
+# 🗺️ **4. User Journey & Flows (Web Platform)**
 
 ### Core Journeys
-
-# 🌍 Pair Up Events — Complete User Journey & Flow (Web Platform)
-
+ 
 ## 🧭 Primary Navigation (for logged-in users)
 1. **Explore** — Browse and search events  
 2. **Events** — Manage created and joined events  
@@ -291,7 +289,7 @@ Pair Up Events enables users to:
 
 ---
 
-## 🧱 1. Landing Page (Logged-out Users)
+## 🧱 a) Landing Page (Logged-out Users)
 
 ### Main Goals
 - Inspire users to explore events.
@@ -316,7 +314,7 @@ Pair Up Events enables users to:
 
 ---
 
-## 🧩 2. Sign-Up Flow
+## 🧩 b) Sign-Up Flow
 
 ### Methods
 - Facebook  
@@ -328,7 +326,7 @@ After sign-up → redirected to **Profile page (first-time setup)**.
 
 ---
 
-## 🧍‍♀️ 3. Profile Page
+## 🧍‍♀️ c) Profile Page
 
 ### Fields
 - Profile picture  
@@ -353,23 +351,23 @@ Accessible via burger menu:
 
 ---
 
-## 🔍 4. Explore Page (Logged-in Users)
+## 🔍 d) Explore Page (Logged-in Users)
 
 ### Search Functionality
-- Filter by **City only** (v1).
+- **City and activity type** .
 - Shows:
   - Default PairUp templates  
   - Real (live) events created by user duos  
 
 ### Card Types
 
-#### A. Default PairUp Templates
+#### - Default PairUp Templates
 - No duo yet (only concept)
 - **CTA:** “Create this experience”  
 - Opens pre-filled “Create Event” form  
 - **Share:** Always functional  
 
-#### B. Real User-Created Events
+#### - Real User-Created Events
 - Duo confirmed (User A + B)
 - **CTA:** “View event”  
 - **Share:** Always functional  
@@ -384,7 +382,7 @@ Accessible via burger menu:
 
 ---
 
-## 🎟️ 5. Events Page
+## 🎟️ e) Events Page
 
 ### State A: Empty
 > “No events yet. Create your first experience!”  
@@ -442,7 +440,7 @@ User A → Event appears in **Events tab (Pending)**.
 
 ---
 
-## 🔗 6. Invite Flow
+## 🔗 f) Invite Flow
 
 - User A can share the link with multiple potential User Bs.  
 - **First to accept** = official User B.  
@@ -452,7 +450,7 @@ User A → Event appears in **Events tab (Pending)**.
 
 ---
 
-## ✅ 7. Event Confirmation Flow
+## ✅ g) Event Confirmation Flow
 
 ### When User B accepts
 - Event = **Live**  
@@ -467,7 +465,7 @@ User A → Event appears in **Events tab (Pending)**.
 
 ---
 
-## 🌍 8. User C (Joining a Live Event)
+## 🌍 h) User C (Joining a Live Event)
 
 - Sees listings in Explore (city-based)  
 - Blurred date & location until logged in  
@@ -489,7 +487,7 @@ Chat auto-created.
 
 ---
 
-## 💬 9. Chat System Flow
+## 💬 i) Chat System Flow
 
 ### Chat Creation
 - Trigger: Event confirmed (A+B+C+D)  
@@ -505,7 +503,7 @@ Chat auto-created.
 
 ### Chat Navigation
 
-#### A. Active Chats
+#### - Active Chats
 - List of active event chats:
   - Activity name  
   - City  
@@ -516,7 +514,7 @@ Chat auto-created.
 > “No active chats yet. Start exploring or create a new experience here!”  
 [**CTA → Create Experience**]
 
-#### B. Archived Chats (collapsible)
+#### - Archived Chats (collapsible)
 - Label: “Past Events ▼”
 - Collapsed by default  
 
@@ -561,7 +559,7 @@ Chat tab visible but empty.
 
 ---
 
-## ⚠️ 10. Reporting System
+## ⚠️ j) Reporting System
 
 ### Users can report:
 - An **event**
@@ -577,7 +575,7 @@ Chat tab visible but empty.
 
 ---
 
-## 🔔 11. Notifications
+## 🔔 k) Notifications
 
 - Bell icon → new invites, confirmations, updates  
 - Browser push notifications for changes  
@@ -585,7 +583,7 @@ Chat tab visible but empty.
 
 ---
 
-## 🗂️ 12. System States Overview
+## 🗂️ l) System States Overview
 
 | State | Description | Visibility |
 |--------|--------------|-------------|
@@ -602,28 +600,99 @@ Chat tab visible but empty.
 
 ---
 
-## 🧱 **5. Information Architecture**
+# 🧱 **5. Information Architecture**
 
 **High-level structure:**
 
-```
-/ (Landing Page)
-├── /login
-├── /signup
-├── /events
-│ ├── /create
-│ ├── /:eventId
-│ └── /edit/:eventId
-├── /profile
-│ ├── /settings
-│ └── /preferences
-└── /legal
-├── /privacy-policy
-└── /terms-of-service
-```
+PairUp Events
+│
+├── Explore
+│   ├── Default Activity Cards
+│   │   ├── Card Preview (CTA: "Create this experience")
+│   │   └── Share Link (always active)
+│   ├── User-Generated Events
+│   │   ├── Event Card (CTA: "View event")
+│   │   ├── Blurred Date + Location (for logged-out users)
+│   │   └── Share Link (always active)
+│   ├── Filters
+│   │   └── City (initial scope)
+│   └── States
+│       ├── Logged-out View (restricted visibility)
+│       └── Logged-in View (full interaction)
+│
+├── Events
+│   ├── My Events
+│   │   ├── Upcoming Events
+│   │   └── Past Events
+│   ├── Create Event Flow
+│   │   ├── Select Template (from Explore) or Custom
+│   │   ├── Add Title, Description, Date, City
+│   │   ├── Invite User(s) (via share link)
+│   │   ├── Confirm Duo (User B accepts)
+│   │   └── Publish (Visible to Users C + D)
+│   ├── Event States
+│   │   ├── Draft
+│   │   ├── Awaiting Duo Confirmation
+│   │   ├── Active Event
+│   │   ├── Completed Event
+│   │   └── Cancelled
+│   └── Reporting
+│       └── Report Event (for moderation)
+│
+├── Chat
+│   ├── Active Chats
+│   │   ├── Group Chat (User A+B and C+D)
+│   │   ├── System Messages (reminders, event updates)
+│   │   └── Post-Event System Prompt
+│   │       └── Options:
+│   │           ├── Keep Chat Open
+│   │           └── Archive Chat
+│   ├── Empty State
+│   │   └── Message: “No active chats yet. Start exploring or create a new experience here!”
+│   ├── Archived Chats (Collapsible)
+│   │   ├── Label: “Past Events ▼”
+│   │   ├── Chat Card
+│   │   │   ├── Activity Name
+│   │   │   ├── Date (dimmed)
+│   │   │   ├── Last Message Preview (bold if unread)
+│   │   │   └── Button: “Reopen Chat”
+│   │   └── Reopen Chat → Moves to Active Chats, notifications reactivated
+│   └── Soft Expiration
+│       └── After 30 days inactivity → Moves to Archived
+│
+├── Profile
+│   ├── My Profile
+│   │   ├── Name, Picture, Bio
+│   │   ├── Event History (past + current)
+│   │   └── Ratings Overview
+│   ├── Settings & Support
+│   │   ├── Language
+│   │   ├── Location
+│   │   ├── Privacy Policy
+│   │   ├── Support Center
+│   │   ├── Feedback
+│   │   ├── “How PairUp Works” Guide
+│   │   └── Log Out
+│   └── Reporting
+│       └── Report User (from profile or chat)
+│
+└── System-Level Elements
+    ├── Top Navigation Bar
+    │   ├── Explore
+    │   ├── Events
+    │   ├── Chat
+    │   └── Profile
+    ├── Floating Action Button (FAB)
+    │   └── Create Event Shortcut
+    ├── Notifications Panel
+    │   ├── Invites
+    │   ├── Confirmations
+    │   ├── Reminders
+    │   └── Chat Notifications
+    └── Admin / Moderation Layer
+        ├── Event Reports
+        └── User Reports
 
-
-Each page uses the **LandingPageLayout** or **AuthLayout** template for consistency.
 Navigation uses a responsive `Navigation` organism with adaptive links and user state awareness.
 
 ---
