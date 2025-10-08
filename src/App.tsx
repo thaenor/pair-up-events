@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster } from "sonner";
 import { Suspense, lazy } from "react";
 
@@ -13,30 +13,12 @@ const ProfilePage = lazy(() => import("./pages/profile"));
 const TermsOfServicePage = lazy(() => import("./pages/terms-of-service"));
 const PrivacyPolicyPage = lazy(() => import("./pages/privacy-policy"));
 
-// Component to handle GitHub Pages 404 redirects
-const GitHubPagesRedirect = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    // Check if we're on a GitHub Pages redirect URL (/?/path)
-    if (location.pathname === '/' && location.search.startsWith('/?/')) {
-      const path = location.search.slice(3).replace(/~and~/g, '&');
-      const newPath = path.split('&')[0]; // Remove query params for now
-
-      // Replace the current URL with the correct path
-      window.history.replaceState(null, '', newPath);
-    }
-  }, [location]);
-
-  return null;
-};
 
 const App = () => {
 
   const appContent = (
     <AuthProvider>
       <BrowserRouter future={{ v7_relativeSplatPath: true }}>
-        <GitHubPagesRedirect />
         <ErrorBoundary>
           <Suspense
             fallback={(

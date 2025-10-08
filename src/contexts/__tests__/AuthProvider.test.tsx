@@ -17,31 +17,23 @@ const mockOnAuthStateChanged = vi.fn();
 const mockSendEmailVerification = vi.fn();
 const mockSendPasswordResetEmail = vi.fn();
 const mockDeleteUser = vi.fn();
-const mockLoadAuthResources = vi.fn();
 
 let authObserver: ((user: unknown) => void) | undefined;
-
-vi.mock("firebase/auth", async () => {
-  const actual = await vi.importActual<typeof import("firebase/auth")>("firebase/auth");
-  return {
-    ...actual,
-    signInWithEmailAndPassword: (...args: unknown[]) => mockSignInWithEmailAndPassword(...args),
-    createUserWithEmailAndPassword: (...args: unknown[]) => mockCreateUserWithEmailAndPassword(...args),
-    signOut: (...args: unknown[]) => mockSignOut(...args),
-    onAuthStateChanged: (...args: unknown[]) => {
-      authObserver = args[1] as (user: unknown) => void;
-      return mockOnAuthStateChanged(...args);
-    },
-    sendEmailVerification: (...args: unknown[]) => mockSendEmailVerification(...args),
-    sendPasswordResetEmail: (...args: unknown[]) => mockSendPasswordResetEmail(...args),
-    deleteUser: (...args: unknown[]) => mockDeleteUser(...args),
-  };
-});
 
 const mockSetUser = vi.fn();
 
 vi.mock("@/lib/firebase", () => ({
-  loadAuthResources: (...args: unknown[]) => mockLoadAuthResources(...args),
+  auth: mockAuth,
+  signInWithEmailAndPassword: (...args: unknown[]) => mockSignInWithEmailAndPassword(...args),
+  createUserWithEmailAndPassword: (...args: unknown[]) => mockCreateUserWithEmailAndPassword(...args),
+  signOut: (...args: unknown[]) => mockSignOut(...args),
+  onAuthStateChanged: (...args: unknown[]) => {
+    authObserver = args[1] as (user: unknown) => void;
+    return mockOnAuthStateChanged(...args);
+  },
+  sendEmailVerification: (...args: unknown[]) => mockSendEmailVerification(...args),
+  sendPasswordResetEmail: (...args: unknown[]) => mockSendPasswordResetEmail(...args),
+  deleteUser: (...args: unknown[]) => mockDeleteUser(...args),
 }));
 
 vi.mock("@/lib/sentry", () => ({
@@ -80,22 +72,6 @@ describe("AuthProvider", () => {
     mockSendEmailVerification.mockReset();
     mockSendPasswordResetEmail.mockReset();
     mockDeleteUser.mockReset();
-    mockLoadAuthResources.mockReset();
-    mockLoadAuthResources.mockResolvedValue({
-      authModule: {
-        onAuthStateChanged: (...args: unknown[]) => {
-          authObserver = args[1] as (user: unknown) => void;
-          return mockOnAuthStateChanged(...args);
-        },
-        signInWithEmailAndPassword: (...args: unknown[]) => mockSignInWithEmailAndPassword(...args),
-        createUserWithEmailAndPassword: (...args: unknown[]) => mockCreateUserWithEmailAndPassword(...args),
-        signOut: (...args: unknown[]) => mockSignOut(...args),
-        sendEmailVerification: (...args: unknown[]) => mockSendEmailVerification(...args),
-        sendPasswordResetEmail: (...args: unknown[]) => mockSendPasswordResetEmail(...args),
-        deleteUser: (...args: unknown[]) => mockDeleteUser(...args),
-      },
-      auth: mockAuth,
-    });
     mockSetUser.mockReset();
   });
 

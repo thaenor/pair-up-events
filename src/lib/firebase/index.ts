@@ -1,46 +1,18 @@
-import type { Auth } from 'firebase/auth';
-import type { FirebaseApp } from 'firebase/app';
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { firebaseConfig } from './config';
 
-import { firebaseConfig, validateFirebaseConfig } from './config';
+// Initialize Firebase immediately and synchronously
+export const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
 
-let appPromise: Promise<FirebaseApp> | null = null;
-let authPromise: Promise<Auth> | null = null;
-let authModulePromise: Promise<typeof import('firebase/auth')> | null = null;
-
-const getFirebaseApp = async (): Promise<FirebaseApp> => {
-  if (appPromise) {
-    return appPromise;
-  }
-
-  validateFirebaseConfig();
-  appPromise = import('firebase/app').then(({ initializeApp }) => initializeApp(firebaseConfig));
-  return appPromise;
-};
-
-export const loadAuthModule = async () => {
-  if (authModulePromise) {
-    return authModulePromise;
-  }
-
-  authModulePromise = import('firebase/auth');
-  return authModulePromise;
-};
-
-export const getFirebaseAuth = async (): Promise<Auth> => {
-  if (authPromise) {
-    return authPromise;
-  }
-
-  authPromise = Promise.all([getFirebaseApp(), loadAuthModule()]).then(([app, authModule]) => {
-    const authInstance = authModule.getAuth(app);
-
-    return authInstance;
-  });
-
-  return authPromise;
-};
-
-export const loadAuthResources = async () => {
-  const [authModule, auth] = await Promise.all([loadAuthModule(), getFirebaseAuth()]);
-  return { authModule, auth };
-};
+// Re-export all auth functions we need
+export {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  sendPasswordResetEmail,
+  signOut,
+  deleteUser,
+  onAuthStateChanged,
+} from 'firebase/auth';
