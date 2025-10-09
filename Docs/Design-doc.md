@@ -604,94 +604,87 @@ Chat tab visible but empty.
 
 **High-level structure:**
 
-PairUp Events
-│
-├── Explore
-│   ├── Default Activity Cards
-│   │   ├── Card Preview (CTA: "Create this experience")
-│   │   └── Share Link (always active)
-│   ├── User-Generated Events
-│   │   ├── Event Card (CTA: "View event")
-│   │   ├── Blurred Date + Location (for logged-out users)
-│   │   └── Share Link (always active)
-│   ├── Filters
-│   │   └── City (initial scope)
-│   └── States
-│       ├── Logged-out View (restricted visibility)
-│       └── Logged-in View (full interaction)
-│
-├── Events
-│   ├── My Events
-│   │   ├── Upcoming Events
-│   │   └── Past Events
-│   ├── Create Event Flow
-│   │   ├── Select Template (from Explore) or Custom
-│   │   ├── Add Title, Description, Date, City
-│   │   ├── Invite User(s) (via share link)
-│   │   ├── Confirm Duo (User B accepts)
-│   │   └── Publish (Visible to Users C + D)
-│   ├── Event States
-│   │   ├── Draft
-│   │   ├── Awaiting Duo Confirmation
-│   │   ├── Active Event
-│   │   ├── Completed Event
-│   │   └── Cancelled
-│   └── Reporting
-│       └── Report Event (for moderation)
-│
-├── Chat
-│   ├── Active Chats
-│   │   ├── Group Chat (User A+B and C+D)
-│   │   ├── System Messages (reminders, event updates)
-│   │   └── Post-Event System Prompt
-│   │       └── Options:
-│   │           ├── Keep Chat Open
-│   │           └── Archive Chat
-│   ├── Empty State
-│   │   └── Message: “No active chats yet. Start exploring or create a new experience here!”
-│   ├── Archived Chats (Collapsible)
-│   │   ├── Label: “Past Events ▼”
-│   │   ├── Chat Card
-│   │   │   ├── Activity Name
-│   │   │   ├── Date (dimmed)
-│   │   │   ├── Last Message Preview (bold if unread)
-│   │   │   └── Button: “Reopen Chat”
-│   │   └── Reopen Chat → Moves to Active Chats, notifications reactivated
-│   └── Soft Expiration
-│       └── After 30 days inactivity → Moves to Archived
-│
-├── Profile
-│   ├── My Profile
-│   │   ├── Name, Picture, Bio
-│   │   ├── Event History (past + current)
-│   │   └── Ratings Overview
-│   ├── Settings & Support
-│   │   ├── Language
-│   │   ├── Location
-│   │   ├── Privacy Policy
-│   │   ├── Support Center
-│   │   ├── Feedback
-│   │   ├── “How PairUp Works” Guide
-│   │   └── Log Out
-│   └── Reporting
-│       └── Report User (from profile or chat)
-│
-└── System-Level Elements
-    ├── Top Navigation Bar
-    │   ├── Explore
-    │   ├── Events
-    │   ├── Chat
-    │   └── Profile
-    ├── Floating Action Button (FAB)
-    │   └── Create Event Shortcut
-    ├── Notifications Panel
-    │   ├── Invites
-    │   ├── Confirmations
-    │   ├── Reminders
-    │   └── Chat Notifications
-    └── Admin / Moderation Layer
-        ├── Event Reports
-        └── User Reports
+High-Level Structure
+
+**- Explore**
+  - Default Activity Cards
+      - Card Preview (CTA: "Create this experience")
+      - Share Link (always active)
+  - User-Generated Events
+    - Event Card (CTA: "View event")
+    - Blurred Date + Location (logged-out users)
+    - Share Link (always active)
+  - Filters
+    - City (initial scope)
+  - States
+    - Logged-out View (restricted visibility)
+    - Logged-in View (full interaction)
+**- Events**
+  - My Events
+    - Upcoming Events
+    - Past Events
+  - Create Event Flow
+    - Select Template or Custom
+    - Add Title, Description, Date, City
+    - Invite User(s) via share link
+    - Confirm Duo (User B accepts)
+    - Publish (visible to Users C + D)
+  - Event States
+    - Draft
+    - Awaiting Duo Confirmation
+    - Active Event
+    - Completed Event
+    - Cancelled
+  - Reporting
+    - Report Event (for moderation)
+**- Chat**
+- Active Chats
+   - Group Chat (A+B and C+D)
+   - System Messages (reminders, event updates)
+   - Post-Event Prompt
+   - Options: Keep Chat Open / Archive Chat
+- Empty State
+   - Message: “No active chats yet. Start exploring or create a new experience here!”
+   - CTA: Create an experience
+- Archived Chats (collapsible)
+  - Label: Past Events ▼
+  - Chat Card
+    - Activity Name
+    - Date (dimmed = visually de-emphasized)
+    - Last Message Preview (bold if unread)
+    - Button: Reopen Chat
+  - Reopen Chat → moves to Active Chats, notifications reactivated
+- Soft Expiration
+  - After 30 days inactivity → Moves to Archived
+**- Profile**
+- My Profile
+  - Name, Picture, Bio, What I like, What I don't like, Hobbies
+  - Settings & Support
+    - Language
+    - Location
+    - Privacy Policy
+    - Support Center
+    - Feedback
+    - How PairUp Works Guide
+    - Log Out
+  - Reporting
+    - Report User (from profile or chat)
+**- System-Level Elements**
+  - Top Navigation Bar
+    - Explore
+    - Events
+    - Chat
+    - Profile
+  - Floating Action Button (FAB)
+    - Create Experience Shortcut
+  - Notifications Panel
+    - Invites
+    - Confirmations
+    - Reminders
+    - Chat Notifications
+  - Admin / Moderation Layer
+    - Event Reports
+    - User Reports
 
 Navigation uses a responsive `Navigation` organism with adaptive links and user state awareness.
 
