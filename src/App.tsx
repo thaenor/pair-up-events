@@ -3,6 +3,7 @@ import { Toaster } from "sonner";
 import { Suspense, lazy } from "react";
 
 import { AuthProvider } from "./contexts/AuthProvider";
+import { UserProfileProvider } from "./contexts/UserProfileProvider";
 import ErrorBoundary from "./components/ErrorBoundary";
 
 const IndexPage = lazy(() => import("./pages/Index"));
@@ -18,7 +19,8 @@ const App = () => {
 
   const appContent = (
     <AuthProvider>
-      <BrowserRouter future={{ v7_relativeSplatPath: true }}>
+      <UserProfileProvider>
+        <BrowserRouter future={{ v7_relativeSplatPath: true }}>
         <ErrorBoundary>
           <Suspense
             fallback={(
@@ -47,7 +49,8 @@ const App = () => {
             closeButton={true}
           />
         </ErrorBoundary>
-      </BrowserRouter>
+        </BrowserRouter>
+      </UserProfileProvider>
     </AuthProvider>
   );
 

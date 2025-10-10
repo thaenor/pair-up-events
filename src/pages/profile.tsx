@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import LoadingSpinner from '@/components/atoms/LoadingSpinner';
@@ -7,20 +7,30 @@ import AccountControls from '@/components/molecules/account-controls';
 import InviteFriendSection from '@/components/molecules/invite-friend-section';
 import { useAuth } from '@/hooks/useAuth';
 import { PROFILE_CONFIG } from '@/constants/profile';
+import { useUserProfile } from '@/hooks/useUserProfile';
+import ProfileDetailsForm from '@/components/molecules/profile-details-form';
+import ProfilePreferencesForm from '@/components/molecules/profile-preferences-form';
+import ProfileStatsCard from '@/components/molecules/profile-stats-card';
+import type { UserProfileUpdate } from '@/types/user-profile';
 
 const ProfilePage: React.FC = () => {
-    const { user, loading } = useAuth();
+    const { user, loading: authLoading } = useAuth();
+    const { profile, loading: profileLoading, error: profileError, isSaving, saveProfile } = useUserProfile();
     const navigate = useNavigate();
 
     // Redirect if not authenticated
     useEffect(() => {
-        if (!loading && !user) {
+        if (!authLoading && !user) {
             navigate('/login');
         }
-    }, [user, loading, navigate]);
+    }, [user, authLoading, navigate]);
 
+    const handleSaveProfile = useCallback(
+        (updates: UserProfileUpdate) => saveProfile(updates),
+        [saveProfile]
+    );
 
-    if (loading) {
+    if (authLoading || profileLoading) {
         return (
             <div className="min-h-screen bg-pairup-cream flex items-center justify-center">
                 <LoadingSpinner size="lg" />
@@ -52,7 +62,27 @@ const ProfilePage: React.FC = () => {
                 </div>
 
                 {/* User Information */}
-                <ProfileSection user={user} />
+                <ProfileSection profile={profile} />
+
+                {profileError ? (
+                    <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+                        {profileError}
+                    </div>
+                ) : null}
+
+                <ProfileDetailsForm
+                    profile={profile}
+                    onSubmit={handleSaveProfile}
+                    isSaving={isSaving}
+                />
+
+                <ProfilePreferencesForm
+                    profile={profile}
+                    onSubmit={handleSaveProfile}
+                    isSaving={isSaving}
+                />
+
+                <ProfileStatsCard stats={profile?.stats} />
 
                 {/* Survey Link */}
                 <div className="bg-pairup-cyan/10 border border-pairup-cyan/30 rounded-lg p-6 mb-8">
