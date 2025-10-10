@@ -17,10 +17,14 @@ const mockOnAuthStateChanged = vi.fn();
 const mockSendEmailVerification = vi.fn();
 const mockSendPasswordResetEmail = vi.fn();
 const mockDeleteUser = vi.fn();
+const mockCreateUserProfile = vi.fn();
+const mockDeleteUserProfile = vi.fn();
 
 let authObserver: ((user: unknown) => void) | undefined;
 
 const mockSetUser = vi.fn();
+const mockCaptureException = vi.fn();
+const mockCaptureMessage = vi.fn();
 
 vi.mock("@/lib/firebase", () => ({
   auth: mockAuth,
@@ -38,6 +42,13 @@ vi.mock("@/lib/firebase", () => ({
 
 vi.mock("@/lib/sentry", () => ({
   setUser: (...args: unknown[]) => mockSetUser(...args),
+  captureException: (...args: unknown[]) => mockCaptureException(...args),
+  captureMessage: (...args: unknown[]) => mockCaptureMessage(...args),
+}));
+
+vi.mock("@/lib/firebase/user-profile", () => ({
+  createUserProfile: (...args: unknown[]) => mockCreateUserProfile(...args),
+  deleteUserProfile: (...args: unknown[]) => mockDeleteUserProfile(...args),
 }));
 
 const TestConsumer = () => {
@@ -73,6 +84,10 @@ describe("AuthProvider", () => {
     mockSendPasswordResetEmail.mockReset();
     mockDeleteUser.mockReset();
     mockSetUser.mockReset();
+    mockCreateUserProfile.mockReset();
+    mockDeleteUserProfile.mockReset();
+    mockCaptureException.mockReset();
+    mockCaptureMessage.mockReset();
   });
 
   const resolveAuth = async (user: unknown) => {
@@ -158,6 +173,7 @@ describe("AuthProvider", () => {
     const newUser = { uid: "456", email: "new@pairup.events" };
     mockCreateUserWithEmailAndPassword.mockResolvedValueOnce({ user: newUser });
     mockSendEmailVerification.mockResolvedValueOnce(undefined);
+    mockCreateUserProfile.mockResolvedValueOnce(undefined);
 
     await act(async () => {
       await TestConsumer.latest!.signUpWithEmail("new@pairup.events", "password");
@@ -168,7 +184,14 @@ describe("AuthProvider", () => {
       "new@pairup.events",
       "password"
     );
+    expect(mockCreateUserProfile).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: "456",
+        email: "new@pairup.events",
+      })
+    );
     expect(mockSendEmailVerification).toHaveBeenCalledWith(newUser);
+    expect(mockDeleteUser).not.toHaveBeenCalled();
   });
 
   it("blocks email verification when no user is signed in", async () => {
@@ -197,6 +220,7 @@ describe("AuthProvider", () => {
     mockSignOut.mockResolvedValueOnce(undefined);
     mockSendPasswordResetEmail.mockResolvedValueOnce(undefined);
     mockDeleteUser.mockResolvedValueOnce(undefined);
+    mockDeleteUserProfile.mockResolvedValueOnce(undefined);
 
     await act(async () => {
       await TestConsumer.latest!.sendPasswordReset("reset@pairup.events");
@@ -210,6 +234,7 @@ describe("AuthProvider", () => {
     await act(async () => {
       await TestConsumer.latest!.deleteUserAccount();
     });
+    expect(mockDeleteUserProfile).toHaveBeenCalledWith("999");
     expect(mockDeleteUser).toHaveBeenCalled();
   });
 

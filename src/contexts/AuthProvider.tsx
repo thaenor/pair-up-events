@@ -9,12 +9,15 @@ import {
   sendPasswordResetEmail,
   signOut,
   deleteUser,
-  onAuthStateChanged
+  onAuthStateChanged,
+  missingFirebaseConfig,
 } from '@/lib/firebase';
 import { AuthContextType, AuthState } from '@/lib/firebase/types';
 import { AuthContext } from './AuthContext';
 import { getAuthErrorMessage } from '@/utils/authErrorMessages';
 import { setUser } from '@/lib/sentry';
+import { createUserProfile, deleteUserProfile } from '@/lib/firebase/user-profile';
+import { logError, logWarning } from '@/utils/logger';
 
 // AuthProvider component
 interface AuthProviderProps {
@@ -43,11 +46,53 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     [setAuthState] // Explicitly include setAuthState for clarity and maintainability
   );
 
+  const ensureAuthConfigured = useCallback((options?: { suppressErrorState?: boolean }) => {
+    if (!auth) {
+      const errorMessage = missingFirebaseConfig.length > 0
+        ? 'Authentication is unavailable because Firebase credentials are not configured.'
+        : 'Authentication is temporarily unavailable. Please try again later.';
+
+      const error = new Error(errorMessage);
+
+      if (options?.suppressErrorState) {
+        logWarning('Firebase Auth is disabled due to missing configuration.', {
+          component: 'AuthProvider',
+          action: 'ensureAuthConfigured:suppressed',
+          additionalData: { missingFirebaseConfig },
+        });
+      } else {
+        logError('Attempted to use Firebase Auth without a valid configuration.', error, {
+          component: 'AuthProvider',
+          action: 'ensureAuthConfigured',
+          additionalData: { missingFirebaseConfig },
+        });
+      }
+
+      setAuthState(prev => ({
+        ...prev,
+        loading: false,
+        error: options?.suppressErrorState ? prev.error : errorMessage,
+      }));
+
+      setUser(null);
+
+      return { auth: null, error } as const;
+    }
+
+    return { auth, error: null as Error | null } as const;
+  }, []);
+
   // Set up auth state listener
   useEffect(() => {
+    const { auth: authInstance } = ensureAuthConfigured({ suppressErrorState: true });
+
+    if (!authInstance) {
+      return undefined;
+    }
+
     let isMounted = true;
 
-    const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
+    const unsubscribe = onAuthStateChanged(authInstance, (user: User | null) => {
       if (!isMounted) {
         return;
       }
@@ -73,14 +118,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       isMounted = false;
       unsubscribe();
     };
-  }, []);
+  }, [ensureAuthConfigured]);
 
 
   // Sign in with email and password
   const signInWithEmail = async (email: string, password: string) => {
     try {
+      const { auth: authInstance, error } = ensureAuthConfigured();
+      if (!authInstance) {
+        throw error;
+      }
+
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(authInstance, email, password);
     } catch (error: unknown) {
       handleAuthError(error);
       throw error;
@@ -93,10 +143,42 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signUpWithEmail = async (email: string, password: string) => {
     try {
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const { auth: authInstance, error: configurationError } = ensureAuthConfigured();
+      if (!authInstance) {
+        throw configurationError;
+      }
+
+      const userCredential = await createUserWithEmailAndPassword(authInstance, email, password);
 
       if (userCredential.user) {
-        await sendEmailVerification(userCredential.user);
+        try {
+          await createUserProfile({
+            id: userCredential.user.uid,
+            email,
+            displayName: userCredential.user.displayName,
+            photoUrl: userCredential.user.photoURL,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          });
+          await sendEmailVerification(userCredential.user);
+        } catch (profileError) {
+          logError('Failed to finalize sign up flow', profileError, {
+            component: 'AuthProvider',
+            action: 'signUpWithEmail',
+            additionalData: { uid: userCredential.user.uid },
+          });
+
+          try {
+            await deleteUser(userCredential.user);
+          } catch (cleanupError) {
+            logError('Failed to rollback user creation after profile error', cleanupError, {
+              component: 'AuthProvider',
+              action: 'signUpWithEmail:rollback',
+              additionalData: { uid: userCredential.user.uid },
+            });
+          }
+
+          throw profileError;
+        }
       }
     } catch (error: unknown) {
       handleAuthError(error);
@@ -109,8 +191,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Send email verification
   const sendEmailVerificationToUser = async () => {
     try {
+      const { auth: authInstance, error } = ensureAuthConfigured();
+      if (!authInstance) {
+        throw error;
+      }
+
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
-      const currentUser = auth.currentUser;
+      const currentUser = authInstance.currentUser;
 
       if (!currentUser) {
         throw new Error('No user is currently signed in');
@@ -128,8 +215,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Sign out
   const signOutUser = async () => {
     try {
+      const { auth: authInstance, error } = ensureAuthConfigured();
+      if (!authInstance) {
+        throw error;
+      }
+
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
-      await signOut(auth);
+      await signOut(authInstance);
     } catch (error: unknown) {
       handleAuthError(error);
       throw error;
@@ -141,8 +233,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Send password reset email
   const sendPasswordReset = async (email: string) => {
     try {
+      const { auth: authInstance, error } = ensureAuthConfigured();
+      if (!authInstance) {
+        throw error;
+      }
+
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
-      await sendPasswordResetEmail(auth, email);
+      await sendPasswordResetEmail(authInstance, email);
     } catch (error: unknown) {
       handleAuthError(error);
       throw error;
@@ -154,11 +251,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Delete user account
   const deleteUserAccount = async () => {
     try {
+      const { auth: authInstance, error } = ensureAuthConfigured();
+      if (!authInstance) {
+        throw error;
+      }
+
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
-      const currentUser = auth.currentUser;
+      const currentUser = authInstance.currentUser;
 
       if (!currentUser) {
         throw new Error('No user is currently signed in');
+      }
+
+      try {
+        await deleteUserProfile(currentUser.uid);
+      } catch (profileError) {
+        logError('Profile cleanup failed during account deletion. Continuing with auth deletion.', profileError, {
+          component: 'AuthProvider',
+          action: 'deleteUserAccount:profileCleanupError',
+          additionalData: { uid: currentUser.uid },
+        });
       }
 
       await deleteUser(currentUser);

@@ -10,37 +10,30 @@ vi.mock("@/utils/profileHelpers", () => ({
 }));
 
 describe("ProfileSection", () => {
-  const baseUser = {
+  const baseProfile = {
+    id: "user-1",
     email: "person@pairup.events",
-    metadata: {
-      creationTime: "2024-01-01T00:00:00Z",
-      lastSignInTime: "2024-02-01T00:00:00Z"
-    }
-  } as unknown as Parameters<typeof ProfileSection>[0]["user"];
+    displayName: "PairUp Duo",
+    createdAt: "2024-01-01T00:00:00Z",
+    timezone: "America/New_York"
+  } as unknown as Parameters<typeof ProfileSection>[0]["profile"];
 
-  it("renders user email and formatted dates", () => {
-    render(<ProfileSection user={baseUser} />);
+  it("renders primary profile fields", () => {
+    render(<ProfileSection profile={baseProfile} />);
 
+    expect(screen.getByTestId("profile-display-name")).toHaveTextContent("PairUp Duo");
     expect(screen.getByTestId("profile-email")).toHaveTextContent("person@pairup.events");
-    expect(mockFormatDate).toHaveBeenCalledWith("2024-01-01T00:00:00Z");
-    expect(mockFormatDate).toHaveBeenCalledWith("2024-02-01T00:00:00Z");
+    expect(screen.getByTestId("profile-timezone")).toHaveTextContent("America/New_York");
     expect(screen.getByTestId("profile-created-at")).toHaveTextContent("formatted-2024-01-01T00:00:00Z");
-    expect(screen.getByTestId("profile-last-sign-in")).toHaveTextContent("formatted-2024-02-01T00:00:00Z");
+    expect(mockFormatDate).toHaveBeenCalledWith("2024-01-01T00:00:00Z");
   });
 
-  it("omits last sign-in when not available", () => {
-    render(
-      <ProfileSection
-        user={{
-          ...baseUser,
-          metadata: {
-            creationTime: "2024-01-01T00:00:00Z",
-            lastSignInTime: undefined
-          }
-        }}
-      />
-    );
+  it("shows fallback text when profile is not yet loaded", () => {
+    render(<ProfileSection profile={null} />);
 
-    expect(screen.queryByTestId("profile-last-sign-in")).not.toBeInTheDocument();
+    expect(screen.getByTestId("profile-display-name")).toHaveTextContent("Add your display name");
+    expect(screen.getByTestId("profile-email")).toHaveTextContent("Add your email address");
+    expect(screen.getByTestId("profile-timezone")).toHaveTextContent("Set your timezone");
+    expect(screen.getByTestId("profile-created-at")).toHaveTextContent("Pending");
   });
 });

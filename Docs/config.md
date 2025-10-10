@@ -56,7 +56,11 @@ PROFILE_MESSAGES = {
     PASSWORD_RESET_ERROR: 'Failed to send password reset email. Please try again.',
     ACCOUNT_DELETE_SUCCESS: 'Account deleted successfully.',
     ACCOUNT_DELETE_ERROR: 'Failed to delete account. Please try again.',
-    DELETE_CONFIRMATION: 'Are you sure you want to delete your account?'
+    DELETE_CONFIRMATION: 'Are you sure you want to delete your account?',
+    PROFILE_SAVE_SUCCESS: 'Profile details updated successfully.',
+    PROFILE_SAVE_ERROR: 'We could not update your profile details. Please try again.',
+    PREFERENCES_SAVE_SUCCESS: 'Preferences saved! Your vibe is up to date.',
+    PREFERENCES_SAVE_ERROR: 'We could not save your preferences. Please try again.'
   }
 }
 
