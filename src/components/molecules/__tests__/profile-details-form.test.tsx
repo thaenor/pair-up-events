@@ -21,7 +21,7 @@ describe("ProfileDetailsForm", () => {
     displayName: "PairUp Pioneers",
     photoUrl: "https://pairup.events/photo.png",
     timezone: "Europe/Paris",
-    age: 27,
+    birthDate: "1996-04-15",
     gender: "Non-binary",
   } as Parameters<typeof ProfileDetailsForm>[0]["profile"];
 
@@ -39,8 +39,8 @@ describe("ProfileDetailsForm", () => {
     fireEvent.change(screen.getByTestId("profile-details-display-name"), {
       target: { value: "  New Display Name  " },
     });
-    fireEvent.change(screen.getByTestId("profile-details-age"), {
-      target: { value: "29" },
+    fireEvent.change(screen.getByTestId("profile-details-birth-date"), {
+      target: { value: "1996-05-20" },
     });
 
     fireEvent.submit(screen.getByTestId("profile-details-form"));
@@ -51,7 +51,7 @@ describe("ProfileDetailsForm", () => {
         photoUrl: baseProfile.photoUrl,
         timezone: baseProfile.timezone,
         gender: baseProfile.gender,
-        age: 29,
+        birthDate: "1996-05-20",
       });
     });
 
@@ -87,7 +87,7 @@ describe("ProfileDetailsForm", () => {
     expect(screen.getByTestId("profile-details-submit")).toBeDisabled();
     expect(screen.getByTestId("profile-details-display-name")).toBeDisabled();
     expect(screen.getByTestId("profile-details-timezone")).toBeDisabled();
-    expect(screen.getByTestId("profile-details-age")).toBeDisabled();
+    expect(screen.getByTestId("profile-details-birth-date")).toBeDisabled();
     expect(screen.getByTestId("profile-details-gender")).toBeDisabled();
     expect(screen.getByTestId("profile-details-photo")).toBeDisabled();
   });

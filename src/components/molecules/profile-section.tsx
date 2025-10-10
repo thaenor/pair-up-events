@@ -39,17 +39,20 @@ const ProfileSection: React.FC<ProfileSectionProps> = React.memo(({ profile }) =
       </div>
 
       <div className="mt-6 grid gap-4 md:grid-cols-3">
-        <div className="flex items-center rounded-lg border border-pairup-cyan/40 bg-pairup-cyan/10 px-4 py-3">
-          <Mail className="mr-3 h-5 w-5 text-pairup-darkBlue/60" />
-          <div>
+        <div className="flex items-start gap-3 rounded-lg border border-pairup-cyan/40 bg-pairup-cyan/10 px-4 py-3 min-w-0">
+          <Mail className="mt-0.5 h-5 w-5 text-pairup-darkBlue/60" />
+          <div className="min-w-0">
             <p className="text-xs uppercase tracking-wide text-pairup-darkBlue/60">Email</p>
-            <p className="text-sm font-medium text-pairup-darkBlue" data-testid="profile-email">
+            <p
+              className="text-sm font-medium text-pairup-darkBlue break-words"
+              data-testid="profile-email"
+            >
               {email}
             </p>
           </div>
         </div>
-        <div className="flex items-center rounded-lg border border-pairup-cyan/40 bg-pairup-cyan/10 px-4 py-3">
-          <Globe className="mr-3 h-5 w-5 text-pairup-darkBlue/60" />
+        <div className="flex items-start gap-3 rounded-lg border border-pairup-cyan/40 bg-pairup-cyan/10 px-4 py-3">
+          <Globe className="mt-0.5 h-5 w-5 text-pairup-darkBlue/60" />
           <div>
             <p className="text-xs uppercase tracking-wide text-pairup-darkBlue/60">Timezone</p>
             <p className="text-sm font-medium text-pairup-darkBlue" data-testid="profile-timezone">
@@ -57,8 +60,8 @@ const ProfileSection: React.FC<ProfileSectionProps> = React.memo(({ profile }) =
             </p>
           </div>
         </div>
-        <div className="flex items-center rounded-lg border border-pairup-cyan/40 bg-pairup-cyan/10 px-4 py-3">
-          <Calendar className="mr-3 h-5 w-5 text-pairup-darkBlue/60" />
+        <div className="flex items-start gap-3 rounded-lg border border-pairup-cyan/40 bg-pairup-cyan/10 px-4 py-3">
+          <Calendar className="mt-0.5 h-5 w-5 text-pairup-darkBlue/60" />
           <div>
             <p className="text-xs uppercase tracking-wide text-pairup-darkBlue/60">Joined</p>
             <p className="text-sm font-medium text-pairup-darkBlue" data-testid="profile-created-at">

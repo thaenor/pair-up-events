@@ -19,14 +19,14 @@ export const ProfileDetailsForm: React.FC<ProfileDetailsFormProps> = ({
   const [displayName, setDisplayName] = useState('');
   const [photoUrl, setPhotoUrl] = useState('');
   const [timezone, setTimezone] = useState('');
-  const [age, setAge] = useState('');
+  const [birthDate, setBirthDate] = useState('');
   const [gender, setGender] = useState('');
 
   useEffect(() => {
     setDisplayName(profile?.displayName ?? '');
     setPhotoUrl(profile?.photoUrl ?? '');
     setTimezone(profile?.timezone ?? '');
-    setAge(profile?.age ? String(profile.age) : '');
+    setBirthDate(profile?.birthDate ?? '');
     setGender(profile?.gender ?? '');
   }, [profile]);
 
@@ -38,14 +38,8 @@ export const ProfileDetailsForm: React.FC<ProfileDetailsFormProps> = ({
       photoUrl: photoUrl.trim() || null,
       timezone: timezone.trim() || null,
       gender: gender.trim() || null,
+      birthDate: birthDate.trim() || null,
     };
-
-    if (age.trim()) {
-      const parsedAge = Number(age);
-      updates.age = Number.isNaN(parsedAge) ? null : parsedAge;
-    } else {
-      updates.age = null;
-    }
 
     try {
       await onSubmit(updates);
@@ -103,16 +97,15 @@ export const ProfileDetailsForm: React.FC<ProfileDetailsFormProps> = ({
         </label>
 
         <label className="flex flex-col text-sm font-medium text-pairup-darkBlue/80">
-          Age
+          Birth date
           <input
-            type="number"
-            min={0}
-            value={age}
-            onChange={event => setAge(event.target.value)}
+            type="date"
+            value={birthDate}
+            onChange={event => setBirthDate(event.target.value)}
             disabled={isDisabled}
             className="mt-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
-            placeholder="Add your age"
-            data-testid="profile-details-age"
+            placeholder="Select your birth date"
+            data-testid="profile-details-birth-date"
           />
         </label>
 
@@ -143,9 +136,12 @@ export const ProfileDetailsForm: React.FC<ProfileDetailsFormProps> = ({
         </label>
       </div>
 
-      <div className="mt-6 flex items-center justify-between rounded-lg bg-pairup-cyan/10 px-4 py-3 text-sm text-pairup-darkBlue">
+      <div className="mt-6 flex flex-col gap-1 rounded-lg bg-pairup-cyan/10 px-4 py-3 text-sm text-pairup-darkBlue sm:flex-row sm:items-center sm:justify-between">
         <span>Email</span>
-        <span className="font-medium" data-testid="profile-details-email">
+        <span
+          className="font-medium break-words text-right sm:text-left"
+          data-testid="profile-details-email"
+        >
           {profile?.email ?? 'Not available'}
         </span>
       </div>
