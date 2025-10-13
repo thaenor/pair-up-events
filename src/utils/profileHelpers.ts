@@ -4,6 +4,12 @@ import { toast } from 'sonner';
 import { PROFILE_MESSAGES } from '@/constants/profile';
 import { logError } from '@/utils/logger';
 
+const PROFILE_DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
 /**
  * Formats a timestamp into a readable date string
  */
@@ -29,11 +35,7 @@ export const formatDate = (timestamp: string | number | Date | Timestamp | undef
       throw new Error('Invalid date value');
     }
 
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    return PROFILE_DATE_FORMATTER.format(date);
   } catch (error) {
     logError('Error formatting date', error, {
       component: 'profileHelpers',
