@@ -29,6 +29,7 @@ const InviteLandingPage: React.FC = () => {
   const [inviterProfile, setInviterProfile] = useState<UserProfile | null>(null);
   const [activeInvite, setActiveInvite] = useState<ActiveDuoInvite | null>(null);
   const [tokenHash, setTokenHash] = useState<string | null>(null);
+  const [verificationWarning, setVerificationWarning] = useState(false);
   const [isAccepting, setIsAccepting] = useState(false);
 
   const inviterName = useMemo(() => {
@@ -48,6 +49,7 @@ const InviteLandingPage: React.FC = () => {
       if (!inviterId || !token) {
         setStatus('invalid');
         setTokenHash(null);
+        setVerificationWarning(false);
         return;
       }
 
@@ -58,25 +60,36 @@ const InviteLandingPage: React.FC = () => {
 
       setStatus('loading');
 
+      let computedTokenHash: string | null = null;
+
       try {
+        computedTokenHash = await hashDuoInviteToken(token);
         const profile = await getUserProfileOnce(inviterId);
         if (!profile) {
           setStatus('invalid');
+          setInviterProfile(null);
+          setActiveInvite(null);
           setTokenHash(null);
+          setVerificationWarning(false);
           return;
         }
 
         const invite = profile.activeDuoInvite;
         if (!invite) {
           setStatus('invalid');
+          setInviterProfile(null);
+          setActiveInvite(null);
           setTokenHash(null);
+          setVerificationWarning(false);
           return;
         }
 
-        const computedTokenHash = await hashDuoInviteToken(token);
         if (invite.tokenHash !== computedTokenHash) {
           setStatus('invalid');
+          setInviterProfile(null);
+          setActiveInvite(null);
           setTokenHash(null);
+          setVerificationWarning(false);
           return;
         }
 
@@ -95,15 +108,41 @@ const InviteLandingPage: React.FC = () => {
           setInviterProfile(profile);
           setActiveInvite(invite);
           setTokenHash(nextStatus === 'ready' ? computedTokenHash : null);
+          setVerificationWarning(false);
           setStatus(nextStatus);
         }
       } catch (error) {
-        if (error instanceof FirebaseError && error.code === 'permission-denied' && !user?.uid) {
+        if (error instanceof FirebaseError && error.code === 'permission-denied') {
+          if (!user?.uid) {
+            if (isMounted) {
+              setStatus('auth-required');
+              setInviterProfile(null);
+              setActiveInvite(null);
+              setTokenHash(null);
+              setVerificationWarning(false);
+            }
+            return;
+          }
+
+          let ensuredTokenHash = computedTokenHash;
+          if (!ensuredTokenHash) {
+            try {
+              ensuredTokenHash = await hashDuoInviteToken(token);
+            } catch (hashError) {
+              logError('Failed to hash duo invite token after permission error', hashError, {
+                component: 'InviteLandingPage',
+                action: 'verifyInvite:fallback-hash',
+                additionalData: { inviterId, token },
+              });
+            }
+          }
+
           if (isMounted) {
-            setStatus('auth-required');
+            setStatus('ready');
             setInviterProfile(null);
             setActiveInvite(null);
-            setTokenHash(null);
+            setTokenHash(ensuredTokenHash ?? null);
+            setVerificationWarning(true);
           }
           return;
         }
@@ -115,7 +154,10 @@ const InviteLandingPage: React.FC = () => {
         });
         if (isMounted) {
           setStatus('invalid');
+          setInviterProfile(null);
+          setActiveInvite(null);
           setTokenHash(null);
+          setVerificationWarning(false);
         }
       }
     };
@@ -147,7 +189,7 @@ const InviteLandingPage: React.FC = () => {
   }, [status, inviterId, token, user]);
 
   const handleAcceptInvite = async () => {
-    if (!inviterId || !token || !activeInvite) {
+    if (!inviterId || !token) {
       return;
     }
 
@@ -161,9 +203,23 @@ const InviteLandingPage: React.FC = () => {
       return;
     }
 
-    const ensuredTokenHash = tokenHash ?? (await hashDuoInviteToken(token));
+    let ensuredTokenHash = tokenHash ?? activeInvite?.tokenHash ?? null;
 
-    if (ensuredTokenHash !== activeInvite.tokenHash) {
+    if (!ensuredTokenHash) {
+      try {
+        ensuredTokenHash = await hashDuoInviteToken(token);
+      } catch (error) {
+        logError('Failed to hash duo invite token before accepting', error, {
+          component: 'InviteLandingPage',
+          action: 'handleAcceptInvite:hash',
+          additionalData: { inviterId, token },
+        });
+        toast.error(PROFILE_MESSAGES.INVITE_DUO.ACCEPT_ERROR);
+        return;
+      }
+    }
+
+    if (activeInvite && ensuredTokenHash !== activeInvite.tokenHash) {
       toast.error(PROFILE_MESSAGES.INVITE_DUO.ACCEPT_ERROR);
       return;
     }
@@ -182,6 +238,7 @@ const InviteLandingPage: React.FC = () => {
       sessionStorage.removeItem(PENDING_DUO_INVITE_STORAGE_KEY);
       setStatus('accepted');
       setTokenHash(null);
+      setVerificationWarning(false);
     } catch (error) {
       logError('Failed to accept duo invite', error, {
         component: 'InviteLandingPage',
@@ -222,6 +279,11 @@ const InviteLandingPage: React.FC = () => {
         return 'This invite has already been accepted. Head to your profile to see your duos!';
       case 'accepted':
         return 'Success! You and your duo are now connected on PairUp Events.';
+      case 'ready':
+        if (verificationWarning) {
+          return PROFILE_MESSAGES.INVITE_DUO.PERMISSION_WARNING;
+        }
+        return `${inviterName} wants to pair up with you on PairUp Events. Join them to start planning together!`;
       default:
         return `${inviterName} wants to pair up with you on PairUp Events. Join them to start planning together!`;
     }

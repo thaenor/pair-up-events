@@ -125,6 +125,8 @@ Let me know what you think! 😊`,
     ACCEPT_SELF: 'You cannot accept your own invite.',
     ACCEPT_SUCCESS: 'You are now paired up! 🎉',
     AUTH_REQUIRED: 'Sign in or create an account to view and accept this invite.',
+    PERMISSION_WARNING:
+      'We couldn’t verify this invite automatically, but you can accept it if you trust the person who shared it.',
   },
   ALERTS: {
     PASSWORD_RESET_SUCCESS: 'Password reset email sent! Check your inbox.',

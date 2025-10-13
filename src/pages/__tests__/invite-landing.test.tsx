@@ -142,4 +142,24 @@ describe('InviteLandingPage', () => {
 
     expect(mockGetUserProfileOnce).toHaveBeenCalledTimes(2);
   });
+
+  it('allows acceptance when metadata remains restricted after sign-in', async () => {
+    mockUseAuthValue.user = { uid: 'partner-1', displayName: 'Partner' };
+    mockHashDuoInviteToken.mockResolvedValue('hash-abc');
+    mockGetUserProfileOnce.mockRejectedValue(
+      new FirebaseError('permission-denied', 'still restricted'),
+    );
+
+    render(<InviteLandingPage />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('invite-landing-status').textContent).toBe(
+        PROFILE_MESSAGES.INVITE_DUO.PERMISSION_WARNING,
+      );
+    });
+
+    expect(
+      screen.getByRole('button', { name: /accept invite/i }),
+    ).toBeInTheDocument();
+  });
 });
