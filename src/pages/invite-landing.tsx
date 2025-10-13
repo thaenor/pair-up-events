@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
+import { FirebaseError } from 'firebase/app';
 
 import { PROFILE_MESSAGES } from '@/constants/profile';
 import { PENDING_DUO_INVITE_STORAGE_KEY } from '@/constants/invites';
@@ -23,6 +24,7 @@ const InviteLandingPage: React.FC = () => {
     | 'already-accepted'
     | 'ready'
     | 'accepted'
+    | 'auth-required'
   >('loading');
   const [inviterProfile, setInviterProfile] = useState<UserProfile | null>(null);
   const [activeInvite, setActiveInvite] = useState<ActiveDuoInvite | null>(null);
@@ -49,6 +51,11 @@ const InviteLandingPage: React.FC = () => {
         return;
       }
 
+      if (authLoading) {
+        setStatus('loading');
+        return;
+      }
+
       setStatus('loading');
 
       try {
@@ -66,8 +73,8 @@ const InviteLandingPage: React.FC = () => {
           return;
         }
 
-        const tokenHash = await hashDuoInviteToken(token);
-        if (invite.tokenHash !== tokenHash) {
+        const computedTokenHash = await hashDuoInviteToken(token);
+        if (invite.tokenHash !== computedTokenHash) {
           setStatus('invalid');
           setTokenHash(null);
           return;
@@ -87,10 +94,20 @@ const InviteLandingPage: React.FC = () => {
         if (isMounted) {
           setInviterProfile(profile);
           setActiveInvite(invite);
-          setTokenHash(nextStatus === 'ready' ? tokenHash : null);
+          setTokenHash(nextStatus === 'ready' ? computedTokenHash : null);
           setStatus(nextStatus);
         }
       } catch (error) {
+        if (error instanceof FirebaseError && error.code === 'permission-denied' && !user?.uid) {
+          if (isMounted) {
+            setStatus('auth-required');
+            setInviterProfile(null);
+            setActiveInvite(null);
+            setTokenHash(null);
+          }
+          return;
+        }
+
         logError('Failed to verify duo invite', error, {
           component: 'InviteLandingPage',
           action: 'verifyInvite',
@@ -108,7 +125,7 @@ const InviteLandingPage: React.FC = () => {
     return () => {
       isMounted = false;
     };
-  }, [inviterId, token]);
+  }, [authLoading, inviterId, token, user?.uid]);
 
   useEffect(() => {
     if (!inviterId || !token) {
@@ -116,7 +133,7 @@ const InviteLandingPage: React.FC = () => {
       return;
     }
 
-    if (status === 'ready' && !user) {
+    if ((status === 'ready' || status === 'auth-required') && !user) {
       sessionStorage.setItem(
         PENDING_DUO_INVITE_STORAGE_KEY,
         JSON.stringify({ inviterId, token }),
@@ -195,6 +212,8 @@ const InviteLandingPage: React.FC = () => {
         return 'Checking your invite…';
       case 'invalid':
         return 'This invite is no longer valid. It might have been revoked or the link is incorrect.';
+      case 'auth-required':
+        return PROFILE_MESSAGES.INVITE_DUO.AUTH_REQUIRED;
       case 'revoked':
         return 'This invite was revoked by the sender. Ask them to share a new link.';
       case 'expired':
@@ -209,7 +228,7 @@ const InviteLandingPage: React.FC = () => {
   };
 
   const renderActions = () => {
-    if (status === 'ready' && !user) {
+    if ((status === 'ready' || status === 'auth-required') && !user) {
       return (
         <div className="mt-6 flex flex-wrap gap-3">
           <button
