@@ -1,0 +1,101 @@
+{
+    "$schema": "https://codex.openai/schemas/v1.json",
+    "projectName": "pairup-events",
+    "version": "1.0.0",
+    "description": "Codex bootstrap manifest for the PairUp-events web app. Ensures consistent TypeScript + React development aligned with Firestore cost-efficiency and Atomic Design architecture.",
+  
+    "language": "typescript-react",
+    "framework": "vite-react",
+    "architecture": {
+      "pattern": "atomic-design",
+      "layers": ["atoms", "molecules", "organisms", "templates", "pages"]
+    },
+  
+    "rootDirs": {
+      "components": "src/components",
+      "hooks": "src/hooks",
+      "lib": "src/lib",
+      "firebase": "src/lib/firebase",
+      "types": "src/types",
+      "tests": "src/__tests__",
+      "docs": "docs"
+    },
+  
+    "docs": {
+      "contextualizer": "docs/agents.md",
+      "design": "docs/Design-doc.md",
+      "implementationPlans": "docs/implementation-plans/"
+    },
+  
+    "commands": {
+      "lint": "npm run lint -- --fix",
+      "test": "npm test",
+      "build": "npm run build"
+    },
+  
+    "firestore": {
+      "optimizeReads": true,
+      "collections": [
+        "users/{userId}/devices",
+        "users/{userId}/notifications",
+        "users/{userId}/memberships",
+        "public_profiles",
+        "events/{eventId}/participants",
+        "events/{eventId}/messages",
+        "events/{eventId}/attachments",
+        "events/{eventId}/activity",
+        "events_listings",
+        "events_geo",
+        "autocomplete_events",
+        "system",
+        "audit_logs"
+      ],
+      "guidelines": {
+        "noNewTopLevelCollections": true,
+        "batchWritesPreferred": true,
+        "cachedReadsPreferred": true,
+        "minimizeSnapshots": true
+      }
+    },
+  
+    "rules": {
+      "namingConvention": "kebab-case",
+      "componentExport": "named",
+      "styling": "tailwind-only",
+      "noInlineStyles": true,
+      "useClsxAndTwMerge": true,
+      "propsTypeExport": true,
+      "testsRequired": true,
+      "useErrorBoundary": true,
+      "mockMode": true
+    },
+  
+    "testing": {
+      "framework": "vitest",
+      "library": "react-testing-library",
+      "coLocate": true,
+      "selector": "data-testid",
+      "minimumTests": ["render", "behavior", "errorFallback"]
+    },
+  
+    "guardrails": {
+      "firestoreEfficiency": "minimizeReadsWrites",
+      "stopOnBackendUndefined": true,
+      "respectSecurityRules": true,
+      "haltOnConventionConflict": true,
+      "selfReviewBeforeComplete": true
+    },
+  
+    "codexBehavior": {
+      "contextFirst": true,
+      "consistencyOverCreativity": true,
+      "readabilityPriority": true,
+      "useDocsAsSourceOfTruth": true,
+      "docLookupOrder": [
+        "docs/agents.md",
+        "docs/Design-doc.md",
+        "docs/"
+      ]
+    }
+  }
+  
