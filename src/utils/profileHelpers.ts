@@ -1,7 +1,7 @@
 import { Timestamp } from 'firebase/firestore';
 import { toast } from 'sonner';
 
-import { PROFILE_MESSAGES } from '@/constants/profile';
+import { PROFILE_COPY, PROFILE_MESSAGES } from '@/constants/profile';
 import { logError } from '@/utils/logger';
 
 const PROFILE_DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
@@ -14,7 +14,7 @@ const PROFILE_DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
  * Formats a timestamp into a readable date string
  */
 export const formatDate = (timestamp: string | number | Date | Timestamp | undefined): string => {
-  if (!timestamp) return 'Unknown';
+  if (!timestamp) return PROFILE_COPY.GENERAL.UNKNOWN_VALUE;
 
   try {
     let date: Date | undefined;
@@ -28,7 +28,7 @@ export const formatDate = (timestamp: string | number | Date | Timestamp | undef
     }
 
     if (!date) {
-      return 'Unknown';
+      return PROFILE_COPY.GENERAL.UNKNOWN_VALUE;
     }
 
     if (Number.isNaN(date.getTime())) {
@@ -42,7 +42,7 @@ export const formatDate = (timestamp: string | number | Date | Timestamp | undef
       action: 'formatDate',
       additionalData: { timestamp }
     });
-    return 'Invalid Date';
+    return PROFILE_COPY.GENERAL.INVALID_DATE;
   }
 };
 
@@ -99,8 +99,8 @@ export const shareOrCopyToClipboard = async (shareData: ShareData): Promise<void
         action: 'shareOrCopyToClipboard',
         additionalData: { shareData, fallbackAttempt: true }
       });
-      toast.error('Unable to share or copy to clipboard');
-      throw new Error('Unable to share or copy to clipboard');
+      toast.error(PROFILE_COPY.GENERAL.SHARE_FALLBACK_ERROR);
+      throw new Error(PROFILE_COPY.GENERAL.SHARE_FALLBACK_ERROR);
     }
   }
 };

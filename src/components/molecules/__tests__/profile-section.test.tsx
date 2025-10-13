@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import ProfileSection from "../profile-section";
+import { PROFILE_COPY } from "@/constants/profile";
 
 const mockFormatDate = vi.fn((value: unknown) => `formatted-${String(value)}`);
 
@@ -31,9 +32,17 @@ describe("ProfileSection", () => {
   it("shows fallback text when profile is not yet loaded", () => {
     render(<ProfileSection profile={null} />);
 
-    expect(screen.getByTestId("profile-display-name")).toHaveTextContent("Add your display name");
-    expect(screen.getByTestId("profile-email")).toHaveTextContent("Add your email address");
-    expect(screen.getByTestId("profile-timezone")).toHaveTextContent("Set your timezone");
-    expect(screen.getByTestId("profile-created-at")).toHaveTextContent("Pending");
+    expect(screen.getByTestId("profile-display-name")).toHaveTextContent(
+      PROFILE_COPY.SNAPSHOT.DISPLAY_NAME_PLACEHOLDER
+    );
+    expect(screen.getByTestId("profile-email")).toHaveTextContent(
+      PROFILE_COPY.SNAPSHOT.EMAIL_PLACEHOLDER
+    );
+    expect(screen.getByTestId("profile-timezone")).toHaveTextContent(
+      PROFILE_COPY.SNAPSHOT.TIMEZONE_PLACEHOLDER
+    );
+    expect(screen.getByTestId("profile-created-at")).toHaveTextContent(
+      PROFILE_COPY.SNAPSHOT.CREATED_PENDING
+    );
   });
 });

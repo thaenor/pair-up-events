@@ -6,6 +6,7 @@ import {
   formatDate,
   shareOrCopyToClipboard
 } from "../profileHelpers";
+import { PROFILE_COPY } from "@/constants/profile";
 
 const mockToastSuccess = vi.fn();
 const mockToastError = vi.fn();
@@ -55,8 +56,8 @@ describe("formatDate", () => {
   });
 
   it("handles invalid values gracefully", () => {
-    expect(formatDate(undefined)).toBe("Unknown");
-    expect(formatDate("invalid" as unknown as number)).toBe("Invalid Date");
+    expect(formatDate(undefined)).toBe(PROFILE_COPY.GENERAL.UNKNOWN_VALUE);
+    expect(formatDate("invalid" as unknown as number)).toBe(PROFILE_COPY.GENERAL.INVALID_DATE);
   });
 });
 
@@ -89,10 +90,12 @@ describe("shareOrCopyToClipboard", () => {
   it("logs errors and surfaces feedback if clipboard fallback fails", async () => {
     mockClipboardWriteText.mockRejectedValue(new Error("clipboard"));
 
-    await expect(shareOrCopyToClipboard(shareData)).rejects.toThrow("Unable to share or copy to clipboard");
+    await expect(shareOrCopyToClipboard(shareData)).rejects.toThrow(
+      PROFILE_COPY.GENERAL.SHARE_FALLBACK_ERROR
+    );
 
     expect(mockLogError).toHaveBeenCalledTimes(2);
-    expect(mockToastError).toHaveBeenCalledWith("Unable to share or copy to clipboard");
+    expect(mockToastError).toHaveBeenCalledWith(PROFILE_COPY.GENERAL.SHARE_FALLBACK_ERROR);
   });
 });
 

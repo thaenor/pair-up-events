@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import InviteFriendSection from "../invite-friend-section";
+import { PROFILE_MESSAGES } from "@/constants/profile";
 
 const mockCreateInviteMessage = vi.fn(() => "Join us at PairUp! {URL}");
 const mockShareOrCopyToClipboard = vi.fn();
@@ -39,7 +40,7 @@ describe("InviteFriendSection", () => {
     expect(mockCreateInviteMessage).toHaveBeenCalled();
     expect(mockShareOrCopyToClipboard).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: "PairUp Events - Connect & Discover Together",
+        title: PROFILE_MESSAGES.INVITE_FRIEND.TITLE,
         text: expect.stringContaining("Join us at PairUp!"),
         url: window.location.origin
       })
@@ -55,7 +56,7 @@ describe("InviteFriendSection", () => {
 
     await waitFor(() => {
       expect(mockLogError).toHaveBeenCalled();
-      expect(mockToastError).toHaveBeenCalledWith("Unable to share. Please try again.");
+      expect(mockToastError).toHaveBeenCalledWith(PROFILE_MESSAGES.INVITE_FRIEND.ERROR_SHARE);
     });
   });
 });

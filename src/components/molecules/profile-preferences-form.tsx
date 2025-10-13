@@ -1,8 +1,8 @@
 import React, { FormEventHandler, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
+import { PROFILE_COPY, PROFILE_MESSAGES } from '@/constants/profile';
 import type { UserProfile, UserProfileUpdate } from '@/types/user-profile';
-import { PROFILE_MESSAGES } from '@/constants/profile';
 
 export type ProfilePreferencesFormProps = {
   profile: UserProfile | null;
@@ -61,57 +61,55 @@ export const ProfilePreferencesForm: React.FC<ProfilePreferencesFormProps> = ({
       data-testid="profile-preferences-form"
     >
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-pairup-darkBlue">Preferences & vibe</h3>
-        <p className="text-sm text-pairup-darkBlue/70">
-          Share your fun facts so we can match you with the right duos.
-        </p>
+        <h3 className="text-lg font-semibold text-pairup-darkBlue">{PROFILE_COPY.PREFERENCES.TITLE}</h3>
+        <p className="text-sm text-pairup-darkBlue/70">{PROFILE_COPY.PREFERENCES.DESCRIPTION}</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <label className="flex flex-col text-sm font-medium text-pairup-darkBlue/80 md:col-span-2">
-          Fun fact about me
+          {PROFILE_COPY.PREFERENCES.FUN_FACT_LABEL}
           <textarea
             value={funFact}
             onChange={event => setFunFact(event.target.value)}
             disabled={isDisabled}
             className="mt-2 h-24 resize-none rounded-lg border border-gray-200 bg-white px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
-            placeholder="I once built a boat from recycled bottles..."
+            placeholder={PROFILE_COPY.PREFERENCES.FUN_FACT_PLACEHOLDER}
             data-testid="profile-preferences-fun-fact"
           />
         </label>
 
         <label className="flex flex-col text-sm font-medium text-pairup-darkBlue/80">
-          I like
+          {PROFILE_COPY.PREFERENCES.LIKES_LABEL}
           <textarea
             value={likes}
             onChange={event => setLikes(event.target.value)}
             disabled={isDisabled}
             className="mt-2 h-24 resize-none rounded-lg border border-gray-200 bg-white px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
-            placeholder="Sunrise hikes, indie concerts, spontaneous road trips..."
+            placeholder={PROFILE_COPY.PREFERENCES.LIKES_PLACEHOLDER}
             data-testid="profile-preferences-likes"
           />
         </label>
 
         <label className="flex flex-col text-sm font-medium text-pairup-darkBlue/80">
-          I dislike
+          {PROFILE_COPY.PREFERENCES.DISLIKES_LABEL}
           <textarea
             value={dislikes}
             onChange={event => setDislikes(event.target.value)}
             disabled={isDisabled}
             className="mt-2 h-24 resize-none rounded-lg border border-gray-200 bg-white px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
-            placeholder="Crowded tourist traps, last-minute cancellations..."
+            placeholder={PROFILE_COPY.PREFERENCES.DISLIKES_PLACEHOLDER}
             data-testid="profile-preferences-dislikes"
           />
         </label>
 
         <label className="flex flex-col text-sm font-medium text-pairup-darkBlue/80 md:col-span-2">
-          Hobbies
+          {PROFILE_COPY.PREFERENCES.HOBBIES_LABEL}
           <textarea
             value={hobbies}
             onChange={event => setHobbies(event.target.value)}
             disabled={isDisabled}
             className="mt-2 h-24 resize-none rounded-lg border border-gray-200 bg-white px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
-            placeholder="Climbing, pottery, plant parenting, sci-fi book clubs..."
+            placeholder={PROFILE_COPY.PREFERENCES.HOBBIES_PLACEHOLDER}
             data-testid="profile-preferences-hobbies"
           />
         </label>
@@ -128,8 +126,8 @@ export const ProfilePreferencesForm: React.FC<ProfilePreferencesFormProps> = ({
             data-testid="profile-preferences-email"
           />
           <span>
-            <span className="block font-semibold">Email notifications</span>
-            <span className="block text-pairup-darkBlue/70">Receive updates about new matches and event confirmations.</span>
+            <span className="block font-semibold">{PROFILE_COPY.PREFERENCES.EMAIL_NOTIFICATIONS_LABEL}</span>
+            <span className="block text-pairup-darkBlue/70">{PROFILE_COPY.PREFERENCES.EMAIL_NOTIFICATIONS_DESCRIPTION}</span>
           </span>
         </label>
 
@@ -143,8 +141,8 @@ export const ProfilePreferencesForm: React.FC<ProfilePreferencesFormProps> = ({
             data-testid="profile-preferences-push"
           />
           <span>
-            <span className="block font-semibold">Push notifications</span>
-            <span className="block text-pairup-darkBlue/70">Get instant alerts from the mobile or PWA experience.</span>
+            <span className="block font-semibold">{PROFILE_COPY.PREFERENCES.PUSH_NOTIFICATIONS_LABEL}</span>
+            <span className="block text-pairup-darkBlue/70">{PROFILE_COPY.PREFERENCES.PUSH_NOTIFICATIONS_DESCRIPTION}</span>
           </span>
         </label>
       </div>
@@ -156,7 +154,7 @@ export const ProfilePreferencesForm: React.FC<ProfilePreferencesFormProps> = ({
           className="inline-flex items-center rounded-lg border border-pairup-cyan bg-white px-5 py-2 text-sm font-semibold text-pairup-darkBlue transition-colors hover:bg-pairup-cyan/20 focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
           data-testid="profile-preferences-submit"
         >
-          {isSaving ? 'Saving…' : 'Save preferences'}
+          {isSaving ? PROFILE_COPY.PREFERENCES.SUBMIT_LOADING : PROFILE_COPY.PREFERENCES.SUBMIT_IDLE}
         </button>
       </div>
     </form>

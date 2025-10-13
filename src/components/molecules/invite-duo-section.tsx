@@ -2,7 +2,7 @@ import React, { FormEventHandler, useState } from 'react';
 import { UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { PROFILE_MESSAGES } from '@/constants/profile';
+import { PROFILE_COPY, PROFILE_MESSAGES } from '@/constants/profile';
 import { createDuoInviteMessage } from '@/utils/profileHelpers';
 import { logError } from '@/utils/logger';
 
@@ -78,7 +78,7 @@ const InviteDuoSectionComponent: React.FC = () => {
       </div>
 
       <label className="flex flex-col text-sm font-medium text-pairup-darkBlue/80">
-        Invite by email
+        {PROFILE_COPY.INVITE_DUO.FIELD_LABEL}
         <input
           type="email"
           value={email}
@@ -113,7 +113,7 @@ const InviteDuoSectionComponent: React.FC = () => {
           className="inline-flex items-center rounded-lg border border-pairup-darkBlue bg-transparent px-5 py-2 text-sm font-semibold text-pairup-darkBlue transition-colors hover:bg-pairup-darkBlue hover:text-white focus:outline-none focus:ring-2 focus:ring-pairup-darkBlue disabled:cursor-not-allowed disabled:opacity-60"
           data-testid="invite-duo-submit"
         >
-          {isSubmitting ? 'Sending…' : PROFILE_MESSAGES.INVITE_DUO.CTA}
+          {isSubmitting ? PROFILE_COPY.INVITE_DUO.LOADING_LABEL : PROFILE_MESSAGES.INVITE_DUO.CTA}
         </button>
       </div>
     </form>
