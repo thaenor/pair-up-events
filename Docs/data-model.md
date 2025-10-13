@@ -175,3 +175,38 @@ graph LR
   E[users] --> F[memberships]
   E --> G[public_profiles]
   A --> F
+````
+
+**All derived collections** (`listings`, `geo`, `autocomplete`) are written by **Cloud Functions**,
+keeping client writes minimal and reads cheap.
+
+---
+
+## 💸 Cost Optimization Summary
+
+| Feature       | Optimization                           |
+| ------------- | -------------------------------------- |
+| Event feed    | Small projection (`events_listings`)   |
+| Nearby search | Minimal `events_geo` index             |
+| My events     | Localized `memberships` subcollection  |
+| Public search | Tokenized autocomplete cache           |
+| Notifications | TTL-enabled subcollection              |
+| Audits/logs   | TTL pruning and small doc size         |
+| Writes        | Trigger-based projections (no fan-out) |
+
+---
+
+## 🔒 Access Control Summary
+
+| Collection            | Read                   | Write                   |
+| --------------------- | ---------------------- | ----------------------- |
+| `users`               | Owner only             | Owner only              |
+| `public_profiles`     | Public                 | Owner only              |
+| `events`              | Public or participants | Organizer               |
+| `events_listings`     | Public                 | Cloud Function only     |
+| `events_geo`          | Public                 | Cloud Function only     |
+| `autocomplete_events` | Public                 | Cloud Function only     |
+| `memberships`         | Owner                  | Cloud Function / System |
+| `system`              | Admin                  | Admin                   |
+| `audit_logs`          | Admin                  | System only             |
+
