@@ -9,6 +9,10 @@ const subscribeMock = vi.fn();
 const updateMock = vi.fn();
 const useAuthMock = vi.fn();
 
+vi.mock("@/lib/firebase", () => ({
+  missingFirebaseConfig: ["apiKey"],
+}));
+
 vi.mock("@/lib/firebase/user-profile", () => ({
   subscribeToUserProfile: (...args: unknown[]) => subscribeMock(...args),
   updateUserProfile: (...args: unknown[]) => updateMock(...args),
