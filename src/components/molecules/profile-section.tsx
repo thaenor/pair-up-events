@@ -7,11 +7,12 @@ import { formatDate } from '@/utils/profileHelpers';
 
 export type ProfileSectionProps = {
   profile: UserProfile | null;
+  authEmail?: string | null;
 };
 
-const ProfileSection: React.FC<ProfileSectionProps> = React.memo(({ profile }) => {
+const ProfileSection: React.FC<ProfileSectionProps> = React.memo(({ profile, authEmail }) => {
   const displayName = profile?.displayName?.trim() || PROFILE_COPY.SNAPSHOT.DISPLAY_NAME_PLACEHOLDER;
-  const email = profile?.email ?? PROFILE_COPY.SNAPSHOT.EMAIL_PLACEHOLDER;
+  const email = profile?.email ?? authEmail ?? PROFILE_COPY.SNAPSHOT.EMAIL_PLACEHOLDER;
   const timezone = profile?.timezone ?? PROFILE_COPY.SNAPSHOT.TIMEZONE_PLACEHOLDER;
   const createdAtLabel = profile?.createdAt ? formatDate(profile.createdAt) : PROFILE_COPY.SNAPSHOT.CREATED_PENDING;
 

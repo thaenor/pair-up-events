@@ -59,7 +59,7 @@ const ProfilePage: React.FC = () => {
                 </div>
 
                 {/* User Information */}
-                <ProfileSection profile={profile} />
+                <ProfileSection profile={profile} authEmail={user.email} />
 
                 {profileError ? (
                     <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">

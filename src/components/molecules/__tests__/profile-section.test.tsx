@@ -20,7 +20,7 @@ describe("ProfileSection", () => {
   } as unknown as Parameters<typeof ProfileSection>[0]["profile"];
 
   it("renders primary profile fields", () => {
-    render(<ProfileSection profile={baseProfile} />);
+    render(<ProfileSection profile={baseProfile} authEmail="auth@pairup.events" />);
 
     expect(screen.getByTestId("profile-display-name")).toHaveTextContent("PairUp Duo");
     expect(screen.getByTestId("profile-email")).toHaveTextContent("person@pairup.events");
@@ -29,20 +29,26 @@ describe("ProfileSection", () => {
     expect(mockFormatDate).toHaveBeenCalledWith("2024-01-01T00:00:00Z");
   });
 
-  it("shows fallback text when profile is not yet loaded", () => {
-    render(<ProfileSection profile={null} />);
+  it("prefers the auth email when the profile is missing", () => {
+    render(<ProfileSection profile={null} authEmail="auth@pairup.events" />);
 
     expect(screen.getByTestId("profile-display-name")).toHaveTextContent(
       PROFILE_COPY.SNAPSHOT.DISPLAY_NAME_PLACEHOLDER
     );
-    expect(screen.getByTestId("profile-email")).toHaveTextContent(
-      PROFILE_COPY.SNAPSHOT.EMAIL_PLACEHOLDER
-    );
+    expect(screen.getByTestId("profile-email")).toHaveTextContent("auth@pairup.events");
     expect(screen.getByTestId("profile-timezone")).toHaveTextContent(
       PROFILE_COPY.SNAPSHOT.TIMEZONE_PLACEHOLDER
     );
     expect(screen.getByTestId("profile-created-at")).toHaveTextContent(
       PROFILE_COPY.SNAPSHOT.CREATED_PENDING
+    );
+  });
+
+  it("falls back to placeholder copy when no email is available", () => {
+    render(<ProfileSection profile={null} />);
+
+    expect(screen.getByTestId("profile-email")).toHaveTextContent(
+      PROFILE_COPY.SNAPSHOT.EMAIL_PLACEHOLDER
     );
   });
 });
