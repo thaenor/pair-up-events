@@ -8,18 +8,11 @@ import { formatDate } from '@/utils/profileHelpers';
 export type ProfileSectionProps = {
   profile: UserProfile | null;
   authEmail?: string | null;
-  authDisplayName?: string | null;
 };
 
-const ProfileSection: React.FC<ProfileSectionProps> = React.memo(({ profile, authEmail, authDisplayName }) => {
+const ProfileSection: React.FC<ProfileSectionProps> = React.memo(({ profile, authEmail }) => {
   const displayName = profile?.displayName?.trim() || PROFILE_COPY.SNAPSHOT.DISPLAY_NAME_PLACEHOLDER;
-  const preferredName =
-    profile?.username?.trim() ||
-    profile?.displayName?.trim() ||
-    authDisplayName?.trim() ||
-    null;
-  const email = profile?.email?.trim() || authEmail?.trim() || null;
-  const contactValue = preferredName ?? email ?? PROFILE_COPY.SNAPSHOT.EMAIL_PLACEHOLDER;
+  const emailLabel = profile?.email?.trim() || authEmail?.trim() || PROFILE_COPY.SNAPSHOT.EMAIL_PLACEHOLDER;
   const timezone = profile?.timezone ?? PROFILE_COPY.SNAPSHOT.TIMEZONE_PLACEHOLDER;
   const createdAtLabel = profile?.createdAt ? formatDate(profile.createdAt) : PROFILE_COPY.SNAPSHOT.CREATED_PENDING;
 
@@ -52,11 +45,8 @@ const ProfileSection: React.FC<ProfileSectionProps> = React.memo(({ profile, aut
           <Mail className="mt-0.5 h-5 w-5 text-pairup-darkBlue/60" />
           <div className="min-w-0">
             <p className="text-xs uppercase tracking-wide text-pairup-darkBlue/60">{PROFILE_COPY.SNAPSHOT.EMAIL_LABEL}</p>
-            <p
-              className="text-sm font-medium text-pairup-darkBlue break-words"
-              data-testid="profile-email"
-            >
-              {contactValue}
+            <p className="text-sm font-medium text-pairup-darkBlue break-words" data-testid="profile-email">
+              {emailLabel}
             </p>
           </div>
         </div>
