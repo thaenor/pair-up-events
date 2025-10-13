@@ -11,7 +11,7 @@ export const formatDate = (timestamp: string | number | Date | Timestamp | undef
   if (!timestamp) return 'Unknown';
 
   try {
-    let date: Date;
+    let date: Date | undefined;
 
     if (timestamp instanceof Timestamp) {
       date = timestamp.toDate();
@@ -19,10 +19,14 @@ export const formatDate = (timestamp: string | number | Date | Timestamp | undef
       date = timestamp;
     } else if (typeof timestamp === 'string' || typeof timestamp === 'number') {
       date = new Date(timestamp);
-    } else if (typeof timestamp === 'object' && 'toDate' in timestamp) {
-      date = (timestamp as { toDate: () => Date }).toDate();
-    } else {
-      date = new Date(String(timestamp));
+    }
+
+    if (!date) {
+      return 'Unknown';
+    }
+
+    if (Number.isNaN(date.getTime())) {
+      throw new Error('Invalid date value');
     }
 
     return date.toLocaleDateString('en-US', {
@@ -36,7 +40,7 @@ export const formatDate = (timestamp: string | number | Date | Timestamp | undef
       action: 'formatDate',
       additionalData: { timestamp }
     });
-    return 'Invalid date';
+    return 'Invalid Date';
   }
 };
 
