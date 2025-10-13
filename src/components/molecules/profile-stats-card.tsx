@@ -10,6 +10,7 @@ export type ProfileStatsCardProps = {
 export const ProfileStatsCard: React.FC<ProfileStatsCardProps> = ({ stats }) => {
   const eventsCreated = stats?.eventsCreated ?? 0;
   const eventsJoined = stats?.eventsJoined ?? 0;
+  const duosFormed = stats?.duosFormed ?? 0;
 
   return (
     <section
@@ -17,7 +18,7 @@ export const ProfileStatsCard: React.FC<ProfileStatsCardProps> = ({ stats }) => 
       data-testid="profile-stats-card"
     >
       <h3 className="text-lg font-semibold text-pairup-darkBlue mb-4">{PROFILE_COPY.STATS.TITLE}</h3>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="rounded-lg border border-pairup-cyan/40 bg-pairup-cyan/10 p-4 text-center">
           <p className="text-sm uppercase tracking-wide text-pairup-darkBlue/70">{PROFILE_COPY.STATS.EVENTS_CREATED_LABEL}</p>
           <p className="mt-2 text-3xl font-bold text-pairup-darkBlue" data-testid="profile-stats-created">
@@ -28,6 +29,12 @@ export const ProfileStatsCard: React.FC<ProfileStatsCardProps> = ({ stats }) => 
           <p className="text-sm uppercase tracking-wide text-pairup-darkBlue/70">{PROFILE_COPY.STATS.EVENTS_JOINED_LABEL}</p>
           <p className="mt-2 text-3xl font-bold text-pairup-darkBlue" data-testid="profile-stats-joined">
             {eventsJoined}
+          </p>
+        </div>
+        <div className="rounded-lg border border-pairup-cyan/40 bg-pairup-cyan/10 p-4 text-center">
+          <p className="text-sm uppercase tracking-wide text-pairup-darkBlue/70">{PROFILE_COPY.STATS.DUOS_FORMED_LABEL}</p>
+          <p className="mt-2 text-3xl font-bold text-pairup-darkBlue" data-testid="profile-stats-duos">
+            {duosFormed}
           </p>
         </div>
       </div>

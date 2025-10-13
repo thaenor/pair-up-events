@@ -1,16 +1,26 @@
 import { FirebaseError } from 'firebase/app';
 import {
-  doc,
-  setDoc,
-  updateDoc,
+  arrayUnion,
   deleteDoc,
+  doc,
+  getDoc,
+  increment,
   onSnapshot,
+  runTransaction,
+  setDoc,
   Timestamp,
+  updateDoc,
   type FirestoreDataConverter,
 } from 'firebase/firestore';
 
 import { logError, logWarning } from '@/utils/logger';
-import type { UserProfile, UserProfileUpdate } from '@/types/user-profile';
+import type {
+  ActiveDuoInvite,
+  DuoInviteStatus,
+  DuoSummary,
+  UserProfile,
+  UserProfileUpdate,
+} from '@/types/user-profile';
 import { db } from './index';
 
 const COLLECTION_NAME = 'users';
@@ -25,6 +35,8 @@ const userProfileConverter: FirestoreDataConverter<UserProfile> = {
 
 const userProfileDoc = (userId: string) =>
   doc(db, COLLECTION_NAME, userId).withConverter(userProfileConverter);
+
+const sanitizeActiveInvite = (invite: ActiveDuoInvite) => removeUndefined(invite);
 
 type CreateUserProfileParams = {
   id: string;
@@ -64,7 +76,10 @@ export const createUserProfile = async ({
     stats: {
       eventsCreated: 0,
       eventsJoined: 0,
+      duosFormed: 0,
     },
+    activeDuoInvite: null,
+    duos: [],
   };
 
   try {
@@ -181,6 +196,183 @@ export const deleteUserProfile = async (userId: string): Promise<void> => {
     logError('Failed to delete user profile', error, {
       component: 'firebase:user-profile',
       action: 'deleteUserProfile',
+      additionalData: { userId },
+    });
+    throw error;
+  }
+};
+
+export const setActiveDuoInvite = async (userId: string, invite: ActiveDuoInvite): Promise<void> => {
+  if (!db) {
+    logWarning('Skipped setting duo invite because Firestore is not configured.', {
+      component: 'firebase:user-profile',
+      action: 'setActiveDuoInvite:disabled',
+      additionalData: { userId },
+    });
+    throw new Error('Profile storage is not configured.');
+  }
+
+  try {
+    await updateDoc(userProfileDoc(userId), {
+      activeDuoInvite: sanitizeActiveInvite(invite),
+    });
+  } catch (error) {
+    logError('Failed to set active duo invite', error, {
+      component: 'firebase:user-profile',
+      action: 'setActiveDuoInvite',
+      additionalData: { userId },
+    });
+    throw error;
+  }
+};
+
+export const clearActiveDuoInvite = async (userId: string): Promise<void> => {
+  if (!db) {
+    logWarning('Skipped clearing duo invite because Firestore is not configured.', {
+      component: 'firebase:user-profile',
+      action: 'clearActiveDuoInvite:disabled',
+      additionalData: { userId },
+    });
+    throw new Error('Profile storage is not configured.');
+  }
+
+  try {
+    await updateDoc(userProfileDoc(userId), {
+      activeDuoInvite: null,
+    });
+  } catch (error) {
+    logError('Failed to clear active duo invite', error, {
+      component: 'firebase:user-profile',
+      action: 'clearActiveDuoInvite',
+      additionalData: { userId },
+    });
+    throw error;
+  }
+};
+
+type AcceptDuoInviteParams = {
+  inviterId: string;
+  partnerId: string;
+  tokenHash: string;
+  inviterDisplayName?: string | null;
+  partnerDisplayName?: string | null;
+};
+
+const ACCEPTED_STATUS: DuoInviteStatus = 'accepted';
+
+export const acceptDuoInvite = async ({
+  inviterId,
+  partnerId,
+  tokenHash,
+  inviterDisplayName,
+  partnerDisplayName,
+}: AcceptDuoInviteParams): Promise<void> => {
+  if (!db) {
+    logWarning('Skipped accepting duo invite because Firestore is not configured.', {
+      component: 'firebase:user-profile',
+      action: 'acceptDuoInvite:disabled',
+      additionalData: { inviterId, partnerId },
+    });
+    throw new Error('Profile storage is not configured.');
+  }
+
+  if (inviterId === partnerId) {
+    throw new Error('You cannot accept your own invite.');
+  }
+
+  const inviterRef = userProfileDoc(inviterId);
+  const partnerRef = userProfileDoc(partnerId);
+
+  try {
+    await runTransaction(db, async transaction => {
+      const [inviterSnap, partnerSnap] = await Promise.all([
+        transaction.get(inviterRef),
+        transaction.get(partnerRef),
+      ]);
+
+      if (!inviterSnap.exists()) {
+        throw new Error('Inviter profile no longer exists.');
+      }
+
+      if (!partnerSnap.exists()) {
+        throw new Error('Partner profile does not exist.');
+      }
+
+      const inviterData = inviterSnap.data();
+      const partnerData = partnerSnap.data();
+      const activeInvite = inviterData.activeDuoInvite;
+
+      if (!activeInvite || activeInvite.status !== 'pending') {
+        throw new Error('This invite is no longer active.');
+      }
+
+      if (activeInvite.tokenHash !== tokenHash) {
+        throw new Error('Invite token does not match.');
+      }
+
+      const now = Timestamp.now();
+
+      if (activeInvite.expiresAt.toMillis() < now.toMillis()) {
+        throw new Error('This invite has expired.');
+      }
+
+      const inviterDuoEntry: DuoSummary = {
+        partnerId,
+        partnerName: partnerDisplayName ?? partnerData.displayName ?? partnerData.email,
+        createdAt: now,
+        formedViaInviteTokenHash: activeInvite.tokenHash,
+      };
+
+      const partnerDuoEntry: DuoSummary = {
+        partnerId: inviterId,
+        partnerName: inviterDisplayName ?? inviterData.displayName ?? inviterData.email,
+        createdAt: now,
+        formedViaInviteTokenHash: activeInvite.tokenHash,
+      };
+
+      transaction.update(inviterRef, {
+        activeDuoInvite: {
+          ...activeInvite,
+          status: ACCEPTED_STATUS,
+          acceptedAt: now,
+          acceptedByUserId: partnerId,
+        },
+        duos: arrayUnion(inviterDuoEntry),
+        'stats.duosFormed': increment(1),
+      });
+
+      transaction.update(partnerRef, {
+        duos: arrayUnion(partnerDuoEntry),
+        'stats.duosFormed': increment(1),
+      });
+    });
+  } catch (error) {
+    logError('Failed to accept duo invite', error, {
+      component: 'firebase:user-profile',
+      action: 'acceptDuoInvite',
+      additionalData: { inviterId, partnerId },
+    });
+    throw error;
+  }
+};
+
+export const getUserProfileOnce = async (userId: string): Promise<UserProfile | null> => {
+  if (!db) {
+    logWarning('Skipped fetching user profile because Firestore is not configured.', {
+      component: 'firebase:user-profile',
+      action: 'getUserProfileOnce:disabled',
+      additionalData: { userId },
+    });
+    throw new Error('Profile storage is not configured.');
+  }
+
+  try {
+    const snapshot = await getDoc(userProfileDoc(userId));
+    return snapshot.exists() ? snapshot.data() : null;
+  } catch (error) {
+    logError('Failed to fetch user profile', error, {
+      component: 'firebase:user-profile',
+      action: 'getUserProfileOnce',
       additionalData: { userId },
     });
     throw error;

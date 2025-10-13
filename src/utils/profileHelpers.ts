@@ -4,6 +4,12 @@ import { toast } from 'sonner';
 import { PROFILE_COPY, PROFILE_MESSAGES } from '@/constants/profile';
 import { logError } from '@/utils/logger';
 
+const BASE64_URL_REPLACER: Record<string, string> = {
+  '+': '-',
+  '/': '_',
+  '=': '',
+};
+
 const PROFILE_DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
   month: 'long',
@@ -56,8 +62,8 @@ export const createInviteMessage = (): string => {
 /**
  * Creates the invite duo message with the current origin URL
  */
-export const createDuoInviteMessage = (): string => {
-  return PROFILE_MESSAGES.INVITE_DUO.MESSAGE.replace('{URL}', window.location.origin);
+export const createDuoInviteMessage = (inviteUrl: string): string => {
+  return PROFILE_MESSAGES.INVITE_DUO.MESSAGE.replace('{URL}', inviteUrl);
 };
 
 /**
@@ -103,4 +109,33 @@ export const shareOrCopyToClipboard = async (shareData: ShareData): Promise<void
       throw new Error(PROFILE_COPY.GENERAL.SHARE_FALLBACK_ERROR);
     }
   }
+};
+
+const toBase64Url = (bytes: ArrayBuffer): string => {
+  const binary = String.fromCharCode(...new Uint8Array(bytes));
+  const base64 = btoa(binary);
+
+  return base64
+    .replace(/[+/=]/g, char => BASE64_URL_REPLACER[char] ?? char)
+    .replace(/=+$/u, '');
+};
+
+export const hashDuoInviteToken = async (rawToken: string): Promise<string> => {
+  const encoder = new TextEncoder();
+  const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(rawToken));
+  return toBase64Url(hashBuffer);
+};
+
+export const generateDuoInviteToken = async (): Promise<{ rawToken: string; tokenHash: string }> => {
+  const rawToken = crypto.randomUUID().replace(/-/g, '');
+
+  return {
+    rawToken,
+    tokenHash: await hashDuoInviteToken(rawToken),
+  };
+};
+
+export const createDuoInviteLink = (inviterId: string, token: string): string => {
+  const baseUrl = window.location.origin.replace(/\/$/u, '');
+  return `${baseUrl}/invite/${inviterId}/${token}`;
 };

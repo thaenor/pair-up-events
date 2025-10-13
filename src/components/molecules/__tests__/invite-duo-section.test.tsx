@@ -1,16 +1,62 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { describe, expect, it, beforeEach, vi } from 'vitest';
+import { Timestamp } from 'firebase/firestore';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import InviteDuoSection from '../invite-duo-section';
-import { PROFILE_MESSAGES } from '@/constants/profile';
+import { PROFILE_COPY, PROFILE_MESSAGES } from '@/constants/profile';
+import type { ActiveDuoInvite } from '@/types/user-profile';
 
-const mockCreateDuoInviteMessage = vi.fn(() => 'Join me on PairUp Events!');
+type MockedUseUserProfileReturn = {
+  profile: {
+    id: string;
+    activeDuoInvite: ActiveDuoInvite | null;
+  } | null;
+  loading: boolean;
+  isSaving: boolean;
+  error: string | null;
+  saveProfile: () => Promise<void>;
+};
+
+const mockUseUserProfileValue: MockedUseUserProfileReturn = {
+  profile: {
+    id: 'user-123',
+    activeDuoInvite: null,
+  },
+  loading: false,
+  isSaving: false,
+  error: null,
+  saveProfile: async () => undefined,
+};
+
+const mockSetActiveDuoInvite = vi.fn();
+const mockClearActiveDuoInvite = vi.fn();
+const mockGenerateDuoInviteToken = vi.fn(async () => ({
+  rawToken: 'token123',
+  tokenHash: 'hash123',
+}));
+const mockHashDuoInviteToken = vi.fn(async () => 'hash123');
+const mockCreateDuoInviteLink = vi.fn(() => 'https://pairup.test/invite/user-123/token123');
+const mockCreateDuoInviteMessage = vi.fn(() => 'Join me on PairUp! https://pairup.test/invite/user-123/token123');
+const mockShareOrCopyToClipboard = vi.fn(async () => undefined);
 const mockToastSuccess = vi.fn();
 const mockToastError = vi.fn();
 const mockLogError = vi.fn();
 
+vi.mock('@/hooks/useUserProfile', () => ({
+  useUserProfile: () => mockUseUserProfileValue,
+}));
+
+vi.mock('@/lib/firebase/user-profile', () => ({
+  setActiveDuoInvite: (...args: unknown[]) => mockSetActiveDuoInvite(...args),
+  clearActiveDuoInvite: (...args: unknown[]) => mockClearActiveDuoInvite(...args),
+}));
+
 vi.mock('@/utils/profileHelpers', () => ({
-  createDuoInviteMessage: () => mockCreateDuoInviteMessage(),
+  generateDuoInviteToken: (...args: unknown[]) => mockGenerateDuoInviteToken(...args),
+  hashDuoInviteToken: (...args: unknown[]) => mockHashDuoInviteToken(...args),
+  createDuoInviteLink: (...args: unknown[]) => mockCreateDuoInviteLink(...args),
+  createDuoInviteMessage: (...args: unknown[]) => mockCreateDuoInviteMessage(...args),
+  shareOrCopyToClipboard: (...args: unknown[]) => mockShareOrCopyToClipboard(...args),
 }));
 
 vi.mock('sonner', () => ({
@@ -25,77 +71,109 @@ vi.mock('@/utils/logger', () => ({
 }));
 
 describe('InviteDuoSection', () => {
-  let openMock: ReturnType<typeof vi.fn>;
-
   beforeEach(() => {
+    mockUseUserProfileValue.profile = {
+      id: 'user-123',
+      activeDuoInvite: null,
+    };
+    mockSetActiveDuoInvite.mockReset();
+    mockClearActiveDuoInvite.mockReset();
+    mockGenerateDuoInviteToken.mockClear();
+    mockCreateDuoInviteLink.mockClear();
     mockCreateDuoInviteMessage.mockClear();
+    mockShareOrCopyToClipboard.mockClear();
     mockToastSuccess.mockReset();
     mockToastError.mockReset();
     mockLogError.mockReset();
 
-    openMock = vi.fn(() => null);
-    Object.defineProperty(window, 'open', {
-      configurable: true,
-      writable: true,
-      value: openMock,
+    Object.assign(navigator, {
+      clipboard: {
+        writeText: vi.fn().mockResolvedValue(undefined),
+      },
     });
   });
 
-  it('launches the email client with a prefilled invite', async () => {
+  it('renders an empty invite link when no invite exists', () => {
     render(<InviteDuoSection />);
 
-    const emailInput = screen.getByTestId('invite-duo-email') as HTMLInputElement;
-    fireEvent.change(emailInput, { target: { value: 'partner@example.com' } });
-    fireEvent.click(screen.getByTestId('invite-duo-submit'));
+    expect(screen.getByTestId('invite-duo-link')).toHaveValue('');
+    expect(screen.getByTestId('invite-duo-status')).toHaveTextContent(
+      PROFILE_COPY.INVITE_DUO.STATUS_NONE,
+    );
+    expect(screen.getByTestId('invite-duo-share')).toBeDisabled();
+    expect(screen.getByTestId('invite-duo-revoke')).toBeDisabled();
+  });
+
+  it('generates a new invite when the user requests one', async () => {
+    render(<InviteDuoSection />);
+
+    fireEvent.click(screen.getByTestId('invite-duo-generate'));
 
     await waitFor(() => {
-      expect(openMock).toHaveBeenCalledTimes(1);
+      expect(mockGenerateDuoInviteToken).toHaveBeenCalled();
     });
 
-    const [mailtoUrl] = openMock.mock.calls[0];
-    expect(mailtoUrl).toContain('mailto:partner%40example.com');
-    expect(mailtoUrl).toContain(`subject=${encodeURIComponent(PROFILE_MESSAGES.INVITE_DUO.SUBJECT)}`);
-    expect(mailtoUrl).toContain('body=Join%20me%20on%20PairUp%20Events!');
+    expect(mockSetActiveDuoInvite).toHaveBeenCalledTimes(1);
+    const [userId, invitePayload] = mockSetActiveDuoInvite.mock.calls[0];
+
+    expect(userId).toBe('user-123');
+    expect(invitePayload).toEqual(
+      expect.objectContaining({
+        slug: 'token123',
+        tokenHash: 'hash123',
+        status: 'pending',
+      }),
+    );
+    expect(invitePayload.createdAt).toBeInstanceOf(Timestamp);
+    expect(invitePayload.expiresAt).toBeInstanceOf(Timestamp);
     expect(mockToastSuccess).toHaveBeenCalledWith(PROFILE_MESSAGES.INVITE_DUO.SUCCESS);
-    expect(emailInput.value).toBe('');
   });
 
-  it('validates the email input before sending', async () => {
-    render(<InviteDuoSection />);
-
-    fireEvent.submit(screen.getByTestId('invite-duo-section'));
-    await waitFor(() => {
-      expect(mockToastError).toHaveBeenCalledWith(PROFILE_MESSAGES.INVITE_DUO.REQUIRED);
-    });
-    expect(openMock).not.toHaveBeenCalled();
-    mockToastError.mockClear();
-
-    fireEvent.change(screen.getByTestId('invite-duo-email'), { target: { value: 'not-an-email' } });
-    await waitFor(() => {
-      expect(screen.getByTestId('invite-duo-email')).toHaveValue('not-an-email');
-    });
-    fireEvent.submit(screen.getByTestId('invite-duo-section'));
-
-    await waitFor(() => {
-      expect(mockToastError).toHaveBeenCalledWith(PROFILE_MESSAGES.INVITE_DUO.INVALID_EMAIL);
-    });
-    expect(openMock).not.toHaveBeenCalled();
-    mockToastError.mockClear();
-  });
-
-  it('logs and surfaces errors when the email client fails to open', async () => {
-    openMock.mockImplementation(() => {
-      throw new Error('popup blocked');
-    });
+  it('copies the invite link to the clipboard', async () => {
+    const now = Timestamp.now();
+    mockUseUserProfileValue.profile = {
+      id: 'user-123',
+      activeDuoInvite: {
+        slug: 'token123',
+        tokenHash: 'hash123',
+        status: 'pending',
+        createdAt: now,
+        expiresAt: Timestamp.fromMillis(now.toMillis() + 1_000_000),
+      },
+    };
 
     render(<InviteDuoSection />);
 
-    fireEvent.change(screen.getByTestId('invite-duo-email'), { target: { value: 'duo@example.com' } });
-    fireEvent.click(screen.getByTestId('invite-duo-submit'));
+    fireEvent.click(screen.getByTestId('invite-duo-copy'));
 
     await waitFor(() => {
-      expect(mockLogError).toHaveBeenCalled();
-      expect(mockToastError).toHaveBeenCalledWith(PROFILE_MESSAGES.INVITE_DUO.ERROR);
+      expect((navigator.clipboard.writeText as vi.Mock)).toHaveBeenCalledWith(
+        'https://pairup.test/invite/user-123/token123',
+      );
     });
+    expect(mockToastSuccess).toHaveBeenCalledWith(PROFILE_MESSAGES.INVITE_DUO.COPIED);
+  });
+
+  it('revokes an existing invite', async () => {
+    const now = Timestamp.now();
+    mockUseUserProfileValue.profile = {
+      id: 'user-123',
+      activeDuoInvite: {
+        slug: 'token123',
+        tokenHash: 'hash123',
+        status: 'pending',
+        createdAt: now,
+        expiresAt: Timestamp.fromMillis(now.toMillis() + 1_000_000),
+      },
+    };
+
+    render(<InviteDuoSection />);
+
+    fireEvent.click(screen.getByTestId('invite-duo-revoke'));
+
+    await waitFor(() => {
+      expect(mockClearActiveDuoInvite).toHaveBeenCalledWith('user-123');
+    });
+    expect(mockToastSuccess).toHaveBeenCalledWith(PROFILE_MESSAGES.INVITE_DUO.REVOKED);
   });
 });

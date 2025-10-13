@@ -5,12 +5,14 @@ import { Suspense, lazy } from "react";
 import { AuthProvider } from "./contexts/AuthProvider";
 import { UserProfileProvider } from "./contexts/UserProfileProvider";
 import ErrorBoundary from "./components/ErrorBoundary";
+import PendingInviteRedirector from "./components/pending-invite-redirector";
 
 const IndexPage = lazy(() => import("./pages/Index"));
 const NotFoundPage = lazy(() => import("./pages/NotFound"));
 const AuthPage = lazy(() => import("./pages/auth"));
 const LoginPage = lazy(() => import("./pages/login"));
 const ProfilePage = lazy(() => import("./pages/profile"));
+const InviteLandingPage = lazy(() => import("./pages/invite-landing"));
 const TermsOfServicePage = lazy(() => import("./pages/terms-of-service"));
 const PrivacyPolicyPage = lazy(() => import("./pages/privacy-policy"));
 
@@ -29,11 +31,13 @@ const App = () => {
               </div>
             )}
           >
+            <PendingInviteRedirector />
             <Routes>
               <Route path="/" element={<IndexPage />} />
               <Route path="/signup" element={<AuthPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/invite/:inviterId/:token" element={<InviteLandingPage />} />
               <Route path="/terms-of-service" element={<TermsOfServicePage />} />
               <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
               <Route path="/404" element={<NotFoundPage />} />

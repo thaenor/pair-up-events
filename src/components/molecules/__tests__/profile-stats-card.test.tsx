@@ -9,6 +9,7 @@ describe("ProfileStatsCard", () => {
 
     expect(screen.getByTestId("profile-stats-created")).toHaveTextContent("0");
     expect(screen.getByTestId("profile-stats-joined")).toHaveTextContent("0");
+    expect(screen.getByTestId("profile-stats-duos")).toHaveTextContent("0");
   });
 
   it("displays provided statistics", () => {
@@ -17,11 +18,13 @@ describe("ProfileStatsCard", () => {
         stats={{
           eventsCreated: 3,
           eventsJoined: 5,
+          duosFormed: 2,
         }}
       />
     );
 
     expect(screen.getByTestId("profile-stats-created")).toHaveTextContent("3");
     expect(screen.getByTestId("profile-stats-joined")).toHaveTextContent("5");
+    expect(screen.getByTestId("profile-stats-duos")).toHaveTextContent("2");
   });
 });
