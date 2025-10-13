@@ -94,6 +94,9 @@
       "docLookupOrder": [
         "docs/agents.md",
         "docs/Design-doc.md",
+        "docs/FIREBASE_SETUP.md",
+        "docs/config.md",
+        "docs/data-model.md",
         "docs/"
       ]
     }
