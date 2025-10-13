@@ -8,11 +8,18 @@ import { formatDate } from '@/utils/profileHelpers';
 export type ProfileSectionProps = {
   profile: UserProfile | null;
   authEmail?: string | null;
+  authDisplayName?: string | null;
 };
 
-const ProfileSection: React.FC<ProfileSectionProps> = React.memo(({ profile, authEmail }) => {
+const ProfileSection: React.FC<ProfileSectionProps> = React.memo(({ profile, authEmail, authDisplayName }) => {
   const displayName = profile?.displayName?.trim() || PROFILE_COPY.SNAPSHOT.DISPLAY_NAME_PLACEHOLDER;
-  const email = profile?.email ?? authEmail ?? PROFILE_COPY.SNAPSHOT.EMAIL_PLACEHOLDER;
+  const preferredName =
+    profile?.username?.trim() ||
+    profile?.displayName?.trim() ||
+    authDisplayName?.trim() ||
+    null;
+  const email = profile?.email?.trim() || authEmail?.trim() || null;
+  const contactValue = preferredName ?? email ?? PROFILE_COPY.SNAPSHOT.EMAIL_PLACEHOLDER;
   const timezone = profile?.timezone ?? PROFILE_COPY.SNAPSHOT.TIMEZONE_PLACEHOLDER;
   const createdAtLabel = profile?.createdAt ? formatDate(profile.createdAt) : PROFILE_COPY.SNAPSHOT.CREATED_PENDING;
 
@@ -49,7 +56,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = React.memo(({ profile, aut
               className="text-sm font-medium text-pairup-darkBlue break-words"
               data-testid="profile-email"
             >
-              {email}
+              {contactValue}
             </p>
           </div>
         </div>

@@ -36,6 +36,7 @@ export interface UserProfile {
   stats?: UserProfileStats;
 
   /** Additional profile metadata */
+  username?: string | null;
   birthDate?: string | null;
   gender?: string | null;
   funFact?: string | null;

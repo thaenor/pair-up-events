@@ -23,7 +23,7 @@ describe("ProfileSection", () => {
     render(<ProfileSection profile={baseProfile} authEmail="auth@pairup.events" />);
 
     expect(screen.getByTestId("profile-display-name")).toHaveTextContent("PairUp Duo");
-    expect(screen.getByTestId("profile-email")).toHaveTextContent("person@pairup.events");
+    expect(screen.getByTestId("profile-email")).toHaveTextContent("PairUp Duo");
     expect(screen.getByTestId("profile-timezone")).toHaveTextContent("America/New_York");
     expect(screen.getByTestId("profile-created-at")).toHaveTextContent("formatted-2024-01-01T00:00:00Z");
     expect(mockFormatDate).toHaveBeenCalledWith("2024-01-01T00:00:00Z");
@@ -50,5 +50,22 @@ describe("ProfileSection", () => {
     expect(screen.getByTestId("profile-email")).toHaveTextContent(
       PROFILE_COPY.SNAPSHOT.EMAIL_PLACEHOLDER
     );
+  });
+
+  it("prefers a username on the profile when available", () => {
+    render(
+      <ProfileSection
+        profile={{ ...baseProfile, username: "pairupduo", email: "person@pairup.events" }}
+        authEmail="auth@pairup.events"
+      />
+    );
+
+    expect(screen.getByTestId("profile-email")).toHaveTextContent("pairupduo");
+  });
+
+  it("uses the authenticated display name before falling back to email", () => {
+    render(<ProfileSection profile={null} authEmail="auth@pairup.events" authDisplayName="PairUp" />);
+
+    expect(screen.getByTestId("profile-email")).toHaveTextContent("PairUp");
   });
 });
