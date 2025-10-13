@@ -106,7 +106,7 @@ const AccountControls: React.FC<AccountControlsProps> = React.memo(({ user }) =>
         <button
           onClick={handleResetPassword}
           disabled={isResettingPassword}
-          className="w-full flex items-center justify-center px-4 py-3 border border-pairup-cyan text-pairup-cyan rounded-lg hover:bg-pairup-cyan/10 focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="w-full flex items-center justify-center px-4 py-3 border border-pairup-darkBlue text-pairup-darkBlue rounded-lg hover:bg-pairup-darkBlue/10 focus:outline-none focus:ring-2 focus:ring-pairup-darkBlue disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           data-testid="account-controls-reset-password"
         >
           {isResettingPassword ? (

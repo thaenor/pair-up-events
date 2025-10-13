@@ -3,6 +3,7 @@ import { MemoryRouter, useNavigate } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi, type MockedFunction } from "vitest";
 
 import Navigation from "../Navigation";
+import { NAVIGATION_COPY, NAVIGATION_MESSAGES } from "@/constants/navigation";
 
 type AuthState = {
   user: { email?: string; displayName?: string } | null;
@@ -73,7 +74,23 @@ describe("Navigation", () => {
     );
 
     expect(screen.queryByTestId("get-started-button")).not.toBeInTheDocument();
-    expect(screen.getByTestId("navigation-welcome")).toHaveTextContent("member@pairup.events");
+    expect(screen.getByTestId("navigation-welcome")).toHaveTextContent(
+      `${NAVIGATION_COPY.AUTHENTICATED.WELCOME_PREFIX}member@pairup.events`
+    );
+  });
+
+  it("navigates to the profile page when the welcome message is clicked", () => {
+    authState.user = { email: "member@pairup.events" };
+
+    render(
+      <MemoryRouter>
+        <Navigation />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByTestId("navigation-welcome"));
+
+    expect(mockNavigate).toHaveBeenCalledWith(NAVIGATION_COPY.AUTHENTICATED.PROFILE_ROUTE);
   });
 
   it("logs the user out and shows feedback", async () => {
@@ -89,7 +106,7 @@ describe("Navigation", () => {
 
     await waitFor(() => {
       expect(mockSignOut).toHaveBeenCalled();
-      expect(mockToastSuccess).toHaveBeenCalledWith("Logged out successfully");
+      expect(mockToastSuccess).toHaveBeenCalledWith(NAVIGATION_MESSAGES.LOGOUT_SUCCESS);
     });
   });
 
@@ -106,7 +123,7 @@ describe("Navigation", () => {
     fireEvent.click(screen.getByTestId("logout-button"));
 
     await waitFor(() => {
-      expect(mockToastError).toHaveBeenCalledWith("Failed to log out. Please try again.");
+      expect(mockToastError).toHaveBeenCalledWith(NAVIGATION_MESSAGES.LOGOUT_ERROR);
     });
   });
 });

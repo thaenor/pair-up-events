@@ -41,8 +41,91 @@ VALIDATION_MESSAGES = {
 ```
 
 ### `src/constants/profile.ts`
-**Purpose**: Profile-related messages and configuration
+**Purpose**: Profile-related copy, messages, and configuration
 **Configurable Values**:
+```typescript
+PROFILE_COPY = {
+  HEADER: {
+    LOGO_ALT: 'PairUp Events',
+    TITLE: 'Your Profile',
+    WELCOME_TITLE: 'Welcome back! 👋',
+    WELCOME_BODY: "Thanks for being part of the PairUp Events community...",
+  },
+  SNAPSHOT: {
+    TITLE: 'Account snapshot',
+    DISPLAY_NAME_PLACEHOLDER: 'Add your display name',
+    EMAIL_PLACEHOLDER: 'Add your email address',
+    TIMEZONE_PLACEHOLDER: 'Set your timezone',
+    CREATED_PENDING: 'Pending',
+    EMAIL_LABEL: 'Email',
+    TIMEZONE_LABEL: 'Timezone',
+    CREATED_LABEL: 'Joined',
+    AVATAR_ALT: 'Profile avatar',
+  },
+  DETAILS: {
+    TITLE: 'Profile details',
+    DESCRIPTION: 'Update how other duos see you across PairUp.',
+    DISPLAY_NAME_LABEL: 'Display name',
+    DISPLAY_NAME_PLACEHOLDER: 'Add your name',
+    TIMEZONE_LABEL: 'Timezone',
+    TIMEZONE_PLACEHOLDER: 'e.g. America/Los_Angeles',
+    BIRTH_DATE_LABEL: 'Birth date',
+    BIRTH_DATE_PLACEHOLDER: 'Select your birth date',
+    GENDER_LABEL: 'Gender',
+    GENDER_PLACEHOLDER: 'How do you identify?',
+    PHOTO_LABEL: 'Profile photo URL',
+    PHOTO_PLACEHOLDER: 'Paste a link to your photo',
+    EMAIL_LABEL: 'Email',
+    EMAIL_FALLBACK: 'Not available',
+    SUBMIT_IDLE: 'Save details',
+    SUBMIT_LOADING: 'Saving…',
+  },
+  PREFERENCES: {
+    TITLE: 'Preferences & vibe',
+    DESCRIPTION: 'Share your fun facts so we can match you with the right duos.',
+    FUN_FACT_LABEL: 'Fun fact about me',
+    FUN_FACT_PLACEHOLDER: 'I once built a boat from recycled bottles...',
+    LIKES_LABEL: 'I like',
+    LIKES_PLACEHOLDER: 'Sunrise hikes, indie concerts, spontaneous road trips...',
+    DISLIKES_LABEL: 'I dislike',
+    DISLIKES_PLACEHOLDER: 'Crowded tourist traps, last-minute cancellations...',
+    HOBBIES_LABEL: 'Hobbies',
+    HOBBIES_PLACEHOLDER: 'Climbing, pottery, plant parenting, sci-fi book clubs...',
+    EMAIL_NOTIFICATIONS_LABEL: 'Email notifications',
+    EMAIL_NOTIFICATIONS_DESCRIPTION: 'Receive updates about new matches and event confirmations.',
+    PUSH_NOTIFICATIONS_LABEL: 'Push notifications',
+    PUSH_NOTIFICATIONS_DESCRIPTION: 'Get instant alerts from the mobile or PWA experience.',
+    SUBMIT_IDLE: 'Save preferences',
+    SUBMIT_LOADING: 'Saving…',
+  },
+  STATS: {
+    TITLE: 'Your PairUp journey',
+    EVENTS_CREATED_LABEL: 'Events created',
+    EVENTS_JOINED_LABEL: 'Events joined',
+    FOOTER: 'Keep exploring! Your story grows every time you connect with another duo.',
+  },
+  SURVEY: {
+    TITLE: 'Help Us Build Something Amazing! 🚀',
+    DESCRIPTION: "Thank you for creating an account!...",
+    CTA: 'Share Your Feedback',
+  },
+  INVITE_FRIEND: {
+    TITLE: 'Invite a Friend',
+    DESCRIPTION: 'Know someone who would love PairUp Events? Share the app with them!',
+    CTA: 'Invite Friend',
+  },
+  INVITE_DUO: {
+    FIELD_LABEL: 'Invite by email',
+    LOADING_LABEL: 'Sending…',
+  },
+  DEVELOPMENT_NOTICE: '🚧 This app is currently in development... ',
+  GENERAL: {
+    UNKNOWN_VALUE: 'Unknown',
+    INVALID_DATE: 'Invalid Date',
+    SHARE_FALLBACK_ERROR: 'Unable to share or copy to clipboard',
+  }
+}
+```
 ```typescript
 PROFILE_MESSAGES = {
   INVITE_FRIEND: {
@@ -50,13 +133,30 @@ PROFILE_MESSAGES = {
     MESSAGE: 'Hey! I wanted to invite you to check out PairUp Events...',
     SUCCESS_COPY: 'Invitation message copied to clipboard!',
     SUCCESS_SHARE: 'Invitation shared successfully!'
+    ERROR_SHARE: 'We could not share your invite. Please try again.'
+  },
+  INVITE_DUO: {
+    TITLE: 'Invite your duo to join PairUp Events',
+    DESCRIPTION: 'Bring your partner, best friend, or favorite teammate along so you can experience PairUp together.',
+    CTA: 'Send invite',
+    EMAIL_PLACEHOLDER: 'friend@example.com',
+    REQUIRED: 'Please enter an email address.',
+    INVALID_EMAIL: 'Enter a valid email so we can draft your invite.',
+    SUBJECT: 'Join me on PairUp Events! 💫',
+    MESSAGE: 'Hey! I just created a PairUp Events account and would love for us to explore duos together... {URL}',
+    SUCCESS: 'We opened your email app so you can send the invite.',
+    ERROR: 'We could not open your email app. Please try again.'
   },
   ALERTS: {
     PASSWORD_RESET_SUCCESS: 'Password reset email sent! Check your inbox.',
     PASSWORD_RESET_ERROR: 'Failed to send password reset email. Please try again.',
     ACCOUNT_DELETE_SUCCESS: 'Account deleted successfully.',
     ACCOUNT_DELETE_ERROR: 'Failed to delete account. Please try again.',
-    DELETE_CONFIRMATION: 'Are you sure you want to delete your account?'
+    DELETE_CONFIRMATION: 'Are you sure you want to delete your account?',
+    PROFILE_SAVE_SUCCESS: 'Profile details updated successfully.',
+    PROFILE_SAVE_ERROR: 'We could not update your profile details. Please try again.',
+    PREFERENCES_SAVE_SUCCESS: 'Preferences saved! Your vibe is up to date.',
+    PREFERENCES_SAVE_ERROR: 'We could not save your preferences. Please try again.'
   }
 }
 
@@ -67,6 +167,40 @@ PROFILE_CONFIG = {
     month: 'long',
     day: 'numeric'
   }
+}
+```
+
+### `src/constants/navigation.ts`
+**Purpose**: Navigation copy and feedback strings
+**Configurable Values**:
+```typescript
+NAVIGATION_COPY = {
+  LINKS: {
+    HOW_IT_WORKS: 'How It Works',
+    HOW_IT_WORKS_ARIA: 'Learn how Pair Up Events works',
+    BENEFITS: 'Benefits',
+    BENEFITS_ARIA: 'Learn about the benefits of Pair Up Events',
+    EARLY_ACCESS: 'Early Access',
+    EARLY_ACCESS_ARIA: 'Sign up for early access to Pair Up Events',
+  },
+  AUTHENTICATED: {
+    WELCOME_PREFIX: 'Welcome, ',
+    WELCOME_ARIA_LABEL: 'View your profile',
+    PROFILE_ROUTE: '/profile',
+  },
+  CTA: {
+    GET_STARTED: 'Get Started',
+    GET_STARTED_ARIA_LABEL: 'Get started with Pair Up Events',
+  },
+  ACTIONS: {
+    LOGOUT: 'Logout',
+    LOGGING_OUT: 'Logging out...',
+  }
+}
+
+NAVIGATION_MESSAGES = {
+  LOGOUT_SUCCESS: 'Logged out successfully',
+  LOGOUT_ERROR: 'Failed to log out. Please try again.'
 }
 ```
 

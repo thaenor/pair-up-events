@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import Logo from "../atoms/Logo";
 import LoadingSpinner from "../atoms/LoadingSpinner";
 import { useAuth } from "@/hooks/useAuth";
+import { NAVIGATION_COPY, NAVIGATION_MESSAGES } from "@/constants/navigation";
 
 export interface NavigationProps {
     isLoggedIn?: boolean;
@@ -28,14 +29,18 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
         }
     }, [user, navigate]);
 
+    const handleNavigateToProfile = useCallback(() => {
+        navigate(NAVIGATION_COPY.AUTHENTICATED.PROFILE_ROUTE);
+    }, [navigate]);
+
     const handleLogout = useCallback(async () => {
         setIsLoggingOut(true);
     try {
         await signOut();
-        toast.success('Logged out successfully');
+        toast.success(NAVIGATION_MESSAGES.LOGOUT_SUCCESS);
     } catch {
         // Error is handled by AuthProvider and will be caught by ErrorBoundary if needed
-        toast.error('Failed to log out. Please try again.');
+        toast.error(NAVIGATION_MESSAGES.LOGOUT_ERROR);
     } finally {
         setIsLoggingOut(false);
     }
@@ -54,26 +59,26 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
                     <a
                         href="#how-it-works"
                         className="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
-                        aria-label="Learn how Pair Up Events works"
+                        aria-label={NAVIGATION_COPY.LINKS.HOW_IT_WORKS_ARIA}
                         role="menuitem"
                     >
-                        How It Works
+                        {NAVIGATION_COPY.LINKS.HOW_IT_WORKS}
                     </a>
                     <a
                         href="#benefits"
                         className="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
-                        aria-label="Learn about the benefits of Pair Up Events"
+                        aria-label={NAVIGATION_COPY.LINKS.BENEFITS_ARIA}
                         role="menuitem"
                     >
-                        Benefits
+                        {NAVIGATION_COPY.LINKS.BENEFITS}
                     </a>
                     <a
                         href="#early-access"
                         className="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
-                        aria-label="Sign up for early access to Pair Up Events"
+                        aria-label={NAVIGATION_COPY.LINKS.EARLY_ACCESS_ARIA}
                         role="menuitem"
                     >
-                        Early Access
+                        {NAVIGATION_COPY.LINKS.EARLY_ACCESS}
                     </a>
                 </div>
 
@@ -81,13 +86,16 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
                     {user ? (
                         // User is logged in
                         <>
-                            <span
-                                className="text-pairup-cream text-sm"
+                            <button
+                                type="button"
+                                onClick={handleNavigateToProfile}
+                                className="text-pairup-cream text-sm underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-pairup-darkBlue hover:underline"
                                 aria-live="polite"
+                                aria-label={NAVIGATION_COPY.AUTHENTICATED.WELCOME_ARIA_LABEL}
                                 data-testid="navigation-welcome"
                             >
-                                Welcome, {user.displayName || user.email}
-                            </span>
+                                {`${NAVIGATION_COPY.AUTHENTICATED.WELCOME_PREFIX}${user.displayName || user.email}`}
+                            </button>
                             <button
                                 className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[5px] font-medium transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 px-6 py-3 text-base bg-pairup-cyan text-pairup-darkBlue hover:opacity-90"
                                 onClick={handleLogout}
@@ -98,10 +106,10 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
                                 {isLoggingOut ? (
                                     <>
                                         <LoadingSpinner size="sm" className="mr-2" aria-hidden="true" />
-                                        <span aria-live="polite">Logging out...</span>
+                                        <span aria-live="polite">{NAVIGATION_COPY.ACTIONS.LOGGING_OUT}</span>
                                     </>
                                 ) : (
-                                    'Logout'
+                                    NAVIGATION_COPY.ACTIONS.LOGOUT
                                 )}
                             </button>
                         </>
@@ -110,10 +118,10 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
                         <button
                             className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[5px] font-medium transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 px-6 py-3 text-base bg-pairup-cyan text-pairup-darkBlue hover:opacity-90"
                             onClick={handleGetStarted}
-                            aria-label="Get started with Pair Up Events"
+                            aria-label={NAVIGATION_COPY.CTA.GET_STARTED_ARIA_LABEL}
                             data-testid="get-started-button"
                         >
-                            Get Started
+                            {NAVIGATION_COPY.CTA.GET_STARTED}
                         </button>
                     )}
                 </div>

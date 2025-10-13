@@ -9,6 +9,7 @@ export { default as EmailLoginForm } from "./molecules/email-login-form";
 export { default as ProfileSection } from "./molecules/profile-section";
 export { default as AccountControls } from "./molecules/account-controls";
 export { default as InviteFriendSection } from "./molecules/invite-friend-section";
+export { default as InviteDuoSection } from "./molecules/invite-duo-section";
 
 // Organisms
 export { default as BenefitsSection } from "./organisms/BenefitsSection";
