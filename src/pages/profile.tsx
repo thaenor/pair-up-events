@@ -5,6 +5,7 @@ import LoadingSpinner from '@/components/atoms/LoadingSpinner';
 import ProfileSection from '@/components/molecules/profile-section';
 import AccountControls from '@/components/molecules/account-controls';
 import InviteFriendSection from '@/components/molecules/invite-friend-section';
+import InviteDuoSection from '@/components/molecules/invite-duo-section';
 import { useAuth } from '@/hooks/useAuth';
 import { PROFILE_CONFIG } from '@/constants/profile';
 import { useUserProfile } from '@/hooks/useUserProfile';
@@ -105,6 +106,9 @@ const ProfilePage: React.FC = () => {
                         </svg>
                     </a>
                 </div>
+
+                {/* Invite Duo */}
+                <InviteDuoSection />
 
                 {/* Invite Friend */}
                 <InviteFriendSection />

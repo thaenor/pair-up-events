@@ -54,6 +54,13 @@ export const createInviteMessage = (): string => {
 };
 
 /**
+ * Creates the invite duo message with the current origin URL
+ */
+export const createDuoInviteMessage = (): string => {
+  return PROFILE_MESSAGES.INVITE_DUO.MESSAGE.replace('{URL}', window.location.origin);
+};
+
+/**
  * Checks if the Web Share API is available and can share the given data
  */
 export const canUseWebShare = (shareData: ShareData): boolean => {

@@ -51,6 +51,18 @@ PROFILE_MESSAGES = {
     SUCCESS_COPY: 'Invitation message copied to clipboard!',
     SUCCESS_SHARE: 'Invitation shared successfully!'
   },
+  INVITE_DUO: {
+    TITLE: 'Invite your duo to join PairUp Events',
+    DESCRIPTION: 'Bring your partner, best friend, or favorite teammate along so you can experience PairUp together.',
+    CTA: 'Send invite',
+    EMAIL_PLACEHOLDER: 'friend@example.com',
+    REQUIRED: 'Please enter an email address.',
+    INVALID_EMAIL: 'Enter a valid email so we can draft your invite.',
+    SUBJECT: 'Join me on PairUp Events! 💫',
+    MESSAGE: 'Hey! I just created a PairUp Events account and would love for us to explore duos together... {URL}',
+    SUCCESS: 'We opened your email app so you can send the invite.',
+    ERROR: 'We could not open your email app. Please try again.'
+  },
   ALERTS: {
     PASSWORD_RESET_SUCCESS: 'Password reset email sent! Check your inbox.',
     PASSWORD_RESET_ERROR: 'Failed to send password reset email. Please try again.',
