@@ -234,8 +234,8 @@ describe("AuthProvider", () => {
     await act(async () => {
       await TestConsumer.latest!.deleteUserAccount();
     });
+    expect(mockDeleteUser).toHaveBeenCalledWith({ uid: "999" });
     expect(mockDeleteUserProfile).toHaveBeenCalledWith("999");
-    expect(mockDeleteUser).toHaveBeenCalled();
   });
 
   it("throws when deleting without an authenticated user", async () => {
@@ -255,5 +255,21 @@ describe("AuthProvider", () => {
     await waitFor(() => {
       expect(TestConsumer.latest?.error).toBe("No user is currently signed in");
     });
+  });
+
+  it("keeps the profile document when auth deletion fails", async () => {
+    renderProvider();
+    await resolveAuth(null);
+
+    const deletionError = new Error("reauth required");
+    mockAuth.currentUser = { uid: "555" } as unknown;
+    mockDeleteUser.mockRejectedValueOnce(deletionError);
+
+    await act(async () => {
+      await expect(TestConsumer.latest!.deleteUserAccount()).rejects.toBe(deletionError);
+    });
+
+    expect(mockDeleteUser).toHaveBeenCalledWith({ uid: "555" });
+    expect(mockDeleteUserProfile).not.toHaveBeenCalled();
   });
 });

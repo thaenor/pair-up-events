@@ -263,17 +263,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         throw new Error('No user is currently signed in');
       }
 
-      try {
-        await deleteUserProfile(currentUser.uid);
-      } catch (profileError) {
-        logError('Profile cleanup failed during account deletion. Continuing with auth deletion.', profileError, {
-          component: 'AuthProvider',
-          action: 'deleteUserAccount:profileCleanupError',
-          additionalData: { uid: currentUser.uid },
-        });
-      }
+      const userId = currentUser.uid;
 
       await deleteUser(currentUser);
+
+      try {
+        await deleteUserProfile(userId);
+      } catch (profileError) {
+        logError('Profile cleanup failed after account deletion. Manual cleanup may be required.', profileError, {
+          component: 'AuthProvider',
+          action: 'deleteUserAccount:profileCleanupError',
+          additionalData: { uid: userId },
+        });
+      }
     } catch (error: unknown) {
       handleAuthError(error);
       throw error;
