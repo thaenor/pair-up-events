@@ -28,6 +28,10 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
         }
     }, [user, navigate]);
 
+    const handleNavigateToProfile = useCallback(() => {
+        navigate('/profile');
+    }, [navigate]);
+
     const handleLogout = useCallback(async () => {
         setIsLoggingOut(true);
     try {
@@ -81,13 +85,16 @@ const Navigation: React.FC<NavigationProps> = React.memo(() => {
                     {user ? (
                         // User is logged in
                         <>
-                            <span
-                                className="text-pairup-cream text-sm"
+                            <button
+                                type="button"
+                                onClick={handleNavigateToProfile}
+                                className="text-pairup-cream text-sm underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-pairup-darkBlue hover:underline"
                                 aria-live="polite"
+                                aria-label="View your profile"
                                 data-testid="navigation-welcome"
                             >
                                 Welcome, {user.displayName || user.email}
-                            </span>
+                            </button>
                             <button
                                 className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[5px] font-medium transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 px-6 py-3 text-base bg-pairup-cyan text-pairup-darkBlue hover:opacity-90"
                                 onClick={handleLogout}

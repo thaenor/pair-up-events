@@ -76,6 +76,20 @@ describe("Navigation", () => {
     expect(screen.getByTestId("navigation-welcome")).toHaveTextContent("member@pairup.events");
   });
 
+  it("navigates to the profile page when the welcome message is clicked", () => {
+    authState.user = { email: "member@pairup.events" };
+
+    render(
+      <MemoryRouter>
+        <Navigation />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByTestId("navigation-welcome"));
+
+    expect(mockNavigate).toHaveBeenCalledWith("/profile");
+  });
+
   it("logs the user out and shows feedback", async () => {
     authState.user = { email: "member@pairup.events" };
 
