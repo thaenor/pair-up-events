@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { Timestamp } from 'firebase/firestore';
 import { FirebaseError } from 'firebase/app';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -161,5 +161,52 @@ describe('InviteLandingPage', () => {
     expect(
       screen.getByRole('button', { name: /accept invite/i }),
     ).toBeInTheDocument();
+  });
+
+  it('shows the acceptance confirmation copy after the invite is accepted', async () => {
+    const now = Timestamp.now();
+    const invite: ActiveDuoInvite = {
+      slug: 'token-abc',
+      tokenHash: 'hash-abc',
+      status: 'pending',
+      createdAt: now,
+      expiresAt: Timestamp.fromMillis(now.toMillis() + 1000 * 60 * 60),
+    };
+
+    mockUseAuthValue.user = { uid: 'partner-1', displayName: 'Partner' };
+    mockHashDuoInviteToken.mockResolvedValue('hash-abc');
+    mockGetUserProfileOnce.mockResolvedValue({
+      id: 'inviter-1',
+      email: 'host@example.com',
+      displayName: 'Host User',
+      photoUrl: null,
+      createdAt: now,
+      timezone: null,
+      settings: null,
+      stats: { duosFormed: 1 },
+      activeDuoInvite: invite,
+      duos: [],
+    });
+    mockAcceptDuoInvite.mockResolvedValue(undefined);
+
+    render(<InviteLandingPage />);
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /accept invite/i })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /accept invite/i }));
+
+    await waitFor(() => {
+      expect(mockAcceptDuoInvite).toHaveBeenCalled();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('invite-landing-status').textContent).toBe(
+        'All set! We’ve let your duo know, and they’ll finalize the connection shortly.',
+      );
+    });
+
+    expect(screen.getByRole('heading', { name: 'Invite accepted! 🎉' })).toBeInTheDocument();
   });
 });

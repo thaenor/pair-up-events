@@ -15,6 +15,7 @@ import {
 } from 'firebase/firestore';
 
 import { logError, logWarning } from '@/utils/logger';
+import { createDuoInviteAcceptanceRequest } from './duo-invite-acceptances';
 import type {
   ActiveDuoInvite,
   DuoInviteStatus,
@@ -274,6 +275,78 @@ type AcceptDuoInviteParams = {
 
 const ACCEPTED_STATUS: DuoInviteStatus = 'accepted';
 
+type InviteAcceptanceFallbackParams = {
+  firestore: Firestore;
+  inviterId: string;
+  partnerId: string;
+  tokenHash: string;
+  inviterDisplayName?: string | null;
+  partnerDisplayName?: string | null;
+};
+
+const handleInviteAcceptanceWithoutCrossProfileWrite = async ({
+  firestore,
+  inviterId,
+  partnerId,
+  tokenHash,
+  inviterDisplayName,
+  partnerDisplayName,
+}: InviteAcceptanceFallbackParams) => {
+  logWarning('Falling back to queued duo invite acceptance due to permission constraints.', {
+    component: 'firebase:user-profile',
+    action: 'acceptDuoInvite:fallback',
+    additionalData: { inviterId, partnerId },
+  });
+
+  const partnerRef = userProfileDoc(firestore, partnerId);
+
+  let partnerName: string | null = partnerDisplayName ?? null;
+  let partnerEmail: string | null = null;
+
+  await runTransaction(firestore, async transaction => {
+    const partnerSnap = await transaction.get(partnerRef);
+
+    if (!partnerSnap.exists()) {
+      throw new Error('Partner profile does not exist.');
+    }
+
+    const partnerData = partnerSnap.data();
+    partnerName = partnerDisplayName ?? partnerData.displayName ?? partnerData.email ?? null;
+    partnerEmail = partnerData.email ?? null;
+
+    const now = Timestamp.now();
+    const existingDuos = partnerData.duos ?? [];
+    const hasExistingDuo = existingDuos.some(
+      duo => duo.partnerId === inviterId && duo.formedViaInviteTokenHash === tokenHash,
+    );
+
+    if (hasExistingDuo) {
+      return;
+    }
+
+    const partnerDuoEntry: DuoSummary = {
+      partnerId: inviterId,
+      partnerName: inviterDisplayName ?? partnerData.displayName ?? partnerData.email,
+      createdAt: now,
+      formedViaInviteTokenHash: tokenHash,
+    };
+
+    transaction.update(partnerRef, {
+      duos: arrayUnion(partnerDuoEntry),
+      'stats.duosFormed': increment(1),
+    });
+  });
+
+  await createDuoInviteAcceptanceRequest({
+    inviterId,
+    partnerId,
+    tokenHash,
+    partnerName,
+    partnerEmail,
+    inviterName: inviterDisplayName ?? null,
+  });
+};
+
 export const acceptDuoInvite = async ({
   inviterId,
   partnerId,
@@ -363,9 +436,115 @@ export const acceptDuoInvite = async ({
       });
     });
   } catch (error) {
+    if (error instanceof FirebaseError && error.code === 'permission-denied') {
+      await handleInviteAcceptanceWithoutCrossProfileWrite({
+        firestore,
+        inviterId,
+        partnerId,
+        tokenHash,
+        inviterDisplayName,
+        partnerDisplayName,
+      });
+      return;
+    }
+
     logError('Failed to accept duo invite', error, {
       component: 'firebase:user-profile',
       action: 'acceptDuoInvite',
+      additionalData: { inviterId, partnerId },
+    });
+    throw error;
+  }
+};
+
+type FinalizeDuoInviteParams = {
+  inviterId: string;
+  partnerId: string;
+  tokenHash: string;
+  partnerDisplayName?: string | null;
+};
+
+export const finalizeDuoInviteForInviter = async ({
+  inviterId,
+  partnerId,
+  tokenHash,
+  partnerDisplayName,
+}: FinalizeDuoInviteParams): Promise<void> => {
+  const firestore = db;
+
+  if (!firestore) {
+    logWarning('Skipped finalizing duo invite because Firestore is not configured.', {
+      component: 'firebase:user-profile',
+      action: 'finalizeDuoInviteForInviter:disabled',
+      additionalData: { inviterId, partnerId },
+    });
+    throw new Error('Profile storage is not configured.');
+  }
+
+  if (inviterId === partnerId) {
+    throw new Error('You cannot accept your own invite.');
+  }
+
+  const inviterRef = userProfileDoc(firestore, inviterId);
+
+  try {
+    await runTransaction(firestore, async transaction => {
+      const inviterSnap = await transaction.get(inviterRef);
+
+      if (!inviterSnap.exists()) {
+        throw new Error('Inviter profile no longer exists.');
+      }
+
+      const inviterData = inviterSnap.data();
+      const activeInvite = inviterData.activeDuoInvite;
+
+      if (!activeInvite) {
+        throw new Error('This invite is no longer active.');
+      }
+
+      if (activeInvite.tokenHash !== tokenHash) {
+        throw new Error('Invite token does not match.');
+      }
+
+      const now = Timestamp.now();
+      const inviteExpired = activeInvite.expiresAt.toMillis() < now.toMillis();
+
+      if (inviteExpired && activeInvite.status !== ACCEPTED_STATUS) {
+        throw new Error('This invite has expired.');
+      }
+
+      const inviterDuos = inviterData.duos ?? [];
+      const hasExistingDuo = inviterDuos.some(
+        duo => duo.partnerId === partnerId && duo.formedViaInviteTokenHash === tokenHash,
+      );
+
+      const updates: Record<string, unknown> = {
+        activeDuoInvite: {
+          ...activeInvite,
+          status: ACCEPTED_STATUS,
+          acceptedAt: activeInvite.acceptedAt ?? now,
+          acceptedByUserId: partnerId,
+        },
+      };
+
+      if (!hasExistingDuo) {
+        const inviterDuoEntry: DuoSummary = {
+          partnerId,
+          partnerName: partnerDisplayName ?? inviterData.displayName ?? inviterData.email,
+          createdAt: now,
+          formedViaInviteTokenHash: tokenHash,
+        };
+
+        updates.duos = arrayUnion(inviterDuoEntry);
+        updates['stats.duosFormed'] = increment(1);
+      }
+
+      transaction.update(inviterRef, updates);
+    });
+  } catch (error) {
+    logError('Failed to finalize duo invite for inviter', error, {
+      component: 'firebase:user-profile',
+      action: 'finalizeDuoInviteForInviter',
       additionalData: { inviterId, partnerId },
     });
     throw error;

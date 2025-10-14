@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LinkIcon, Share2, UserPlus, X } from 'lucide-react';
 import { Timestamp } from 'firebase/firestore';
 import { toast } from 'sonner';
@@ -7,8 +7,15 @@ import { PROFILE_COPY, PROFILE_MESSAGES } from '@/constants/profile';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import {
   clearActiveDuoInvite,
+  finalizeDuoInviteForInviter,
   setActiveDuoInvite,
 } from '@/lib/firebase/user-profile';
+import {
+  markDuoInviteAcceptanceFailed,
+  markDuoInviteAcceptanceProcessed,
+  subscribeToPendingDuoInviteAcceptances,
+} from '@/lib/firebase/duo-invite-acceptances';
+import type { DuoInviteAcceptance } from '@/types/duo-invite-acceptance';
 import type { ActiveDuoInvite } from '@/types/user-profile';
 import {
   createDuoInviteLink,
@@ -25,6 +32,7 @@ const InviteDuoSectionComponent: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
   const [isRevoking, setIsRevoking] = useState(false);
+  const processingRequestsRef = useRef<Set<string>>(new Set());
 
   const invite = profile?.activeDuoInvite ?? null;
 
@@ -67,6 +75,68 @@ const InviteDuoSectionComponent: React.FC = () => {
 
   const canShareInvite = Boolean(invite && invite.status === 'pending' && !isInviteExpired);
   const canRevokeInvite = Boolean(invite && invite.status === 'pending');
+
+  const processAcceptanceRequest = useCallback(async (request: DuoInviteAcceptance) => {
+    if (!profile?.id) {
+      processingRequestsRef.current.delete(request.id);
+      return;
+    }
+
+    try {
+      await finalizeDuoInviteForInviter({
+        inviterId: profile.id,
+        partnerId: request.partnerId,
+        tokenHash: request.tokenHash,
+        partnerDisplayName: request.partnerName ?? request.partnerEmail ?? null,
+      });
+      await markDuoInviteAcceptanceProcessed(request.id);
+    } catch (error) {
+      logError('Failed to finalize queued duo invite acceptance', error, {
+        component: 'InviteDuoSection',
+        action: 'processAcceptanceRequest',
+        additionalData: { userId: profile.id, requestId: request.id },
+      });
+
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      await markDuoInviteAcceptanceFailed(request.id, message);
+    } finally {
+      processingRequestsRef.current.delete(request.id);
+    }
+  }, [profile?.id]);
+
+  useEffect(() => {
+    if (!profile?.id) {
+      return;
+    }
+
+    const unsubscribe = subscribeToPendingDuoInviteAcceptances(
+      profile.id,
+      requests => {
+        requests.forEach(request => {
+          if (processingRequestsRef.current.has(request.id)) {
+            return;
+          }
+
+          processingRequestsRef.current.add(request.id);
+          void processAcceptanceRequest(request);
+        });
+      },
+      error => {
+        logError('Failed to observe duo invite acceptance requests', error, {
+          component: 'InviteDuoSection',
+          action: 'subscribeToAcceptances',
+          additionalData: { userId: profile.id },
+        });
+      },
+    );
+
+    const trackedRequests = processingRequestsRef.current;
+
+    return () => {
+      unsubscribe();
+      trackedRequests.clear();
+    };
+  }, [processAcceptanceRequest, profile?.id]);
 
   const handleGenerateInvite = async () => {
     if (!profile?.id) {

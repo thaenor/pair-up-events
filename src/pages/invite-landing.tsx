@@ -278,7 +278,7 @@ const InviteLandingPage: React.FC = () => {
       case 'already-accepted':
         return 'This invite has already been accepted. Head to your profile to see your duos!';
       case 'accepted':
-        return 'Success! You and your duo are now connected on PairUp Events.';
+        return 'All set! We’ve let your duo know, and they’ll finalize the connection shortly.';
       case 'ready':
         if (verificationWarning) {
           return PROFILE_MESSAGES.INVITE_DUO.PERMISSION_WARNING;
@@ -358,7 +358,9 @@ const InviteLandingPage: React.FC = () => {
             Duo invite
           </div>
           <h1 className="text-3xl font-bold text-pairup-darkBlue">
-            {status === 'accepted' ? 'You’re paired up! 🎉' : `Join ${inviterName} on PairUp Events`}
+            {status === 'accepted'
+              ? 'Invite accepted! 🎉'
+              : `Join ${inviterName} on PairUp Events`}
           </h1>
           <p className="mt-4 text-base text-pairup-darkBlue/80" data-testid="invite-landing-status">
             {renderStatusDescription()}

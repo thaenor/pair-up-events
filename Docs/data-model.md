@@ -150,6 +150,36 @@ Examples:
 
 ---
 
+### `/duoInviteAcceptances/{requestId}`
+Queued duo invite acceptance requests used when invitees cannot directly write to an inviter’s private profile document.
+
+| Field | Type | Description |
+|--------|------|-------------|
+| `inviterId` | string | UID of the inviter who owns the invite |
+| `partnerId` | string | UID of the partner who accepted |
+| `tokenHash` | string | Hash of the invite token to match the inviter’s active invite |
+| `status` | string | `"pending" | "processed" | "failed"` |
+| `partnerName` | string | Optional snapshot of the partner’s display name |
+| `partnerEmail` | string | Optional snapshot of the partner’s email |
+| `inviterName` | string | Optional snapshot of the inviter’s display name |
+| `createdAt` | Timestamp | When the acceptance was queued |
+| `processedAt` | Timestamp | When the inviter finalized it |
+| `errorMessage` | string | Populated when processing fails |
+
+**Security rules:**
+
+```javascript
+match /duoInviteAcceptances/{requestId} {
+  allow create: if request.auth != null && request.auth.uid == request.resource.data.partnerId;
+  allow update: if request.auth != null && request.auth.uid == resource.data.inviterId;
+  allow read: if request.auth != null && (request.auth.uid == resource.data.inviterId || request.auth.uid == resource.data.partnerId);
+}
+```
+
+This keeps the original “owner only” constraints on `users/{userId}` while still letting invitees signal acceptance.
+
+---
+
 ### `/audit_logs/{logId}`
 Admin-only logs for moderation and analytics.
 

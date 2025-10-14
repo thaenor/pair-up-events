@@ -123,7 +123,8 @@ Let me know what you think! 😊`,
     EXPIRED: 'This invite has expired. Generate a new one.',
     ACCEPT_ERROR: 'We could not accept this invite. Please try again.',
     ACCEPT_SELF: 'You cannot accept your own invite.',
-    ACCEPT_SUCCESS: 'You are now paired up! 🎉',
+    ACCEPT_SUCCESS:
+      'Invite accepted! We’ll let your duo know so they can finalize the connection in their profile.',
     AUTH_REQUIRED: 'Sign in or create an account to view and accept this invite.',
     PERMISSION_WARNING:
       'We couldn’t verify this invite automatically, but you can accept it if you trust the person who shared it.',
