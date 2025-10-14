@@ -2,6 +2,8 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, useNavigate } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi, type MockedFunction } from "vitest";
 
+import { PENDING_DUO_INVITE_STORAGE_KEY } from "@/constants/invites";
+
 import EmailSignupForm from "../email-signup-form";
 
 const mockSignUpWithEmail = vi.fn();
@@ -41,6 +43,7 @@ describe("EmailSignupForm", () => {
     mockToastError.mockReset();
     mockClearError.mockReset();
     mockNavigate.mockReset();
+    sessionStorage.clear();
     (useNavigate as MockedFunction<typeof useNavigate>).mockReturnValue(mockNavigate);
   });
 
@@ -110,6 +113,30 @@ describe("EmailSignupForm", () => {
       expect(mockNavigate).toHaveBeenCalledWith("/profile");
       expect(screen.getByTestId("signup-success")).toBeInTheDocument();
     });
+  });
+
+  it("redirects newly registered users back to a pending invite", async () => {
+    sessionStorage.setItem(
+      PENDING_DUO_INVITE_STORAGE_KEY,
+      JSON.stringify({ inviterId: "inviter-456", token: "token-def" }),
+    );
+
+    render(
+      <MemoryRouter>
+        <EmailSignupForm />
+      </MemoryRouter>
+    );
+
+    fillValidForm();
+
+    fireEvent.click(screen.getByTestId("signup-submit-button"));
+
+    await waitFor(() => {
+      expect(mockSignUpWithEmail).toHaveBeenCalledWith("hello@pairup.events", "ValidPass1");
+      expect(mockNavigate).toHaveBeenCalledWith("/invite/inviter-456/token-def", { replace: true });
+    });
+
+    expect(mockNavigate).not.toHaveBeenCalledWith("/profile");
   });
 
   it("toggles password visibility for both password fields", () => {

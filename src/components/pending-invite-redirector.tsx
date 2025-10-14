@@ -1,13 +1,8 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { PENDING_DUO_INVITE_STORAGE_KEY } from '@/constants/invites';
 import { useAuth } from '@/hooks/useAuth';
-
-type PendingInvitePayload = {
-  inviterId: string;
-  token: string;
-};
+import { clearPendingInvite, readPendingInvitePayload } from '@/utils/pendingInvite';
 
 const PendingInviteRedirector: React.FC = () => {
   const { user, loading } = useAuth();
@@ -19,8 +14,8 @@ const PendingInviteRedirector: React.FC = () => {
       return;
     }
 
-    const payloadRaw = sessionStorage.getItem(PENDING_DUO_INVITE_STORAGE_KEY);
-    if (!payloadRaw) {
+    const payload = readPendingInvitePayload();
+    if (!payload) {
       return;
     }
 
@@ -28,19 +23,9 @@ const PendingInviteRedirector: React.FC = () => {
       return;
     }
 
-    try {
-      const payload = JSON.parse(payloadRaw) as PendingInvitePayload;
-      if (!payload?.inviterId || !payload?.token) {
-        sessionStorage.removeItem(PENDING_DUO_INVITE_STORAGE_KEY);
-        return;
-      }
-
-      const targetPath = `/invite/${payload.inviterId}/${payload.token}`;
-      if (location.pathname !== targetPath) {
-        navigate(targetPath, { replace: true });
-      }
-    } catch {
-      sessionStorage.removeItem(PENDING_DUO_INVITE_STORAGE_KEY);
+    const targetPath = `/invite/${payload.inviterId}/${payload.token}`;
+    if (location.pathname !== targetPath) {
+      navigate(targetPath, { replace: true });
     }
   }, [user, loading, navigate, location.pathname]);
 
@@ -49,18 +34,9 @@ const PendingInviteRedirector: React.FC = () => {
       return;
     }
 
-    const payloadRaw = sessionStorage.getItem(PENDING_DUO_INVITE_STORAGE_KEY);
-    if (!payloadRaw) {
-      return;
-    }
-
-    try {
-      const payload = JSON.parse(payloadRaw) as PendingInvitePayload;
-      if (!payload?.inviterId || !payload?.token) {
-        sessionStorage.removeItem(PENDING_DUO_INVITE_STORAGE_KEY);
-      }
-    } catch {
-      sessionStorage.removeItem(PENDING_DUO_INVITE_STORAGE_KEY);
+    const payload = readPendingInvitePayload();
+    if (!payload) {
+      clearPendingInvite();
     }
   }, [user]);
 

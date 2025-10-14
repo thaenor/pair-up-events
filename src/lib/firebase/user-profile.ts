@@ -10,6 +10,7 @@ import {
   setDoc,
   Timestamp,
   updateDoc,
+  type Firestore,
   type FirestoreDataConverter,
 } from 'firebase/firestore';
 
@@ -33,8 +34,8 @@ const userProfileConverter: FirestoreDataConverter<UserProfile> = {
   fromFirestore: snapshot => ({ id: snapshot.id, ...(snapshot.data() as Omit<UserProfile, 'id'>) }),
 };
 
-const userProfileDoc = (userId: string) =>
-  doc(db, COLLECTION_NAME, userId).withConverter(userProfileConverter);
+const userProfileDoc = (firestore: Firestore, userId: string) =>
+  doc(firestore, COLLECTION_NAME, userId).withConverter(userProfileConverter);
 
 const sanitizeActiveInvite = (invite: ActiveDuoInvite) => removeUndefined(invite);
 
@@ -53,7 +54,9 @@ export const createUserProfile = async ({
   photoUrl,
   timezone,
 }: CreateUserProfileParams): Promise<void> => {
-  if (!db) {
+  const firestore = db;
+
+  if (!firestore) {
     logWarning('Skipped creating user profile because Firestore is not configured.', {
       component: 'firebase:user-profile',
       action: 'createUserProfile:disabled',
@@ -83,7 +86,7 @@ export const createUserProfile = async ({
   };
 
   try {
-    await setDoc(userProfileDoc(id), profile, { merge: true });
+    await setDoc(userProfileDoc(firestore, id), profile, { merge: true });
   } catch (error) {
     logError('Failed to create user profile', error, {
       component: 'firebase:user-profile',
@@ -98,45 +101,50 @@ export const subscribeToUserProfile = (
   userId: string,
   onNext: (profile: UserProfile | null) => void,
   onError?: (error: Error) => void,
-) =>
-  db
-    ? onSnapshot(
-      userProfileDoc(userId),
-      snapshot => {
-        if (snapshot.exists()) {
-          onNext(snapshot.data());
-          return;
-        }
-        onNext(null);
-      },
-      error => {
-        logError('Failed to subscribe to user profile', error, {
-          component: 'firebase:user-profile',
-          action: 'subscribeToUserProfile',
-          additionalData: { userId },
-        });
-        onError?.(error);
-      },
-    )
-    : (() => {
-        const error = new Error('Profile storage is not configured.');
+) => {
+  const firestore = db;
 
-        logWarning('Firestore is not configured; returning empty profile subscription.', {
-          component: 'firebase:user-profile',
-          action: 'subscribeToUserProfile:disabled',
-          additionalData: { userId },
-        });
+  if (!firestore) {
+    const error = new Error('Profile storage is not configured.');
 
-        queueMicrotask(() => {
-          onNext(null);
-          onError?.(error);
-        });
+    logWarning('Firestore is not configured; returning empty profile subscription.', {
+      component: 'firebase:user-profile',
+      action: 'subscribeToUserProfile:disabled',
+      additionalData: { userId },
+    });
 
-        return () => undefined;
-      })();
+    queueMicrotask(() => {
+      onNext(null);
+      onError?.(error);
+    });
+
+    return () => undefined;
+  }
+
+  return onSnapshot(
+    userProfileDoc(firestore, userId),
+    snapshot => {
+      if (snapshot.exists()) {
+        onNext(snapshot.data());
+        return;
+      }
+      onNext(null);
+    },
+    error => {
+      logError('Failed to subscribe to user profile', error, {
+        component: 'firebase:user-profile',
+        action: 'subscribeToUserProfile',
+        additionalData: { userId },
+      });
+      onError?.(error);
+    },
+  );
+};
 
 export const updateUserProfile = async (userId: string, updates: UserProfileUpdate): Promise<void> => {
-  if (!db) {
+  const firestore = db;
+
+  if (!firestore) {
     logWarning('Skipped updating user profile because Firestore is not configured.', {
       component: 'firebase:user-profile',
       action: 'updateUserProfile:disabled',
@@ -148,12 +156,12 @@ export const updateUserProfile = async (userId: string, updates: UserProfileUpda
   const sanitizedUpdates = removeUndefined(updates);
 
   try {
-    await updateDoc(userProfileDoc(userId), sanitizedUpdates);
+    await updateDoc(userProfileDoc(firestore, userId), sanitizedUpdates);
   } catch (error) {
     if (error instanceof FirebaseError && error.code === 'not-found') {
       try {
         await setDoc(
-          userProfileDoc(userId),
+          userProfileDoc(firestore, userId),
           {
             createdAt: Timestamp.now(),
             ...sanitizedUpdates,
@@ -181,7 +189,9 @@ export const updateUserProfile = async (userId: string, updates: UserProfileUpda
 };
 
 export const deleteUserProfile = async (userId: string): Promise<void> => {
-  if (!db) {
+  const firestore = db;
+
+  if (!firestore) {
     logWarning('Skipped deleting user profile because Firestore is not configured.', {
       component: 'firebase:user-profile',
       action: 'deleteUserProfile:disabled',
@@ -191,7 +201,7 @@ export const deleteUserProfile = async (userId: string): Promise<void> => {
   }
 
   try {
-    await deleteDoc(userProfileDoc(userId));
+    await deleteDoc(userProfileDoc(firestore, userId));
   } catch (error) {
     logError('Failed to delete user profile', error, {
       component: 'firebase:user-profile',
@@ -203,7 +213,9 @@ export const deleteUserProfile = async (userId: string): Promise<void> => {
 };
 
 export const setActiveDuoInvite = async (userId: string, invite: ActiveDuoInvite): Promise<void> => {
-  if (!db) {
+  const firestore = db;
+
+  if (!firestore) {
     logWarning('Skipped setting duo invite because Firestore is not configured.', {
       component: 'firebase:user-profile',
       action: 'setActiveDuoInvite:disabled',
@@ -213,7 +225,7 @@ export const setActiveDuoInvite = async (userId: string, invite: ActiveDuoInvite
   }
 
   try {
-    await updateDoc(userProfileDoc(userId), {
+    await updateDoc(userProfileDoc(firestore, userId), {
       activeDuoInvite: sanitizeActiveInvite(invite),
     });
   } catch (error) {
@@ -227,7 +239,9 @@ export const setActiveDuoInvite = async (userId: string, invite: ActiveDuoInvite
 };
 
 export const clearActiveDuoInvite = async (userId: string): Promise<void> => {
-  if (!db) {
+  const firestore = db;
+
+  if (!firestore) {
     logWarning('Skipped clearing duo invite because Firestore is not configured.', {
       component: 'firebase:user-profile',
       action: 'clearActiveDuoInvite:disabled',
@@ -237,7 +251,7 @@ export const clearActiveDuoInvite = async (userId: string): Promise<void> => {
   }
 
   try {
-    await updateDoc(userProfileDoc(userId), {
+    await updateDoc(userProfileDoc(firestore, userId), {
       activeDuoInvite: null,
     });
   } catch (error) {
@@ -267,7 +281,9 @@ export const acceptDuoInvite = async ({
   inviterDisplayName,
   partnerDisplayName,
 }: AcceptDuoInviteParams): Promise<void> => {
-  if (!db) {
+  const firestore = db;
+
+  if (!firestore) {
     logWarning('Skipped accepting duo invite because Firestore is not configured.', {
       component: 'firebase:user-profile',
       action: 'acceptDuoInvite:disabled',
@@ -280,11 +296,11 @@ export const acceptDuoInvite = async ({
     throw new Error('You cannot accept your own invite.');
   }
 
-  const inviterRef = userProfileDoc(inviterId);
-  const partnerRef = userProfileDoc(partnerId);
+  const inviterRef = userProfileDoc(firestore, inviterId);
+  const partnerRef = userProfileDoc(firestore, partnerId);
 
   try {
-    await runTransaction(db, async transaction => {
+    await runTransaction(firestore, async transaction => {
       const [inviterSnap, partnerSnap] = await Promise.all([
         transaction.get(inviterRef),
         transaction.get(partnerRef),
@@ -357,7 +373,9 @@ export const acceptDuoInvite = async ({
 };
 
 export const getUserProfileOnce = async (userId: string): Promise<UserProfile | null> => {
-  if (!db) {
+  const firestore = db;
+
+  if (!firestore) {
     logWarning('Skipped fetching user profile because Firestore is not configured.', {
       component: 'firebase:user-profile',
       action: 'getUserProfileOnce:disabled',
@@ -367,7 +385,7 @@ export const getUserProfileOnce = async (userId: string): Promise<UserProfile | 
   }
 
   try {
-    const snapshot = await getDoc(userProfileDoc(userId));
+    const snapshot = await getDoc(userProfileDoc(firestore, userId));
     return snapshot.exists() ? snapshot.data() : null;
   } catch (error) {
     logError('Failed to fetch user profile', error, {
