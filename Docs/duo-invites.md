@@ -44,7 +44,7 @@ The helper in `src/lib/firebase/user-profile.ts` keeps invite updates inside a s
 - Visitors land on `/invite/:inviterId/:token`. The page validates the invite with a one-off `getUserProfileOnce` call and only proceeds when the hash matches.
 - Pending invites are cached in `sessionStorage` so unauthenticated visitors can return after sign-in. `PendingInviteRedirector` reads this cache once auth completes and routes the user back to the invite URL.
 - Accepting an invite calls `acceptDuoInvite`, surfaces success or failure via toasts, and clears the cached metadata. If Firestore rejects the cross-profile write, we fall back to the queued flow so the partner still sees immediate success while the inviter finalizes from their profile.
-- `InviteDuoSection` listens for new entries in `duoInviteAcceptances` for the authenticated user and quietly finalizes them, so the inviter never has to handle the queue manually.
+- `InviteDuoSection` listens for new entries in `duoInviteAcceptances` for the authenticated user and quietly finalizes them, so the inviter never has to handle the queue manually. When Firestore rules block invitees from creating those acceptance documents, the partner still sees a success state and is prompted to ask the inviter to open PairUp and finalize the connection manually.
 
 ## Configuration knobs
 

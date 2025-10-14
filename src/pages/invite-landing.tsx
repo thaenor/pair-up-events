@@ -6,7 +6,11 @@ import { FirebaseError } from 'firebase/app';
 import { PROFILE_MESSAGES } from '@/constants/profile';
 import { PENDING_DUO_INVITE_STORAGE_KEY } from '@/constants/invites';
 import { useAuth } from '@/hooks/useAuth';
-import { acceptDuoInvite, getUserProfileOnce } from '@/lib/firebase/user-profile';
+import {
+  acceptDuoInvite,
+  getUserProfileOnce,
+  type AcceptDuoInviteResult,
+} from '@/lib/firebase/user-profile';
 import type { ActiveDuoInvite, UserProfile } from '@/types/user-profile';
 import { hashDuoInviteToken } from '@/utils/profileHelpers';
 import { logError } from '@/utils/logger';
@@ -31,6 +35,9 @@ const InviteLandingPage: React.FC = () => {
   const [tokenHash, setTokenHash] = useState<string | null>(null);
   const [verificationWarning, setVerificationWarning] = useState(false);
   const [isAccepting, setIsAccepting] = useState(false);
+  const [acceptOutcome, setAcceptOutcome] = useState<
+    AcceptDuoInviteResult['status'] | null
+  >(null);
 
   const inviterName = useMemo(() => {
     if (!inviterProfile) {
@@ -67,6 +74,7 @@ const InviteLandingPage: React.FC = () => {
         const profile = await getUserProfileOnce(inviterId);
         if (!profile) {
           setStatus('invalid');
+          setAcceptOutcome(null);
           setInviterProfile(null);
           setActiveInvite(null);
           setTokenHash(null);
@@ -77,6 +85,7 @@ const InviteLandingPage: React.FC = () => {
         const invite = profile.activeDuoInvite;
         if (!invite) {
           setStatus('invalid');
+          setAcceptOutcome(null);
           setInviterProfile(null);
           setActiveInvite(null);
           setTokenHash(null);
@@ -86,6 +95,7 @@ const InviteLandingPage: React.FC = () => {
 
         if (invite.tokenHash !== computedTokenHash) {
           setStatus('invalid');
+          setAcceptOutcome(null);
           setInviterProfile(null);
           setActiveInvite(null);
           setTokenHash(null);
@@ -110,12 +120,16 @@ const InviteLandingPage: React.FC = () => {
           setTokenHash(nextStatus === 'ready' ? computedTokenHash : null);
           setVerificationWarning(false);
           setStatus(nextStatus);
+          if (nextStatus !== 'accepted') {
+            setAcceptOutcome(null);
+          }
         }
       } catch (error) {
         if (error instanceof FirebaseError && error.code === 'permission-denied') {
           if (!user?.uid) {
             if (isMounted) {
               setStatus('auth-required');
+              setAcceptOutcome(null);
               setInviterProfile(null);
               setActiveInvite(null);
               setTokenHash(null);
@@ -139,6 +153,7 @@ const InviteLandingPage: React.FC = () => {
 
           if (isMounted) {
             setStatus('ready');
+            setAcceptOutcome(null);
             setInviterProfile(null);
             setActiveInvite(null);
             setTokenHash(ensuredTokenHash ?? null);
@@ -154,6 +169,7 @@ const InviteLandingPage: React.FC = () => {
         });
         if (isMounted) {
           setStatus('invalid');
+          setAcceptOutcome(null);
           setInviterProfile(null);
           setActiveInvite(null);
           setTokenHash(null);
@@ -227,16 +243,25 @@ const InviteLandingPage: React.FC = () => {
     setIsAccepting(true);
 
     try {
-      await acceptDuoInvite({
+      const result = await acceptDuoInvite({
         inviterId,
         partnerId: user.uid,
         tokenHash: ensuredTokenHash,
         inviterDisplayName: inviterProfile?.displayName,
         partnerDisplayName: user.displayName,
       });
-      toast.success(PROFILE_MESSAGES.INVITE_DUO.ACCEPT_SUCCESS);
+      let successMessage = PROFILE_MESSAGES.INVITE_DUO.ACCEPT_SUCCESS_COMPLETE;
+
+      if (result.status === 'queued') {
+        successMessage = PROFILE_MESSAGES.INVITE_DUO.ACCEPT_SUCCESS_QUEUED;
+      } else if (result.status === 'queued-without-notification') {
+        successMessage = PROFILE_MESSAGES.INVITE_DUO.ACCEPT_SUCCESS_MANUAL;
+      }
+
+      toast.success(successMessage);
       sessionStorage.removeItem(PENDING_DUO_INVITE_STORAGE_KEY);
       setStatus('accepted');
+      setAcceptOutcome(result.status);
       setTokenHash(null);
       setVerificationWarning(false);
     } catch (error) {
@@ -245,6 +270,7 @@ const InviteLandingPage: React.FC = () => {
         action: 'handleAcceptInvite',
         additionalData: { inviterId, token },
       });
+      setAcceptOutcome(null);
       toast.error(PROFILE_MESSAGES.INVITE_DUO.ACCEPT_ERROR);
     } finally {
       setIsAccepting(false);
@@ -278,7 +304,15 @@ const InviteLandingPage: React.FC = () => {
       case 'already-accepted':
         return 'This invite has already been accepted. Head to your profile to see your duos!';
       case 'accepted':
-        return 'All set! We’ve let your duo know, and they’ll finalize the connection shortly.';
+        if (acceptOutcome === 'queued-without-notification') {
+          return PROFILE_MESSAGES.INVITE_DUO.ACCEPT_SUCCESS_MANUAL;
+        }
+
+        if (acceptOutcome === 'queued') {
+          return PROFILE_MESSAGES.INVITE_DUO.ACCEPT_SUCCESS_QUEUED;
+        }
+
+        return PROFILE_MESSAGES.INVITE_DUO.ACCEPT_SUCCESS_COMPLETE;
       case 'ready':
         if (verificationWarning) {
           return PROFILE_MESSAGES.INVITE_DUO.PERMISSION_WARNING;

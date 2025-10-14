@@ -123,8 +123,12 @@ Let me know what you think! 😊`,
     EXPIRED: 'This invite has expired. Generate a new one.',
     ACCEPT_ERROR: 'We could not accept this invite. Please try again.',
     ACCEPT_SELF: 'You cannot accept your own invite.',
-    ACCEPT_SUCCESS:
-      'Invite accepted! We’ll let your duo know so they can finalize the connection in their profile.',
+    ACCEPT_SUCCESS_COMPLETE:
+      'You’re all set! Your duo connection has been confirmed across both profiles.',
+    ACCEPT_SUCCESS_QUEUED:
+      'Invite accepted! We’ve let your duo know so they can finalize the connection shortly.',
+    ACCEPT_SUCCESS_MANUAL:
+      'Invite accepted! Ask your duo to open PairUp so you can finish linking up—we couldn’t notify them automatically.',
     AUTH_REQUIRED: 'Sign in or create an account to view and accept this invite.',
     PERMISSION_WARNING:
       'We couldn’t verify this invite automatically, but you can accept it if you trust the person who shared it.',

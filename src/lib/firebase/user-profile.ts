@@ -273,6 +273,11 @@ type AcceptDuoInviteParams = {
   partnerDisplayName?: string | null;
 };
 
+export type AcceptDuoInviteResult =
+  | { status: 'completed' }
+  | { status: 'queued' }
+  | { status: 'queued-without-notification' };
+
 const ACCEPTED_STATUS: DuoInviteStatus = 'accepted';
 
 type InviteAcceptanceFallbackParams = {
@@ -291,7 +296,7 @@ const handleInviteAcceptanceWithoutCrossProfileWrite = async ({
   tokenHash,
   inviterDisplayName,
   partnerDisplayName,
-}: InviteAcceptanceFallbackParams) => {
+}: InviteAcceptanceFallbackParams): Promise<AcceptDuoInviteResult> => {
   logWarning('Falling back to queued duo invite acceptance due to permission constraints.', {
     component: 'firebase:user-profile',
     action: 'acceptDuoInvite:fallback',
@@ -337,14 +342,31 @@ const handleInviteAcceptanceWithoutCrossProfileWrite = async ({
     });
   });
 
-  await createDuoInviteAcceptanceRequest({
-    inviterId,
-    partnerId,
-    tokenHash,
-    partnerName,
-    partnerEmail,
-    inviterName: inviterDisplayName ?? null,
-  });
+  try {
+    await createDuoInviteAcceptanceRequest({
+      inviterId,
+      partnerId,
+      tokenHash,
+      partnerName,
+      partnerEmail,
+      inviterName: inviterDisplayName ?? null,
+    });
+    return { status: 'queued' };
+  } catch (error) {
+    if (error instanceof FirebaseError && error.code === 'permission-denied') {
+      logWarning(
+        'Invite acceptance was recorded for the partner but the inviter must finalize it manually due to Firestore permissions.',
+        {
+          component: 'firebase:user-profile',
+          action: 'acceptDuoInvite:fallback-queue-denied',
+          additionalData: { inviterId, partnerId },
+        },
+      );
+      return { status: 'queued-without-notification' };
+    }
+
+    throw error;
+  }
 };
 
 export const acceptDuoInvite = async ({
@@ -353,7 +375,7 @@ export const acceptDuoInvite = async ({
   tokenHash,
   inviterDisplayName,
   partnerDisplayName,
-}: AcceptDuoInviteParams): Promise<void> => {
+}: AcceptDuoInviteParams): Promise<AcceptDuoInviteResult> => {
   const firestore = db;
 
   if (!firestore) {
@@ -435,9 +457,11 @@ export const acceptDuoInvite = async ({
         'stats.duosFormed': increment(1),
       });
     });
+
+    return { status: 'completed' };
   } catch (error) {
     if (error instanceof FirebaseError && error.code === 'permission-denied') {
-      await handleInviteAcceptanceWithoutCrossProfileWrite({
+      return handleInviteAcceptanceWithoutCrossProfileWrite({
         firestore,
         inviterId,
         partnerId,
@@ -445,7 +469,6 @@ export const acceptDuoInvite = async ({
         inviterDisplayName,
         partnerDisplayName,
       });
-      return;
     }
 
     logError('Failed to accept duo invite', error, {
