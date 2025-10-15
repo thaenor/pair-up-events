@@ -39,11 +39,29 @@ const InviteLandingPage: React.FC = () => {
     AcceptDuoInviteResult['status'] | null
   >(null);
 
+
+  // Helper to ensure token hash, with fallback
+  const getEnsuredTokenHash = async (
+    token: string,
+    fallbackHash?: string | null,
+  ): Promise<string | null> => {
+    if (fallbackHash) return fallbackHash;
+    try {
+      return await hashDuoInviteToken(token);
+    } catch (error) {
+      logError('Failed to hash duo invite token', error, {
+        component: 'InviteLandingPage',
+        action: 'getEnsuredTokenHash',
+        additionalData: { token },
+      });
+      return null;
+    }
+  };
+
   const inviterName = useMemo(() => {
     if (!inviterProfile) {
       return 'this';
     }
-
     return inviterProfile.displayName || inviterProfile.email || 'this';
   }, [inviterProfile]);
 
@@ -51,6 +69,7 @@ const InviteLandingPage: React.FC = () => {
 
   useEffect(() => {
     let isMounted = true;
+
 
     const verifyInvite = async () => {
       if (!inviterId || !token) {
@@ -138,18 +157,7 @@ const InviteLandingPage: React.FC = () => {
             return;
           }
 
-          let ensuredTokenHash = computedTokenHash;
-          if (!ensuredTokenHash) {
-            try {
-              ensuredTokenHash = await hashDuoInviteToken(token);
-            } catch (hashError) {
-              logError('Failed to hash duo invite token after permission error', hashError, {
-                component: 'InviteLandingPage',
-                action: 'verifyInvite:fallback-hash',
-                additionalData: { inviterId, token },
-              });
-            }
-          }
+          const ensuredTokenHash = await getEnsuredTokenHash(token, computedTokenHash);
 
           if (isMounted) {
             setStatus('ready');
@@ -219,23 +227,9 @@ const InviteLandingPage: React.FC = () => {
       return;
     }
 
-    let ensuredTokenHash = tokenHash ?? activeInvite?.tokenHash ?? null;
+    const ensuredTokenHash = await getEnsuredTokenHash(token, tokenHash ?? activeInvite?.tokenHash ?? null);
 
-    if (!ensuredTokenHash) {
-      try {
-        ensuredTokenHash = await hashDuoInviteToken(token);
-      } catch (error) {
-        logError('Failed to hash duo invite token before accepting', error, {
-          component: 'InviteLandingPage',
-          action: 'handleAcceptInvite:hash',
-          additionalData: { inviterId, token },
-        });
-        toast.error(PROFILE_MESSAGES.INVITE_DUO.ACCEPT_ERROR);
-        return;
-      }
-    }
-
-    if (activeInvite && ensuredTokenHash !== activeInvite.tokenHash) {
+    if (!ensuredTokenHash || (activeInvite && ensuredTokenHash !== activeInvite.tokenHash)) {
       toast.error(PROFILE_MESSAGES.INVITE_DUO.ACCEPT_ERROR);
       return;
     }

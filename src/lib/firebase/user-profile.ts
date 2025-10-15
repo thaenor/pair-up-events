@@ -94,7 +94,7 @@ export const createUserProfile = async ({
       additionalData: { id },
     });
     throw error;
-  }
+        await setDoc(userProfileDoc(firestore, id), profile, { merge: true });
 };
 
 export const subscribeToUserProfile = (
@@ -124,7 +124,7 @@ export const subscribeToUserProfile = (
   return onSnapshot(
     userProfileDoc(firestore, userId),
     snapshot => {
-      if (snapshot.exists()) {
+          userProfileDoc(firestore, userId),
         onNext(snapshot.data());
         return;
       }
@@ -146,24 +146,24 @@ export const updateUserProfile = async (userId: string, updates: UserProfileUpda
 
   if (!firestore) {
     logWarning('Skipped updating user profile because Firestore is not configured.', {
-      component: 'firebase:user-profile',
-      action: 'updateUserProfile:disabled',
-      additionalData: { userId, updates },
-    });
-    throw new Error('Profile storage is not configured.');
-  }
-
-  const sanitizedUpdates = removeUndefined(updates);
-
-  try {
-    await updateDoc(userProfileDoc(firestore, userId), sanitizedUpdates);
-  } catch (error) {
-    if (error instanceof FirebaseError && error.code === 'not-found') {
-      try {
-        await setDoc(
-          userProfileDoc(firestore, userId),
-          {
-            createdAt: Timestamp.now(),
+  return onSnapshot(
+    userProfileDoc(firestore, userId),
+    (snapshot) => {
+      if (snapshot.exists()) {
+        onNext(snapshot.data());
+        return;
+      }
+      onNext(null);
+    },
+    (error) => {
+      logError('Failed to subscribe to user profile', error, {
+        component: 'firebase:user-profile',
+        action: 'subscribeToUserProfile',
+        additionalData: { userId },
+      });
+      onError?.(error);
+    }
+  );
             ...sanitizedUpdates,
           },
           { merge: true },
@@ -174,7 +174,7 @@ export const updateUserProfile = async (userId: string, updates: UserProfileUpda
           component: 'firebase:user-profile',
           action: 'updateUserProfile:fallback',
           additionalData: { userId, updates },
-        });
+        await deleteDoc(userProfileDoc(firestore, userId));
         throw setDocError;
       }
     }
@@ -186,12 +186,11 @@ export const updateUserProfile = async (userId: string, updates: UserProfileUpda
     });
     throw error;
   }
-};
 
 export const deleteUserProfile = async (userId: string): Promise<void> => {
   const firestore = db;
 
-  if (!firestore) {
+        await updateDoc(userProfileDoc(firestore, userId), {
     logWarning('Skipped deleting user profile because Firestore is not configured.', {
       component: 'firebase:user-profile',
       action: 'deleteUserProfile:disabled',
@@ -210,7 +209,7 @@ export const deleteUserProfile = async (userId: string): Promise<void> => {
     });
     throw error;
   }
-};
+        await updateDoc(userProfileDoc(firestore, userId), {
 
 export const setActiveDuoInvite = async (userId: string, invite: ActiveDuoInvite): Promise<void> => {
   const firestore = db;
@@ -239,7 +238,7 @@ export const setActiveDuoInvite = async (userId: string, invite: ActiveDuoInvite
 };
 
 export const clearActiveDuoInvite = async (userId: string): Promise<void> => {
-  const firestore = db;
+        const inviterRef = userProfileDoc(firestore, inviterId);
 
   if (!firestore) {
     logWarning('Skipped clearing duo invite because Firestore is not configured.', {
@@ -256,7 +255,7 @@ export const clearActiveDuoInvite = async (userId: string): Promise<void> => {
     });
   } catch (error) {
     logError('Failed to clear active duo invite', error, {
-      component: 'firebase:user-profile',
+        const snapshot = await getDoc(userProfileDoc(firestore, userId));
       action: 'clearActiveDuoInvite',
       additionalData: { userId },
     });
