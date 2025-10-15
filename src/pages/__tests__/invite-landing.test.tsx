@@ -210,47 +210,6 @@ describe('InviteLandingPage', () => {
     expect(screen.getByRole('heading', { name: 'Invite accepted! 🎉' })).toBeInTheDocument();
   });
 
-  it('surfaces the queued acceptance message when the inviter must finalize', async () => {
-    const now = Timestamp.now();
-    const invite: ActiveDuoInvite = {
-      slug: 'token-abc',
-      tokenHash: 'hash-abc',
-      status: 'pending',
-      createdAt: now,
-      expiresAt: Timestamp.fromMillis(now.toMillis() + 1000 * 60 * 60),
-    };
-
-    mockUseAuthValue.user = { uid: 'partner-1', displayName: 'Partner' };
-    mockHashDuoInviteToken.mockResolvedValue('hash-abc');
-    mockGetUserProfileOnce.mockResolvedValue({
-      id: 'inviter-1',
-      email: 'host@example.com',
-      displayName: 'Host User',
-      photoUrl: null,
-      createdAt: now,
-      timezone: null,
-      settings: null,
-      stats: { duosFormed: 1 },
-      activeDuoInvite: invite,
-      duos: [],
-    });
-    mockAcceptDuoInvite.mockResolvedValue({ status: 'queued' });
-
-    render(<InviteLandingPage />);
-
-    await waitFor(() => {
-      expect(screen.getByRole('button', { name: /accept invite/i })).toBeInTheDocument();
-    });
-
-    fireEvent.click(screen.getByRole('button', { name: /accept invite/i }));
-
-    await waitFor(() => {
-      expect(screen.getByTestId('invite-landing-status').textContent).toBe(
-        PROFILE_MESSAGES.INVITE_DUO.ACCEPT_SUCCESS_QUEUED,
-      );
-    });
-  });
-
   it('informs the user when the inviter must be notified manually', async () => {
     const now = Timestamp.now();
     const invite: ActiveDuoInvite = {
@@ -275,7 +234,7 @@ describe('InviteLandingPage', () => {
       activeDuoInvite: invite,
       duos: [],
     });
-    mockAcceptDuoInvite.mockResolvedValue({ status: 'queued-without-notification' });
+    mockAcceptDuoInvite.mockResolvedValue({ status: 'manual-follow-up' });
 
     render(<InviteLandingPage />);
 

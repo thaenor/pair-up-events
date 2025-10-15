@@ -5,7 +5,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import InviteDuoSection from '../invite-duo-section';
 import { PROFILE_COPY, PROFILE_MESSAGES } from '@/constants/profile';
 import type { ActiveDuoInvite } from '@/types/user-profile';
-import type { DuoInviteAcceptance } from '@/types/duo-invite-acceptance';
 
 type MockedUseUserProfileReturn = {
   profile: {
@@ -31,12 +30,6 @@ const mockUseUserProfileValue: MockedUseUserProfileReturn = {
 
 const mockSetActiveDuoInvite = vi.fn();
 const mockClearActiveDuoInvite = vi.fn();
-const mockFinalizeDuoInviteForInviter = vi.fn();
-const mockSubscribeToPendingDuoInviteAcceptances = vi
-  .fn<(inviterId: string, onNext: (requests: DuoInviteAcceptance[]) => void) => () => void>()
-  .mockReturnValue(() => undefined);
-const mockMarkProcessed = vi.fn();
-const mockMarkFailed = vi.fn();
 const mockGenerateDuoInviteToken = vi.fn(async () => ({
   rawToken: 'token123',
   tokenHash: 'hash123',
@@ -56,15 +49,6 @@ vi.mock('@/hooks/useUserProfile', () => ({
 vi.mock('@/lib/firebase/user-profile', () => ({
   setActiveDuoInvite: (...args: unknown[]) => mockSetActiveDuoInvite(...args),
   clearActiveDuoInvite: (...args: unknown[]) => mockClearActiveDuoInvite(...args),
-  finalizeDuoInviteForInviter: (...args: unknown[]) => mockFinalizeDuoInviteForInviter(...args),
-}));
-
-vi.mock('@/lib/firebase/duo-invite-acceptances', () => ({
-  subscribeToPendingDuoInviteAcceptances: (
-    ...args: Parameters<typeof mockSubscribeToPendingDuoInviteAcceptances>
-  ) => mockSubscribeToPendingDuoInviteAcceptances(...args),
-  markDuoInviteAcceptanceProcessed: (...args: unknown[]) => mockMarkProcessed(...args),
-  markDuoInviteAcceptanceFailed: (...args: unknown[]) => mockMarkFailed(...args),
 }));
 
 vi.mock('@/utils/profileHelpers', () => ({
@@ -101,10 +85,6 @@ describe('InviteDuoSection', () => {
     mockToastSuccess.mockReset();
     mockToastError.mockReset();
     mockLogError.mockReset();
-    mockFinalizeDuoInviteForInviter.mockReset();
-    mockMarkProcessed.mockReset();
-    mockMarkFailed.mockReset();
-    mockSubscribeToPendingDuoInviteAcceptances.mockClear();
 
     Object.assign(navigator, {
       clipboard: {
@@ -115,8 +95,6 @@ describe('InviteDuoSection', () => {
 
   it('renders an empty invite link when no invite exists', () => {
     render(<InviteDuoSection />);
-
-    expect(mockSubscribeToPendingDuoInviteAcceptances).toHaveBeenCalled();
 
     expect(screen.getByTestId('invite-duo-link')).toHaveValue('');
     expect(screen.getByTestId('invite-duo-status')).toHaveTextContent(
@@ -149,42 +127,6 @@ describe('InviteDuoSection', () => {
     expect(invitePayload.createdAt).toBeInstanceOf(Timestamp);
     expect(invitePayload.expiresAt).toBeInstanceOf(Timestamp);
     expect(mockToastSuccess).toHaveBeenCalledWith(PROFILE_MESSAGES.INVITE_DUO.SUCCESS);
-  });
-
-  it('processes queued acceptance requests for the current user', async () => {
-    const subscribers: Array<(requests: DuoInviteAcceptance[]) => void> = [];
-    mockSubscribeToPendingDuoInviteAcceptances.mockImplementation((_, onNext) => {
-      subscribers.push(onNext);
-      return () => undefined;
-    });
-
-    render(<InviteDuoSection />);
-
-    const request: DuoInviteAcceptance = {
-      id: 'req-1',
-      inviterId: 'user-123',
-      partnerId: 'partner-999',
-      tokenHash: 'hash-xyz',
-      status: 'pending',
-      partnerName: 'Partner 999',
-      partnerEmail: 'partner@example.com',
-      inviterName: 'Inviter',
-      createdAt: Timestamp.now(),
-    };
-
-    subscribers.forEach(callback => callback([request]));
-
-    await waitFor(() => {
-      expect(mockFinalizeDuoInviteForInviter).toHaveBeenCalledWith({
-        inviterId: 'user-123',
-        partnerId: 'partner-999',
-        tokenHash: 'hash-xyz',
-        partnerDisplayName: 'Partner 999',
-      });
-    });
-
-    expect(mockMarkProcessed).toHaveBeenCalledWith('req-1');
-    expect(mockMarkFailed).not.toHaveBeenCalled();
   });
 
   it('copies the invite link to the clipboard', async () => {

@@ -250,13 +250,10 @@ const InviteLandingPage: React.FC = () => {
         inviterDisplayName: inviterProfile?.displayName,
         partnerDisplayName: user.displayName,
       });
-      let successMessage = PROFILE_MESSAGES.INVITE_DUO.ACCEPT_SUCCESS_COMPLETE;
-
-      if (result.status === 'queued') {
-        successMessage = PROFILE_MESSAGES.INVITE_DUO.ACCEPT_SUCCESS_QUEUED;
-      } else if (result.status === 'queued-without-notification') {
-        successMessage = PROFILE_MESSAGES.INVITE_DUO.ACCEPT_SUCCESS_MANUAL;
-      }
+      const successMessage =
+        result.status === 'manual-follow-up'
+          ? PROFILE_MESSAGES.INVITE_DUO.ACCEPT_SUCCESS_MANUAL
+          : PROFILE_MESSAGES.INVITE_DUO.ACCEPT_SUCCESS_COMPLETE;
 
       toast.success(successMessage);
       sessionStorage.removeItem(PENDING_DUO_INVITE_STORAGE_KEY);
@@ -304,12 +301,8 @@ const InviteLandingPage: React.FC = () => {
       case 'already-accepted':
         return 'This invite has already been accepted. Head to your profile to see your duos!';
       case 'accepted':
-        if (acceptOutcome === 'queued-without-notification') {
+        if (acceptOutcome === 'manual-follow-up') {
           return PROFILE_MESSAGES.INVITE_DUO.ACCEPT_SUCCESS_MANUAL;
-        }
-
-        if (acceptOutcome === 'queued') {
-          return PROFILE_MESSAGES.INVITE_DUO.ACCEPT_SUCCESS_QUEUED;
         }
 
         return PROFILE_MESSAGES.INVITE_DUO.ACCEPT_SUCCESS_COMPLETE;
