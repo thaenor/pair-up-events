@@ -116,8 +116,7 @@ const toBase64Url = (bytes: ArrayBuffer): string => {
   const base64 = btoa(binary);
 
   return base64
-    .replace(/[+/=]/g, char => BASE64_URL_REPLACER[char] ?? char)
-    .replace(/=+$/u, '');
+    .replace(/[+/=]/g, char => BASE64_URL_REPLACER[char] ?? char);
 };
 
 export const hashDuoInviteToken = async (rawToken: string): Promise<string> => {
