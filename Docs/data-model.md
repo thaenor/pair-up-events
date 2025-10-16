@@ -1,38 +1,27 @@
-# PairUp Events – Firestore Data Model
-
-> Version: 1.0  
-> Purpose: Provide a clear, maintainable, and cost-optimized Firestore data architecture for the PairUp Events app.
-
----
-
-## 🔧 Overview
-
-This model is designed for **low-cost, scalable Firebase usage**:
-- Minimize document reads/writes.
-- Favor projection collections (listings, geo) for cheap list views.
-- Separate public vs private data for privacy and caching.
-- Avoid fan-out updates by linking data through subcollections and snapshots.
+# PairUp Events – Firestore Data Model  
+> Updated with Duo Feature  
+> Version: 1.1  
 
 ---
 
 ## 🧱 Top-Level Collections
 
 ### `/users/{userId}`
-**Private user profiles** — only visible to the authenticated user.
+**Private user profiles** — only visible to the authenticated user.  
 
 | Field | Type | Description |
 |--------|------|-------------|
-| `email` | string | User’s private email |
-| `displayName` | string | User’s display name (from OAuth or custom) |
+| `email` | string | Private email |
+| `displayName` | string | Display name (from OAuth or custom) |
 | `photoUrl` | string | Profile photo URL (from Firebase Auth) |
 | `timezone` | string | Optional timezone |
 | `createdAt` | Timestamp | Account creation date |
 | `settings` | object | `{ emailNotifications: boolean, pushNotifications: boolean }` |
 | `stats` | object | `{ eventsCreated: number, eventsJoined: number }` |
 
-**Subcollections:**
-- `/devices/{deviceId}` → stores push tokens and platform info.
-- `/notifications/{notificationId}` → ephemeral alerts, TTL-enabled.
+**Subcollections:**  
+- `/devices/{deviceId}` → stores push tokens and platform info.  
+- `/notifications/{notificationId}` → ephemeral alerts, TTL-enabled.  
 - `/memberships/{eventId}` → references to events the user created/joined.
 
 ---
@@ -66,36 +55,45 @@ This model is designed for **low-cost, scalable Firebase usage**:
 | `capacity` | number | Max participants |
 | `approvalRequired` | boolean | If true, joins need approval |
 | `counts` | object | `{ confirmed, applicants, messages }` |
-| `coverThumbUrl` | string | Small thumbnail for listings |
+| `coverThumbUrl` | string | Thumbnail for listings |
 | `createdAt` | Timestamp | Creation time |
 | `updatedAt` | Timestamp | Last update |
 | `lastActivityAt` | Timestamp | Used for sorting listings |
 
-**Subcollections:**
-- `/participants/{userId}` → participant info and snapshot.
-- `/messages/{messageId}` → chat messages.
-- `/attachments/{attachmentId}` → uploaded images/files.
-- `/activity/{activityId}` → logs (e.g., user joined, left, etc.).
+**Subcollections:**  
+- `/participants/{userId}` → participant info and snapshot.  
+- `/messages/{messageId}` → chat messages.  
+- `/attachments/{attachmentId}` → uploaded images/files.  
+- `/activity/{activityId}` → event logs.
 
 ---
 
-### `/users/{userId}/memberships/{eventId}`
-User–Event relationship documents.
+### `/duos/{duoId}`
+**Represents a two-user partnership (duo).**
 
 | Field | Type | Description |
 |--------|------|-------------|
-| `eventId` | string | Event reference |
-| `role` | string | `"organizer" | "participant" | "invited"` |
-| `status` | string | `"confirmed" | "pending" | "declined"` |
-| `joinedAt` | Timestamp | When user joined |
-| `lastMessageAt` | Timestamp | Last message in event |
-| `lastSeenMessageAt` | Timestamp | Last read timestamp |
-| `eventSnap` | object | `{ title, timeStart, city, coverThumbUrl }` |
+| `creatorId` | string | UID of the user who created the invite |
+| `partnerId` | string or null | UID of the partner once accepted |
+| `members` | string[] | Array of UIDs (1 or 2 members) |
+| `status` | string | `"pending"` or `"approved"` |
+| `token` | string | Optional unique token for invitation link |
+| `createdAt` | Timestamp | When the invite was created |
+| `acceptedAt` | Timestamp | When the partner accepted |
+
+**Lifecycle:**  
+1. User A creates a new doc with `status: "pending"`, `members: ["userA"]`.  
+2. User B accepts the invite by updating the same document to include their UID and `status: "approved"`.  
+3. Optional backend notification or push message informs User A.  
+
+**Permissions:**  
+- Only `members[]` users can read/write.  
+- Clients never modify other users’ `/users/*` documents directly.  
 
 ---
 
 ### `/events_listings/{eventId}`
-**Lightweight projection** for public discovery feeds.
+Lightweight projection for public discovery feeds.
 
 | Field | Type | Description |
 |--------|------|-------------|
@@ -109,13 +107,13 @@ User–Event relationship documents.
 | `tags` | string[] | Search keywords |
 | `lastActivityAt` | Timestamp | Recent activity time |
 
-> **Updated by Cloud Function** on event create/update.  
+> Updated by Cloud Function on event create/update.  
 > Used for: home feed, search, “upcoming” lists.
 
 ---
 
 ### `/events_geo/{eventId}`
-**Spatial projection** for geo-based queries.
+Spatial projection for geo-based queries.
 
 | Field | Type | Description |
 |--------|------|-------------|
@@ -124,8 +122,6 @@ User–Event relationship documents.
 | `geohash` | string | Precomputed hash for range queries |
 | `timeStart` | Timestamp | For sorting/upcoming filter |
 | `visibility` | string | Public/private flag |
-
-> **Updated by Cloud Function** for nearby event lookups.
 
 ---
 
@@ -150,10 +146,6 @@ Examples:
 
 ---
 
-This keeps the original “owner only” constraints on `users/{userId}`—if invitees cannot write to another profile, the client now reports a manual follow-up state instead of writing to an auxiliary collection.
-
----
-
 ### `/audit_logs/{logId}`
 Admin-only logs for moderation and analytics.
 
@@ -165,52 +157,29 @@ Admin-only logs for moderation and analytics.
 | `meta` | object | Extra metadata |
 | `createdAt` | Timestamp | When it happened |
 
-> **TTL rule** auto-deletes old logs for cost efficiency.
+> TTL rule auto-deletes old logs for cost efficiency.
 
 ---
 
-## ⚙️ Derived Data Flow
+## ⚙️ Duo Access & Lifecycle Summary
 
-```mermaid
-graph LR
-  A[events] --> B[events_listings]
-  A --> C[events_geo]
-  A --> D[autocomplete_events]
-  E[users] --> F[memberships]
-  E --> G[public_profiles]
-  A --> F
-````
-
-**All derived collections** (`listings`, `geo`, `autocomplete`) are written by **Cloud Functions**,
-keeping client writes minimal and reads cheap.
+| Step | Action | Performed By | Effect |
+|------|---------|--------------|---------|
+| 1 | Create duo (pending) | User A | Writes new `/duos/{id}` with only A in members |
+| 2 | Accept duo | User B | Updates same doc, adds self and sets status `"approved"` |
+| 3 | Notify | Cloud Function or Client | Sends optional notification to A |
+| 4 | Read | Either member | Real-time listener reflects current state |
 
 ---
 
-## 💸 Cost Optimization Summary
-
-| Feature       | Optimization                           |
-| ------------- | -------------------------------------- |
-| Event feed    | Small projection (`events_listings`)   |
-| Nearby search | Minimal `events_geo` index             |
-| My events     | Localized `memberships` subcollection  |
-| Public search | Tokenized autocomplete cache           |
-| Notifications | TTL-enabled subcollection              |
-| Audits/logs   | TTL pruning and small doc size         |
-| Writes        | Trigger-based projections (no fan-out) |
+## 💸 Cost Summary (Duo Flow)
+| Operation | Document Writes | Notes |
+|------------|----------------|-------|
+| Create invite | 1 | `duos/{id}` created |
+| Accept invite | 1 | Status update + partner added |
+| Notification (optional) | 0–1 | Triggered by function |
+| Read updates | Real-time | Both users subscribe to same doc |
 
 ---
 
-## 🔒 Access Control Summary
-
-| Collection            | Read                   | Write                   |
-| --------------------- | ---------------------- | ----------------------- |
-| `users`               | Owner only             | Owner only              |
-| `public_profiles`     | Public                 | Owner only              |
-| `events`              | Public or participants | Organizer               |
-| `events_listings`     | Public                 | Cloud Function only     |
-| `events_geo`          | Public                 | Cloud Function only     |
-| `autocomplete_events` | Public                 | Cloud Function only     |
-| `memberships`         | Owner                  | Cloud Function / System |
-| `system`              | Admin                  | Admin                   |
-| `audit_logs`          | Admin                  | System only             |
-
+**End of data-model.md v1.1 (with Duo feature)**
