@@ -33,6 +33,12 @@ export const EMAIL_VALIDATION = {
   MIN_LOCAL_PART_LENGTH: 2
 } as const;
 
+export const FIRST_NAME_VALIDATION = {
+  MIN_LENGTH: 2,
+  MAX_LENGTH: 50,
+  REGEX: /^[a-zA-Z\s\-'.]+$/
+} as const;
+
 export const PASSWORD_VALIDATION = {
   MIN_LENGTH: 6,
   REQUIREMENTS: {
@@ -51,4 +57,36 @@ export const DISPLAY_NAME_VALIDATION = {
 export const BIRTHDATE_VALIDATION = {
   MIN_AGE: 13,
   MAX_AGE: 120
+} as const;
+
+export const GENDER_VALIDATION = {
+  VALID_VALUES: ['male', 'female', 'non-binary', 'prefer-not-to-say']
+} as const;
+
+export const EVENT_VALIDATION = {
+  TITLE_MIN_LENGTH: 3,
+  TITLE_MAX_LENGTH: 100,
+  DESCRIPTION_MIN_LENGTH: 10,
+  DESCRIPTION_MAX_LENGTH: 1000,
+  TAGS_MAX_COUNT: 10,
+  TAGS_MAX_LENGTH: 20,
+  CAPACITY: 4
+} as const;
+
+export const MESSAGE_VALIDATION = {
+  CONTENT_MIN_LENGTH: 1,
+  CONTENT_MAX_LENGTH: 1000
+} as const;
+
+export const REPORT_VALIDATION = {
+  DESCRIPTION_MIN_LENGTH: 10,
+  DESCRIPTION_MAX_LENGTH: 500,
+  CATEGORIES: [
+    'harassment',
+    'spam',
+    'inappropriate_content',
+    'fake_profile',
+    'safety_concern',
+    'other'
+  ]
 } as const;

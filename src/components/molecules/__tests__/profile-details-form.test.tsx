@@ -18,6 +18,7 @@ describe("ProfileDetailsForm", () => {
   const baseProfile = {
     id: "user-1",
     email: "duo@pairup.events",
+    firstName: "John",
     displayName: "PairUp Pioneers",
     birthDate: "1996-04-15",
     gender: "non-binary",
@@ -45,6 +46,7 @@ describe("ProfileDetailsForm", () => {
 
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledWith({
+        firstName: baseProfile?.firstName,
         displayName: "New Display Name",
         gender: baseProfile?.gender,
         birthDate: "1996-05-20",

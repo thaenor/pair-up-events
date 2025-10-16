@@ -13,7 +13,7 @@ export interface AuthState {
 // Authentication context type
 export interface AuthContextType extends AuthState {
   signInWithEmail: (email: string, password: string) => Promise<void>;
-  signUpWithEmail: (email: string, password: string, displayName?: string, birthDate?: string) => Promise<void>;
+  signUpWithEmail: (email: string, password: string, firstName: string, displayName: string, birthDate: string, gender: string) => Promise<void>;
   sendEmailVerification: () => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
   deleteUserAccount: () => Promise<void>;

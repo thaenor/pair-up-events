@@ -141,8 +141,10 @@ describe('useFormValidation', () => {
         email: 'user@gmail.com',
         password: 'Password123',
         confirmPassword: 'Password123',
+        firstName: 'John',
         displayName: 'John Doe',
-        birthDate: '1990-01-01'
+        birthDate: '1990-01-01',
+        gender: 'male'
       };
 
       const errors = hook.validateForm(validFormData);

@@ -89,7 +89,7 @@ const Footer = () => {
     };
 
     return (
-        <footer className="py-12 bg-pairup-darkBlue">
+        <footer className="py-12 bg-pairup-darkBlue" role="contentinfo" aria-label="Site footer">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col md:flex-row justify-between items-center">
                     <div className="mb-6 md:mb-0">
@@ -100,7 +100,7 @@ const Footer = () => {
                         </p>
                     </div>
 
-                    <div className="grid md:grid-cols-3 gap-8 text-center md:text-left">
+                    <nav className="grid md:grid-cols-3 gap-8 text-center md:text-left" aria-label="Footer navigation">
                         {footerLinkGroups.map((group) => (
                             <div key={group.heading}>
                                 <h3 className="text-sm font-semibold mb-3 text-pairup-yellow">
@@ -137,7 +137,7 @@ const Footer = () => {
                                 </ul>
                             </div>
                         ))}
-                    </div>
+                    </nav>
                 </div>
 
                 <div className="border-t border-pairup-darkBlueAlt/30 mt-12 pt-8 text-center text-sm text-pairup-cream/50">

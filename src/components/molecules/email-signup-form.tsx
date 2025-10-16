@@ -18,8 +18,10 @@ const EmailSignupForm: React.FC = React.memo(() => {
     email: '',
     password: '',
     confirmPassword: '',
+    firstName: '',
     displayName: '',
-    birthDate: ''
+    birthDate: '',
+    gender: ''
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -62,7 +64,7 @@ const EmailSignupForm: React.FC = React.memo(() => {
     }
 
     try {
-      await signUpWithEmail(formData.email, formData.password, formData.displayName, formData.birthDate);
+      await signUpWithEmail(formData.email, formData.password, formData.firstName, formData.displayName, formData.birthDate, formData.gender);
       setRegistrationSuccess(true);
       toast.success('Account created successfully! Please check your email to verify your account.');
       
@@ -211,6 +213,47 @@ const EmailSignupForm: React.FC = React.memo(() => {
             )}
           </div>
 
+          {/* First Name Field */}
+          <div className="space-y-2">
+            <label htmlFor="firstName" className="block text-sm font-medium text-white">
+              First Name *
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <User className="h-5 w-5 text-gray-400" aria-hidden="true" />
+              </div>
+              <input
+                id="firstName"
+                type="text"
+                value={formData.firstName}
+                onChange={(e) => handleInputChange('firstName', e.target.value)}
+                className={`block w-full pl-10 pr-3 py-3 border rounded-md bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors ${
+                  errors.firstName ? 'border-red-500' : 'border-gray-500'
+                }`}
+                aria-invalid={!!errors.firstName}
+                aria-describedby={errors.firstName ? 'first-name-error' : 'first-name-help'}
+                aria-required="true"
+                placeholder="Enter your first name"
+                disabled={loading}
+                autoComplete="given-name"
+                data-testid="signup-first-name-input"
+              />
+            </div>
+            <div id="first-name-help" className="sr-only">
+              Enter your first name (2-50 characters)
+            </div>
+            {errors.firstName && (
+              <p
+                id="first-name-error"
+                className="text-red-400 text-sm"
+                role="alert"
+                data-testid="signup-first-name-error"
+              >
+                {errors.firstName}
+              </p>
+            )}
+          </div>
+
           {/* Display Name Field */}
           <div className="space-y-2">
             <label htmlFor="displayName" className="block text-sm font-medium text-white">
@@ -287,6 +330,47 @@ const EmailSignupForm: React.FC = React.memo(() => {
                 data-testid="signup-birthdate-error"
               >
                 {errors.birthDate}
+              </p>
+            )}
+          </div>
+
+          {/* Gender Field */}
+          <div className="space-y-2">
+            <label htmlFor="gender" className="block text-sm font-medium text-white">
+              Gender *
+            </label>
+            <div className="relative">
+              <select
+                id="gender"
+                value={formData.gender}
+                onChange={(e) => handleInputChange('gender', e.target.value)}
+                className={`block w-full px-3 py-3 border rounded-md bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors ${
+                  errors.gender ? 'border-red-500' : 'border-gray-500'
+                }`}
+                aria-invalid={!!errors.gender}
+                aria-describedby={errors.gender ? 'gender-error' : 'gender-help'}
+                aria-required="true"
+                disabled={loading}
+                data-testid="signup-gender-input"
+              >
+                <option value="" className="bg-gray-800 text-white">Select your gender</option>
+                <option value="male" className="bg-gray-800 text-white">Male</option>
+                <option value="female" className="bg-gray-800 text-white">Female</option>
+                <option value="non-binary" className="bg-gray-800 text-white">Non-binary</option>
+                <option value="prefer-not-to-say" className="bg-gray-800 text-white">Prefer not to say</option>
+              </select>
+            </div>
+            <div id="gender-help" className="sr-only">
+              Select your gender identity
+            </div>
+            {errors.gender && (
+              <p
+                id="gender-error"
+                className="text-red-400 text-sm"
+                role="alert"
+                data-testid="signup-gender-error"
+              >
+                {errors.gender}
               </p>
             )}
           </div>

@@ -1,55 +1,40 @@
 import { useCallback } from 'react';
-import { EMAIL_VALIDATION, PASSWORD_VALIDATION, DISPLAY_NAME_VALIDATION, BIRTHDATE_VALIDATION } from '@/constants/validation';
+import { PASSWORD_VALIDATION } from '@/constants/validation';
 import { VALIDATION_MESSAGES } from '@/constants/messages';
+import { 
+  validateFirstName, 
+  validateDisplayName, 
+  validateEmail, 
+  validateBirthDate, 
+  validateGender,
+  Gender
+} from '@/types';
 
 export interface FormData {
   email: string;
   password: string;
   confirmPassword: string;
+  firstName: string;
   displayName: string;
   birthDate: string;
+  gender: string;
 }
 
 export interface FormErrors extends Record<string, string | undefined> {
   email?: string;
   password?: string;
   confirmPassword?: string;
+  firstName?: string;
   displayName?: string;
   birthDate?: string;
+  gender?: string;
 }
 
 export const useFormValidation = () => {
-  // Email validation
-  const validateEmail = useCallback((email: string): string | null => {
-    // Basic format validation
-    if (!EMAIL_VALIDATION.REGEX.test(email)) {
-      return VALIDATION_MESSAGES.EMAIL.INVALID;
-    }
-
-    // Check for common fake/test email domains
-    const domain = email.split('@')[1]?.toLowerCase();
-    if (domain && EMAIL_VALIDATION.FAKE_DOMAINS.includes(domain as typeof EMAIL_VALIDATION.FAKE_DOMAINS[number])) {
-      return VALIDATION_MESSAGES.EMAIL.FAKE_DOMAIN;
-    }
-
-    // Check for common disposable email domains
-    if (domain && EMAIL_VALIDATION.DISPOSABLE_DOMAINS.includes(domain as typeof EMAIL_VALIDATION.DISPOSABLE_DOMAINS[number])) {
-      return VALIDATION_MESSAGES.EMAIL.DISPOSABLE;
-    }
-
-    // Check for suspicious patterns
-    if (email.includes('+') && email.split('+')[1]?.includes('@')) {
-      // Allow email aliases like user+tag@gmail.com
-      return null;
-    }
-
-    // Check for very short local parts (likely fake)
-    const localPart = email.split('@')[0];
-    if (localPart && localPart.length < EMAIL_VALIDATION.MIN_LOCAL_PART_LENGTH) {
-      return VALIDATION_MESSAGES.EMAIL.TOO_SHORT;
-    }
-
-    return null; // Valid email
+  // Email validation using new validation function
+  const validateEmailField = useCallback((email: string): string | null => {
+    const result = validateEmail(email);
+    return result.isValid ? null : result.errors[0] || 'Invalid email';
   }, []);
 
   // Password validation
@@ -69,67 +54,49 @@ export const useFormValidation = () => {
     return null;
   }, []);
 
-  // Display name validation
-  const validateDisplayName = useCallback((displayName: string): string | null => {
-    if (displayName.length < DISPLAY_NAME_VALIDATION.MIN_LENGTH) {
-      return VALIDATION_MESSAGES.DISPLAY_NAME.TOO_SHORT;
-    }
-    if (displayName.length > DISPLAY_NAME_VALIDATION.MAX_LENGTH) {
-      return VALIDATION_MESSAGES.DISPLAY_NAME.TOO_LONG;
-    }
-    if (!DISPLAY_NAME_VALIDATION.REGEX.test(displayName)) {
-      return VALIDATION_MESSAGES.DISPLAY_NAME.INVALID;
-    }
-    return null;
+  // First name validation using new validation function
+  const validateFirstNameField = useCallback((firstName: string): string | null => {
+    const result = validateFirstName(firstName);
+    return result.isValid ? null : result.errors[0] || 'Invalid first name';
   }, []);
 
-  // Birthdate validation
-  const validateBirthDate = useCallback((birthDate: string): string | null => {
-    if (!birthDate) {
-      return VALIDATION_MESSAGES.BIRTHDATE.REQUIRED;
-    }
+  // Display name validation using new validation function
+  const validateDisplayNameField = useCallback((displayName: string): string | null => {
+    const result = validateDisplayName(displayName);
+    return result.isValid ? null : result.errors[0] || 'Invalid display name';
+  }, []);
 
-    const date = new Date(birthDate);
-    const today = new Date();
-    
-    // Check if date is valid
-    if (isNaN(date.getTime())) {
-      return VALIDATION_MESSAGES.BIRTHDATE.INVALID;
-    }
+  // Birthdate validation using new validation function
+  const validateBirthDateField = useCallback((birthDate: string): string | null => {
+    const result = validateBirthDate(birthDate);
+    return result.isValid ? null : result.errors[0] || 'Invalid birth date';
+  }, []);
 
-    // Check if date is in the future
-    if (date > today) {
-      return VALIDATION_MESSAGES.BIRTHDATE.INVALID;
-    }
-
-    // Calculate age
-    const age = today.getFullYear() - date.getFullYear();
-    const monthDiff = today.getMonth() - date.getMonth();
-    
-    const actualAge = monthDiff < 0 || (monthDiff === 0 && today.getDate() < date.getDate()) 
-      ? age - 1 
-      : age;
-
-    if (actualAge < BIRTHDATE_VALIDATION.MIN_AGE) {
-      return VALIDATION_MESSAGES.BIRTHDATE.TOO_YOUNG;
-    }
-    
-    if (actualAge > BIRTHDATE_VALIDATION.MAX_AGE) {
-      return VALIDATION_MESSAGES.BIRTHDATE.TOO_OLD;
-    }
-
-    return null;
+  // Gender validation using new validation function
+  const validateGenderField = useCallback((gender: string): string | null => {
+    const result = validateGender(gender as Gender);
+    return result.isValid ? null : result.errors[0] || 'Invalid gender';
   }, []);
 
   // Form validation
   const validateForm = useCallback((formData: FormData): FormErrors => {
     const newErrors: FormErrors = {};
 
+    // First name validation
+    if (!formData.firstName) {
+      newErrors.firstName = 'First name is required';
+    } else {
+      const firstNameError = validateFirstNameField(formData.firstName);
+      if (firstNameError) {
+        newErrors.firstName = firstNameError;
+      }
+    }
+
     // Email validation
     if (!formData.email) {
       newErrors.email = VALIDATION_MESSAGES.EMAIL.REQUIRED;
     } else {
-      const emailError = validateEmail(formData.email);
+      const emailError = validateEmailField(formData.email);
       if (emailError) {
         newErrors.email = emailError;
       }
@@ -139,16 +106,26 @@ export const useFormValidation = () => {
     if (!formData.displayName) {
       newErrors.displayName = VALIDATION_MESSAGES.DISPLAY_NAME.REQUIRED;
     } else {
-      const displayNameError = validateDisplayName(formData.displayName);
+      const displayNameError = validateDisplayNameField(formData.displayName);
       if (displayNameError) {
         newErrors.displayName = displayNameError;
       }
     }
 
     // Birthdate validation
-    const birthDateError = validateBirthDate(formData.birthDate);
+    const birthDateError = validateBirthDateField(formData.birthDate);
     if (birthDateError) {
       newErrors.birthDate = birthDateError;
+    }
+
+    // Gender validation
+    if (!formData.gender) {
+      newErrors.gender = 'Gender is required';
+    } else {
+      const genderError = validateGenderField(formData.gender);
+      if (genderError) {
+        newErrors.gender = genderError;
+      }
     }
 
     // Password validation
@@ -165,7 +142,15 @@ export const useFormValidation = () => {
     }
 
     return newErrors;
-  }, [validateEmail, validateDisplayName, validateBirthDate, validatePassword]);
+  }, [validateFirstNameField, validateEmailField, validateDisplayNameField, validateBirthDateField, validateGenderField, validatePassword]);
 
-  return { validateEmail, validatePassword, validateDisplayName, validateBirthDate, validateForm };
+  return { 
+    validateEmail: validateEmailField, 
+    validatePassword, 
+    validateDisplayName: validateDisplayNameField, 
+    validateBirthDate: validateBirthDateField,
+    validateFirstName: validateFirstNameField,
+    validateGender: validateGenderField,
+    validateForm 
+  };
 };
