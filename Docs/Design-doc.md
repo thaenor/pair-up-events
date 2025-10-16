@@ -692,36 +692,226 @@ Navigation uses a responsive `Navigation` organism with adaptive links and user 
 
 # **6. Component Design System**
 
-### Core Atoms
-- **Button** — primary, secondary, ghost
-- **Input/Textarea** — with validation and ARIA support
-- **Modal** — for confirmations and forms
-- **Avatar** — displays user initials or uploaded image
-- **Icons** — Lucide icons, consistent stroke width
+---
+meta:
+  section: "Component Design System"
+  version: "1.0"
+  related_sections: ["Design Tokens & Theming", "Accessibility & UX", "Animations & Micro-interactions"]
+  updated: "2025-10-16"
+---
 
-### Molecules
-- **Email Login/Signup Forms**
-- **Toast Notifications** (using `sonner`)
-- **Invite Friend Section**
-- **Account Controls** (logout, password reset)
+## Component Design System – Pair Up Events
 
-### Organisms
-- **Navigation Bar** (responsive, auth-aware)
-- **Hero Section** (scroll-into-view via React refs)
-- **Footer** (supports `href` or `targetId`)
-- **Event Cards** (status badges, participant count)
+### Design Principles
+- Components are **modular and reusable** across web and future mobile platforms.
+- Design is **playful, inviting, and warm-organic**, aligned with brand tone.
+- All components reference **design tokens** (colors, typography, spacing) from the Design Tokens & Theming section.
+- Interaction logic (hover, focus, pressed states) is **defined per component**, while detailed accessibility and animations are handled in their respective guideline sections.
+- Naming conventions follow **semantic clarity**, e.g., `ButtonPrimaryCreate`, `EventCardBasic`.
 
-### Templates
-- **LandingPageLayout**
-- **AuthLayout**
-- **DashboardLayout** (for future event management)
+---
 
-### Pages
-- Home
-- Event Detail
-- Profile
-- Terms / Privacy
-- NotFound
+### Component Naming Conventions
+- **Base Components:** Use descriptive, generic names for reusability (e.g., `ButtonPrimary`, `CardBasic`).
+- **Feature Components:** Include purpose in name (e.g., `EventCard`, `PairProfileCard`).
+- **Variants:** Append variant descriptor (e.g., `ButtonPrimaryCreate`, `ButtonSecondaryFind`).
+- **States:** Defined within JSON `states` array (default, hover, pressed, disabled, focus).
+
+---
+
+### Components
+
+#### Component: Button
+```json
+{
+  "category": "UI element",
+  "description": "Triggers actions. Used for primary, secondary, and neutral actions.",
+  "dependencies": ["ColorTokens", "TypographyTokens"],
+  "variants": [
+    {
+      "name": "PrimaryCreate",
+      "purpose": "Trigger creation of a new experience",
+      "color": "#27E9F3",
+      "stroke": "#1A2A33"
+    },
+    {
+      "name": "PrimaryFind",
+      "purpose": "Trigger searching for existing experiences",
+      "color": "#FECC08",
+      "stroke": "#1A2A33"
+    },
+    {
+      "name": "Neutral",
+      "purpose": "General navigation or secondary action",
+      "color": "#1A2A33",
+      "stroke": null
+    }
+  ],
+  "states": ["default", "hover", "pressed", "disabled", "focus"],
+  "properties": {
+    "size": "small|medium|large",
+    "icon": "optional",
+    "width": "auto|full"
+  },
+  "behavior": {
+    "hover": "Slightly darker shade of base color",
+    "pressed": "Apply 90% opacity",
+    "focus": "Add 2px outline using accent color"
+  },
+  "semantic_usage": "Used for primary and secondary actions across web and future mobile interfaces, e.g., creating or searching experiences."
+}
+
+{
+  "category": "UI element",
+  "description": "Text input fields for forms, search, or filters.",
+  "dependencies": ["ColorTokens", "TypographyTokens"],
+  "variants": ["default", "withIcon", "textarea"],
+  "states": ["default", "hover", "focus", "disabled", "error"],
+  "properties": {
+    "size": "small|medium|large",
+    "placeholder": "text",
+    "icon": "optional",
+    "validationState": "none|error|success"
+  },
+  "behavior": {
+    "focus": "Apply primary accent outline",
+    "error": "Change border to error color and show tooltip",
+    "disabled": "Reduce opacity to 50%"
+  },
+  "semantic_usage": "Used for creating events, searching experiences, or filtering lists."
+}
+
+{
+  "category": "UI element",
+  "description": "Container for content blocks with optional actions.",
+  "dependencies": ["ColorTokens", "TypographyTokens", "Button"],
+  "variants": ["Basic", "Elevated", "Interactive"],
+  "states": ["default", "hover", "selected"],
+  "properties": {
+    "cornerRadius": "16px",
+    "shadow": "subtle",
+    "padding": "medium",
+    "width": "auto|fixed"
+  },
+  "behavior": {
+    "hover": "Slight shadow increase to indicate interactivity",
+    "clickable": "Optional, depending on child elements"
+  },
+  "semantic_usage": "Base container used by EventCard, PairProfileCard, or other content blocks."
+}
+
+{
+  "category": "UI element",
+  "description": "Top navigation bar including logo, navigation links, and actions.",
+  "dependencies": ["Button", "Avatar", "ColorTokens", "TypographyTokens"],
+  "variants": ["Default", "Sticky"],
+  "states": ["default", "hover"],
+  "properties": {
+    "height": "64px",
+    "backgroundColor": "#1A2A33",
+    "logoPosition": "left|center",
+    "menuItems": "array of link objects"
+  },
+  "behavior": {
+    "hover": "Buttons change background or stroke on hover",
+    "sticky": "Remain visible on scroll"
+  },
+  "semantic_usage": "Main navigation container for web interface; houses primary actions and global navigation links."
+}
+
+{
+  "category": "UI element",
+  "description": "Overlay container to display content requiring focused attention.",
+  "dependencies": ["Card", "Button", "ColorTokens", "TypographyTokens"],
+  "variants": ["Small", "Medium", "Large", "FullScreen"],
+  "states": ["open", "closed"],
+  "properties": {
+    "size": "small|medium|large|fullscreen",
+    "overlayOpacity": 0.5,
+    "dismissible": true
+  },
+  "behavior": {
+    "open": "Fade in overlay and scale content",
+    "close": "Fade out overlay and scale content down",
+    "focusTrap": "Maintain keyboard focus inside modal"
+  },
+  "semantic_usage": "Used for confirmation, match details, or event creation forms."
+}
+
+{
+  "category": "UI element",
+  "description": "Small label used to indicate activity types, status, or categories.",
+  "dependencies": ["ColorTokens", "TypographyTokens"],
+  "variants": ["Default", "Rounded", "Outlined"],
+  "states": ["default", "hover"],
+  "properties": {
+    "size": "small|medium",
+    "color": "semantic based on type",
+    "icon": "optional"
+  },
+  "behavior": {
+    "hover": "Slight scale or shadow to indicate interactivity"
+  },
+  "semantic_usage": "Used for activity tags on EventCards or status labels for pairs."
+}
+
+{
+  "category": "UI element",
+  "description": "Circular user or pair profile image.",
+  "dependencies": ["ColorTokens", "TypographyTokens"],
+  "variants": ["Small", "Medium", "Large"],
+  "states": ["default", "hover"],
+  "properties": {
+    "size": "small|medium|large",
+    "fallbackInitials": "string",
+    "border": "optional"
+  },
+  "behavior": {
+    "hover": "Optional outline or shadow to indicate interactivity"
+  },
+  "semantic_usage": "Used in Navbar, PairProfileCard, and EventCard to represent users or pairs."
+}
+
+{
+  "category": "Feature component",
+  "description": "Displays event information, participants, and call-to-action buttons.",
+  "dependencies": ["Card", "Tag", "Button", "Avatar", "ColorTokens", "TypographyTokens"],
+  "variants": ["Basic", "Interactive"],
+  "states": ["default", "hover", "selected"],
+  "properties": {
+    "title": "string",
+    "activityType": "Tag object",
+    "participants": "array of Avatar objects",
+    "dateTime": "datetime string",
+    "location": "string",
+    "ctaButton": "Button object"
+  },
+  "behavior": {
+    "hover": "Elevate card and reveal secondary actions",
+    "click": "Navigate to detailed event page"
+  },
+  "semantic_usage": "Represents individual events in feeds or search results; used for joining or viewing event details."
+}
+
+{
+  "category": "Feature component",
+  "description": "Displays a pair’s profile information including avatars, interests, and social tags.",
+  "dependencies": ["Card", "Avatar", "Tag", "Button", "ColorTokens", "TypographyTokens"],
+  "variants": ["Basic", "Interactive"],
+  "states": ["default", "hover", "selected"],
+  "properties": {
+    "pairName": "string",
+    "avatars": "array of Avatar objects",
+    "tags": "array of Tag objects",
+    "ctaButton": "Button object"
+  },
+  "behavior": {
+    "hover": "Elevate card and reveal secondary actions",
+    "click": "Open Pair details modal"
+  },
+  "semantic_usage": "Represents a pair in feeds or search results; used to learn about other pairs and connect."
+}
+
 
 ---
 
