@@ -298,7 +298,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setAuthState(prev => ({ ...prev, error: null }));
   };
 
-  const value: AuthContextType = {
+  const value: AuthContextType = React.useMemo(() => ({
     ...authState,
     signInWithEmail,
     signUpWithEmail,
@@ -307,7 +307,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     deleteUserAccount,
     signOut: signOutUser,
     clearError,
-  };
+  }), [authState, signInWithEmail, signUpWithEmail, sendEmailVerificationToUser, sendPasswordReset, deleteUserAccount, signOutUser, clearError]);
 
   return (
     <AuthContext.Provider value={value}>

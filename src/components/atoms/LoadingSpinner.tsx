@@ -5,11 +5,13 @@ import { cn } from "@/lib/utils";
 interface LoadingSpinnerProps {
     size?: "xs" | "sm" | "md" | "lg" | "xl" | "xxl" | "xxxl" | "hero";
     className?: string;
+    "aria-label"?: string;
 }
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     size = "md",
     className,
+    "aria-label": ariaLabel = "Loading",
 }) => {
     const getSizeClasses = () => {
         switch (size) {
@@ -41,6 +43,8 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
                 getSizeClasses(),
                 className
             )}
+            role="status"
+            aria-label={ariaLabel}
         />
     );
 };

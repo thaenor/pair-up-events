@@ -44,18 +44,20 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onScrollToEarlyAccess }) => {
                                 rel="noopener noreferrer"
                                 className="btn-cta btn-cta--cyan"
                                 data-testid="create-listing-link"
+                                aria-label="Create a new listing (opens in new tab)"
                             >
                                 Create a new listing
-                                <ArrowRight size={18} />
+                                <ArrowRight size={18} aria-hidden="true" />
                             </a>
                             <button
                                 id="search-listing-btn"
                                 className="btn-cta btn-cta--yellow"
                                 onClick={onScrollToEarlyAccess}
                                 data-testid="search-listings-button"
+                                aria-label="Search for existing listings"
                             >
                                 Search for existing listings
-                                <ArrowRight size={18} />
+                                <ArrowRight size={18} aria-hidden="true" />
                             </button>
                         </div>
                     </div>
