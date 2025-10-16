@@ -91,21 +91,41 @@ self.addEventListener('fetch', (event) => {
     return; // Let the browser handle these requests directly
   }
 
+  // Skip Firebase authentication and API requests
+  if (url.hostname.includes('firebase') || 
+      url.hostname.includes('googleapis.com') ||
+      url.hostname.includes('gstatic.com') ||
+      url.pathname.includes('/auth/') ||
+      url.pathname.includes('/v1/') ||
+      url.searchParams.has('key')) {
+    return; // Let Firebase handle these requests directly
+  }
+
   // In development, use network-first strategy for better HMR
   if (isDevelopment) {
     event.respondWith(
       fetch(request)
         .then((networkResponse) => {
-          // Only cache static assets in development
-          if (networkResponse.ok && 
+          // Only cache static assets in development with proper validation
+          if (networkResponse && 
+              networkResponse.ok && 
+              networkResponse.status === 200 &&
+              networkResponse.type === 'basic' &&
               (url.pathname.endsWith('.png') || 
                url.pathname.endsWith('.jpg') || 
                url.pathname.endsWith('.ico') ||
                url.pathname.endsWith('.svg'))) {
             const responseToCache = networkResponse.clone();
             caches.open(STATIC_CACHE_NAME)
-              .then((cache) => cache.put(request, responseToCache))
-              .catch(() => {}); // Ignore cache errors in dev
+              .then((cache) => {
+                // Additional validation before caching
+                if (responseToCache && responseToCache.status === 200) {
+                  return cache.put(request, responseToCache);
+                }
+              })
+              .catch((error) => {
+                console.log('Service Worker: Failed to cache in development', error);
+              }); // Log cache errors in dev for debugging
           }
           return networkResponse;
         })
@@ -128,21 +148,27 @@ self.addEventListener('fetch', (event) => {
           return fetch(request)
             .then((networkResponse) => {
               // Don't cache if not a valid response
-              if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+              if (!networkResponse || 
+                  networkResponse.status !== 200 || 
+                  networkResponse.type !== 'basic' ||
+                  !networkResponse.ok) {
                 return networkResponse;
               }
 
               // Clone the response
               const responseToCache = networkResponse.clone();
 
-              // Cache dynamic content
-              caches.open(DYNAMIC_CACHE_NAME)
-                .then((cache) => {
-                  cache.put(request, responseToCache);
-                })
-                .catch((error) => {
-                  console.log('Service Worker: Failed to cache response', error);
-                });
+              // Only cache if the cloned response is also valid
+              if (responseToCache && responseToCache.status === 200) {
+                // Cache dynamic content with proper error handling
+                caches.open(DYNAMIC_CACHE_NAME)
+                  .then((cache) => {
+                    return cache.put(request, responseToCache);
+                  })
+                  .catch((error) => {
+                    console.log('Service Worker: Failed to cache response', error);
+                  });
+              }
 
               return networkResponse;
             })
