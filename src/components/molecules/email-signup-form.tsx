@@ -7,6 +7,7 @@ import LoadingSpinner from '@/components/atoms/LoadingSpinner';
 import { useAuth } from '@/hooks/useAuth';
 import { useFormState } from '@/hooks/useFormState';
 import { useFormValidation, FormData } from '@/hooks/useFormValidation';
+import { getPendingInvitePath } from '@/utils/pendingInvite';
 
 const EmailSignupForm: React.FC = React.memo(() => {
   const { signUpWithEmail, loading, error, clearError } = useAuth();
@@ -57,6 +58,13 @@ const EmailSignupForm: React.FC = React.memo(() => {
       await signUpWithEmail(formData.email, formData.password);
       setRegistrationSuccess(true);
       toast.success('Account created successfully! Please check your email to verify your account.');
+      const pendingInvitePath = getPendingInvitePath();
+
+      if (pendingInvitePath) {
+        navigate(pendingInvitePath, { replace: true });
+        return;
+      }
+
       // Redirect to profile page after successful registration
       navigate('/profile');
     } catch {

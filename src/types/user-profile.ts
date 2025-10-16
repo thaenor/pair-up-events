@@ -8,6 +8,27 @@ export type UserProfileSettings = {
 export type UserProfileStats = {
   eventsCreated?: number;
   eventsJoined?: number;
+  duosFormed?: number;
+};
+
+export type DuoSummary = {
+  partnerId: string;
+  partnerName?: string | null;
+  createdAt: Timestamp;
+  formedViaInviteTokenHash?: string;
+};
+
+export type DuoInviteStatus = 'pending' | 'accepted' | 'expired' | 'revoked';
+
+export type ActiveDuoInvite = {
+  slug: string;
+  tokenHash: string;
+  status: DuoInviteStatus;
+  createdAt: Timestamp;
+  expiresAt: Timestamp;
+  lastSharedAt?: Timestamp;
+  acceptedByUserId?: string;
+  acceptedAt?: Timestamp;
 };
 
 export interface UserProfile {
@@ -34,6 +55,12 @@ export interface UserProfile {
 
   /** App usage or engagement stats */
   stats?: UserProfileStats;
+
+  /** Invite currently available for sharing */
+  activeDuoInvite?: ActiveDuoInvite | null;
+
+  /** Historical list of duos the user has formed */
+  duos?: DuoSummary[];
 
   /** Additional profile metadata */
   username?: string | null;

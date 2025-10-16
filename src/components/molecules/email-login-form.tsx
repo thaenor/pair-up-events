@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import LoadingSpinner from '@/components/atoms/LoadingSpinner';
 import { useAuth } from '@/hooks/useAuth';
 import { useFormState } from '@/hooks/useFormState';
+import { getPendingInvitePath } from '@/utils/pendingInvite';
 
 type LoginFormData = {
   email: string;
@@ -73,6 +74,13 @@ const EmailLoginForm: React.FC = React.memo(() => {
     try {
       await signInWithEmail(formData.email, formData.password);
       toast.success('Welcome back! You have been signed in successfully.');
+      const pendingInvitePath = getPendingInvitePath();
+
+      if (pendingInvitePath) {
+        navigate(pendingInvitePath, { replace: true });
+        return;
+      }
+
       // Redirect to profile page after successful login
       navigate('/profile');
     } catch {
