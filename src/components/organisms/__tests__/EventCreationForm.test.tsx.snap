@@ -1,0 +1,1250 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`EventCreationForm > should match snapshot - creating state 1`] = `
+<form
+  class="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg p-6 mb-8"
+  data-testid="event-creation-form"
+>
+  <div
+    class="mb-8"
+  >
+    <div
+      class="mb-6"
+    >
+      <h3
+        class="text-lg font-semibold text-pairup-darkBlue flex items-center"
+      >
+        🎉 About Your Activity
+      </h3>
+      <p
+        class="text-sm text-pairup-darkBlue/70"
+      >
+        What would you like to do with another pair? Share your idea or plan.
+      </p>
+    </div>
+    <div
+      class="grid gap-4 md:grid-cols-2"
+    >
+      <label
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80 md:col-span-2"
+        for="activity-title"
+      >
+        What activity do you want to do? *
+        <input
+          aria-label="Activity title"
+          class="mt-2 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan"
+          data-testid="activity-title"
+          disabled=""
+          id="activity-title"
+          placeholder="e.g., Coffee and conversation, Hiking adventure, Board game night"
+          type="text"
+          value=""
+        />
+      </label>
+      <label
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80"
+        for="activity-type"
+      >
+        Activity type *
+        <select
+          aria-label="Activity type"
+          class="mt-2 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan"
+          data-testid="activity-type"
+          disabled=""
+          id="activity-type"
+        >
+          <option
+            value=""
+          >
+            Select activity type
+          </option>
+          <option
+            value="food"
+          >
+            🍽️ Food & Dining
+          </option>
+          <option
+            value="games"
+          >
+            🎮 Games
+          </option>
+          <option
+            value="culture"
+          >
+            🎭 Culture & Arts
+          </option>
+          <option
+            value="outdoors"
+          >
+            🌲 Outdoors & Nature
+          </option>
+          <option
+            value="sports"
+          >
+            🏋️‍♂️ Sports & Fitness
+          </option>
+          <option
+            value="casual"
+          >
+            ☕ Casual Meetup
+          </option>
+        </select>
+      </label>
+      <label
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80"
+        for="activity-description"
+      >
+        Describe your activity *
+        <textarea
+          aria-label="Activity description"
+          class="mt-2 h-24 resize-none rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan"
+          data-testid="activity-description"
+          disabled=""
+          id="activity-description"
+          placeholder="Tell us more about what you'd like to do..."
+        />
+      </label>
+      <label
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80"
+        for="country"
+      >
+        Country *
+        <input
+          aria-label="Country"
+          class="mt-2 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan"
+          data-testid="country"
+          disabled=""
+          id="country"
+          placeholder="e.g., Germany, Spain, France"
+          type="text"
+          value=""
+        />
+      </label>
+      <label
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80"
+        for="city"
+      >
+        City *
+        <input
+          aria-label="City"
+          class="mt-2 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan"
+          data-testid="city"
+          disabled=""
+          id="city"
+          placeholder="e.g., Berlin, Madrid, Paris"
+          type="text"
+          value=""
+        />
+      </label>
+      <label
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80"
+        for="time-start"
+      >
+        When do you want to meet? (optional)
+        <input
+          aria-label="Event date and time"
+          class="mt-2 rounded-lg border border-gray-200 px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+          data-testid="time-start"
+          disabled=""
+          id="time-start"
+          type="datetime-local"
+          value=""
+        />
+      </label>
+      <label
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80 md:col-span-2"
+        for="availability-notes"
+      >
+        What days or times usually work best for your duo? (optional)
+        <textarea
+          class="mt-2 h-20 resize-none rounded-lg border border-gray-200 px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+          data-testid="availability-notes"
+          disabled=""
+          id="availability-notes"
+          placeholder="e.g., Weekends, evenings after 7pm, flexible schedule..."
+        />
+      </label>
+    </div>
+  </div>
+  <div
+    class="mb-8"
+  >
+    <div
+      class="mb-6"
+    >
+      <h3
+        class="text-lg font-semibold text-pairup-darkBlue flex items-center"
+      >
+        🔎 About the Other Duo
+      </h3>
+      <p
+        class="text-sm text-pairup-darkBlue/70"
+      >
+        What kind of pair are you hoping to meet? Let us know your preferences.
+      </p>
+    </div>
+    <div
+      class="grid gap-4 md:grid-cols-2"
+    >
+      <label
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80"
+        for="duo-type"
+      >
+        What type of pair are you hoping to meet? *
+        <select
+          aria-label="Preferred pair type"
+          class="mt-2 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan"
+          data-testid="duo-type"
+          disabled=""
+          id="duo-type"
+        >
+          <option
+            value=""
+          >
+            Select pair type
+          </option>
+          <option
+            value="friends"
+          >
+            Friends
+          </option>
+          <option
+            value="couples"
+          >
+            Partners
+          </option>
+          <option
+            value="family"
+          >
+            Parents
+          </option>
+          <option
+            value="roommates"
+          >
+            Siblings
+          </option>
+          <option
+            value="colleagues"
+          >
+            Other
+          </option>
+        </select>
+      </label>
+      <div
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80"
+      >
+        <label
+          class="mb-2"
+          for="age-range-min"
+        >
+          Preferred age range *
+        </label>
+        <div
+          class="flex gap-2"
+        >
+          <input
+            aria-label="Minimum age"
+            class="flex-1 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan"
+            data-testid="age-range-min"
+            disabled=""
+            id="age-range-min"
+            max="100"
+            min="18"
+            placeholder="Min"
+            type="number"
+            value="18"
+          />
+          <span
+            class="flex items-center text-pairup-darkBlue/60"
+          >
+            to
+          </span>
+          <input
+            aria-label="Maximum age"
+            class="flex-1 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan"
+            data-testid="age-range-max"
+            disabled=""
+            id="age-range-max"
+            max="100"
+            min="18"
+            placeholder="Max"
+            type="number"
+            value="65"
+          />
+        </div>
+      </div>
+      <div
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80 md:col-span-2"
+      >
+        <span
+          class="mb-2"
+        >
+          Is there a gender mix you'd feel most comfortable meeting with?
+        </span>
+        <div
+          class="grid grid-cols-2 gap-2"
+        >
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="gender-male"
+              disabled=""
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Male
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="gender-female"
+              disabled=""
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Female
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="gender-non-binary"
+              disabled=""
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Diverse
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="gender-prefer-not-to-say"
+              disabled=""
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Prefer not to say
+            </span>
+          </label>
+        </div>
+        <p
+          class="mt-1 text-xs text-pairup-darkBlue/60"
+        >
+          Leave all unchecked for "No preference"
+        </p>
+      </div>
+      <div
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80 md:col-span-2"
+      >
+        <span
+          class="mb-2"
+        >
+          What vibe do you imagine would match best with yours? *
+        </span>
+        <div
+          class="grid grid-cols-2 gap-2"
+        >
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-adventurous"
+              disabled=""
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Adventurous
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-chill"
+              disabled=""
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Chill & Relaxed
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-funny"
+              disabled=""
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Funny & Playful
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-curious"
+              disabled=""
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Curious & Open-Minded
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-outgoing"
+              disabled=""
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Outgoing & Social
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-creative"
+              disabled=""
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Creative
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-foodies"
+              disabled=""
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Foodies
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-active"
+              disabled=""
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Active & Sporty
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-culture"
+              disabled=""
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Culture Lovers
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-nightlife"
+              disabled=""
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Nightlife Lovers
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-mindful"
+              disabled=""
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Mindful & Calm
+            </span>
+          </label>
+        </div>
+      </div>
+      <div
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80"
+      >
+        <span
+          class="mb-2"
+        >
+          Are you parents? If yes, are you also interested in meeting other parents?
+        </span>
+        <div
+          class="space-y-2"
+        >
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="parent-yes-with-kids"
+              disabled=""
+              name="parentPreference"
+              type="radio"
+              value="yes-with-kids"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Yes, with kids
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="parent-yes-without-kids"
+              disabled=""
+              name="parentPreference"
+              type="radio"
+              value="yes-without-kids"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Yes, without kids
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="parent-no"
+              disabled=""
+              name="parentPreference"
+              type="radio"
+              value="no"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              No
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="parent-other"
+              disabled=""
+              name="parentPreference"
+              type="radio"
+              value="other"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Other
+            </span>
+          </label>
+        </div>
+      </div>
+      <label
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80"
+        for="other-notes"
+      >
+        Is there anything else that matters to you about the other duo? (optional)
+        <textarea
+          class="mt-2 h-20 resize-none rounded-lg border border-gray-200 px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+          data-testid="other-notes"
+          disabled=""
+          id="other-notes"
+          placeholder="Any additional preferences or notes..."
+        />
+      </label>
+    </div>
+  </div>
+  <div
+    class="flex justify-end"
+  >
+    <button
+      class="inline-flex items-center rounded-lg border border-pairup-cyan bg-pairup-cyan px-5 py-2 text-sm font-semibold text-pairup-darkBlue transition-colors hover:bg-pairup-cyan/90 focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
+      data-testid="event-creation-submit"
+      disabled=""
+      type="submit"
+    >
+      Saving Draft...
+    </button>
+  </div>
+</form>
+`;
+
+exports[`EventCreationForm > should match snapshot 1`] = `
+<form
+  class="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg p-6 mb-8"
+  data-testid="event-creation-form"
+>
+  <div
+    class="mb-8"
+  >
+    <div
+      class="mb-6"
+    >
+      <h3
+        class="text-lg font-semibold text-pairup-darkBlue flex items-center"
+      >
+        🎉 About Your Activity
+      </h3>
+      <p
+        class="text-sm text-pairup-darkBlue/70"
+      >
+        What would you like to do with another pair? Share your idea or plan.
+      </p>
+    </div>
+    <div
+      class="grid gap-4 md:grid-cols-2"
+    >
+      <label
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80 md:col-span-2"
+        for="activity-title"
+      >
+        What activity do you want to do? *
+        <input
+          aria-label="Activity title"
+          class="mt-2 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan"
+          data-testid="activity-title"
+          id="activity-title"
+          placeholder="e.g., Coffee and conversation, Hiking adventure, Board game night"
+          type="text"
+          value=""
+        />
+      </label>
+      <label
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80"
+        for="activity-type"
+      >
+        Activity type *
+        <select
+          aria-label="Activity type"
+          class="mt-2 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan"
+          data-testid="activity-type"
+          id="activity-type"
+        >
+          <option
+            value=""
+          >
+            Select activity type
+          </option>
+          <option
+            value="food"
+          >
+            🍽️ Food & Dining
+          </option>
+          <option
+            value="games"
+          >
+            🎮 Games
+          </option>
+          <option
+            value="culture"
+          >
+            🎭 Culture & Arts
+          </option>
+          <option
+            value="outdoors"
+          >
+            🌲 Outdoors & Nature
+          </option>
+          <option
+            value="sports"
+          >
+            🏋️‍♂️ Sports & Fitness
+          </option>
+          <option
+            value="casual"
+          >
+            ☕ Casual Meetup
+          </option>
+        </select>
+      </label>
+      <label
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80"
+        for="activity-description"
+      >
+        Describe your activity *
+        <textarea
+          aria-label="Activity description"
+          class="mt-2 h-24 resize-none rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan"
+          data-testid="activity-description"
+          id="activity-description"
+          placeholder="Tell us more about what you'd like to do..."
+        />
+      </label>
+      <label
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80"
+        for="country"
+      >
+        Country *
+        <input
+          aria-label="Country"
+          class="mt-2 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan"
+          data-testid="country"
+          id="country"
+          placeholder="e.g., Germany, Spain, France"
+          type="text"
+          value=""
+        />
+      </label>
+      <label
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80"
+        for="city"
+      >
+        City *
+        <input
+          aria-label="City"
+          class="mt-2 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan"
+          data-testid="city"
+          id="city"
+          placeholder="e.g., Berlin, Madrid, Paris"
+          type="text"
+          value=""
+        />
+      </label>
+      <label
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80"
+        for="time-start"
+      >
+        When do you want to meet? (optional)
+        <input
+          aria-label="Event date and time"
+          class="mt-2 rounded-lg border border-gray-200 px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+          data-testid="time-start"
+          id="time-start"
+          type="datetime-local"
+          value=""
+        />
+      </label>
+      <label
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80 md:col-span-2"
+        for="availability-notes"
+      >
+        What days or times usually work best for your duo? (optional)
+        <textarea
+          class="mt-2 h-20 resize-none rounded-lg border border-gray-200 px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+          data-testid="availability-notes"
+          id="availability-notes"
+          placeholder="e.g., Weekends, evenings after 7pm, flexible schedule..."
+        />
+      </label>
+    </div>
+  </div>
+  <div
+    class="mb-8"
+  >
+    <div
+      class="mb-6"
+    >
+      <h3
+        class="text-lg font-semibold text-pairup-darkBlue flex items-center"
+      >
+        🔎 About the Other Duo
+      </h3>
+      <p
+        class="text-sm text-pairup-darkBlue/70"
+      >
+        What kind of pair are you hoping to meet? Let us know your preferences.
+      </p>
+    </div>
+    <div
+      class="grid gap-4 md:grid-cols-2"
+    >
+      <label
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80"
+        for="duo-type"
+      >
+        What type of pair are you hoping to meet? *
+        <select
+          aria-label="Preferred pair type"
+          class="mt-2 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan"
+          data-testid="duo-type"
+          id="duo-type"
+        >
+          <option
+            value=""
+          >
+            Select pair type
+          </option>
+          <option
+            value="friends"
+          >
+            Friends
+          </option>
+          <option
+            value="couples"
+          >
+            Partners
+          </option>
+          <option
+            value="family"
+          >
+            Parents
+          </option>
+          <option
+            value="roommates"
+          >
+            Siblings
+          </option>
+          <option
+            value="colleagues"
+          >
+            Other
+          </option>
+        </select>
+      </label>
+      <div
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80"
+      >
+        <label
+          class="mb-2"
+          for="age-range-min"
+        >
+          Preferred age range *
+        </label>
+        <div
+          class="flex gap-2"
+        >
+          <input
+            aria-label="Minimum age"
+            class="flex-1 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan"
+            data-testid="age-range-min"
+            id="age-range-min"
+            max="100"
+            min="18"
+            placeholder="Min"
+            type="number"
+            value="18"
+          />
+          <span
+            class="flex items-center text-pairup-darkBlue/60"
+          >
+            to
+          </span>
+          <input
+            aria-label="Maximum age"
+            class="flex-1 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan"
+            data-testid="age-range-max"
+            id="age-range-max"
+            max="100"
+            min="18"
+            placeholder="Max"
+            type="number"
+            value="65"
+          />
+        </div>
+      </div>
+      <div
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80 md:col-span-2"
+      >
+        <span
+          class="mb-2"
+        >
+          Is there a gender mix you'd feel most comfortable meeting with?
+        </span>
+        <div
+          class="grid grid-cols-2 gap-2"
+        >
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="gender-male"
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Male
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="gender-female"
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Female
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="gender-non-binary"
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Diverse
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="gender-prefer-not-to-say"
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Prefer not to say
+            </span>
+          </label>
+        </div>
+        <p
+          class="mt-1 text-xs text-pairup-darkBlue/60"
+        >
+          Leave all unchecked for "No preference"
+        </p>
+      </div>
+      <div
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80 md:col-span-2"
+      >
+        <span
+          class="mb-2"
+        >
+          What vibe do you imagine would match best with yours? *
+        </span>
+        <div
+          class="grid grid-cols-2 gap-2"
+        >
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-adventurous"
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Adventurous
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-chill"
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Chill & Relaxed
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-funny"
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Funny & Playful
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-curious"
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Curious & Open-Minded
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-outgoing"
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Outgoing & Social
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-creative"
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Creative
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-foodies"
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Foodies
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-active"
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Active & Sporty
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-culture"
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Culture Lovers
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-nightlife"
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Nightlife Lovers
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="vibe-mindful"
+              type="checkbox"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Mindful & Calm
+            </span>
+          </label>
+        </div>
+      </div>
+      <div
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80"
+      >
+        <span
+          class="mb-2"
+        >
+          Are you parents? If yes, are you also interested in meeting other parents?
+        </span>
+        <div
+          class="space-y-2"
+        >
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="parent-yes-with-kids"
+              name="parentPreference"
+              type="radio"
+              value="yes-with-kids"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Yes, with kids
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="parent-yes-without-kids"
+              name="parentPreference"
+              type="radio"
+              value="yes-without-kids"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Yes, without kids
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="parent-no"
+              name="parentPreference"
+              type="radio"
+              value="no"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              No
+            </span>
+          </label>
+          <label
+            class="flex items-center space-x-2"
+          >
+            <input
+              class="text-pairup-cyan focus:ring-pairup-cyan"
+              data-testid="parent-other"
+              name="parentPreference"
+              type="radio"
+              value="other"
+            />
+            <span
+              class="text-sm text-pairup-darkBlue"
+            >
+              Other
+            </span>
+          </label>
+        </div>
+      </div>
+      <label
+        class="flex flex-col text-sm font-medium text-pairup-darkBlue/80"
+        for="other-notes"
+      >
+        Is there anything else that matters to you about the other duo? (optional)
+        <textarea
+          class="mt-2 h-20 resize-none rounded-lg border border-gray-200 px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+          data-testid="other-notes"
+          id="other-notes"
+          placeholder="Any additional preferences or notes..."
+        />
+      </label>
+    </div>
+  </div>
+  <div
+    class="flex justify-end"
+  >
+    <button
+      class="inline-flex items-center rounded-lg border border-pairup-cyan bg-pairup-cyan px-5 py-2 text-sm font-semibold text-pairup-darkBlue transition-colors hover:bg-pairup-cyan/90 focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
+      data-testid="event-creation-submit"
+      type="submit"
+    >
+      Save as Draft
+    </button>
+  </div>
+</form>
+`;

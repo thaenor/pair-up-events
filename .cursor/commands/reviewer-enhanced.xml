@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<code-review-prompt version="2.0">
+    <metadata>
+        <purpose>Advanced Comprehensive Code Analysis with Enhanced Bug Detection</purpose>
+        <mode>Review Only - Non-Destructive Analysis</mode>
+        <output-format>Markdown Report with Actionable Insights</output-format>
+        <project-context>
+            <language>TypeScript + React</language>
+            <framework>Vite</framework>
+            <architecture>Atomic Design Pattern</architecture>
+            <styling>Tailwind CSS</styling>
+            <database>Firestore</database>
+            <testing>Vitest + React Testing Library + Playwright</testing>
+        </project-context>
+    </metadata>
+
+    <review-workflow>
+        <step name="pre-analysis">
+            <objective>Gather context and understand change scope</objective>
+            <actions>
+                <action>Read git diff (staged and unstaged changes)</action>
+                <action>Identify modified file types and patterns</action>
+                <action>Check for related documentation updates</action>
+                <action>Review recent CHANGELOG entries for context</action>
+                <action>Identify affected components/modules</action>
+            </actions>
+        </step>
+
+        <step name="comprehensive-analysis">
+            <objective>Multi-dimensional code quality analysis</objective>
+            <categories>
+                <!-- CATEGORY 1: LOGIC & CORRECTNESS -->
+                <category name="logic-and-correctness" priority="critical">
+                    <checks>
+                        <check severity="critical">Algorithmic correctness and efficiency</check>
+                        <check severity="critical">Edge case handling (null, undefined, empty arrays/objects)</check>
+                        <check severity="critical">Off-by-one errors in loops and array operations</check>
+                        <check severity="high">Control flow accuracy and completeness</check>
+                        <check severity="high">Logical implementation integrity</check>
+                        <check severity="high">Async/await error handling patterns</check>
+                        <check severity="medium">Early return opportunities for readability</check>
+                        <check severity="medium">Unnecessary nested conditionals</check>
+                    </checks>
+                </category>
+
+                <!-- CATEGORY 2: BUG DETECTION (ENHANCED) -->
+                <category name="bug-detection" priority="critical">
+                    <subcategory name="react-specific-bugs">
+                        <checks>
+                            <check severity="critical">Missing dependency arrays in useEffect/useCallback/useMemo</check>
+                            <check severity="critical">Stale closure bugs in event handlers</check>
+                            <check severity="critical">Direct state mutation (mutating props or state)</check>
+                            <check severity="critical">Key prop issues in lists (missing, non-unique, using index)</check>
+                            <check severity="high">Infinite render loops (setState in render)</check>
+                            <check severity="high">Missing cleanup in useEffect (subscriptions, timers, listeners)</check>
+                            <check severity="high">useEffect running on every render (missing deps)</check>
+                            <check severity="high">Conditional hooks (hooks inside conditionals/loops)</check>
+                            <check severity="medium">Unnecessary re-renders (missing memoization)</check>
+                            <check severity="medium">Props drilling more than 3 levels deep</check>
+                        </checks>
+                    </subcategory>
+
+                    <subcategory name="typescript-bugs">
+                        <checks>
+                            <check severity="critical">Type assertions hiding real type errors (as any, as unknown)</check>
+                            <check severity="critical">Missing null/undefined checks before property access</check>
+                            <check severity="critical">Type widening issues in generic functions</check>
+                            <check severity="high">Implicit any types (parameters, return values)</check>
+                            <check severity="high">Missing discriminated union checks</check>
+                            <check severity="high">Unsafe type narrowing</check>
+                            <check severity="medium">Non-null assertions (!) without justification</check>
+                            <check severity="medium">Missing readonly modifiers for props/state</check>
+                        </checks>
+                    </subcategory>
+
+                    <subcategory name="async-bugs">
+                        <checks>
+                            <check severity="critical">Unhandled promise rejections</check>
+                            <check severity="critical">Race conditions in concurrent operations</check>
+                            <check severity="critical">Missing await keywords</check>
+                            <check severity="high">Promise constructor anti-patterns</check>
+                            <check severity="high">Incorrect error propagation in async functions</check>
+                            <check severity="high">Async function used without await or proper error handling</check>
+                            <check severity="medium">Multiple awaits that could be parallelized (Promise.all)</check>
+                            <check severity="medium">Timeout/cancellation not implemented for long operations</check>
+                        </checks>
+                    </subcategory>
+
+                    <subcategory name="firestore-specific-bugs">
+                        <checks>
+                            <check severity="critical">Unsubscribed real-time listeners (memory leaks)</check>
+                            <check severity="critical">Missing error handling for Firestore operations</check>
+                            <check severity="critical">Firestore query without proper indexing</check>
+                            <check severity="high">Reading entire collections instead of querying</check>
+                            <check severity="high">Multiple sequential reads that could be batched</check>
+                            <check severity="high">Missing offline persistence consideration</check>
+                            <check severity="medium">Excessive snapshot listeners</check>
+                            <check severity="medium">Not using Firestore transactions for atomic operations</check>
+                        </checks>
+                    </subcategory>
+
+                    <subcategory name="memory-and-performance-bugs">
+                        <checks>
+                            <check severity="critical">Memory leaks (event listeners, timers, subscriptions)</check>
+                            <check severity="critical">Infinite loops or recursion without base case</check>
+                            <check severity="high">Large objects stored in component state</check>
+                            <check severity="high">Heavy computations in render functions</check>
+                            <check severity="high">Creating functions/objects inside render</check>
+                            <check severity="medium">Unnecessary component re-renders</check>
+                            <check severity="medium">N+1 query problems</check>
+                        </checks>
+                    </subcategory>
+
+                    <subcategory name="security-vulnerabilities">
+                        <checks>
+                            <check severity="critical">XSS vulnerabilities (dangerouslySetInnerHTML without sanitization)</check>
+                            <check severity="critical">Sensitive data in client-side code</check>
+                            <check severity="critical">Missing input validation/sanitization</check>
+                            <check severity="critical">Firestore security rules bypassed client-side</check>
+                            <check severity="high">Unvalidated redirects</check>
+                            <check severity="high">Missing CSRF protection</check>
+                            <check severity="high">Exposed API keys or secrets</check>
+                            <check severity="medium">Lack of rate limiting consideration</check>
+                        </checks>
+                    </subcategory>
+                </category>
+
+                <!-- CATEGORY 3: CODE SMELLS -->
+                <category name="code-smells" priority="high">
+                    <checks>
+                        <check severity="high">Functions longer than 50 lines</check>
+                        <check severity="high">Cyclomatic complexity > 10</check>
+                        <check severity="high">Duplicated code blocks (DRY violation)</check>
+                        <check severity="medium">God objects/components doing too much</check>
+                        <check severity="medium">Feature envy (component using another's data extensively)</check>
+                        <check severity="medium">Shotgun surgery (change requires modifications in many places)</check>
+                        <check severity="medium">Primitive obsession (not using proper types/classes)</check>
+                        <check severity="low">Magic numbers without constants</check>
+                        <check severity="low">Dead code (unused variables, imports, functions)</check>
+                    </checks>
+                </category>
+
+                <!-- CATEGORY 4: STYLE & CONSISTENCY -->
+                <category name="style-consistency" priority="medium">
+                    <subcategory name="naming-conventions">
+                        <checks>
+                            <check severity="medium">File naming (kebab-case enforcement)</check>
+                            <check severity="medium">Component naming (PascalCase)</check>
+                            <check severity="medium">Variable/function naming (camelCase)</check>
+                            <check severity="medium">Constants naming (UPPER_SNAKE_CASE)</check>
+                            <check severity="low">Boolean variable naming (is/has/should prefix)</check>
+                            <check severity="low">Event handler naming (handle* or on* prefix)</check>
+                        </checks>
+                    </subcategory>
+
+                    <subcategory name="atomic-design-compliance">
+                        <checks>
+                            <check severity="high">Component placed in wrong atomic level</check>
+                            <check severity="high">Atoms containing molecules/organisms</check>
+                            <check severity="high">Cross-layer dependencies</check>
+                            <check severity="medium">Template using organism incorrectly</check>
+                            <check severity="low">Component hierarchy depth exceeding best practices</check>
+                        </checks>
+                    </subcategory>
+
+                    <subcategory name="tailwind-patterns">
+                        <checks>
+                            <check severity="high">Inline styles instead of Tailwind classes</check>
+                            <check severity="medium">Not using clsx/twMerge for conditional classes</check>
+                            <check severity="medium">Tailwind class ordering inconsistency</check>
+                            <check severity="low">Missing responsive utilities where needed</check>
+                        </checks>
+                    </subcategory>
+
+                    <subcategory name="formatting-standards">
+                        <checks>
+                            <check severity="low">Inconsistent indentation</check>
+                            <check severity="low">Missing trailing commas</check>
+                            <check severity="low">Inconsistent quote style</check>
+                            <check severity="low">Line length exceeding 100 characters</check>
+                        </checks>
+                    </subcategory>
+                </category>
+
+                <!-- CATEGORY 5: ARCHITECTURE & PATTERNS -->
+                <category name="architecture-patterns" priority="high">
+                    <checks>
+                        <check severity="critical">Breaking separation of concerns</check>
+                        <check severity="high">Business logic in components (should be in hooks/services)</check>
+                        <check severity="high">Direct Firestore calls in components (should use hooks)</check>
+                        <check severity="high">Missing error boundaries for critical components</check>
+                        <check severity="medium">Tight coupling between unrelated components</check>
+                        <check severity="medium">Missing proper abstraction layers</check>
+                        <check severity="medium">Improper use of Context API (overuse or underuse)</check>
+                    </checks>
+                </category>
+
+                <!-- CATEGORY 6: TESTING CONCERNS -->
+                <category name="testing-concerns" priority="medium">
+                    <checks>
+                        <check severity="high">New component without tests</check>
+                        <check severity="high">Missing data-testid attributes</check>
+                        <check severity="medium">Untestable code (hard dependencies, no DI)</check>
+                        <check severity="medium">Missing tests for error scenarios</check>
+                        <check severity="low">Test file not co-located</check>
+                    </checks>
+                </category>
+
+                <!-- CATEGORY 7: ACCESSIBILITY -->
+                <category name="accessibility" priority="high">
+                    <checks>
+                        <check severity="critical">Missing alt text on images</check>
+                        <check severity="critical">Form inputs without labels</check>
+                        <check severity="high">Missing ARIA attributes where needed</check>
+                        <check severity="high">Poor keyboard navigation support</check>
+                        <check severity="medium">Missing focus indicators</check>
+                        <check severity="medium">Insufficient color contrast</check>
+                        <check severity="low">Missing semantic HTML</check>
+                    </checks>
+                </category>
+
+                <!-- CATEGORY 8: DOCUMENTATION -->
+                <category name="documentation" priority="medium">
+                    <checks>
+                        <check severity="high">Missing JSDoc for exported components/functions</check>
+                        <check severity="high">Props without type documentation</check>
+                        <check severity="medium">Complex logic without explanatory comments</check>
+                        <check severity="medium">TODO/FIXME without context or ticket reference</check>
+                        <check severity="low">Missing usage examples in JSDoc</check>
+                    </checks>
+                </category>
+            </categories>
+        </step>
+
+        <step name="context-aware-analysis">
+            <objective>Project-specific validation</objective>
+            <validations>
+                <validation>Check against .cursor/config.json rules</validation>
+                <validation>Verify Firestore optimization guidelines</validation>
+                <validation>Validate atomic design hierarchy</validation>
+                <validation>Check DRY principle compliance</validation>
+                <validation>Verify meaningful comments policy</validation>
+                <validation>Validate export style (named exports only)</validation>
+            </validations>
+        </step>
+
+        <step name="report-generation">
+            <objective>Generate comprehensive, actionable report</objective>
+            <output-template>
+                <structure>
+                    <section name="executive-summary">
+                        <field>Total issues found</field>
+                        <field>Critical issues count</field>
+                        <field>High priority count</field>
+                        <field>Overall code health score (0-100)</field>
+                        <field>Top 3 concerns</field>
+                    </section>
+
+                    <section name="critical-bugs">
+                        <field>Bug description</field>
+                        <field>File and line location</field>
+                        <field>Why it's critical</field>
+                        <field>Potential impact</field>
+                        <field>Recommended fix with code example</field>
+                        <field>Related best practices</field>
+                    </section>
+
+                    <section name="high-priority-issues">
+                        <field>Issue category</field>
+                        <field>Specific location</field>
+                        <field>Impact assessment</field>
+                        <field>Recommended solution</field>
+                        <field>Effort estimate (low/medium/high)</field>
+                    </section>
+
+                    <section name="medium-priority-improvements">
+                        <field>Issue description</field>
+                        <field>Location</field>
+                        <field>Improvement benefit</field>
+                        <field>Suggested approach</field>
+                    </section>
+
+                    <section name="low-priority-suggestions">
+                        <field>Suggestion</field>
+                        <field>Location</field>
+                        <field>Benefit</field>
+                    </section>
+
+                    <section name="positive-patterns">
+                        <field>Good practices found</field>
+                        <field>Well-implemented patterns</field>
+                        <field>Code worth highlighting</field>
+                    </section>
+
+                    <section name="recommendations">
+                        <field>Prioritized action items</field>
+                        <field>Quick wins (easy fixes with high impact)</field>
+                        <field>Long-term improvements</field>
+                        <field>Learning resources</field>
+                    </section>
+                </structure>
+                <format>Markdown with tables</format>
+                <style>Clear, actionable, educational</style>
+            </output-template>
+        </step>
+    </review-workflow>
+
+    <severity-definitions>
+        <level name="critical" color="red">
+            <description>Must fix before merging - breaks functionality or creates security vulnerabilities</description>
+            <examples>
+                <example>Unhandled promise rejections causing silent failures</example>
+                <example>Memory leaks from unsubscribed listeners</example>
+                <example>XSS vulnerabilities</example>
+                <example>Type assertions hiding real errors</example>
+            </examples>
+        </level>
+
+        <level name="high" color="orange">
+            <description>Should fix soon - significant code quality issues or potential bugs</description>
+            <examples>
+                <example>Missing error boundaries</example>
+                <example>Business logic in components</example>
+                <example>Missing accessibility attributes</example>
+                <example>Inefficient Firestore queries</example>
+            </examples>
+        </level>
+
+        <level name="medium" color="yellow">
+            <description>Should address - maintainability or performance concerns</description>
+            <examples>
+                <example>Code duplication</example>
+                <example>Missing memoization for expensive computations</example>
+                <example>Inconsistent naming</example>
+                <example>Missing JSDoc</example>
+            </examples>
+        </level>
+
+        <level name="low" color="green">
+            <description>Nice to have - minor improvements</description>
+            <examples>
+                <example>Style inconsistencies</example>
+                <example>Magic numbers</example>
+                <example>Minor formatting issues</example>
+            </examples>
+        </level>
+    </severity-definitions>
+
+    <pattern-detection>
+        <anti-patterns>
+            <pattern name="useState-overuse">
+                <description>Too many useState calls - consider useReducer</description>
+                <threshold>5 useState calls in single component</threshold>
+            </pattern>
+            <pattern name="prop-drilling">
+                <description>Props passed through multiple levels</description>
+                <suggestion>Consider Context API or composition</suggestion>
+            </pattern>
+            <pattern name="useEffect-dependency-omission">
+                <description>useEffect with missing dependencies</description>
+                <risk>Stale closures and bugs</risk>
+            </pattern>
+            <pattern name="premature-optimization">
+                <description>Complex optimizations without performance profiling</description>
+                <advice>Measure before optimizing</advice>
+            </pattern>
+        </anti-patterns>
+
+        <good-patterns>
+            <pattern name="custom-hooks">
+                <description>Logic extracted into reusable hooks</description>
+            </pattern>
+            <pattern name="error-boundaries">
+                <description>Critical components wrapped in error boundaries</description>
+            </pattern>
+            <pattern name="proper-memoization">
+                <description>Appropriate use of useMemo/useCallback</description>
+            </pattern>
+            <pattern name="defensive-programming">
+                <description>Proper null checks and error handling</description>
+            </pattern>
+        </good-patterns>
+    </pattern-detection>
+
+    <code-health-scoring>
+        <metrics>
+            <metric name="bug-density" weight="40">
+                <calculation>Critical bugs per 100 lines of code</calculation>
+            </metric>
+            <metric name="code-complexity" weight="20">
+                <calculation>Average cyclomatic complexity</calculation>
+            </metric>
+            <metric name="maintainability" weight="20">
+                <calculation>Code duplication + naming quality</calculation>
+            </metric>
+            <metric name="test-coverage-indicator" weight="10">
+                <calculation>Presence of test files and data-testid</calculation>
+            </metric>
+            <metric name="documentation-quality" weight="10">
+                <calculation>JSDoc coverage for exported items</calculation>
+            </metric>
+        </metrics>
+        <scoring>
+            <range min="90" max="100">Excellent</range>
+            <range min="75" max="89">Good</range>
+            <range min="60" max="74">Acceptable</range>
+            <range min="40" max="59">Needs Improvement</range>
+            <range min="0" max="39">Critical Issues</range>
+        </scoring>
+    </code-health-scoring>
+
+    <constraints>
+        <rule>No code modifications - analysis only</rule>
+        <rule>Non-destructive review</rule>
+        <rule>Educational tone - explain WHY, not just WHAT</rule>
+        <rule>Provide code examples for complex fixes</rule>
+        <rule>Link to relevant documentation when applicable</rule>
+        <rule>Balance criticism with positive feedback</rule>
+    </constraints>
+
+    <output-format>
+        <![CDATA[
+# 🔍 Code Review Analysis Report
+
+## Executive Summary
+
+**Overall Code Health Score**: XX/100 (Status)
+
+- 🔴 **Critical Issues**: X
+- 🟠 **High Priority**: X  
+- 🟡 **Medium Priority**: X
+- 🟢 **Low Priority**: X
+
+**Top Concerns**:
+1. [Brief description]
+2. [Brief description]
+3. [Brief description]
+
+**Quick Wins** (Easy fixes with high impact):
+- [List 2-3 quick wins]
+
+---
+
+## 🔴 Critical Bugs (Must Fix Before Merge)
+
+### 1. [Bug Category]: [Brief Description]
+
+**Location**: `file.tsx:line`
+
+**Issue**:
+[Clear explanation of the bug]
+
+**Why Critical**:
+[Explain the potential impact]
+
+**Current Code**:
+```typescript
+// Problematic code
+```
+
+**Recommended Fix**:
+```typescript
+// Corrected code with explanation
+```
+
+**Related**: [Link to docs/best practices]
+
+---
+
+## 🟠 High Priority Issues
+
+| Category | Location | Issue | Impact | Fix Effort |
+|----------|----------|-------|--------|------------|
+| [Category] | file.tsx:42 | [Description] | [Impact] | Medium |
+
+### Detailed Analysis
+
+[Detailed explanations for each high-priority issue]
+
+---
+
+## 🟡 Medium Priority Improvements
+
+| Category | Location | Improvement | Benefit |
+|----------|----------|-------------|---------|
+| [Category] | file.tsx:15 | [Description] | [Benefit] |
+
+---
+
+## 🟢 Low Priority Suggestions
+
+- **file.tsx:8**: [Suggestion] - [Small benefit]
+
+---
+
+## ✅ Positive Patterns Found
+
+- **Good Practice**: [Description of well-implemented pattern]
+- **Strong Type Safety**: [Example of good typing]
+- **Clean Architecture**: [Well-structured code example]
+
+---
+
+## 📋 Prioritized Action Plan
+
+### Immediate (Before Merge)
+1. [Critical fix 1]
+2. [Critical fix 2]
+
+### Short Term (This Sprint)
+1. [High priority fix 1]
+2. [High priority fix 2]
+
+### Long Term (Future Improvements)
+1. [Medium priority improvement 1]
+2. [Medium priority improvement 2]
+
+---
+
+## 📚 Learning Resources
+
+- [Relevant documentation links]
+- [Best practices guides]
+- [Pattern examples]
+
+---
+
+**Review completed on**: [Timestamp]
+**Files analyzed**: [Count]
+**Lines reviewed**: [Count]
+        ]]>
+    </output-format>
+
+    <configuration>
+        <settings>
+            <severity-threshold>Low</severity-threshold>
+            <report-verbosity>Detailed</report-verbosity>
+            <include-code-examples>true</include-code-examples>
+            <include-positive-feedback>true</include-positive-feedback>
+            <max-issues-per-category>10</max-issues-per-category>
+            <educational-mode>true</educational-mode>
+        </settings>
+    </configuration>
+</code-review-prompt>
+

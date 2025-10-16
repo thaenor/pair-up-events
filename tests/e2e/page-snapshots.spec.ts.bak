@@ -1,0 +1,364 @@
+import { test, expect } from '@playwright/test'
+
+// Helper function to dismiss any visible toasts
+async function dismissToasts(page) {
+  try {
+    const closeButtons = page.locator('[data-close-button]')
+    const count = await closeButtons.count()
+    for (let i = 0; i < count; i++) {
+      await closeButtons.first().click().catch(() => { })
+    }
+    await page.waitForTimeout(100)
+  } catch (error) {
+    // Silently ignore if no toasts present
+  }
+}
+
+// Helper function to monitor console for errors
+function setupConsoleErrorMonitoring(page) {
+  const consoleErrors: string[] = []
+  const consoleWarnings: string[] = []
+
+  page.on('console', msg => {
+    if (msg.type() === 'error') {
+      consoleErrors.push(msg.text())
+    } else if (msg.type() === 'warning') {
+      consoleWarnings.push(msg.text())
+    }
+  })
+
+  return { consoleErrors, consoleWarnings }
+}
+
+// Helper function to take full page snapshot
+async function takePageSnapshot(page, pageName: string) {
+  await page.waitForLoadState('networkidle')
+  await page.waitForTimeout(500) // Wait for any animations or transitions
+  await page.screenshot({ 
+    path: `tests/e2e/screenshots/${pageName}.png`,
+    fullPage: true 
+  })
+}
+
+// Helper function to authenticate a user
+async function authenticateUser(page) {
+  const testUser = {
+    email: `e2e-snapshot-${Date.now()}@example.com`,
+    password: 'SecurePass123!',
+    firstName: 'E2E',
+    lastName: 'Snapshot',
+    birthDate: '1995-06-15',
+    gender: 'prefer-not-to-say',
+  }
+
+  // Go to signup
+  await page.goto('/signup')
+  
+  // Fill signup form
+  await page.fill('[data-testid="signup-first-name"]', testUser.firstName)
+  await page.fill('[data-testid="signup-last-name"]', testUser.lastName)
+  await page.fill('[data-testid="signup-email"]', testUser.email)
+  await page.fill('[data-testid="signup-password"]', testUser.password)
+  await page.fill('[data-testid="signup-confirm-password"]', testUser.password)
+  await page.fill('[data-testid="signup-birth-date"]', testUser.birthDate)
+  await page.selectOption('[data-testid="signup-gender"]', testUser.gender)
+  
+  // Submit signup
+  await page.click('[data-testid="signup-submit-button"]')
+  
+  // Wait for redirect to profile
+  await expect(page).toHaveURL('/profile', { timeout: 10000 })
+  
+  return testUser
+}
+
+// Helper function to logout
+async function logout(page) {
+  await dismissToasts(page)
+  await page.click('[data-testid="burger-menu-button"]')
+  await page.waitForTimeout(300) // Sidebar animation
+  await dismissToasts(page)
+  await page.click('[data-testid="sidebar-logout-button"]')
+  await expect(page).toHaveURL('/', { timeout: 10000 })
+}
+
+test.describe('Page Snapshots - Public Pages', () => {
+  test.beforeEach(async ({ page }) => {
+    // Ensure we start with a clean state (not logged in)
+    await page.goto('/')
+  })
+
+  test('Landing Page (Index) - snapshot and console check', async ({ page }) => {
+    const { consoleErrors } = setupConsoleErrorMonitoring(page)
+    
+    await page.goto('/')
+    await expect(page).toHaveURL('/')
+    
+    // Take snapshot
+    await takePageSnapshot(page, 'index-page')
+    
+    // Verify main elements are visible
+    await expect(page.getByTestId('main-navigation')).toBeVisible()
+    
+    // Check for console errors
+    expect(consoleErrors, 'Page should not have console errors').toHaveLength(0)
+  })
+
+  test('Login Page - snapshot and console check', async ({ page }) => {
+    const { consoleErrors } = setupConsoleErrorMonitoring(page)
+    
+    await page.goto('/login')
+    await expect(page).toHaveURL('/login')
+    
+    // Take snapshot
+    await takePageSnapshot(page, 'login-page')
+    
+    // Verify login form is visible
+    await expect(page.locator('input[type="email"]')).toBeVisible({ timeout: 10000 })
+    await expect(page.locator('input[type="password"]')).toBeVisible()
+    
+    expect(consoleErrors, 'Page should not have console errors').toHaveLength(0)
+  })
+
+  test('Signup Page - snapshot and console check', async ({ page }) => {
+    const { consoleErrors } = setupConsoleErrorMonitoring(page)
+    
+    await page.goto('/signup')
+    await expect(page).toHaveURL('/signup')
+    
+    // Take snapshot
+    await takePageSnapshot(page, 'signup-page')
+    
+    // Verify signup form is visible
+    await expect(page.getByTestId('signup-first-name')).toBeVisible({ timeout: 10000 })
+    await expect(page.getByTestId('signup-email')).toBeVisible()
+    
+    expect(consoleErrors, 'Page should not have console errors').toHaveLength(0)
+  })
+
+  test('Terms of Service Page - snapshot and console check', async ({ page }) => {
+    const { consoleErrors } = setupConsoleErrorMonitoring(page)
+    
+    await page.goto('/terms-of-service')
+    await expect(page).toHaveURL('/terms-of-service')
+    
+    // Take snapshot
+    await takePageSnapshot(page, 'terms-of-service-page')
+    
+    // Verify main content is visible
+    await expect(page.getByText('Terms of Service')).toBeVisible()
+    
+    expect(consoleErrors, 'Page should not have console errors').toHaveLength(0)
+  })
+
+  test('Privacy Policy Page - snapshot and console check', async ({ page }) => {
+    const { consoleErrors } = setupConsoleErrorMonitoring(page)
+    
+    await page.goto('/privacy-policy')
+    await expect(page).toHaveURL('/privacy-policy')
+    
+    // Take snapshot
+    await takePageSnapshot(page, 'privacy-policy-page')
+    
+    // Verify main content is visible
+    await expect(page.getByText('Privacy Policy')).toBeVisible()
+    
+    expect(consoleErrors, 'Page should not have console errors').toHaveLength(0)
+  })
+
+  test('Not Found Page (404) - snapshot and console check', async ({ page }) => {
+    const { consoleErrors } = setupConsoleErrorMonitoring(page)
+    
+    await page.goto('/this-path-does-not-exist')
+    
+    // Take snapshot
+    await takePageSnapshot(page, 'not-found-page')
+    
+    // Should render NotFound component without errors
+    expect(consoleErrors, 'Page should not have console errors').toHaveLength(0)
+  })
+})
+
+test.describe('Page Snapshots - Protected Pages', () => {
+  test('Profile Page - snapshot and console check', async ({ page }) => {
+    // Authenticate user first
+    await authenticateUser(page)
+    
+    const { consoleErrors } = setupConsoleErrorMonitoring(page)
+    
+    await page.goto('/profile')
+    await expect(page).toHaveURL('/profile')
+    
+    // Take snapshot
+    await takePageSnapshot(page, 'profile-page')
+    
+    // Verify main content is visible
+    await expect(page.getByText('Your Profile')).toBeVisible()
+    
+    expect(consoleErrors, 'Page should not have console errors').toHaveLength(0)
+    
+    // Cleanup
+    await logout(page)
+  })
+
+  test('Events Page - snapshot and console check', async ({ page }) => {
+    await authenticateUser(page)
+    
+    const { consoleErrors } = setupConsoleErrorMonitoring(page)
+    
+    await page.goto('/events')
+    await expect(page).toHaveURL('/events')
+    
+    // Take snapshot
+    await takePageSnapshot(page, 'events-page')
+    
+    // Verify page loaded (content may vary)
+    await page.waitForLoadState('networkidle')
+    
+    expect(consoleErrors, 'Page should not have console errors').toHaveLength(0)
+    
+    await logout(page)
+  })
+
+  test('Events Create Page - snapshot and console check', async ({ page }) => {
+    await authenticateUser(page)
+    
+    const { consoleErrors } = setupConsoleErrorMonitoring(page)
+    
+    await page.goto('/events/create')
+    await expect(page).toHaveURL('/events/create')
+    
+    // Take snapshot
+    await takePageSnapshot(page, 'events-create-page')
+    
+    // Verify page loaded
+    await page.waitForLoadState('networkidle')
+    
+    expect(consoleErrors, 'Page should not have console errors').toHaveLength(0)
+    
+    await logout(page)
+  })
+
+  test('Messenger Page - snapshot and console check', async ({ page }) => {
+    await authenticateUser(page)
+    
+    const { consoleErrors } = setupConsoleErrorMonitoring(page)
+    
+    await page.goto('/messenger')
+    await expect(page).toHaveURL('/messenger')
+    
+    // Take snapshot
+    await takePageSnapshot(page, 'messenger-page')
+    
+    // Verify page loaded
+    await page.waitForLoadState('networkidle')
+    
+    expect(consoleErrors, 'Page should not have console errors').toHaveLength(0)
+    
+    await logout(page)
+  })
+แสน
+
+  test('Settings Page - snapshot and console check', async ({ page }) => {
+    await authenticateUser(page)
+    
+    const { consoleErrors } = setupConsoleErrorMonitoring(page)
+    
+    await page.goto('/settings')
+    await expect(page).toHaveURL('/settings')
+    
+    // Take snapshot
+    await takePageSnapshot(page, 'settings-page')
+    
+    // Verify main content is visible
+    await expect(page.getByText('Settings')).toBeVisible()
+    
+    expect(consoleErrors, 'Page should not have console errors').toHaveLength(0)
+    
+    await logout(page)
+  })
+
+  test('Invite Page - snapshot and console check', async ({ page }) => {
+    await authenticateUser(page)
+    
+    const { consoleErrors } = setupConsoleErrorMonitoring(page)
+    
+    await page.goto('/invite')
+    await expect(page).toHaveURL('/invite')
+    
+    // Take snapshot
+    await takePageSnapshot(page, 'invite-page')
+    
+    // Verify main content is visible
+    await expect(page.getByText('Invite a Friend')).toBeVisible()
+    
+    expect(consoleErrors, 'Page should not have console errors').toHaveLength(0)
+    
+    await logout(page)
+  })
+
+  test('Contact Us Page - snapshot and console check', async ({ page }) => {
+    await authenticateUser(page)
+    
+    const { consoleErrors } = setupConsoleErrorMonitoring(page)
+    
+    await page.goto('/contact-us')
+    await expect(page).toHaveURL('/contact-us')
+    
+    // Take snapshot
+    await takePageSnapshot(page, 'contact-us-page')
+    
+    // Verify main content is visible
+    await expect(page.getByText('Contact Us')).toBeVisible()
+    
+    expect(consoleErrors, 'Page should not have console errors').toHaveLength(0)
+    
+    await logout(page)
+  })
+
+  test('About Page - snapshot and console check', async ({ page }) => {
+    await authenticateUser(page)
+    
+    const { consoleErrors } = setupConsoleErrorMonitoring(page)
+    
+    await page.goto('/about')
+    await expect(page).toHaveURL('/about')
+    
+    // Take snapshot
+    await takePageSnapshot(page, 'about-page')
+    
+    // Verify main content is visible
+    await expect(page.getByText('About Us')).toBeVisible()
+    
+    expect(consoleErrors, 'Page should not have console errors').toHaveLength(0)
+    
+    await logout(page)
+  })
+})
+
+test.describe('Protected Page Redirect Behavior', () => {
+  test('Protected pages redirect to login when not authenticated', async ({ page }) => {
+    // Try to access protected pages without auth
+    const protectedPages = [
+      '/profile',
+      '/events',
+      '/events/create',
+      '/messenger',
+      '/settings',
+      '/invite',
+      '/contact-us',
+      '/about'
+    ]
+
+    for (const path of protectedPages) {
+      await page.goto(path)
+      
+      // Should redirect to login or home
+      const currentUrl = page.url()
+      expect(currentUrl).toMatch(/login|\//)
+      
+      // Navigate away before next iteration
+      await page.goto('/')
+    }
+  })
+})

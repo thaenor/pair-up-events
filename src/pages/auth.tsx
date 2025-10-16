@@ -1,28 +1,18 @@
-import { AuthLayout } from "@/components/templates/auth-layout";
-import EmailSignupForm from "@/components/molecules/email-signup-form";
-import { useAuth } from "@/hooks/useAuth";
+import { AuthLayout } from '@/components/templates/auth-layout'
+import EmailSignupForm from '@/components/molecules/Auth/email-signup-form'
 
 const AuthPage = () => {
-    const { error } = useAuth();
+  const leftContent = (
+    <div className="w-full max-w-sm">
+      <img src="/Logo.png" alt="PairUp Events" className="h-12 mb-8" />
+      <h1 className="text-4xl font-bold text-white mb-8">Create Account</h1>
 
-    const leftContent = (
-        <div className="w-full max-w-sm">
-            <img src="/Logo.png" alt="PairUp Events" className="h-12 mb-8" />
-            <h1 className="text-4xl font-bold text-white mb-8">Create Account</h1>
+      {/* Email Signup Form */}
+      <EmailSignupForm />
+    </div>
+  )
 
-            {/* Global error message */}
-            {error && (
-                <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-md text-red-200 text-sm">
-                    {error}
-                </div>
-            )}
+  return <AuthLayout left={leftContent} />
+}
 
-            {/* Email Signup Form */}
-            <EmailSignupForm />
-        </div>
-    );
-
-    return <AuthLayout left={leftContent} />;
-};
-
-export default AuthPage;
+export default AuthPage

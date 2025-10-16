@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
@@ -27,7 +26,6 @@
     --ring: 183 90% 55%;
 
     --radius: 0.75rem;
-
   }
 
   * {
@@ -43,7 +41,12 @@
     font-family: 'outfit', sans-serif;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Outfit', sans-serif;
     @apply font-semibold;
   }
@@ -57,11 +60,17 @@
   .btn-cta svg {
     @apply pointer-events-none shrink-0 size-4;
   }
-  .btn-cta--cyan { @apply bg-pairup-cyan text-pairup-darkBlue; }
-  .btn-cta--yellow { @apply bg-pairup-yellow text-pairup-darkBlue; }
+  .btn-cta--cyan {
+    @apply bg-pairup-cyan text-pairup-darkBlue;
+  }
+  .btn-cta--yellow {
+    @apply bg-pairup-yellow text-pairup-darkBlue;
+  }
 
   /* Respect reduced motion preference: remove animated shadow changes */
   @media (prefers-reduced-motion: reduce) {
-    .btn-cta { @apply transition-none; }
+    .btn-cta {
+      @apply transition-none;
+    }
   }
 }

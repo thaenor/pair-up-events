@@ -1,0 +1,34 @@
+rules_version = '2';
+
+// Firebase Storage Security Rules for Pair Up Events
+// These rules control access to files stored in Firebase Storage
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Profile Pictures
+    // Path: profile-pictures/{userId}
+    // - Each user can have only one profile picture
+    // - Profile pictures are visible to all authenticated users
+    // - Only the owner can upload, update, or delete their picture
+    match /profile-pictures/{userId} {
+
+      // Allow any authenticated user to read profile pictures
+      // This makes profile pictures visible to everyone in the app
+      allow read: if request.auth != null;
+
+      // Allow users to create or update only their own profile picture
+      allow create, update: if request.auth != null
+                            && request.auth.uid == userId
+                            && request.resource.size < 5 * 1024 * 1024  // Max file size: 5MB
+                            && request.resource.contentType.matches('image/.*');  // Only image files
+
+      // Allow users to delete only their own profile picture
+      allow delete: if request.auth != null
+                    && request.auth.uid == userId;
+    }
+
+    // Deny all other access by default
+    // This ensures that no other files can be accessed without explicit rules
+  }
+}

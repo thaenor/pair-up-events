@@ -1,20 +1,35 @@
-import React from 'react';
+import React from 'react'
 
+/**
+ * Props for the SkipLink component
+ *
+ * @typedef {Object} SkipLinkProps
+ * @property {string} targetId - ID of the target element to skip to
+ * @property {string} [label='Skip to main content'] - Link text label
+ * @property {string} [className=''] - Additional CSS classes
+ */
 export type SkipLinkProps = {
-  targetId: string;
-  label?: string;
-  className?: string;
-};
+  targetId: string
+  label?: string
+  className?: string
+}
 
 /**
  * Skip link component for keyboard navigation accessibility
- * Allows users to skip to main content without tabbing through navigation
+ *
+ * Provides a keyboard-accessible link that allows users to skip to main content
+ * without having to tab through navigation elements. Hidden by default, appears
+ * on focus for keyboard users.
+ *
+ * @component
+ * @param {SkipLinkProps} props - Component props
+ *
+ * @example
+ * ```tsx
+ * <SkipLink targetId="main-content" />
+ * ```
  */
-const SkipLink: React.FC<SkipLinkProps> = ({
-  targetId,
-  label = 'Skip to main content',
-  className = ''
-}) => {
+const SkipLink: React.FC<SkipLinkProps> = ({ targetId, label = 'Skip to main content', className = '' }) => {
   return (
     <a
       href={`#${targetId}`}
@@ -24,7 +39,7 @@ const SkipLink: React.FC<SkipLinkProps> = ({
     >
       {label}
     </a>
-  );
-};
+  )
+}
 
-export default SkipLink;
+export default SkipLink

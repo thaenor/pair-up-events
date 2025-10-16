@@ -1,0 +1,224 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`LoginPage > should match snapshot 1`] = `
+<div
+  class="grid grid-cols-1 md:grid-cols-2 h-screen"
+  data-testid="auth-layout"
+>
+  <div
+    class="bg-[#1A2833] p-8 flex flex-col justify-center items-center order-2 md:order-1"
+    data-testid="auth-layout-left"
+  >
+    <div
+      class="w-full max-w-sm"
+    >
+      <img
+        alt="PairUp Events"
+        class="h-12 mb-8"
+        src="/Logo.png"
+      />
+      <h1
+        class="text-4xl font-bold text-white mb-8"
+      >
+        Welcome Back
+      </h1>
+      <form
+        class="w-full max-w-sm space-y-6"
+        data-testid="login-form"
+      >
+        <div
+          class="bg-pairup-cyan/10 border border-pairup-cyan/30 rounded-md p-3 mb-4"
+        >
+          <p
+            class="text-sm text-pairup-cream"
+          >
+            Welcome back! Sign in to access your account and continue connecting with other pairs!
+          </p>
+        </div>
+        <div
+          class="space-y-2"
+        >
+          <label
+            class="block text-sm font-medium text-white"
+            for="email"
+          >
+            Email Address
+          </label>
+          <div
+            class="relative"
+          >
+            <div
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+            >
+              <svg
+                class="lucide lucide-mail h-5 w-5 text-gray-400"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  height="16"
+                  rx="2"
+                  width="20"
+                  x="2"
+                  y="4"
+                />
+                <path
+                  d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"
+                />
+              </svg>
+            </div>
+            <input
+              class="block w-full pl-10 pr-3 py-3 border rounded-md bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors border-gray-500"
+              data-testid="login-email-input"
+              id="email"
+              placeholder="Enter your email"
+              type="email"
+              value=""
+            />
+          </div>
+        </div>
+        <div
+          class="space-y-2"
+        >
+          <label
+            class="block text-sm font-medium text-white"
+            for="password"
+          >
+            Password
+          </label>
+          <div
+            class="relative"
+          >
+            <div
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+            >
+              <svg
+                class="lucide lucide-lock h-5 w-5 text-gray-400"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  height="11"
+                  rx="2"
+                  ry="2"
+                  width="18"
+                  x="3"
+                  y="11"
+                />
+                <path
+                  d="M7 11V7a5 5 0 0 1 10 0v4"
+                />
+              </svg>
+            </div>
+            <input
+              class="block w-full pl-10 pr-12 py-3 border rounded-md bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors border-gray-500"
+              data-testid="login-password-input"
+              id="password"
+              placeholder="Enter your password"
+              type="password"
+              value=""
+            />
+            <button
+              aria-label="Show password"
+              class="absolute inset-y-0 right-0 pr-3 flex items-center"
+              type="button"
+            >
+              <svg
+                class="lucide lucide-eye h-5 w-5 text-gray-400 hover:text-white transition-colors"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"
+                />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="3"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <button
+          class="w-full flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-pairup-darkBlue bg-pairup-cyan hover:bg-pairup-cyan/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pairup-cyan disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          data-testid="login-submit-button"
+          type="submit"
+        >
+          Sign In
+        </button>
+        <div
+          class="text-center"
+        >
+          <p
+            class="text-sm text-gray-400"
+          >
+            Don't have an account?
+             
+            <a
+              class="text-pairup-cyan hover:underline font-medium"
+              data-testid="login-signup-link"
+              href="/signup"
+            >
+              Create one here
+            </a>
+          </p>
+        </div>
+        <div
+          class="text-center"
+        >
+          <p
+            class="text-sm text-gray-400"
+          >
+            Forgot your password?
+             
+            <button
+              class="text-pairup-cyan hover:underline font-medium bg-transparent border-none p-0 cursor-pointer"
+              data-testid="password-reset-button"
+              type="button"
+            >
+              Reset it here
+            </button>
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div
+    class="order-1 md:order-2"
+    data-testid="auth-layout-images"
+  >
+    <img
+      alt="PairUp Events"
+      class="w-full h-auto object-cover md:hidden"
+      src="/Header Logo Mobile.png"
+    />
+    <img
+      alt="PairUp Events"
+      class="hidden md:block w-full h-full object-cover"
+      src="/Header Logo Desktop.png"
+    />
+  </div>
+</div>
+`;

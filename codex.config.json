@@ -7,13 +7,7 @@
   "framework": "vite-react",
   "architecture": {
     "pattern": "atomic-design",
-    "layers": [
-      "atoms",
-      "molecules",
-      "organisms",
-      "templates",
-      "pages"
-    ]
+    "layers": ["atoms", "molecules", "organisms", "templates", "pages"]
   },
   "rootDirs": {
     "components": "src/components",
@@ -61,6 +55,8 @@
   "rules": {
     "namingConvention": "kebab-case",
     "componentExport": "named",
+    "directImports": true,
+    "noBarrelExports": true,
     "styling": "tailwind-only",
     "noInlineStyles": true,
     "useClsxAndTwMerge": true,
@@ -74,11 +70,7 @@
     "library": "react-testing-library",
     "coLocate": true,
     "selector": "data-testid",
-    "minimumTests": [
-      "render",
-      "behavior",
-      "errorFallback"
-    ]
+    "minimumTests": ["render", "behavior", "errorFallback"]
   },
   "guardrails": {
     "firestoreEfficiency": "minimizeReadsWrites",
@@ -103,11 +95,7 @@
   },
   "reviewProfile": {
     "enabled": true,
-    "trigger": [
-      "pull_request",
-      "pre-merge",
-      "manual"
-    ],
+    "trigger": ["pull_request", "pre-merge", "manual"],
     "reviewGoals": [
       "Enforce project coding standards from docs/agents.md",
       "Verify all TypeScript types are explicit and exported",

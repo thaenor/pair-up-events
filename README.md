@@ -63,9 +63,11 @@ Pair Up Events is a marketing site and authentication experience for a social pl
 ### Running the app
 
 Start the local development server:
+
 ```bash
 npm run dev
 ```
+
 Vite prints a local URL (default `http://localhost:5173`). The marketing landing page is available at `/`, and the authentication experience is served at `/login`.
 
 ## Project Structure

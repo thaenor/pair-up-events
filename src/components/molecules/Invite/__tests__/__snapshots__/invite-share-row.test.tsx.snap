@@ -1,0 +1,101 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`InviteShareRow > should match snapshot - with eventId 1`] = `
+<div
+  class="rounded-lg border border-gray-200 bg-white/70 p-4"
+>
+  <h4
+    class="text-sm font-semibold text-pairup-darkBlue flex items-center mb-2"
+  >
+    🔗 Invite your duo
+  </h4>
+  <p
+    class="text-sm text-pairup-darkBlue/70 mb-3"
+  >
+    Send an invite link to your partner so they can confirm this duo. You can share it via your preferred app.
+  </p>
+  <div
+    class="flex flex-col md:flex-row gap-2 md:items-center"
+  >
+    <input
+      aria-label="Invite link"
+      class="w-full rounded-lg border px-3 py-2 text-sm text-pairup-darkBlue bg-gray-50"
+      data-testid="invite-link-input"
+      readonly=""
+      type="text"
+      value="http://localhost:3000/invite/test123"
+    />
+    <div
+      class="flex gap-2"
+    >
+      <button
+        aria-label="Copy invite link"
+        class="px-3 py-2 text-sm font-medium text-pairup-darkBlue border border-gray-300 rounded-lg hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
+        data-testid="invite-copy-btn"
+        type="button"
+      >
+        Copy link
+      </button>
+      <button
+        aria-label="Share invite link"
+        class="px-3 py-2 text-sm font-medium text-white bg-pairup-cyan rounded-lg hover:bg-pairup-cyan/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
+        data-testid="invite-share-btn"
+        type="button"
+      >
+        Share…
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`InviteShareRow > should match snapshot - without eventId 1`] = `
+<div
+  class="rounded-lg border border-gray-200 bg-white/70 p-4"
+>
+  <h4
+    class="text-sm font-semibold text-pairup-darkBlue flex items-center mb-2"
+  >
+    🔗 Invite your duo
+  </h4>
+  <p
+    class="text-sm text-pairup-darkBlue/70 mb-3"
+  >
+    Send an invite link to your partner so they can confirm this duo. You can share it via your preferred app.
+  </p>
+  <div
+    class="flex flex-col md:flex-row gap-2 md:items-center"
+  >
+    <input
+      aria-label="Invite link"
+      class="w-full rounded-lg border px-3 py-2 text-sm text-pairup-darkBlue bg-gray-50 opacity-60"
+      data-testid="invite-link-input"
+      readonly=""
+      type="text"
+      value="Your invite link will appear after saving Tab 1"
+    />
+    <div
+      class="flex gap-2"
+    >
+      <button
+        aria-label="Copy invite link"
+        class="px-3 py-2 text-sm font-medium text-pairup-darkBlue border border-gray-300 rounded-lg hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
+        data-testid="invite-copy-btn"
+        disabled=""
+        type="button"
+      >
+        Copy link
+      </button>
+      <button
+        aria-label="Share invite link"
+        class="px-3 py-2 text-sm font-medium text-white bg-pairup-cyan rounded-lg hover:bg-pairup-cyan/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
+        data-testid="invite-share-btn"
+        disabled=""
+        type="button"
+      >
+        Share…
+      </button>
+    </div>
+  </div>
+</div>
+`;

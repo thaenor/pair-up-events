@@ -1,0 +1,102 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Button > should match snapshot - loading state 1`] = `
+<button
+  aria-busy="true"
+  aria-disabled="true"
+  class="inline-flex items-center justify-center gap-2 font-medium rounded-md transition-colors disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 text-sm px-4 py-2 h-10 bg-pairup-cyan text-pairup-darkBlue hover:bg-pairup-cyan/90 focus:ring-pairup-cyan relative"
+  disabled=""
+  type="button"
+>
+  <span
+    class="absolute inset-0 flex items-center justify-center"
+    data-testid="button-loading"
+  >
+    <svg
+      aria-label="Loading"
+      class="lucide lucide-loader-circle animate-spin text-pairup-cyan h-6 w-6"
+      fill="none"
+      height="24"
+      role="status"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M21 12a9 9 0 1 1-6.219-8.56"
+      />
+    </svg>
+  </span>
+  <span
+    class="flex items-center gap-2 opacity-0"
+    data-testid="button-content"
+  >
+    Loading
+  </span>
+</button>
+`;
+
+exports[`Button > should match snapshot - primary button 1`] = `
+<button
+  aria-disabled="false"
+  class="inline-flex items-center justify-center gap-2 font-medium rounded-md transition-colors disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 text-sm px-4 py-2 h-10 bg-pairup-cyan text-pairup-darkBlue hover:bg-pairup-cyan/90 focus:ring-pairup-cyan"
+  type="button"
+>
+  <span
+    class="flex items-center gap-2"
+    data-testid="button-content"
+  >
+    Click Nested
+  </span>
+</button>
+`;
+
+exports[`Button > should match snapshot - secondary variant 1`] = `
+<button
+  aria-disabled="false"
+  class="inline-flex items-center justify-center gap-2 font-medium rounded-md transition-colors disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 text-sm px-4 py-2 h-10 bg-pairup-yellow text-pairup-darkBlue hover:bg-pairup-yellow/90 focus:ring-pairup-yellow"
+  type="button"
+>
+  <span
+    class="flex items-center gap-2"
+    data-testid="button-content"
+  >
+    Secondary
+  </span>
+</button>
+`;
+
+exports[`Button > should match snapshot - with icons 1`] = `
+<button
+  aria-disabled="false"
+  class="inline-flex items-center justify-center gap-2 font-medium rounded-md transition-colors disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 text-sm px-4 py-2 h-10 bg-pairup-cyan text-pairup-darkBlue hover:bg-pairup-cyan/90 focus:ring-pairup-cyan"
+  type="button"
+>
+  <span
+    class="flex items-center gap-2"
+    data-testid="button-content"
+  >
+    <span
+      class="flex items-center"
+      data-testid="button-icon-left"
+    >
+      <span>
+        L
+      </span>
+    </span>
+    With Icons
+    <span
+      class="flex items-center"
+      data-testid="button-icon-right"
+    >
+      <span>
+        R
+      </span>
+    </span>
+  </span>
+</button>
+`;

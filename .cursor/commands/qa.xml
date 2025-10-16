@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testing-prompt version="1.0">
+    <metadata>
+        <purpose>Comprehensive Test Coverage and Validation</purpose>
+        <test-types>
+            <type>Unit Tests</type>
+            <type>Playwright Tests</type>
+        </test-types>
+    </metadata>
+
+    <testing-workflow>
+        <step name="existing-test-validation">
+            <objective>Verify current test suite integrity</objective>
+            <actions>
+                <action>Run full test suite</action>
+                <action>Identify failing tests</action>
+                <action>Analyze test failures</action>
+            </actions>
+        </step>
+
+        <test-failure-handling>
+            <failure-tracking>
+                <fields>
+                    <field>Test Name</field>
+                    <field>Error Type</field>
+                    <field>Failure Location</field>
+                    <field>Potential Root Cause</field>
+                    <field>Recommended Fix</field>
+                </fields>
+            </failure-tracking>
+
+            <failure-resolution-strategy>
+                <approach>Sequential Fix</approach>
+                <steps>
+                    <step>Prioritize critical failures</step>
+                    <step>Fix tests one by one</step>
+                    <step>Validate after each fix</step>
+                    <step>Regression testing</step>
+                </steps>
+            </failure-resolution-strategy>
+        </test-failure-handling>
+
+        <new-test-creation>
+            <test-types>
+                <type name="unit-tests">
+                    <coverage-goals>
+                        <goal>100% function coverage</goal>
+                        <goal>Edge case testing</goal>
+                        <goal>Input validation</goal>
+                    </coverage-goals>
+                    <test-attributes>
+                        <attribute>Isolation</attribute>
+                        <attribute>Repeatability</attribute>
+                        <attribute>Independence</attribute>
+                    </test-attributes>
+                </type>
+
+                <type name="playwright-tests">
+                    <when-applicable>Web/UI interactions</when-applicable>
+                    <coverage-goals>
+                        <goal>User flow validation</goal>
+                        <goal>Cross-browser compatibility</goal>
+                        <goal>Interactive element testing</goal>
+                    </coverage-goals>
+                </type>
+            </test-types>
+        </new-test-creation>
+
+        <reporting>
+            <output-format>Markdown</output-format>
+            <report-sections>
+                <section>Existing Test Failures</section>
+                <section>Fixed Tests</section>
+                <section>New Tests Added</section>
+                <section>Coverage Summary</section>
+            </report-sections>
+        </reporting>
+    </testing-workflow>
+
+    <example-markdown-report>
+        <![CDATA[
+# Test Validation Report
+
+## Existing Test Failures
+| Test Name | Error Type | Location | Root Cause | Fix Status |
+|-----------|------------|----------|------------|------------|
+| UserAuth.testLogin | AssertionError | auth.js:42 | Incorrect credential handling | Pending |
+
+## New Tests Created
+| Test Type | Name | Coverage | Status |
+|-----------|------|----------|--------|
+| Unit Test | validateUserInput | 100% | Implemented |
+| Playwright | LoginPageInteraction | UI Flow | Completed |
+
+## Coverage Summary
+- Total Tests: 25
+- Passed: 22
+- Failed: 3
+- Coverage Percentage: 92%
+        ]]>
+    </example-markdown-report>
+
+    <configuration>
+        <test-execution>
+            <mode>Strict</mode>
+            <fail-on-error>true</fail-on-error>
+        </test-execution>
+        <reporting>
+            <verbosity>Detailed</verbosity>
+            <output-destinations>
+                <destination>Console</destination>
+                <destination>Log File</destination>
+            </output-destinations>
+        </reporting>
+    </configuration>
+</testing-prompt>

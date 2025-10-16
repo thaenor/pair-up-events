@@ -1,0 +1,230 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ProfilePictureUpload > should match snapshot - no photo 1`] = `
+<div
+  class="flex flex-col items-center space-y-4 "
+>
+  <div
+    class="relative"
+  >
+    <div
+      class="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden"
+    >
+      <svg
+        class="lucide lucide-user w-12 h-12 text-gray-400"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+        />
+        <circle
+          cx="12"
+          cy="7"
+          r="4"
+        />
+      </svg>
+    </div>
+    <button
+      aria-label="Upload profile picture"
+      class="absolute -bottom-2 -right-2 w-8 h-8 bg-pairup-cyan text-pairup-darkBlue rounded-full flex items-center justify-center hover:bg-pairup-cyan/90 transition-colors disabled:opacity-50"
+    >
+      <svg
+        class="lucide lucide-camera w-4 h-4"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"
+        />
+        <circle
+          cx="12"
+          cy="13"
+          r="3"
+        />
+      </svg>
+    </button>
+  </div>
+  <button
+    class="flex items-center gap-2 px-4 py-2 text-sm text-pairup-darkBlue bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50"
+  >
+    <svg
+      class="lucide lucide-upload w-4 h-4"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+      />
+      <polyline
+        points="17 8 12 3 7 8"
+      />
+      <line
+        x1="12"
+        x2="12"
+        y1="3"
+        y2="15"
+      />
+    </svg>
+    Upload Photo
+  </button>
+  <input
+    accept="image/*"
+    aria-label="Profile picture file input"
+    class="hidden"
+    type="file"
+  />
+  <p
+    class="text-xs text-pairup-darkBlue/60 text-center max-w-xs"
+  >
+    Upload a clear photo of yourself. JPG, PNG formats supported. Max 5MB.
+  </p>
+</div>
+`;
+
+exports[`ProfilePictureUpload > should match snapshot - with photo 1`] = `
+<div
+  class="flex flex-col items-center space-y-4 "
+>
+  <div
+    class="relative"
+  >
+    <div
+      class="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden"
+    >
+      <img
+        alt="Profile"
+        class="w-full h-full object-cover"
+        src="https://example.com/photo.jpg"
+      />
+    </div>
+    <button
+      aria-label="Upload profile picture"
+      class="absolute -bottom-2 -right-2 w-8 h-8 bg-pairup-cyan text-pairup-darkBlue rounded-full flex items-center justify-center hover:bg-pairup-cyan/90 transition-colors disabled:opacity-50"
+    >
+      <svg
+        class="lucide lucide-camera w-4 h-4"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"
+        />
+        <circle
+          cx="12"
+          cy="13"
+          r="3"
+        />
+      </svg>
+    </button>
+  </div>
+  <button
+    class="flex items-center gap-2 px-4 py-2 text-sm text-pairup-darkBlue bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50"
+  >
+    <svg
+      class="lucide lucide-upload w-4 h-4"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+      />
+      <polyline
+        points="17 8 12 3 7 8"
+      />
+      <line
+        x1="12"
+        x2="12"
+        y1="3"
+        y2="15"
+      />
+    </svg>
+    Upload Photo
+  </button>
+  <button
+    class="flex items-center gap-2 px-4 py-2 text-sm text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors disabled:opacity-50"
+  >
+    <svg
+      class="lucide lucide-trash2 w-4 h-4"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M3 6h18"
+      />
+      <path
+        d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"
+      />
+      <path
+        d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"
+      />
+      <line
+        x1="10"
+        x2="10"
+        y1="11"
+        y2="17"
+      />
+      <line
+        x1="14"
+        x2="14"
+        y1="11"
+        y2="17"
+      />
+    </svg>
+    Remove Photo
+  </button>
+  <input
+    accept="image/*"
+    aria-label="Profile picture file input"
+    class="hidden"
+    type="file"
+  />
+  <p
+    class="text-xs text-pairup-darkBlue/60 text-center max-w-xs"
+  >
+    Upload a clear photo of yourself. JPG, PNG formats supported. Max 5MB.
+  </p>
+</div>
+`;

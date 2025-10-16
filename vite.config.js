@@ -1,33 +1,25 @@
-import react from "@vitejs/plugin-react-swc";
-import path from "path";
-import { defineConfig } from "vite";
+import react from '@vitejs/plugin-react-swc'
+import path from 'path'
+import { defineConfig } from 'vite'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
-    host: "::",
+    host: '::',
     port: 8080,
     hmr: true,
     watch: {
       usePolling: false,
     },
   },
-  plugins: [
-    react(),
-    {
-      name: 'html-transform',
-      transformIndexHtml(html) {
-        return html.replace(/%VITE_GTM_ID%/g, process.env.VITE_GTM_ID || 'GTM-PFHVCZSB');
-      },
-    },
-  ],
+  plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      '@': path.resolve(__dirname, './src'),
     },
   },
   define: {
     'process.env.NODE_ENV': JSON.stringify(mode),
     'process.env.REACT_APP_VERSION': JSON.stringify(process.env.npm_package_version || '1.0.0'),
   },
-}));
+}))

@@ -1,5 +1,32 @@
-import * as Sentry from '@sentry/react';
+import * as Sentry from '@sentry/react'
 
+/**
+ * Initialize Sentry error tracking service
+ *
+ * Configures Sentry for error monitoring, session replay, and performance
+ * tracking. Only initializes in production environment to avoid polluting
+ * development logs with expected errors.
+ *
+ * Features:
+ * - Browser tracing integration for performance monitoring
+ * - Session replay with error replay support
+ * - Smart error filtering to ignore known non-critical errors
+ * - Configured sampling rates to control data volume
+ *
+ * @see {@link https://sentry.io/} Sentry documentation
+ * @see {@link https://docs.sentry.io/platforms/javascript/} Sentry JavaScript SDK
+ *
+ * @example
+ * ```ts
+ * import { Sentry } from '@/lib/sentry';
+ *
+ * try {
+ *   // risky operation
+ * } catch (error) {
+ *   Sentry.captureException(error);
+ * }
+ * ```
+ */
 // Initialize Sentry only in production
 if (import.meta.env.PROD) {
   Sentry.init({
@@ -26,8 +53,24 @@ if (import.meta.env.PROD) {
       'WebSocket error',
       'Failed to fetch',
     ],
-  });
+  })
 }
 
-// Export Sentry for direct usage where needed
-export { Sentry };
+/**
+ * Sentry instance for manual error reporting
+ *
+ * Export Sentry for direct usage where needed throughout the application
+ * for custom error capture and context setting.
+ *
+ * @example
+ * ```ts
+ * import { Sentry } from '@/lib/sentry';
+ *
+ * // Add user context
+ * Sentry.setUser({ id: '123', email: 'user@example.com' });
+ *
+ * // Capture exception
+ * Sentry.captureException(new Error('Something went wrong'));
+ * ```
+ */
+export { Sentry }

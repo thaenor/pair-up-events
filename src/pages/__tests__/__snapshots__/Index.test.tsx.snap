@@ -1,0 +1,1336 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Index > should match snapshot 1`] = `
+<div
+  class="min-h-screen bg-pairup-cream"
+>
+  <nav
+    aria-label="Main navigation"
+    class="py-4 w-full absolute top-0 left-0 z-10 bg-pairup-darkBlue shadow-2xl"
+    data-testid="main-navigation"
+  >
+    <div
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between"
+    >
+      <div
+        class="flex items-center gap-2"
+      >
+        <img
+          alt="Pair Up Events logo"
+          class="h-6 w-6 object-contain"
+          src="/PUE_logo_transparent.png"
+        />
+        <span
+          class="text-base font-bold"
+        >
+          <span
+            class="text-pairup-cyan"
+          >
+            Pair
+          </span>
+          <span
+            class="text-pairup-yellow"
+          >
+            Up Events
+          </span>
+        </span>
+      </div>
+      <div
+        class="hidden md:flex items-center gap-6"
+        role="menubar"
+      >
+        <a
+          aria-label="Learn how PairUp works"
+          class="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
+          href="#how-it-works"
+          role="menuitem"
+        >
+          How It Works
+        </a>
+        <a
+          aria-label="Learn about PairUp benefits"
+          class="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
+          href="#benefits"
+          role="menuitem"
+        >
+          Benefits
+        </a>
+        <a
+          aria-label="Join Early Access"
+          class="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
+          href="#early-access"
+          role="menuitem"
+        >
+          Early Access
+        </a>
+      </div>
+      <div
+        class="flex items-center justify-center gap-4 mr-4"
+      >
+        <button
+          aria-label="Navigate to login page"
+          class="flex items-center gap-2 text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-4 py-2 font-medium"
+          data-testid="login-button"
+        >
+          <svg
+            class="lucide lucide-log-in w-4 h-4"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"
+            />
+            <polyline
+              points="10 17 15 12 10 7"
+            />
+            <line
+              x1="15"
+              x2="3"
+              y1="12"
+              y2="12"
+            />
+          </svg>
+          Log In
+        </button>
+        <button
+          aria-label="Navigate to signup page"
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[5px] font-medium transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 px-6 py-3 text-base bg-pairup-yellow text-pairup-darkBlue hover:opacity-90"
+          data-testid="signup-button"
+        >
+          <svg
+            class="lucide lucide-user-plus w-4 h-4"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+            />
+            <circle
+              cx="9"
+              cy="7"
+              r="4"
+            />
+            <line
+              x1="19"
+              x2="19"
+              y1="8"
+              y2="14"
+            />
+            <line
+              x1="22"
+              x2="16"
+              y1="11"
+              y2="11"
+            />
+          </svg>
+          Sign Up
+        </button>
+      </div>
+    </div>
+    <div
+      aria-hidden="true"
+      class="fixed inset-0 bg-black/50 z-50 transition-opacity duration-300 opacity-0 pointer-events-none"
+      data-testid="sidebar-backdrop"
+    />
+    <div
+      aria-hidden="true"
+      aria-label="Navigation menu"
+      aria-modal="true"
+      class="fixed top-0 right-0 h-full w-full max-w-sm bg-pairup-darkBlue shadow-2xl z-50 transform transition-transform duration-300 ease-out translate-x-full"
+      role="dialog"
+    >
+      <div
+        class="h-full flex flex-col"
+      >
+        <div
+          class="flex items-center justify-between p-4 border-b border-pairup-cyan/20"
+        >
+          <h2
+            class="text-xl font-semibold text-pairup-cream"
+          >
+            Menu
+          </h2>
+          <button
+            aria-label="Close menu"
+            class="flex items-center justify-center w-10 h-10 text-pairup-cream hover:text-pairup-yellow hover:bg-pairup-cyan/10 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue hover:rotate-90"
+            data-testid="close-sidebar-button"
+          >
+            <svg
+              class="lucide lucide-x w-6 h-6 transition-transform duration-200"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M18 6 6 18"
+              />
+              <path
+                d="m6 6 12 12"
+              />
+            </svg>
+          </button>
+        </div>
+        <nav
+          aria-label="Side navigation"
+          class="flex-1 overflow-y-auto p-4"
+        >
+          <div
+            class="space-y-2"
+          >
+            <button
+              aria-label="Navigate to settings"
+              class="w-full flex items-center gap-3 px-4 py-3 text-pairup-cream hover:text-pairup-yellow hover:bg-pairup-cyan/10 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+            >
+              <svg
+                class="lucide lucide-settings w-5 h-5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
+                />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="3"
+                />
+              </svg>
+              <span
+                class="font-medium"
+              >
+                Settings
+              </span>
+            </button>
+            <button
+              aria-label="Navigate to invite page"
+              class="w-full flex items-center gap-3 px-4 py-3 text-pairup-cream hover:text-pairup-yellow hover:bg-pairup-cyan/10 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+            >
+              <svg
+                class="lucide lucide-user-plus w-5 h-5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+                />
+                <circle
+                  cx="9"
+                  cy="7"
+                  r="4"
+                />
+                <line
+                  x1="19"
+                  x2="19"
+                  y1="8"
+                  y2="14"
+                />
+                <line
+                  x1="22"
+                  x2="16"
+                  y1="11"
+                  y2="11"
+                />
+              </svg>
+              <span
+                class="font-medium"
+              >
+                Invite a Friend
+              </span>
+            </button>
+            <button
+              aria-label="Navigate to contact page"
+              class="w-full flex items-center gap-3 px-4 py-3 text-pairup-cream hover:text-pairup-yellow hover:bg-pairup-cyan/10 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+            >
+              <svg
+                class="lucide lucide-mail w-5 h-5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  height="16"
+                  rx="2"
+                  width="20"
+                  x="2"
+                  y="4"
+                />
+                <path
+                  d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"
+                />
+              </svg>
+              <span
+                class="font-medium"
+              >
+                Contact Us
+              </span>
+            </button>
+            <button
+              aria-label="Navigate to about page"
+              class="w-full flex items-center gap-3 px-4 py-3 text-pairup-cream hover:text-pairup-yellow hover:bg-pairup-cyan/10 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+            >
+              <svg
+                class="lucide lucide-info w-5 h-5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                />
+                <path
+                  d="M12 16v-4"
+                />
+                <path
+                  d="M12 8h.01"
+                />
+              </svg>
+              <span
+                class="font-medium"
+              >
+                About Us
+              </span>
+            </button>
+            <button
+              aria-label="Navigate to privacy policy"
+              class="w-full flex items-center gap-3 px-4 py-3 text-pairup-cream hover:text-pairup-yellow hover:bg-pairup-cyan/10 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+            >
+              <svg
+                class="lucide lucide-shield w-5 h-5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+                />
+              </svg>
+              <span
+                class="font-medium"
+              >
+                Privacy Policy
+              </span>
+            </button>
+            <button
+              aria-label="Navigate to terms and conditions"
+              class="w-full flex items-center gap-3 px-4 py-3 text-pairup-cream hover:text-pairup-yellow hover:bg-pairup-cyan/10 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+            >
+              <svg
+                class="lucide lucide-file-text w-5 h-5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                />
+                <path
+                  d="M14 2v4a2 2 0 0 0 2 2h4"
+                />
+                <path
+                  d="M10 9H8"
+                />
+                <path
+                  d="M16 13H8"
+                />
+                <path
+                  d="M16 17H8"
+                />
+              </svg>
+              <span
+                class="font-medium"
+              >
+                Terms and Conditions
+              </span>
+            </button>
+            <div
+              class="border-t border-pairup-cyan/20 my-4"
+            />
+            <button
+              aria-label="Logout"
+              class="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-50/10 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50"
+              data-testid="sidebar-logout-button"
+            >
+              <svg
+                class="lucide lucide-log-out w-5 h-5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"
+                />
+                <polyline
+                  points="16 17 21 12 16 7"
+                />
+                <line
+                  x1="21"
+                  x2="9"
+                  y1="12"
+                  y2="12"
+                />
+              </svg>
+              <span
+                class="font-medium"
+              >
+                Logout
+              </span>
+            </button>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </nav>
+  <main
+    class="pb-20 md:pb-0"
+  >
+    <a
+      aria-label="Skip to main content"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-pairup-cyan text-pairup-darkBlue px-4 py-2 rounded-md font-medium z-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pairup-cyan transition-all "
+      href="#main-content"
+      tabindex="1"
+    >
+      Skip to main content
+    </a>
+    <main
+      aria-label="PairUp Events main content"
+      id="main-content"
+      role="main"
+    >
+      <section
+        aria-labelledby="hero-heading"
+        class="relative min-h-screen flex items-center justify-center bg-pairup-cream md:mt-0"
+      >
+        <div
+          class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 md:pt-20"
+        >
+          <div
+            class="grid md:grid-cols-2 gap-6 items-center"
+          >
+            <div
+              class="animate-fade-in mt-16 sm:mt-64 md:mt-0 relative z-10"
+              id="headline-cta"
+              style="animation-delay: 0.2s;"
+            >
+              <h1
+                class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
+                id="hero-heading"
+              >
+                <span
+                  class="text-pairup-darkBlue font-bold"
+                >
+                  Grab your friend
+                </span>
+                <br />
+                <span
+                  class="text-pairup-darkBlue font-normal"
+                >
+                  and meet another pair.
+                </span>
+              </h1>
+              <p
+                class="text-xl mb-8 text-pairup-darkBlue/90 max-w-lg"
+              >
+                Some activities are better as a group of 4.
+                <br />
+                Create your listing and connect with like-minded duos to meet up for shared experiences.
+              </p>
+              <div
+                class="flex flex-col items-center sm:items-start sm:flex-row gap-4"
+              >
+                <a
+                  aria-label="Create a new listing (opens in new tab)"
+                  class="btn-cta btn-cta--cyan"
+                  data-testid="create-listing-link"
+                  href="https://forms.gle/F6xptEXPLA8wEpTp7"
+                  id="create-listing-btn"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Create a new listing
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-arrow-right"
+                    fill="none"
+                    height="18"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="18"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M5 12h14"
+                    />
+                    <path
+                      d="m12 5 7 7-7 7"
+                    />
+                  </svg>
+                </a>
+                <button
+                  aria-label="Search for existing listings"
+                  class="btn-cta btn-cta--yellow"
+                  data-testid="search-listings-button"
+                  id="search-listing-btn"
+                >
+                  Search for existing listings
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-arrow-right"
+                    fill="none"
+                    height="18"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="18"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M5 12h14"
+                    />
+                    <path
+                      d="m12 5 7 7-7 7"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div
+              class="relative w-full -mt-24 sm:-mt-10 md:mt-0 mt-10 animate-fade-in flex items-center justify-center"
+              id="hero-image"
+              style="animation-delay: 0.5s;"
+            >
+              <picture
+                class="w-full max-w-2xl"
+              >
+                <source
+                  srcset="/image-web.png"
+                  type="image/webp"
+                />
+                <img
+                  alt="Two pairs meeting up for an activity"
+                  class="w-full h-auto object-contain max-h-[420px] md:max-h-[560px]"
+                  loading="lazy"
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                  src="/image-web.png"
+                />
+              </picture>
+            </div>
+          </div>
+        </div>
+        <div
+          class="hidden md:flex absolute bottom-10 left-1/2 transform -translate-x-1/2 justify-center"
+          id="bouncy-thing"
+        >
+          <a
+            aria-hidden="true"
+            class="animate-bounce"
+            href="#how-it-works"
+            tabindex="-1"
+          >
+            <div
+              class="w-8 h-12 border-2 border-pairup-darkBlue/50 rounded-full flex justify-center"
+            >
+              <div
+                class="w-2 h-2 bg-pairup-darkBlue/50 rounded-full mt-2"
+              />
+            </div>
+          </a>
+        </div>
+      </section>
+      <section
+        class="py-16 md:py-24 px-4 md:px-8 bg-transparent"
+        id="how-it-works"
+      >
+        <div
+          class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        >
+          <div
+            class="text-center mb-16"
+          >
+            <h2
+              class="text-3xl font-bold mb-4"
+            >
+              How it Works
+            </h2>
+            <p
+              class="text-lg text-pairup-darkBlue/80 max-w-2xl mx-auto"
+            >
+              Our platform makes it easy to expand your social circle in a comfortable, low-pressure way
+            </p>
+          </div>
+          <div
+            class="grid md:grid-cols-3 gap-8"
+          >
+            <div
+              class="bg-white/30 p-8 rounded-2xl transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+            >
+              <div
+                class="mb-6"
+              >
+                <svg
+                  class="lucide lucide-calendar h-12 w-12 text-pairup-darkblue"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M8 2v4"
+                  />
+                  <path
+                    d="M16 2v4"
+                  />
+                  <rect
+                    height="18"
+                    rx="2"
+                    width="18"
+                    x="3"
+                    y="4"
+                  />
+                  <path
+                    d="M3 10h18"
+                  />
+                </svg>
+              </div>
+              <h3
+                class="text-xl font-semibold mb-3"
+              >
+                <span>
+                  <span
+                    class="text-pairup-darkblue"
+                  >
+                    Create
+                  </span>
+                   or 
+                  <span
+                    class="text-pairup-darkblue"
+                  >
+                    Join
+                  </span>
+                </span>
+              </h3>
+              <p
+                class="text-pairup-darkBlue/80"
+              >
+                Create your own event or browse existing ones in your area
+              </p>
+            </div>
+            <div
+              class="bg-white/30 p-8 rounded-2xl transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+            >
+              <div
+                class="mb-6"
+              >
+                <svg
+                  class="lucide lucide-users h-12 w-12 text-pairup-darkblue"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+                  />
+                  <circle
+                    cx="9"
+                    cy="7"
+                    r="4"
+                  />
+                  <path
+                    d="M22 21v-2a4 4 0 0 0-3-3.87"
+                  />
+                  <path
+                    d="M16 3.13a4 4 0 0 1 0 7.75"
+                  />
+                </svg>
+              </div>
+              <h3
+                class="text-xl font-semibold mb-3"
+              >
+                Find a Friend
+              </h3>
+              <p
+                class="text-pairup-darkBlue/80"
+              >
+                Start by selecting one friend to join your pair-up adventure
+              </p>
+            </div>
+            <div
+              class="bg-white/30 p-8 rounded-2xl transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+            >
+              <div
+                class="mb-6"
+              >
+                <svg
+                  class="lucide lucide-map-pin h-12 w-12 text-pairup-darkblue"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"
+                  />
+                  <circle
+                    cx="12"
+                    cy="10"
+                    r="3"
+                  />
+                </svg>
+              </div>
+              <h3
+                class="text-xl font-semibold mb-3"
+              >
+                Meet Up
+              </h3>
+              <p
+                class="text-pairup-darkBlue/80"
+              >
+                Connect with another pair at the agreed location and enjoy!
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        class="py-16 md:py-24 px-4 md:px-8 bg-pairup-cream"
+        id="benefits"
+      >
+        <div
+          class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        >
+          <div
+            class="text-center mb-16"
+          >
+            <h2
+              class="text-3xl font-bold mb-4"
+            >
+              Why Pair Up?
+            </h2>
+            <p
+              class="text-lg text-pairup-darkBlue/80 max-w-2xl mx-auto"
+            >
+              We're reimagining how people meet and connect, making it more comfortable and meaningful
+            </p>
+          </div>
+          <div
+            class="grid md:grid-cols-2 gap-8"
+          >
+            <div
+              class="bg-white/20 p-8 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+            >
+              <div
+                class="mb-6"
+              >
+                <svg
+                  class="lucide lucide-users h-12 w-12 text-pairup-darkblue"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+                  />
+                  <circle
+                    cx="9"
+                    cy="7"
+                    r="4"
+                  />
+                  <path
+                    d="M22 21v-2a4 4 0 0 0-3-3.87"
+                  />
+                  <path
+                    d="M16 3.13a4 4 0 0 1 0 7.75"
+                  />
+                </svg>
+              </div>
+              <h3
+                class="text-xl font-semibold mb-3 text-pairup-darkBlue"
+              >
+                Experience a Fresh 4-Way Dynamic
+              </h3>
+              <p
+                class="text-pairup-darkblue/80"
+              >
+                Meet two new people together with your friend, creating balanced and comfortable social energy
+              </p>
+            </div>
+            <div
+              class="bg-white/20 p-8 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+            >
+              <div
+                class="mb-6"
+              >
+                <svg
+                  class="lucide lucide-calendar h-12 w-12 text-pairup-darkblue"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M8 2v4"
+                  />
+                  <path
+                    d="M16 2v4"
+                  />
+                  <rect
+                    height="18"
+                    rx="2"
+                    width="18"
+                    x="3"
+                    y="4"
+                  />
+                  <path
+                    d="M3 10h18"
+                  />
+                </svg>
+              </div>
+              <h3
+                class="text-xl font-semibold mb-3 text-pairup-darkBlue"
+              >
+                Break Your Routine
+              </h3>
+              <p
+                class="text-pairup-darkblue/80"
+              >
+                Step out of your comfort zone with spontaneous social adventures and new experiences
+              </p>
+            </div>
+            <div
+              class="bg-white/20 p-8 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+            >
+              <div
+                class="mb-6"
+              >
+                <svg
+                  class="lucide lucide-map-pin h-12 w-12 text-pairup-darkblue"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"
+                  />
+                  <circle
+                    cx="12"
+                    cy="10"
+                    r="3"
+                  />
+                </svg>
+              </div>
+              <h3
+                class="text-xl font-semibold mb-3 text-pairup-darkBlue"
+              >
+                Feel Safe and Open
+              </h3>
+              <p
+                class="text-pairup-darkblue/80"
+              >
+                Explore new energies and connections while staying with someone you trust
+              </p>
+            </div>
+            <div
+              class="bg-white/20 p-8 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+            >
+              <div
+                class="mb-6"
+              >
+                <svg
+                  class="lucide lucide-map h-12 w-12 text-pairup-darkblue"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"
+                  />
+                  <path
+                    d="M15 5.764v15"
+                  />
+                  <path
+                    d="M9 3.236v15"
+                  />
+                </svg>
+              </div>
+              <h3
+                class="text-xl font-semibold mb-3 text-pairup-darkBlue"
+              >
+                Grow Your Social Circle
+              </h3>
+              <p
+                class="text-pairup-darkblue/80"
+              >
+                Expand your network through curated, shared experiences in your city
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        class="py-16 md:py-24 px-4 md:px-8 bg-transparent"
+        id="early-access"
+      >
+        <div
+          class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        >
+          <div
+            class="bg-white/30 p-12 rounded-3xl backdrop-blur-sm"
+          >
+            <div
+              class="text-center mb-8"
+            >
+              <h2
+                class="text-3xl font-bold mb-4"
+              >
+                Get Early Access
+              </h2>
+              <p
+                class="text-lg text-pairup-darkBlue/80 max-w-2xl mx-auto"
+              >
+                Be the first to know when we launch. Sign up now to receive exclusive updates, sneak peeks, and priority access to Pair Up Events.
+              </p>
+            </div>
+            <div
+              class="flex items-center justify-center"
+            >
+              <iframe
+                allowfullscreen=""
+                frameborder="0"
+                height="500"
+                scrolling="auto"
+                src="https://sibforms.com/serve/MUIFAFLqsAW47gnNrDXUCqzyVXOATXu7PjahHmeb1AqYEwx7SxJMvu3yKUNMqQm9aiODyeTqHUWA7IklRCduPdiy26zsDtyuOczp56P4PpZKrU2kP8i9yHQP8l6cGp8v4xR3Gbujes1E7lAYjg4MCCSGL2EeIElUR64t6PJncqwNlP2cUiShr_0E-jx3FzqHd5rK5u3jXRXM8J_P"
+                style="display: block; margin-left: auto; margin-right: auto;"
+                title="Brevo Subscription Form"
+                width="600"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </main>
+  <footer
+    aria-label="Site footer"
+    class="py-12 bg-pairup-darkBlue"
+    role="contentinfo"
+  >
+    <div
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+    >
+      <div
+        class="flex flex-col md:flex-row justify-between items-center"
+      >
+        <div
+          class="mb-6 md:mb-0"
+        >
+          <div
+            class="flex items-center gap-2"
+          >
+            <img
+              alt="Pair Up Events logo"
+              class="h-6 w-6 object-contain"
+              src="/PUE_logo_transparent.png"
+            />
+            <span
+              class="text-base font-bold"
+            >
+              <span
+                class="text-pairup-cyan"
+              >
+                Pair
+              </span>
+              <span
+                class="text-pairup-yellow"
+              >
+                Up Events
+              </span>
+            </span>
+          </div>
+          <p
+            class="text-sm text-pairup-cream/70 mt-2"
+          >
+            You and your friend meet another pair for a shared activity
+          </p>
+        </div>
+        <nav
+          aria-label="Footer navigation"
+          class="grid md:grid-cols-3 gap-8 text-center md:text-left"
+        >
+          <div>
+            <h3
+              class="text-sm font-semibold mb-3 text-pairup-yellow"
+            >
+              Platform
+            </h3>
+            <ul
+              class="space-y-2 text-sm"
+            >
+              <li>
+                <a
+                  aria-label="Navigate to the How it Works section"
+                  class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                  href="#how-it-works"
+                >
+                  How it Works
+                </a>
+              </li>
+              <li>
+                <a
+                  aria-label="Learn how to create an event in the Early Access section"
+                  class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                  href="#early-access"
+                >
+                  Create an Event
+                </a>
+              </li>
+              <li>
+                <a
+                  aria-label="Join an event by signing up through the Early Access section"
+                  class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                  href="#early-access"
+                >
+                  Join an Event
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3
+              class="text-sm font-semibold mb-3 text-pairup-yellow"
+            >
+              Company
+            </h3>
+            <ul
+              class="space-y-2 text-sm"
+            >
+              <li>
+                <a
+                  aria-label="Discover more about Pair Up Events in the Benefits section"
+                  class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                  href="#benefits"
+                >
+                  About Us
+                </a>
+              </li>
+              <li>
+                <a
+                  aria-label="Find our contact form in the Early Access section"
+                  class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                  href="#early-access"
+                >
+                  Contact
+                </a>
+              </li>
+              <li>
+                <a
+                  aria-label="See why it's great to work with us in the Benefits section"
+                  class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                  href="#benefits"
+                >
+                  Careers
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3
+              class="text-sm font-semibold mb-3 text-pairup-yellow"
+            >
+              Legal
+            </h3>
+            <ul
+              class="space-y-2 text-sm"
+            >
+              <li>
+                <a
+                  aria-label="Review our privacy policy and data handling practices"
+                  class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                  href="/privacy-policy"
+                >
+                  Privacy Policy
+                </a>
+              </li>
+              <li>
+                <a
+                  aria-label="Read our terms of service and user agreement"
+                  class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                  href="/terms-of-service"
+                >
+                  Terms of Service
+                </a>
+              </li>
+              <li>
+                <a
+                  aria-label="Learn more about our approach in the Benefits section"
+                  class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                  href="#benefits"
+                >
+                  Cookie Policy
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div
+        class="border-t border-pairup-darkBlueAlt/30 mt-12 pt-8 text-center text-sm text-pairup-cream/50"
+      >
+        © 2025 Pair Up Events. All rights reserved.
+      </div>
+    </div>
+  </footer>
+  <nav
+    aria-label="Mobile navigation"
+    class="fixed bottom-0 left-0 right-0 z-50 bg-pairup-darkBlue border-t border-pairup-cyan/20 md:hidden"
+    data-testid="mobile-bottom-navigation"
+  >
+    <div
+      class="flex items-center justify-around py-2"
+    >
+      <button
+        aria-label="Navigate to homepage"
+        class="flex flex-col items-center justify-center py-2 px-3 min-w-0 flex-1 transition-colors duration-200 text-pairup-yellow"
+        role="menuitem"
+      >
+        <svg
+          class="lucide lucide-compass w-5 h-5 mb-1 text-pairup-yellow"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"
+          />
+          <circle
+            cx="12"
+            cy="12"
+            r="10"
+          />
+        </svg>
+        <span
+          class="text-xs font-medium truncate text-pairup-yellow"
+        >
+          Explore
+        </span>
+        <div
+          class="absolute -top-0.5 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-pairup-yellow rounded-full"
+        />
+      </button>
+      <button
+        aria-label="Navigate to my events"
+        class="flex flex-col items-center justify-center py-2 px-3 min-w-0 flex-1 transition-colors duration-200 text-pairup-cream hover:text-pairup-yellow"
+        role="menuitem"
+      >
+        <svg
+          class="lucide lucide-calendar w-5 h-5 mb-1"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M8 2v4"
+          />
+          <path
+            d="M16 2v4"
+          />
+          <rect
+            height="18"
+            rx="2"
+            width="18"
+            x="3"
+            y="4"
+          />
+          <path
+            d="M3 10h18"
+          />
+        </svg>
+        <span
+          class="text-xs font-medium truncate "
+        >
+          My Events
+        </span>
+      </button>
+      <button
+        aria-label="Navigate to messenger"
+        class="flex flex-col items-center justify-center py-2 px-3 min-w-0 flex-1 transition-colors duration-200 text-pairup-cream hover:text-pairup-yellow"
+        role="menuitem"
+      >
+        <svg
+          class="lucide lucide-message-circle w-5 h-5 mb-1"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"
+          />
+        </svg>
+        <span
+          class="text-xs font-medium truncate "
+        >
+          Messenger
+        </span>
+      </button>
+      <button
+        aria-label="Navigate to my profile"
+        class="flex flex-col items-center justify-center py-2 px-3 min-w-0 flex-1 transition-colors duration-200 text-pairup-cream hover:text-pairup-yellow"
+        role="menuitem"
+      >
+        <svg
+          class="lucide lucide-user w-5 h-5 mb-1"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+          />
+          <circle
+            cx="12"
+            cy="7"
+            r="4"
+          />
+        </svg>
+        <span
+          class="text-xs font-medium truncate "
+        >
+          My Profile
+        </span>
+      </button>
+    </div>
+  </nav>
+</div>
+`;

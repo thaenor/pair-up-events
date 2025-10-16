@@ -1,0 +1,32 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AuthLayout > should match snapshot 1`] = `
+<div
+  class="grid grid-cols-1 md:grid-cols-2 h-screen"
+  data-testid="auth-layout"
+>
+  <div
+    class="bg-[#1A2833] p-8 flex flex-col justify-center items-center order-2 md:order-1"
+    data-testid="auth-layout-left"
+  >
+    <div>
+      Left Content
+    </div>
+  </div>
+  <div
+    class="order-1 md:order-2"
+    data-testid="auth-layout-images"
+  >
+    <img
+      alt="PairUp Events"
+      class="w-full h-auto object-cover md:hidden"
+      src="/Header Logo Mobile.png"
+    />
+    <img
+      alt="PairUp Events"
+      class="hidden md:block w-full h-full object-cover"
+      src="/Header Logo Desktop.png"
+    />
+  </div>
+</div>
+`;

@@ -1,0 +1,175 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`HowItWorksSection > should match snapshot 1`] = `
+<section
+  class="py-16 md:py-24 px-4 md:px-8 bg-transparent"
+  id="how-it-works"
+>
+  <div
+    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+  >
+    <div
+      class="text-center mb-16"
+    >
+      <h2
+        class="text-3xl font-bold mb-4"
+      >
+        How it Works
+      </h2>
+      <p
+        class="text-lg text-pairup-darkBlue/80 max-w-2xl mx-auto"
+      >
+        Our platform makes it easy to expand your social circle in a comfortable, low-pressure way
+      </p>
+    </div>
+    <div
+      class="grid md:grid-cols-3 gap-8"
+    >
+      <div
+        class="bg-white/30 p-8 rounded-2xl transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+      >
+        <div
+          class="mb-6"
+        >
+          <svg
+            class="lucide lucide-calendar h-12 w-12 text-pairup-darkblue"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M8 2v4"
+            />
+            <path
+              d="M16 2v4"
+            />
+            <rect
+              height="18"
+              rx="2"
+              width="18"
+              x="3"
+              y="4"
+            />
+            <path
+              d="M3 10h18"
+            />
+          </svg>
+        </div>
+        <h3
+          class="text-xl font-semibold mb-3"
+        >
+          <span>
+            <span
+              class="text-pairup-darkblue"
+            >
+              Create
+            </span>
+             or
+             
+            <span
+              class="text-pairup-darkblue"
+            >
+              Join
+            </span>
+          </span>
+        </h3>
+        <p
+          class="text-pairup-darkBlue/80"
+        >
+          Create your own event or browse existing ones in your area
+        </p>
+      </div>
+      <div
+        class="bg-white/30 p-8 rounded-2xl transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+      >
+        <div
+          class="mb-6"
+        >
+          <svg
+            class="lucide lucide-users h-12 w-12 text-pairup-darkblue"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+            />
+            <circle
+              cx="9"
+              cy="7"
+              r="4"
+            />
+            <path
+              d="M22 21v-2a4 4 0 0 0-3-3.87"
+            />
+            <path
+              d="M16 3.13a4 4 0 0 1 0 7.75"
+            />
+          </svg>
+        </div>
+        <h3
+          class="text-xl font-semibold mb-3"
+        >
+          Find a Friend
+        </h3>
+        <p
+          class="text-pairup-darkBlue/80"
+        >
+          Start by selecting one friend to join your pair-up adventure
+        </p>
+      </div>
+      <div
+        class="bg-white/30 p-8 rounded-2xl transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+      >
+        <div
+          class="mb-6"
+        >
+          <svg
+            class="lucide lucide-map-pin h-12 w-12 text-pairup-darkblue"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"
+            />
+            <circle
+              cx="12"
+              cy="10"
+              r="3"
+            />
+          </svg>
+        </div>
+        <h3
+          class="text-xl font-semibold mb-3"
+        >
+          Meet Up
+        </h3>
+        <p
+          class="text-pairup-darkBlue/80"
+        >
+          Connect with another pair at the agreed location and enjoy!
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+`;
