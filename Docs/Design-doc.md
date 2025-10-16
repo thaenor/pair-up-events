@@ -916,29 +916,113 @@ meta:
 ---
 
 # **7. Visual Design**
+## 🎨 Visual Design
 
-**Typography:**
-- Font: `Inter` (Sans-serif)
-- Sizes: `text-sm`, `text-base`, `text-lg`, `text-2xl`
-- Headings use `font-semibold`, tight line height for clarity
+The visual identity of **Pair Up Events** reflects *warmth, trust, and curiosity*.  
+It invites users to explore real-world experiences in a *modern, organic* interface that feels both *encouraging and authentic*.  
+The system combines photography of real people in motion with card-based floating UI elements to create a natural flow between digital and human interaction.
 
-**Color Palette:**
-| Role | Color | Description |
-|------|--------|-------------|
-| Primary | `#3B82F6` | Action, links, positive states |
-| Secondary | `#9333EA` | Highlights, icons |
-| Background | `#FFFFFF` / `#0F172A` | Light / Dark modes |
-| Success | `#16A34A` | Confirmations |
-| Error | `#DC2626` | Validation errors |
-
-**Layout & Spacing:**
-- 8px base grid (Tailwind spacing scale)
-- Max content width: `1280px`
-- Generous padding for mobile usability
-
-**Imagery:**
-- Minimal illustrations, soft gradients, light tone
-- Icons for function, not decoration
+```json
+{
+  "visual_design": {
+    "core_attributes": {
+      "tone": ["trustworthy", "encouraging", "modern", "warm", "organic"],
+      "keywords": ["connection", "movement", "balance", "real", "light depth"]
+    },
+    "layout_style": {
+      "structure": "card-based floating layers",
+      "visual_depth": {
+        "elevation_levels": 3,
+        "shadow_softness": "medium",
+        "corner_radius": "16px",
+        "border_stroke": "1px solid #1A2A33"
+      },
+      "white_space": "generous",
+      "alignment": "grid-based with organic rhythm"
+    },
+    "photography_style": {
+      "type": "real_people_in_motion",
+      "lighting": "natural daylight or warm interior tones",
+      "composition": "candid, unposed, relational moments",
+      "color_harmony": "aligned with brand primaries and natural tones",
+      "background_depth": "soft blur or environmental context (e.g., city, park, home)"
+    },
+    "hero_image_reference": {
+      "composition": "4-photo collage representing diverse pair dynamics",
+      "images": [
+        {
+          "id": "img_top_left",
+          "description": "Two female friends with one arm over the other’s shoulder, harbor background.",
+          "color_palette": ["#EEF5C8", "#C8D7F5"]
+        },
+        {
+          "id": "img_top_right",
+          "description": "Couple taking a selfie in front of the Eiffel Tower in Paris.",
+          "color_palette": ["#F5D0C8", "#EDD29D"]
+        },
+        {
+          "id": "img_bottom_left",
+          "description": "Twins hugging at home, wearing identical sweaters.",
+          "color_palette": ["#C8F5D0"]
+        },
+        {
+          "id": "img_bottom_right",
+          "description": "Father walking hand-in-hand with child toward a playground.",
+          "color_palette": ["#EDD29D", "#F5C8EE"]
+        }
+      ],
+      "visual_balance": "top-heavy symmetry with bottom grounding imagery",
+      "emotion": ["connection", "comfort", "playfulness", "shared experience"]
+    },
+    "cta_style": {
+      "type": "filled",
+      "shape": "rounded",
+      "colors": {
+        "primary_create": "#27E9F3",
+        "primary_join": "#FECC08",
+        "base_dark": "#1A2A33"
+      },
+      "contrast_ratio_minimum": "4.5:1",
+      "text_treatment": "bold uppercase Manrope",
+      "interaction_feedback": {
+        "hover_state": "light brightness shift + subtle elevation increase",
+        "active_state": "pressed effect with reduced elevation"
+      }
+    },
+    "color_behavior": {
+      "primary_usage": {
+        "create_events": "#27E9F3",
+        "find_events": "#FECC08",
+        "background": "#F5E6C8",
+        "accent_dark": "#1A2A33"
+      },
+      "contrast_management": "Maintain readable contrast against warm backgrounds",
+      "emotion_balance": "Cool tones for energy, warm tones for comfort"
+    },
+    "visual_hierarchy": {
+      "headlines": {
+        "font": "Outfit",
+        "weight": "700",
+        "intent": "confidence, clarity"
+      },
+      "body_text": {
+        "font": "Manrope",
+        "weight": "400",
+        "intent": "approachable readability"
+      },
+      "cta_text": {
+        "font": "Manrope",
+        "weight": "600",
+        "intent": "inviting action"
+      }
+    },
+    "cross_references": {
+      "design_tokens": "Color variables and typography scales defined in Design Tokens & Theming.",
+      "accessibility": "All contrast, color, and size rules are validated per WCAG 2.2 AA.",
+      "animations": "Layer transitions and hover states defined in Animations & Micro-interactions."
+    }
+  }
+}
 
 ---
 
