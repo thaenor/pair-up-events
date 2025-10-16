@@ -15,6 +15,8 @@ const NotFoundPage = lazy(() => import("./pages/NotFound"));
 const AuthPage = lazy(() => import("./pages/auth"));
 const LoginPage = lazy(() => import("./pages/login"));
 const ProfilePage = lazy(() => import("./pages/profile"));
+const EventsPage = lazy(() => import("./pages/events"));
+const MessengerPage = lazy(() => import("./pages/messenger"));
 const TermsOfServicePage = lazy(() => import("./pages/terms-of-service"));
 const PrivacyPolicyPage = lazy(() => import("./pages/privacy-policy"));
 
@@ -44,6 +46,8 @@ const App = () => {
               <Route path="/signup" element={<AuthPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/events" element={<EventsPage />} />
+              <Route path="/messenger" element={<MessengerPage />} />
               <Route path="/terms-of-service" element={<TermsOfServicePage />} />
               <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
               <Route path="/404" element={<NotFoundPage />} />

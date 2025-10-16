@@ -14,6 +14,7 @@ export { default as EarlyAccessSection } from "./organisms/EarlyAccessSection";
 export { default as Footer } from "./organisms/Footer";
 export { default as HeroSection } from "./organisms/HeroSection";
 export { default as HowItWorksSection } from "./organisms/HowItWorksSection";
+export { default as MobileBottomNavigation } from "./organisms/MobileBottomNavigation";
 export { default as Navigation } from "./organisms/Navigation";
 
 // Templates

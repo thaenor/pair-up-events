@@ -3,7 +3,7 @@ import { MemoryRouter, useNavigate } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi, type MockedFunction } from "vitest";
 
 import Navigation from "../Navigation";
-import { NAVIGATION_COPY, NAVIGATION_MESSAGES } from "@/constants/navigation";
+import { NAVIGATION_MESSAGES } from "@/constants/navigation";
 
 type AuthState = {
   user: { email?: string; displayName?: string } | null;
@@ -52,19 +52,19 @@ describe("Navigation", () => {
     (useNavigate as MockedFunction<typeof useNavigate>).mockReturnValue(mockNavigate);
   });
 
-  it("navigates to signup when guest clicks get started", () => {
+  it("navigates to signup when guest clicks sign up button", () => {
     render(
       <MemoryRouter>
         <Navigation />
       </MemoryRouter>
     );
 
-    fireEvent.click(screen.getByTestId("get-started-button"));
+    fireEvent.click(screen.getByTestId("signup-button"));
 
     expect(mockNavigate).toHaveBeenCalledWith("/signup");
   });
 
-  it("shows welcome state instead of the get started button for authenticated users", () => {
+  it("shows navigation links and logout button for authenticated users", () => {
     authState.user = { email: "member@pairup.events" };
 
     render(
@@ -73,13 +73,16 @@ describe("Navigation", () => {
       </MemoryRouter>
     );
 
-    expect(screen.queryByTestId("get-started-button")).not.toBeInTheDocument();
-    expect(screen.getByTestId("navigation-welcome")).toHaveTextContent(
-      `${NAVIGATION_COPY.AUTHENTICATED.WELCOME_PREFIX}member@pairup.events`
-    );
+    expect(screen.queryByTestId("signup-button")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("login-button")).not.toBeInTheDocument();
+    expect(screen.getByTestId("logout-button")).toBeInTheDocument();
+    expect(screen.getByText("Explore")).toBeInTheDocument();
+    expect(screen.getByText("My Events")).toBeInTheDocument();
+    expect(screen.getByText("Messenger")).toBeInTheDocument();
+    expect(screen.getByText("My Profile")).toBeInTheDocument();
   });
 
-  it("navigates to the profile page when the welcome message is clicked", () => {
+  it("navigates to the profile page when My Profile is clicked", () => {
     authState.user = { email: "member@pairup.events" };
 
     render(
@@ -88,9 +91,9 @@ describe("Navigation", () => {
       </MemoryRouter>
     );
 
-    fireEvent.click(screen.getByTestId("navigation-welcome"));
+    fireEvent.click(screen.getByText("My Profile"));
 
-    expect(mockNavigate).toHaveBeenCalledWith(NAVIGATION_COPY.AUTHENTICATED.PROFILE_ROUTE);
+    expect(mockNavigate).toHaveBeenCalledWith("/profile");
   });
 
   it("logs the user out and shows feedback", async () => {
@@ -125,5 +128,59 @@ describe("Navigation", () => {
     await waitFor(() => {
       expect(mockToastError).toHaveBeenCalledWith(NAVIGATION_MESSAGES.LOGOUT_ERROR);
     });
+  });
+
+  it("navigates to login when guest clicks login button", () => {
+    render(
+      <MemoryRouter>
+        <Navigation />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByTestId("login-button"));
+
+    expect(mockNavigate).toHaveBeenCalledWith("/login");
+  });
+
+  it("navigates to events page when My Events is clicked", () => {
+    authState.user = { email: "member@pairup.events" };
+
+    render(
+      <MemoryRouter>
+        <Navigation />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByText("My Events"));
+
+    expect(mockNavigate).toHaveBeenCalledWith("/events");
+  });
+
+  it("navigates to messenger page when Messenger is clicked", () => {
+    authState.user = { email: "member@pairup.events" };
+
+    render(
+      <MemoryRouter>
+        <Navigation />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByText("Messenger"));
+
+    expect(mockNavigate).toHaveBeenCalledWith("/messenger");
+  });
+
+  it("navigates to explore page when Explore is clicked", () => {
+    authState.user = { email: "member@pairup.events" };
+
+    render(
+      <MemoryRouter>
+        <Navigation />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByText("Explore"));
+
+    expect(mockNavigate).toHaveBeenCalledWith("/");
   });
 });

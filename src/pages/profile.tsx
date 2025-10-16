@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '@/components/atoms/LoadingSpinner';
 import AccountControls from '@/components/molecules/account-controls';
 import InviteFriendSection from '@/components/molecules/invite-friend-section';
+import Navigation from '@/components/organisms/Navigation';
+import MobileBottomNavigation from '@/components/organisms/MobileBottomNavigation';
 import { useAuth } from '@/hooks/useAuth';
 import { PROFILE_COPY } from '@/constants/profile';
 import { useUserProfile } from '@/hooks/useUserProfile';
@@ -42,7 +44,8 @@ const ProfilePage: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-pairup-cream">
-            <div className="container mx-auto px-4 py-8 max-w-2xl">
+            <Navigation />
+            <div className="container mx-auto px-4 py-8 max-w-2xl pt-24 pb-20 md:pb-8">
                 {/* Header */}
                 <div className="text-center mb-8">
                     <img src="/Logo.png" alt={PROFILE_COPY.HEADER.LOGO_ALT} className="h-12 mx-auto mb-6" />
@@ -80,6 +83,7 @@ const ProfilePage: React.FC = () => {
                 <AccountControls user={user} />
 
             </div>
+            <MobileBottomNavigation />
         </div>
     );
 };
