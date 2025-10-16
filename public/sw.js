@@ -101,6 +101,25 @@ self.addEventListener('fetch', (event) => {
     return; // Let Firebase handle these requests directly
   }
 
+  // Skip Google Analytics and tracking requests
+  if (url.hostname.includes('google-analytics.com') ||
+      url.hostname.includes('googletagmanager.com') ||
+      url.hostname.includes('analytics.google.com') ||
+      url.pathname.includes('/g/collect') ||
+      url.pathname.includes('/gtm.js') ||
+      url.pathname.includes('/gtag/')) {
+    return; // Let Google Analytics handle these requests directly
+  }
+
+  // Skip Sentry error reporting requests
+  if (url.hostname.includes('sentry.io') ||
+      url.hostname.includes('ingest.sentry.io') ||
+      url.pathname.includes('/api/') ||
+      url.pathname.includes('/store/') ||
+      url.pathname.includes('/envelope/')) {
+    return; // Let Sentry handle these requests directly
+  }
+
   // In development, use network-first strategy for better HMR
   if (isDevelopment) {
     event.respondWith(

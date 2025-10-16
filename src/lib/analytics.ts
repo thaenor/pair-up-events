@@ -10,6 +10,22 @@ declare global {
   }
 }
 
+// Google Analytics Measurement ID from environment or default
+const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || 'G-VLKL39B635';
+
+// Check if analytics is available and working
+export const isAnalyticsAvailable = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  
+  // Check if gtag is available
+  if (typeof window.gtag === 'function') return true;
+  
+  // Check if dataLayer is available (GTM fallback)
+  if (window.dataLayer && Array.isArray(window.dataLayer)) return true;
+  
+  return false;
+};
+
 /**
  * Initialize Google Analytics tracking
  * This should be called after GTM is loaded
@@ -34,16 +50,24 @@ export const initializeAnalytics = (): void => {
 export const trackEvent = (eventName: string, parameters?: Record<string, unknown>): void => {
   if (typeof window === 'undefined') return;
   
-  // Use gtag if available (loaded by GTM)
-  if (window.gtag) {
-    window.gtag('event', eventName, parameters);
-  } else {
-    // Fallback to dataLayer push for GTM
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({
-      event: eventName,
-      ...parameters,
-    });
+  try {
+    // Use gtag if available (loaded by GTM)
+    if (window.gtag) {
+      window.gtag('event', eventName, parameters);
+    } else if (window.dataLayer) {
+      // Fallback to dataLayer push for GTM
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: eventName,
+        ...parameters,
+      });
+    } else {
+      // Analytics not available - log for debugging but don't throw
+      console.log('Analytics not available for event:', eventName, parameters);
+    }
+  } catch (error) {
+    // Silently handle analytics errors to prevent app crashes
+    console.log('Analytics tracking failed:', error);
   }
 };
 
@@ -55,19 +79,27 @@ export const trackEvent = (eventName: string, parameters?: Record<string, unknow
 export const trackPageView = (pagePath: string, pageTitle?: string): void => {
   if (typeof window === 'undefined') return;
   
-  if (window.gtag) {
-    window.gtag('config', 'GA_MEASUREMENT_ID', {
-      page_path: pagePath,
-      page_title: pageTitle,
-    });
-  } else {
-    // Fallback to dataLayer push for GTM
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({
-      event: 'page_view',
-      page_path: pagePath,
-      page_title: pageTitle,
-    });
+  try {
+    if (window.gtag) {
+      window.gtag('config', GA_MEASUREMENT_ID, {
+        page_path: pagePath,
+        page_title: pageTitle,
+      });
+    } else if (window.dataLayer) {
+      // Fallback to dataLayer push for GTM
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'page_view',
+        page_path: pagePath,
+        page_title: pageTitle,
+      });
+    } else {
+      // Analytics not available - log for debugging but don't throw
+      console.log('Analytics not available for page view:', pagePath, pageTitle);
+    }
+  } catch (error) {
+    // Silently handle analytics errors to prevent app crashes
+    console.log('Analytics page view tracking failed:', error);
   }
 };
 
