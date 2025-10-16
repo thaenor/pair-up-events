@@ -69,7 +69,7 @@ This model is designed for **low-cost, scalable Firebase usage** with **pair-bas
 | `title` | string | Event title |
 | `description` | string | Full description |
 | `creatorId` | string | UID of the creator (User A) |
-| `status` | string | `"pending" | "live" | "confirmed" | "completed" | "cancelled"` |
+| `status` | string | `"draft" | "pending" | "live" | "confirmed" | "completed" | "cancelled"` |
 | `visibility` | string | `"public" | "private" | "friends"` |
 | `timeStart` | Timestamp | Start time |
 | `timeEnd` | Timestamp | End time (optional) |
@@ -478,12 +478,14 @@ Users can customize their experience with brand-aligned theming:
 ### Pair-Based Event Constraints
 1. **Fixed Capacity**: All events must have exactly 4 participants (2 pairs of 2)
 2. **Pair Formation**: Users must join as pairs, not individuals
-3. **State Progression**: Events must follow: `pending` → `live` → `confirmed`
+3. **State Progression**: Events must follow: `draft` → `pending` → `live` → `confirmed`
 4. **Chat Creation**: Group chats are automatically created when event reaches `confirmed` status
 5. **Join Requests**: Only one pair can join a live event (first approved request wins)
 
 ### Event State Transitions
 ```
+draft (Event created, no participants yet)
+    ↓ (Creator invites first participant)
 pending (User A created, waiting for User B)
     ↓ (User B accepts)
 live (A+B confirmed, visible to C+D)
@@ -512,7 +514,7 @@ completed (Event finished, feedback prompts sent)
    - Added `join_requests` subcollection for pair-based joining
 
 2. **Event State Management**
-   - Added `status` field: `pending` → `live` → `confirmed` → `completed`
+   - Added `status` field: `draft` → `pending` → `live` → `confirmed` → `completed`
    - Added `chatCreated` and `chatArchived` flags
    - Defined clear state transition rules
 
