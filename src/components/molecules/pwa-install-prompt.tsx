@@ -55,7 +55,10 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({ className = 
         trackNotificationEvent('permission_denied');
       }
     } catch (error) {
-      console.error('Permission request failed:', error);
+      logError('Notification permission request failed', error instanceof Error ? error : new Error(String(error)), {
+        component: 'PWAInstallPrompt',
+        action: 'handleRequestNotifications',
+      });
       // Track notification permission error
       trackNotificationEvent('permission_denied');
     } finally {
