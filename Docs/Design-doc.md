@@ -23,7 +23,7 @@ It serves as the foundation for consistent interface design, component hierarchy
 
 ---
 
-# 🚀 **1. Product Overview**
+# **1. Product Overview**
 Pair Up Events is a social event platform that allows two pairs of people to connect and meet through shared activities.
 Each "pair" represents two users who join the platform together (friends, couple, family duo, etc.).
 The core system enables users to create, share, and join events, encouraging real-world interaction through fun, curiosity-driven activities.
@@ -253,7 +253,7 @@ Pair Up Events enables users to:
 
 ---
 
-# 💡 **2. Design Principles**
+# **2. Design Principles**
 
 1. **Clarity** — Every screen should communicate its purpose at a glance.
 2. **Speed** — Optimize for performance and perceived speed.
@@ -264,7 +264,7 @@ Pair Up Events enables users to:
 
 ---
 
-# 👥 **3. User Personas**
+# **3. User Personas**
 
 | **Persona Name** | **Profile Summary** | **Example Pair** | **Goals** | **Pain Points** |
 |------------------|--------------------|------------------|------------|-----------------|
@@ -277,7 +277,7 @@ Pair Up Events enables users to:
 
 ---
 
-# 🗺️ **4. User Journey & Flows (Web Platform)**
+# **4. User Journey & Flows (Web Platform)**
 
 ### Core Journeys
  
@@ -600,7 +600,7 @@ Chat tab visible but empty.
 
 ---
 
-# 🧱 **5. Information Architecture**
+# **5. Information Architecture**
 
 **High-level structure:**
 
@@ -690,7 +690,7 @@ Navigation uses a responsive `Navigation` organism with adaptive links and user 
 
 ---
 
-## 🧩 **6. Component Design System**
+# **6. Component Design System**
 
 ### Core Atoms
 - **Button** — primary, secondary, ghost
@@ -725,7 +725,7 @@ Navigation uses a responsive `Navigation` organism with adaptive links and user 
 
 ---
 
-## 🎨 **7. Visual Design**
+# **7. Visual Design**
 
 **Typography:**
 - Font: `Inter` (Sans-serif)
@@ -752,7 +752,7 @@ Navigation uses a responsive `Navigation` organism with adaptive links and user 
 
 ---
 
-## ♿ **8. Accessibility & UX**
+# **8. Accessibility & UX**
 
 Pair Up Events is designed to meet **WCAG 2.1 AA** compliance.
 
@@ -768,7 +768,7 @@ Accessibility is reviewed monthly and tested with `@testing-library/jest-axe`.
 
 ---
 
-## 📱 **9. Responsive Design**
+# **9. Responsive Design**
 
 **Approach:**
 Mobile-first layouts that gracefully expand to tablet and desktop.
@@ -788,7 +788,7 @@ Mobile-first layouts that gracefully expand to tablet and desktop.
 
 ---
 
-## ✨ **10. Animations & Micro-interactions**
+# **10. Animations & Micro-interactions**
 
 - **Page transitions:** `framer-motion` fade + slide-in effects
 - **Button feedback:** subtle scale + shadow on press
@@ -802,7 +802,7 @@ Animations should enhance comprehension and delight without slowing performance.
 
 ---
 
-## 🎨 **11. Design Tokens & Theming**
+# **11. Design Tokens & Theming**
 
 - **Colors:** defined in `tailwind.config.ts` via custom palette
 - **Typography:** configured in global styles (`index.css`)
@@ -821,7 +821,7 @@ Example:
 }
 ```
 
-## 💎 **12. Branding Guidelines**
+# **12. Branding Guidelines**
 
 ### 🎭 Tone & Voice
 Pair Up Events speaks with **warmth, energy, and inclusivity**.
@@ -915,7 +915,7 @@ SVG preferred for web. PNG for fallbacks.
 
 ---
 
-## 🔮 **13. Future Improvements**
+# **13. Future Improvements**
 
 The following improvements are planned to evolve both product design and brand maturity:
 
