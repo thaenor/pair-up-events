@@ -23,7 +23,27 @@ Click **"New repository secret"** for each of these:
 - **Name**: `VITE_FIREBASE_PROJECT_ID`
 - **Value**: Your Firebase project ID (from Firebase Console)
 
-### Secret 4: Sentry DSN (Error Tracking)
+### Secret 4: Firebase App ID
+- **Name**: `VITE_FIREBASE_APP_ID`
+- **Value**: Your Firebase App ID (from Firebase Console → Project Settings → Web App)
+
+### Secret 5: Firebase Measurement ID
+- **Name**: `VITE_FIREBASE_MEASUREMENT_ID`
+- **Value**: Your Firebase Measurement ID (from Firebase Console → Project Settings → Web App)
+
+### Secret 6: Firebase Messaging Sender ID
+- **Name**: `VITE_FIREBASE_MESSAGING_SENDER_ID`
+- **Value**: Your Firebase Messaging Sender ID (from Firebase Console → Project Settings → Web App)
+
+### Secret 7: Firebase Storage Bucket
+- **Name**: `VITE_FIREBASE_STORAGE_BUCKET`
+- **Value**: Your Firebase Storage Bucket (from Firebase Console → Project Settings → Web App)
+
+### Secret 8: Firebase VAPID Key
+- **Name**: `VITE_FIREBASE_VAPID_KEY`
+- **Value**: Your Firebase VAPID Key (from Firebase Console → Project Settings → Cloud Messaging → Web Push certificates)
+
+### Secret 9: Sentry DSN (Error Tracking)
 - **Name**: `VITE_SENTRY_DSN`
 - **Value**: Your Sentry DSN (from Sentry.io → Project Settings → Client Keys)
 
@@ -33,6 +53,11 @@ After adding all secrets, you should see:
 - ✅ `VITE_FIREBASE_API_KEY`
 - ✅ `VITE_FIREBASE_AUTH_DOMAIN`
 - ✅ `VITE_FIREBASE_PROJECT_ID`
+- ✅ `VITE_FIREBASE_APP_ID`
+- ✅ `VITE_FIREBASE_MEASUREMENT_ID`
+- ✅ `VITE_FIREBASE_MESSAGING_SENDER_ID`
+- ✅ `VITE_FIREBASE_STORAGE_BUCKET`
+- ✅ `VITE_FIREBASE_VAPID_KEY`
 - ✅ `VITE_SENTRY_DSN`
 
 ## Step 4: Test Deployment
@@ -53,7 +78,7 @@ After adding all secrets, you should see:
 
 ### Build Fails with "Missing Firebase environment variables"
 - Double-check secret names match exactly (case-sensitive)
-- Ensure all 4 secrets are added (Firebase + Sentry)
+- Ensure all 9 secrets are added (Firebase + Sentry)
 - Verify secret values are correct
 
 ### Firebase Authentication Not Working in Production
