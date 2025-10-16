@@ -3,6 +3,7 @@ import { usePWA } from '@/hooks/usePWA';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { Bell, Download, Smartphone } from 'lucide-react';
 import { trackPWAEvent, trackNotificationEvent } from '@/lib/analytics';
+import { logError } from '@/utils/logger';
 
 interface PWAInstallPromptProps {
   className?: string;
@@ -32,7 +33,10 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({ className = 
         trackPWAEvent('install');
       }
     } catch (error) {
-      console.error('Installation failed:', error);
+      logError('PWA installation failed', error instanceof Error ? error : new Error(String(error)), {
+        component: 'PWAInstallPrompt',
+        action: 'handleInstall',
+      });
     } finally {
       setIsInstalling(false);
     }

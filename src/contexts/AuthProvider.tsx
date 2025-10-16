@@ -123,7 +123,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
 
   // Sign in with email and password
-  const signInWithEmail = async (email: string, password: string) => {
+  const signInWithEmail = useCallback(async (email: string, password: string) => {
     try {
       const { auth: authInstance, error } = ensureAuthConfigured();
       if (!authInstance) {
@@ -141,10 +141,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
       setAuthState(prev => ({ ...prev, loading: false }));
     }
-  };
+  }, [ensureAuthConfigured, handleAuthError]);
 
   // Sign up with email and password
-  const signUpWithEmail = async (email: string, password: string, displayName?: string, birthDate?: string) => {
+  const signUpWithEmail = useCallback(async (email: string, password: string, displayName?: string, birthDate?: string) => {
     try {
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
       const { auth: authInstance, error: configurationError } = ensureAuthConfigured();
@@ -192,10 +192,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
       setAuthState(prev => ({ ...prev, loading: false }));
     }
-  };
+  }, [ensureAuthConfigured, handleAuthError]);
 
   // Send email verification
-  const sendEmailVerificationToUser = async () => {
+  const sendEmailVerificationToUser = useCallback(async () => {
     try {
       const { auth: authInstance, error } = ensureAuthConfigured();
       if (!authInstance) {
@@ -216,10 +216,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
       setAuthState(prev => ({ ...prev, loading: false }));
     }
-  };
+  }, [ensureAuthConfigured, handleAuthError]);
 
   // Sign out
-  const signOutUser = async () => {
+  const signOutUser = useCallback(async () => {
     try {
       const { auth: authInstance, error } = ensureAuthConfigured();
       if (!authInstance) {
@@ -237,10 +237,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
       setAuthState(prev => ({ ...prev, loading: false }));
     }
-  };
+  }, [ensureAuthConfigured, handleAuthError]);
 
   // Send password reset email
-  const sendPasswordReset = async (email: string) => {
+  const sendPasswordReset = useCallback(async (email: string) => {
     try {
       const { auth: authInstance, error } = ensureAuthConfigured();
       if (!authInstance) {
@@ -255,10 +255,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
       setAuthState(prev => ({ ...prev, loading: false }));
     }
-  };
+  }, [ensureAuthConfigured, handleAuthError]);
 
   // Delete user account
-  const deleteUserAccount = async () => {
+  const deleteUserAccount = useCallback(async () => {
     try {
       const { auth: authInstance, error } = ensureAuthConfigured();
       if (!authInstance) {
@@ -291,12 +291,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
       setAuthState(prev => ({ ...prev, loading: false }));
     }
-  };
+  }, [ensureAuthConfigured, handleAuthError]);
 
   // Clear error
-  const clearError = () => {
+  const clearError = useCallback(() => {
     setAuthState(prev => ({ ...prev, error: null }));
-  };
+  }, []);
 
   const value: AuthContextType = React.useMemo(() => ({
     ...authState,

@@ -155,7 +155,11 @@ export const usePushNotifications = (): PushNotificationHook => {
 
       // Handle foreground messages here
       // You can show a toast notification or update UI
-      console.log('Foreground message:', payload);
+      logInfo('Foreground notification received', { 
+        component: 'usePushNotifications',
+        action: 'onMessage',
+        additionalData: { notification: payload.notification }
+      });
     });
 
     return () => {
