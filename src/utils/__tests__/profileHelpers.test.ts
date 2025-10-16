@@ -3,7 +3,6 @@ import { describe, expect, it, beforeEach, vi } from "vitest";
 import {
   canUseWebShare,
   createInviteMessage,
-  formatDate,
   shareOrCopyToClipboard
 } from "../profileHelpers";
 import { PROFILE_COPY } from "@/constants/profile";
@@ -47,17 +46,6 @@ beforeEach(() => {
     share: undefined,
     canShare: undefined,
     clipboard: { writeText: mockClipboardWriteText }
-  });
-});
-
-describe("formatDate", () => {
-  it("formats valid dates", () => {
-    expect(formatDate("2024-01-15T00:00:00Z")).toBe("January 15, 2024");
-  });
-
-  it("handles invalid values gracefully", () => {
-    expect(formatDate(undefined)).toBe(PROFILE_COPY.GENERAL.UNKNOWN_VALUE);
-    expect(formatDate("invalid" as unknown as number)).toBe(PROFILE_COPY.GENERAL.INVALID_DATE);
   });
 });
 

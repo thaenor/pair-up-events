@@ -1,6 +1,7 @@
 import { getApp, getApps, initializeApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
+import { getMessaging, type Messaging } from 'firebase/messaging';
 
 import { logWarning } from '@/utils/logger';
 
@@ -10,6 +11,7 @@ type FirebaseResources = {
   app: FirebaseApp | null;
   auth: Auth | null;
   db: Firestore | null;
+  messaging: Messaging | null;
 };
 
 const missingConfigKeys = Object.entries(firebaseConfig)
@@ -30,6 +32,7 @@ const initializeFirebase = (): FirebaseResources => {
       app: null,
       auth: null,
       db: null,
+      messaging: null,
     };
   }
 
@@ -39,12 +42,13 @@ const initializeFirebase = (): FirebaseResources => {
     app: existingApp,
     auth: getAuth(existingApp),
     db: getFirestore(existingApp),
+    messaging: getMessaging(existingApp),
   };
 };
 
-const { app, auth, db } = initializeFirebase();
+const { app, auth, db, messaging } = initializeFirebase();
 
-export { app, auth, db };
+export { app, auth, db, messaging };
 export const missingFirebaseConfig = missingConfigKeys;
 
 // Re-export all auth functions we need
@@ -57,3 +61,10 @@ export {
   deleteUser,
   onAuthStateChanged,
 } from 'firebase/auth';
+
+// Re-export messaging functions
+export {
+  getToken,
+  onMessage,
+  isSupported,
+} from 'firebase/messaging';

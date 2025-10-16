@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 
 import { PROFILE_COPY, PROFILE_MESSAGES } from '@/constants/profile';
 import type { UserProfile, UserProfileUpdate } from '@/types/user-profile';
+import { trackProfileEvent, trackFormEvent } from '@/lib/analytics';
 
 export type ProfilePreferencesFormProps = {
   profile: UserProfile | null;
@@ -20,37 +21,39 @@ export const ProfilePreferencesForm: React.FC<ProfilePreferencesFormProps> = ({
   const [likes, setLikes] = useState('');
   const [dislikes, setDislikes] = useState('');
   const [hobbies, setHobbies] = useState('');
-  const [emailNotifications, setEmailNotifications] = useState(false);
-  const [pushNotifications, setPushNotifications] = useState(false);
 
   useEffect(() => {
     setFunFact(profile?.funFact ?? '');
     setLikes(profile?.likes ?? '');
     setDislikes(profile?.dislikes ?? '');
     setHobbies(profile?.hobbies ?? '');
-    setEmailNotifications(Boolean(profile?.settings?.emailNotifications));
-    setPushNotifications(Boolean(profile?.settings?.pushNotifications));
   }, [profile]);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async event => {
     event.preventDefault();
+
+    // Track form submission start
+    trackFormEvent('profile_preferences', 'start');
 
     const updates: UserProfileUpdate = {
       funFact: funFact.trim() || null,
       likes: likes.trim() || null,
       dislikes: dislikes.trim() || null,
       hobbies: hobbies.trim() || null,
-      settings: {
-        emailNotifications,
-        pushNotifications,
-      },
     };
 
     try {
       await onSubmit(updates);
       toast.success(PROFILE_MESSAGES.ALERTS.PREFERENCES_SAVE_SUCCESS);
+      
+      // Track successful form submission
+      trackFormEvent('profile_preferences', 'submit');
+      trackProfileEvent('update', 'preferences');
     } catch {
       toast.error(PROFILE_MESSAGES.ALERTS.PREFERENCES_SAVE_ERROR);
+      
+      // Track form error
+      trackFormEvent('profile_preferences', 'error');
     }
   };
 
@@ -115,37 +118,6 @@ export const ProfilePreferencesForm: React.FC<ProfilePreferencesFormProps> = ({
         </label>
       </div>
 
-      <div className="mt-6 grid gap-4 rounded-lg border border-pairup-cyan/40 bg-pairup-cyan/10 p-4 md:grid-cols-2">
-        <label className="flex items-start space-x-3 text-sm text-pairup-darkBlue">
-          <input
-            type="checkbox"
-            checked={emailNotifications}
-            onChange={event => setEmailNotifications(event.target.checked)}
-            disabled={isDisabled}
-            className="mt-1 h-4 w-4 rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
-            data-testid="profile-preferences-email"
-          />
-          <span>
-            <span className="block font-semibold">{PROFILE_COPY.PREFERENCES.EMAIL_NOTIFICATIONS_LABEL}</span>
-            <span className="block text-pairup-darkBlue/70">{PROFILE_COPY.PREFERENCES.EMAIL_NOTIFICATIONS_DESCRIPTION}</span>
-          </span>
-        </label>
-
-        <label className="flex items-start space-x-3 text-sm text-pairup-darkBlue">
-          <input
-            type="checkbox"
-            checked={pushNotifications}
-            onChange={event => setPushNotifications(event.target.checked)}
-            disabled={isDisabled}
-            className="mt-1 h-4 w-4 rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
-            data-testid="profile-preferences-push"
-          />
-          <span>
-            <span className="block font-semibold">{PROFILE_COPY.PREFERENCES.PUSH_NOTIFICATIONS_LABEL}</span>
-            <span className="block text-pairup-darkBlue/70">{PROFILE_COPY.PREFERENCES.PUSH_NOTIFICATIONS_DESCRIPTION}</span>
-          </span>
-        </label>
-      </div>
 
       <div className="mt-6 flex justify-end">
         <button

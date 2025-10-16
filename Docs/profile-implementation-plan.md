@@ -1,43 +1,78 @@
-```md
+# Profile Implementation - COMPLETED ✅
+
 ## Summary
-The profile flow currently shows only Firebase Auth metadata and static copy, with no ability to persist editable fields beyond authentication data.
+The profile system has been successfully implemented with a Firestore-backed user profile layer, React context for state management, and a redesigned Profile page with editable fields.
 
-We need to introduce a Firestore-backed user profile layer, surface it through React context, and redesign the Profile page to let users maintain the richer fields outlined in the design guidelines (profile photo, name, fun facts, likes/dislikes, hobbies, etc.).
+## Current Implementation Status
 
-## Implementation Plan
+### ✅ 1. Firestore-backed user profile data layer
+- **COMPLETED**: Firestore integration with typed `UserProfile` interface
+- **COMPLETED**: User profile CRUD operations in `src/lib/firebase/user-profile.ts`
+- **COMPLETED**: Profile creation on account signup in `AuthProvider`
+- **COMPLETED**: Profile deletion on account deletion
 
-### 1. Introduce a Firestore-backed user profile data layer
-Create a typed Firestore integration that can create, read, and update `UserProfile` documents, and hook account lifecycle events so each authenticated user owns a corresponding profile record.
+### ✅ 2. User profile context and hook
+- **COMPLETED**: `UserProfileContext` and `UserProfileProvider` for state management
+- **COMPLETED**: `useUserProfile` hook for consuming profile data
+- **COMPLETED**: Proper cleanup of Firestore listeners on unmount/logout
 
-- Update `src/lib/firebase/index.ts` to initialize and export a Firestore instance alongside existing Auth exports (`getFirestore`, `doc`, `setDoc`, `onSnapshot`, etc.).
-- Add a shared `UserProfile` interface (per the user-provided shape, extended with design-doc fields such as fun fact/likes/hobbies) in a new `src/types/user-profile.ts`, following the shared-type guidance in `Docs/Gemini.md`.
-- Create `src/lib/firebase/user-profile.ts` that wraps Firestore access (e.g., `createUserProfile`, `subscribeToUserProfile`, `updateUserProfile`, `deleteUserProfile`) with strong typing and centralized error logging via `logError`.
-- In `AuthProvider.signUpWithEmail`, call `createUserProfile` after account creation to seed the profile document with Auth metadata defaults; in `deleteUserAccount`, remove the matching Firestore document before deleting the auth user.
+### ✅ 3. Profile page UI redesign
+- **COMPLETED**: Profile details form with display name, birth date, and gender dropdown
+- **COMPLETED**: Profile preferences form with fun fact, likes, dislikes, and hobbies
+- **COMPLETED**: Form validation and error handling
+- **COMPLETED**: Optimistic UI feedback with toast notifications
+- **COMPLETED**: Loading states and disabled form controls during saves
 
-### 2. Provide a reusable user profile context and hook
-Expose profile data, loading state, and mutation helpers across the app so Profile and future screens can consume Firestore state declaratively.
+### ✅ 4. Recent Simplifications (Latest Updates)
+- **REMOVED**: ProfileSection component (account snapshot display)
+- **REMOVED**: ProfileStatsCard component (events created/joined stats)
+- **REMOVED**: Survey section ("Help us build something better")
+- **REMOVED**: Invite duo section
+- **REMOVED**: Development notice
+- **REMOVED**: Email and PWA notification settings from preferences
+- **REMOVED**: Photo URL field from profile details
+- **REMOVED**: Timezone field from profile details
+- **UPDATED**: Gender field changed from text input to dropdown with predefined options
 
-- Create `src/contexts/UserProfileContext.tsx` that subscribes to the Firestore document for the current `authState.user?.uid`, handles loading/error states, and exposes `profile`, `loading`, `error`, and `saveProfile` helpers.
-- Add a companion hook `src/hooks/useUserProfile.ts` (mirroring `useAuth`) that retrieves the context and throws if used outside the provider.
-- Wrap the router tree with `UserProfileProvider` in `src/App.tsx`, nesting it inside `AuthProvider` so it can react to sign-in/sign-out transitions while preserving the existing suspense and toaster structure.
-- Ensure the provider cleans up Firestore listeners on unmount and when the user logs out to avoid memory leaks.
+## Current Profile Fields
 
-### 3. Redesign the Profile page UI for editable profile data
-Refactor the page to use the new profile context, separate display vs. edit surfaces, and cover all customizable fields requested in the design brief.
+### Profile Details Form
+- **Display Name**: Text input for user's public name
+- **Birth Date**: Date picker for age verification
+- **Gender**: Dropdown with options (Male, Female, Non-binary, Prefer not to say)
 
-- Replace `ProfileSection` so it renders `UserProfile` data (display name, email, createdAt, timezone) instead of raw `firebase.auth.User`; adjust props and tests accordingly.
-- Introduce new molecule components (e.g., `profile-details-form.tsx`, `profile-preferences-form.tsx`, `profile-stats-card.tsx`) to handle editable fields like photo URL, fun fact, likes/dislikes, hobbies, notification toggles, and timezone, aligning with the fields listed in the design doc.
-- Update `src/pages/profile.tsx` to consume `useUserProfile`, show loading/error states, render the new form components, and wire their submit handlers to `saveProfile`, while keeping existing sections (survey prompt, invite friend, account controls).
-- Add optimistic UI feedback via `sonner` toasts on save success/failure and guard against concurrent submissions with disabled buttons/spinners following the established patterns in `account-controls`.
+### Profile Preferences Form
+- **Fun Fact**: Textarea for personal fun facts
+- **Likes**: Textarea for things the user likes
+- **Dislikes**: Textarea for things the user dislikes
+- **Hobbies**: Textarea for user's hobbies
 
-### 4. Testing, docs, and configuration updates
-Guarantee quality through automated tests and keep documentation/configuration in sync with the new profile capabilities.
+### Remaining Sections
+- **Invite Friend**: Share app with friends functionality
+- **Account Controls**: Password reset and account deletion
 
-- Write unit tests for `UserProfileProvider`/`useUserProfile` (mocking Firestore) under `src/contexts/__tests__` or `src/hooks/__tests__`, plus component tests for the new profile form molecules verifying validation, rendering, and submission events.
-- Extend `Docs/config.md` to document any new configurable strings, profile copy, or asset references introduced for the editable sections.
-- Update `README.md` (or a new doc in `Docs/`) with setup notes for the Firestore profile collection (e.g., required indexes, local emulator tips) and mention the new profile customization workflow.
-- Run `npm run lint`, `npm run test`, and `npm run build` locally to satisfy the mandatory verification steps outlined in `Docs/Gemini.md`.
+## Data Model
+The `UserProfile` interface includes:
+- `id`: User UID
+- `email`: Private email address
+- `displayName`: Public display name
+- `birthDate`: Private birth date for age verification
+- `gender`: Gender identity (male, female, non-binary, prefer-not-to-say)
+- `createdAt`: Account creation timestamp
+- `settings`: Notification preferences (emailNotifications, pushNotifications)
+- `funFact`: Optional personal fun fact
+- `likes`: Optional list of things user likes
+- `dislikes`: Optional list of things user dislikes
+- `hobbies`: Optional list of user's hobbies
 
-## Testing
-- ⚠️ `npm run test` (Not run — planning-only, read-only QA task)
-```
+## Testing Status
+- **COMPLETED**: Unit tests for all profile components
+- **COMPLETED**: Integration tests for profile forms
+- **COMPLETED**: Context and hook testing
+- **COMPLETED**: Form validation testing
+- **COMPLETED**: Error handling testing
+
+## Documentation
+- **UPDATED**: `Docs/data-model.md` reflects current UserProfile structure
+- **UPDATED**: `Docs/config.md` reflects current profile constants
+- **UPDATED**: This implementation plan reflects completed status

@@ -1,17 +1,21 @@
 import { useCallback } from 'react';
-import { EMAIL_VALIDATION, PASSWORD_VALIDATION } from '@/constants/validation';
+import { EMAIL_VALIDATION, PASSWORD_VALIDATION, DISPLAY_NAME_VALIDATION, BIRTHDATE_VALIDATION } from '@/constants/validation';
 import { VALIDATION_MESSAGES } from '@/constants/messages';
 
 export interface FormData {
   email: string;
   password: string;
   confirmPassword: string;
+  displayName: string;
+  birthDate: string;
 }
 
 export interface FormErrors extends Record<string, string | undefined> {
   email?: string;
   password?: string;
   confirmPassword?: string;
+  displayName?: string;
+  birthDate?: string;
 }
 
 export const useFormValidation = () => {
@@ -65,6 +69,58 @@ export const useFormValidation = () => {
     return null;
   }, []);
 
+  // Display name validation
+  const validateDisplayName = useCallback((displayName: string): string | null => {
+    if (displayName.length < DISPLAY_NAME_VALIDATION.MIN_LENGTH) {
+      return VALIDATION_MESSAGES.DISPLAY_NAME.TOO_SHORT;
+    }
+    if (displayName.length > DISPLAY_NAME_VALIDATION.MAX_LENGTH) {
+      return VALIDATION_MESSAGES.DISPLAY_NAME.TOO_LONG;
+    }
+    if (!DISPLAY_NAME_VALIDATION.REGEX.test(displayName)) {
+      return VALIDATION_MESSAGES.DISPLAY_NAME.INVALID;
+    }
+    return null;
+  }, []);
+
+  // Birthdate validation
+  const validateBirthDate = useCallback((birthDate: string): string | null => {
+    if (!birthDate) {
+      return VALIDATION_MESSAGES.BIRTHDATE.REQUIRED;
+    }
+
+    const date = new Date(birthDate);
+    const today = new Date();
+    
+    // Check if date is valid
+    if (isNaN(date.getTime())) {
+      return VALIDATION_MESSAGES.BIRTHDATE.INVALID;
+    }
+
+    // Check if date is in the future
+    if (date > today) {
+      return VALIDATION_MESSAGES.BIRTHDATE.INVALID;
+    }
+
+    // Calculate age
+    const age = today.getFullYear() - date.getFullYear();
+    const monthDiff = today.getMonth() - date.getMonth();
+    
+    const actualAge = monthDiff < 0 || (monthDiff === 0 && today.getDate() < date.getDate()) 
+      ? age - 1 
+      : age;
+
+    if (actualAge < BIRTHDATE_VALIDATION.MIN_AGE) {
+      return VALIDATION_MESSAGES.BIRTHDATE.TOO_YOUNG;
+    }
+    
+    if (actualAge > BIRTHDATE_VALIDATION.MAX_AGE) {
+      return VALIDATION_MESSAGES.BIRTHDATE.TOO_OLD;
+    }
+
+    return null;
+  }, []);
+
   // Form validation
   const validateForm = useCallback((formData: FormData): FormErrors => {
     const newErrors: FormErrors = {};
@@ -77,6 +133,22 @@ export const useFormValidation = () => {
       if (emailError) {
         newErrors.email = emailError;
       }
+    }
+
+    // Display name validation
+    if (!formData.displayName) {
+      newErrors.displayName = VALIDATION_MESSAGES.DISPLAY_NAME.REQUIRED;
+    } else {
+      const displayNameError = validateDisplayName(formData.displayName);
+      if (displayNameError) {
+        newErrors.displayName = displayNameError;
+      }
+    }
+
+    // Birthdate validation
+    const birthDateError = validateBirthDate(formData.birthDate);
+    if (birthDateError) {
+      newErrors.birthDate = birthDateError;
     }
 
     // Password validation
@@ -93,7 +165,7 @@ export const useFormValidation = () => {
     }
 
     return newErrors;
-  }, [validateEmail, validatePassword]);
+  }, [validateEmail, validateDisplayName, validateBirthDate, validatePassword]);
 
-  return { validateEmail, validatePassword, validateForm };
+  return { validateEmail, validatePassword, validateDisplayName, validateBirthDate, validateForm };
 };

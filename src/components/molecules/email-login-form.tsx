@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import LoadingSpinner from '@/components/atoms/LoadingSpinner';
 import { useAuth } from '@/hooks/useAuth';
 import { useFormState } from '@/hooks/useFormState';
+import { trackFormEvent } from '@/lib/analytics';
 
 type LoginFormData = {
   email: string;
@@ -64,15 +65,24 @@ const EmailLoginForm: React.FC = React.memo(() => {
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Track form submission start
+    trackFormEvent('email_login', 'start');
+
     const formErrors = validateLoginForm(formData);
     if (Object.keys(formErrors).length > 0) {
       setAllErrors(formErrors as Partial<Record<keyof (LoginFormData & Record<string, unknown>), string>>);
+      // Track form validation error
+      trackFormEvent('email_login', 'error');
       return;
     }
 
     try {
       await signInWithEmail(formData.email, formData.password);
       toast.success('Welcome back! You have been signed in successfully.');
+      
+      // Track successful form submission
+      trackFormEvent('email_login', 'submit');
+      
       // Redirect to profile page after successful login
       navigate('/profile');
     } catch {

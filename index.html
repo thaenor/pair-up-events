@@ -4,8 +4,32 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com https://firebasestorage.googleapis.com https://firestore.googleapis.com https://*.googleapis.com https://www.gstatic.com; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com https://storage.googleapis.com https://www.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' https://forms.gle https://docs.google.com; frame-src 'self' https://www.googletagmanager.com https://sibforms.com https://*.sibforms.com;" />
-    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <!-- PWA Meta Tags -->
+    <meta name="application-name" content="Pair Up Events" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Pair Up Events" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <meta name="msapplication-TileColor" content="#000000" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="theme-color" content="#000000" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="/PUE_logo.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/PUE_logo.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/PUE_logo.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="/PUE_logo.png" />
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/PUE_logo.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/PUE_logo.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
 
     <!-- Google Tag Manager -->
     <script>
@@ -13,7 +37,7 @@
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-PFHVCZSB');
+    })(window,document,'script','dataLayer','%VITE_GTM_ID%');
     </script>
     <!-- End Google Tag Manager -->
 
@@ -28,13 +52,13 @@
     <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/mxAqhKh6xqUAtgE08attjGKZD6N2/social-images/social-1757959211906-Gemini_Generated_Image_m5viz6m5viz6m5vi.jpg">
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
+    <meta name="twitter:site" content="@pairup-events" />
     <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/mxAqhKh6xqUAtgE08attjGKZD6N2/social-images/social-1757959211906-Gemini_Generated_Image_m5viz6m5viz6m5vi.jpg">
   </head>
 
   <body>
     <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PFHVCZSB"
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=%VITE_GTM_ID%"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
 

@@ -15,5 +15,17 @@ export const VALIDATION_MESSAGES = {
   CONFIRM_PASSWORD: {
     REQUIRED: 'Please confirm your password',
     NO_MATCH: 'Passwords do not match'
+  },
+  DISPLAY_NAME: {
+    REQUIRED: 'Display name is required',
+    TOO_SHORT: 'Display name must be at least 2 characters long',
+    TOO_LONG: 'Display name must be less than 50 characters',
+    INVALID: 'Display name can only contain letters, spaces, hyphens, apostrophes, and periods'
+  },
+  BIRTHDATE: {
+    REQUIRED: 'Birthdate is required',
+    TOO_YOUNG: 'You must be at least 13 years old to create an account',
+    TOO_OLD: 'Please enter a valid birthdate',
+    INVALID: 'Please enter a valid birthdate'
   }
 } as const;

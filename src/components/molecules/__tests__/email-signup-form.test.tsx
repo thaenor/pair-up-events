@@ -46,6 +46,8 @@ describe("EmailSignupForm", () => {
 
   const fillValidForm = () => {
     fireEvent.change(screen.getByTestId("signup-email-input"), { target: { value: "hello@pairup.events" } });
+    fireEvent.change(screen.getByTestId("signup-display-name-input"), { target: { value: "John Doe" } });
+    fireEvent.change(screen.getByTestId("signup-birthdate-input"), { target: { value: "1990-01-01" } });
     fireEvent.change(screen.getByTestId("signup-password-input"), { target: { value: "ValidPass1" } });
     fireEvent.change(screen.getByTestId("signup-confirm-password-input"), { target: { value: "ValidPass1" } });
   };
@@ -105,7 +107,7 @@ describe("EmailSignupForm", () => {
     fireEvent.click(screen.getByTestId("signup-submit-button"));
 
     await waitFor(() => {
-      expect(mockSignUpWithEmail).toHaveBeenCalledWith("hello@pairup.events", "ValidPass1");
+      expect(mockSignUpWithEmail).toHaveBeenCalledWith("hello@pairup.events", "ValidPass1", "John Doe", "1990-01-01");
       expect(mockToastSuccess).toHaveBeenCalledWith("Account created successfully! Please check your email to verify your account.");
       expect(mockNavigate).toHaveBeenCalledWith("/profile");
       expect(screen.getByTestId("signup-success")).toBeInTheDocument();

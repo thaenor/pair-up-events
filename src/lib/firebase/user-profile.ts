@@ -15,31 +15,33 @@ import { db } from './index';
 
 const COLLECTION_NAME = 'users';
 
-const removeUndefined = <T extends Record<string, unknown>>(value: T): Partial<T> =>
+const removeUndefined = <T extends Record<string, unknown>>(value: T): Record<string, unknown> =>
   Object.fromEntries(Object.entries(value).filter(([, item]) => item !== undefined));
 
 const userProfileConverter: FirestoreDataConverter<UserProfile> = {
   toFirestore: (profile: UserProfile) => removeUndefined(profile),
-  fromFirestore: snapshot => ({ id: snapshot.id, ...(snapshot.data() as Omit<UserProfile, 'id'>) }),
+  fromFirestore: snapshot => ({ id: snapshot.id, ...(snapshot.data() as Omit<UserProfile, 'id'>) } as UserProfile),
 };
 
-const userProfileDoc = (userId: string) =>
-  doc(db, COLLECTION_NAME, userId).withConverter(userProfileConverter);
+const userProfileDoc = (userId: string) => {
+  if (!db) {
+    throw new Error('Firestore is not configured');
+  }
+  return doc(db, COLLECTION_NAME, userId).withConverter(userProfileConverter);
+};
 
 type CreateUserProfileParams = {
   id: string;
   email: string;
   displayName?: string | null;
-  photoUrl?: string | null;
-  timezone?: string | null;
+  birthDate?: string | null;
 };
 
 export const createUserProfile = async ({
   id,
   email,
   displayName,
-  photoUrl,
-  timezone,
+  birthDate,
 }: CreateUserProfileParams): Promise<void> => {
   if (!db) {
     logWarning('Skipped creating user profile because Firestore is not configured.', {
@@ -54,16 +56,11 @@ export const createUserProfile = async ({
     id,
     email,
     displayName: displayName?.trim() || email,
-    photoUrl: photoUrl?.trim() || undefined,
     createdAt: Timestamp.now(),
-    timezone: timezone?.trim() || undefined,
+    birthDate: birthDate?.trim() || undefined,
     settings: {
       emailNotifications: true,
       pushNotifications: false,
-    },
-    stats: {
-      eventsCreated: 0,
-      eventsJoined: 0,
     },
   };
 

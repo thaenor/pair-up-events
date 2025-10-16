@@ -5,35 +5,25 @@ export type UserProfileSettings = {
   pushNotifications?: boolean;
 };
 
-export type UserProfileStats = {
-  eventsCreated?: number;
-  eventsJoined?: number;
-};
 
 export interface UserProfile {
   /** UID of the user — same as document ID */
   id: string;
 
-  /** User’s email (private field) */
+  /** User's email (private field) */
   email: string;
 
   /** Full name or preferred display name */
   displayName: string;
 
-  /** URL to profile photo (optional) */
-  photoUrl?: string | null;
 
   /** Account creation timestamp */
   createdAt: Timestamp;
 
-  /** Optional time zone (useful for event scheduling) */
-  timezone?: string | null;
 
   /** Notification preferences */
   settings?: UserProfileSettings | null;
 
-  /** App usage or engagement stats */
-  stats?: UserProfileStats;
 
   /** Additional profile metadata */
   username?: string | null;
@@ -43,6 +33,9 @@ export interface UserProfile {
   likes?: string | null;
   dislikes?: string | null;
   hobbies?: string | null;
+
+  /** Index signature for additional properties */
+  [key: string]: unknown;
 }
 
 export type UserProfileUpdate = Partial<Omit<UserProfile, 'id' | 'email' | 'createdAt'>>;

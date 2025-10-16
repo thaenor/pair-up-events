@@ -21,6 +21,9 @@ Sentry.init({
     'Network request failed',
     'Loading chunk',
     'ChunkLoadError',
+    'WebSocket connection',
+    'WebSocket error',
+    'Failed to fetch',
   ],
 });
 

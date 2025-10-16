@@ -18,6 +18,7 @@ import { getAuthErrorMessage } from '@/utils/authErrorMessages';
 import { setUser } from '@/lib/sentry';
 import { createUserProfile, deleteUserProfile } from '@/lib/firebase/user-profile';
 import { logError, logWarning } from '@/utils/logger';
+import { trackAuthEvent } from '@/lib/analytics';
 
 // AuthProvider component
 interface AuthProviderProps {
@@ -131,6 +132,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
       await signInWithEmailAndPassword(authInstance, email, password);
+      
+      // Track successful login
+      trackAuthEvent('login', 'email');
     } catch (error: unknown) {
       handleAuthError(error);
       throw error;
@@ -140,7 +144,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   // Sign up with email and password
-  const signUpWithEmail = async (email: string, password: string) => {
+  const signUpWithEmail = async (email: string, password: string, displayName?: string, birthDate?: string) => {
     try {
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
       const { auth: authInstance, error: configurationError } = ensureAuthConfigured();
@@ -155,11 +159,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           await createUserProfile({
             id: userCredential.user.uid,
             email,
-            displayName: userCredential.user.displayName,
-            photoUrl: userCredential.user.photoURL,
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            displayName: displayName || userCredential.user.displayName,
+            birthDate,
           });
           await sendEmailVerification(userCredential.user);
+          
+          // Track successful signup
+          trackAuthEvent('signup', 'email');
         } catch (profileError) {
           logError('Failed to finalize sign up flow', profileError, {
             component: 'AuthProvider',
@@ -222,6 +228,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
       await signOut(authInstance);
+      
+      // Track successful logout
+      trackAuthEvent('logout', 'email');
     } catch (error: unknown) {
       handleAuthError(error);
       throw error;

@@ -19,10 +19,8 @@ describe("ProfileDetailsForm", () => {
     id: "user-1",
     email: "duo@pairup.events",
     displayName: "PairUp Pioneers",
-    photoUrl: "https://pairup.events/photo.png",
-    timezone: "Europe/Paris",
     birthDate: "1996-04-15",
-    gender: "Non-binary",
+    gender: "non-binary",
   } as Parameters<typeof ProfileDetailsForm>[0]["profile"];
 
   beforeEach(() => {
@@ -48,9 +46,7 @@ describe("ProfileDetailsForm", () => {
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledWith({
         displayName: "New Display Name",
-        photoUrl: baseProfile.photoUrl,
-        timezone: baseProfile.timezone,
-        gender: baseProfile.gender,
+        gender: baseProfile?.gender,
         birthDate: "1996-05-20",
       });
     });
@@ -86,9 +82,7 @@ describe("ProfileDetailsForm", () => {
 
     expect(screen.getByTestId("profile-details-submit")).toBeDisabled();
     expect(screen.getByTestId("profile-details-display-name")).toBeDisabled();
-    expect(screen.getByTestId("profile-details-timezone")).toBeDisabled();
     expect(screen.getByTestId("profile-details-birth-date")).toBeDisabled();
     expect(screen.getByTestId("profile-details-gender")).toBeDisabled();
-    expect(screen.getByTestId("profile-details-photo")).toBeDisabled();
   });
 });

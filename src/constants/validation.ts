@@ -41,3 +41,14 @@ export const PASSWORD_VALIDATION = {
     number: /(?=.*\d)/
   }
 } as const;
+
+export const DISPLAY_NAME_VALIDATION = {
+  MIN_LENGTH: 2,
+  MAX_LENGTH: 50,
+  REGEX: /^[a-zA-Z\s\-'.]+$/
+} as const;
+
+export const BIRTHDATE_VALIDATION = {
+  MIN_AGE: 13,
+  MAX_AGE: 120
+} as const;

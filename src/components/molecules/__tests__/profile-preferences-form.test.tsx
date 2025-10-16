@@ -21,10 +21,6 @@ describe("ProfilePreferencesForm", () => {
     likes: "Escape rooms",
     dislikes: "Rainy hikes",
     hobbies: "Rock climbing",
-    settings: {
-      emailNotifications: true,
-      pushNotifications: false,
-    },
   } as Parameters<typeof ProfilePreferencesForm>[0]["profile"];
 
   beforeEach(() => {
@@ -44,7 +40,6 @@ describe("ProfilePreferencesForm", () => {
     fireEvent.change(screen.getByTestId("profile-preferences-likes"), {
       target: { value: "Art walks" },
     });
-    fireEvent.click(screen.getByTestId("profile-preferences-push"));
 
     fireEvent.submit(screen.getByTestId("profile-preferences-form"));
 
@@ -52,12 +47,8 @@ describe("ProfilePreferencesForm", () => {
       expect(onSubmit).toHaveBeenCalledWith({
         funFact: "Loves spontaneous road trips",
         likes: "Art walks",
-        dislikes: baseProfile.dislikes,
-        hobbies: baseProfile.hobbies,
-        settings: {
-          emailNotifications: true,
-          pushNotifications: true,
-        },
+        dislikes: baseProfile?.dislikes,
+        hobbies: baseProfile?.hobbies,
       });
     });
 
@@ -94,7 +85,5 @@ describe("ProfilePreferencesForm", () => {
     expect(screen.getByTestId("profile-preferences-likes")).toBeDisabled();
     expect(screen.getByTestId("profile-preferences-dislikes")).toBeDisabled();
     expect(screen.getByTestId("profile-preferences-hobbies")).toBeDisabled();
-    expect(screen.getByTestId("profile-preferences-email")).toBeDisabled();
-    expect(screen.getByTestId("profile-preferences-push")).toBeDisabled();
   });
 });

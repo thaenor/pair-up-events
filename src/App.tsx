@@ -1,10 +1,13 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster } from "sonner";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
 
 import { AuthProvider } from "./contexts/AuthProvider";
 import { UserProfileProvider } from "./contexts/UserProfileProvider";
 import ErrorBoundary from "./components/ErrorBoundary";
+import { PWAInstallPrompt } from "./components/molecules/pwa-install-prompt";
+import { initializeAnalytics } from "./lib/analytics";
+import { PageTracker } from "./components/PageTracker";
 
 const IndexPage = lazy(() => import("./pages/Index"));
 const NotFoundPage = lazy(() => import("./pages/NotFound"));
@@ -16,11 +19,16 @@ const PrivacyPolicyPage = lazy(() => import("./pages/privacy-policy"));
 
 
 const App = () => {
+  // Initialize analytics when the app loads
+  useEffect(() => {
+    initializeAnalytics();
+  }, []);
 
   const appContent = (
     <AuthProvider>
       <UserProfileProvider>
         <BrowserRouter future={{ v7_relativeSplatPath: true }}>
+        <PageTracker />
         <ErrorBoundary>
           <Suspense
             fallback={(
@@ -48,6 +56,7 @@ const App = () => {
             richColors={true}
             closeButton={true}
           />
+          <PWAInstallPrompt />
         </ErrorBoundary>
         </BrowserRouter>
       </UserProfileProvider>

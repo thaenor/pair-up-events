@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 
 import { PROFILE_COPY, PROFILE_MESSAGES } from '@/constants/profile';
 import type { UserProfile, UserProfileUpdate } from '@/types/user-profile';
+import { trackProfileEvent, trackFormEvent } from '@/lib/analytics';
 
 export type ProfileDetailsFormProps = {
   profile: UserProfile | null;
@@ -17,15 +18,11 @@ export const ProfileDetailsForm: React.FC<ProfileDetailsFormProps> = ({
 }) => {
   const isDisabled = isSaving;
   const [displayName, setDisplayName] = useState('');
-  const [photoUrl, setPhotoUrl] = useState('');
-  const [timezone, setTimezone] = useState('');
   const [birthDate, setBirthDate] = useState('');
   const [gender, setGender] = useState('');
 
   useEffect(() => {
     setDisplayName(profile?.displayName ?? '');
-    setPhotoUrl(profile?.photoUrl ?? '');
-    setTimezone(profile?.timezone ?? '');
     setBirthDate(profile?.birthDate ?? '');
     setGender(profile?.gender ?? '');
   }, [profile]);
@@ -33,10 +30,11 @@ export const ProfileDetailsForm: React.FC<ProfileDetailsFormProps> = ({
   const handleSubmit: FormEventHandler<HTMLFormElement> = async event => {
     event.preventDefault();
 
+    // Track form submission start
+    trackFormEvent('profile_details', 'start');
+
     const updates: UserProfileUpdate = {
       displayName: displayName.trim(),
-      photoUrl: photoUrl.trim() || null,
-      timezone: timezone.trim() || null,
       gender: gender.trim() || null,
       birthDate: birthDate.trim() || null,
     };
@@ -44,8 +42,15 @@ export const ProfileDetailsForm: React.FC<ProfileDetailsFormProps> = ({
     try {
       await onSubmit(updates);
       toast.success(PROFILE_MESSAGES.ALERTS.PROFILE_SAVE_SUCCESS);
+      
+      // Track successful form submission
+      trackFormEvent('profile_details', 'submit');
+      trackProfileEvent('update', 'details');
     } catch {
       toast.error(PROFILE_MESSAGES.ALERTS.PROFILE_SAVE_ERROR);
+      
+      // Track form error
+      trackFormEvent('profile_details', 'error');
     }
   };
 
@@ -60,13 +65,6 @@ export const ProfileDetailsForm: React.FC<ProfileDetailsFormProps> = ({
           <h3 className="text-lg font-semibold text-pairup-darkBlue">{PROFILE_COPY.DETAILS.TITLE}</h3>
           <p className="text-sm text-pairup-darkBlue/70">{PROFILE_COPY.DETAILS.DESCRIPTION}</p>
         </div>
-        {photoUrl ? (
-          <img
-            src={photoUrl}
-            alt={PROFILE_COPY.SNAPSHOT.AVATAR_ALT}
-            className="hidden h-16 w-16 rounded-full object-cover sm:block"
-          />
-        ) : null}
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -83,18 +81,6 @@ export const ProfileDetailsForm: React.FC<ProfileDetailsFormProps> = ({
           />
         </label>
 
-        <label className="flex flex-col text-sm font-medium text-pairup-darkBlue/80">
-          {PROFILE_COPY.DETAILS.TIMEZONE_LABEL}
-          <input
-            type="text"
-            value={timezone}
-            onChange={event => setTimezone(event.target.value)}
-            disabled={isDisabled}
-            className="mt-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
-            placeholder={PROFILE_COPY.DETAILS.TIMEZONE_PLACEHOLDER}
-            data-testid="profile-details-timezone"
-          />
-        </label>
 
         <label className="flex flex-col text-sm font-medium text-pairup-darkBlue/80">
           {PROFILE_COPY.DETAILS.BIRTH_DATE_LABEL}
@@ -111,40 +97,23 @@ export const ProfileDetailsForm: React.FC<ProfileDetailsFormProps> = ({
 
         <label className="flex flex-col text-sm font-medium text-pairup-darkBlue/80">
           {PROFILE_COPY.DETAILS.GENDER_LABEL}
-          <input
-            type="text"
+          <select
             value={gender}
             onChange={event => setGender(event.target.value)}
             disabled={isDisabled}
             className="mt-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
-            placeholder={PROFILE_COPY.DETAILS.GENDER_PLACEHOLDER}
             data-testid="profile-details-gender"
-          />
+          >
+            <option value="">{PROFILE_COPY.DETAILS.GENDER_PLACEHOLDER}</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="non-binary">Non-binary</option>
+            <option value="prefer-not-to-say">Prefer not to say</option>
+          </select>
         </label>
 
-        <label className="flex flex-col text-sm font-medium text-pairup-darkBlue/80 md:col-span-2">
-          {PROFILE_COPY.DETAILS.PHOTO_LABEL}
-          <input
-            type="url"
-            value={photoUrl}
-            onChange={event => setPhotoUrl(event.target.value)}
-            disabled={isDisabled}
-            className="mt-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
-            placeholder={PROFILE_COPY.DETAILS.PHOTO_PLACEHOLDER}
-            data-testid="profile-details-photo"
-          />
-        </label>
       </div>
 
-      <div className="mt-6 flex flex-col gap-1 rounded-lg bg-pairup-cyan/10 px-4 py-3 text-sm text-pairup-darkBlue sm:flex-row sm:items-center sm:justify-between">
-        <span>{PROFILE_COPY.DETAILS.EMAIL_LABEL}</span>
-        <span
-          className="font-medium break-words text-right sm:text-left"
-          data-testid="profile-details-email"
-        >
-          {profile?.email ?? PROFILE_COPY.DETAILS.EMAIL_FALLBACK}
-        </span>
-      </div>
 
       <div className="mt-6 flex justify-end">
         <button

@@ -22,13 +22,16 @@ This model is designed for **low-cost, scalable Firebase usage**:
 
 | Field | Type | Description |
 |--------|------|-------------|
-| `email` | string | User’s private email |
-| `displayName` | string | User’s display name (from OAuth or custom) |
-| `photoUrl` | string | Profile photo URL (from Firebase Auth) |
-| `timezone` | string | Optional timezone |
+| `email` | string | User's private email |
+| `displayName` | string | User's display name (from OAuth or custom) |
+| `birthDate` | string | User's birthdate (private, used for age verification) |
+| `gender` | string | User's gender identity (male, female, non-binary, prefer-not-to-say) |
 | `createdAt` | Timestamp | Account creation date |
 | `settings` | object | `{ emailNotifications: boolean, pushNotifications: boolean }` |
-| `stats` | object | `{ eventsCreated: number, eventsJoined: number }` |
+| `funFact` | string | Optional fun fact about the user |
+| `likes` | string | Optional list of things the user likes |
+| `dislikes` | string | Optional list of things the user dislikes |
+| `hobbies` | string | Optional list of user's hobbies |
 
 **Subcollections:**
 - `/devices/{deviceId}` → stores push tokens and platform info.
@@ -165,6 +168,28 @@ Admin-only logs for moderation and analytics.
 
 ---
 
+## 👤 Account Creation & Data Privacy
+
+### Required Fields During Registration
+During account creation, users must provide:
+- **Email** (private, stored in `/users/{userId}`)
+- **Display Name** (public, stored in both `/users/{userId}` and `/public_profiles/{userId}`)
+- **Birthdate** (private, stored in `/users/{userId}` only)
+- **Password** (handled by Firebase Auth, not stored in Firestore)
+
+### Data Privacy Strategy
+- **Private Data** (`/users/{userId}`): Email, birthdate, settings, stats
+- **Public Data** (`/public_profiles/{userId}`): Display name, photo, bio, city
+- **Age Verification**: Birthdate is used to ensure users are at least 13 years old
+- **Display Name**: Serves as the primary public identifier across the platform
+
+### Validation Rules
+- **Display Name**: 2-50 characters, letters/spaces/hyphens/apostrophes/periods only
+- **Birthdate**: Must be at least 13 years old, maximum 120 years old
+- **Email**: Standard email validation with fake/disposable domain filtering
+
+---
+
 ## ⚙️ Derived Data Flow
 
 ```mermaid
@@ -175,6 +200,7 @@ graph LR
   E[users] --> F[memberships]
   E --> G[public_profiles]
   A --> F
+  E -.->|displayName| G
 ````
 
 **All derived collections** (`listings`, `geo`, `autocomplete`) are written by **Cloud Functions**,
@@ -193,6 +219,7 @@ keeping client writes minimal and reads cheap.
 | Notifications | TTL-enabled subcollection              |
 | Audits/logs   | TTL pruning and small doc size         |
 | Writes        | Trigger-based projections (no fan-out) |
+| Account creation | Single write to `/users`, optional `/public_profiles` |
 
 ---
 

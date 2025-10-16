@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, User, Calendar } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -7,6 +7,7 @@ import LoadingSpinner from '@/components/atoms/LoadingSpinner';
 import { useAuth } from '@/hooks/useAuth';
 import { useFormState } from '@/hooks/useFormState';
 import { useFormValidation, FormData } from '@/hooks/useFormValidation';
+import { trackFormEvent } from '@/lib/analytics';
 
 const EmailSignupForm: React.FC = React.memo(() => {
   const { signUpWithEmail, loading, error, clearError } = useAuth();
@@ -16,7 +17,9 @@ const EmailSignupForm: React.FC = React.memo(() => {
   const { formData, errors, updateField, setAllErrors, clearFieldError } = useFormState<FormData & Record<string, unknown>>({
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    displayName: '',
+    birthDate: ''
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -47,16 +50,25 @@ const EmailSignupForm: React.FC = React.memo(() => {
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Track form submission start
+    trackFormEvent('email_signup', 'start');
+
     const formErrors = validateForm(formData);
     if (Object.keys(formErrors).length > 0) {
       setAllErrors(formErrors as Partial<Record<keyof (FormData & Record<string, unknown>), string>>);
+      // Track form validation error
+      trackFormEvent('email_signup', 'error');
       return;
     }
 
     try {
-      await signUpWithEmail(formData.email, formData.password);
+      await signUpWithEmail(formData.email, formData.password, formData.displayName, formData.birthDate);
       setRegistrationSuccess(true);
       toast.success('Account created successfully! Please check your email to verify your account.');
+      
+      // Track successful form submission
+      trackFormEvent('email_signup', 'submit');
+      
       // Redirect to profile page after successful registration
       navigate('/profile');
     } catch {
@@ -195,6 +207,86 @@ const EmailSignupForm: React.FC = React.memo(() => {
                 data-testid="signup-email-error"
               >
                 {errors.email}
+              </p>
+            )}
+          </div>
+
+          {/* Display Name Field */}
+          <div className="space-y-2">
+            <label htmlFor="displayName" className="block text-sm font-medium text-white">
+              Display Name
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <User className="h-5 w-5 text-gray-400" aria-hidden="true" />
+              </div>
+              <input
+                id="displayName"
+                type="text"
+                value={formData.displayName}
+                onChange={(e) => handleInputChange('displayName', e.target.value)}
+                className={`block w-full pl-10 pr-3 py-3 border rounded-md bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors ${
+                  errors.displayName ? 'border-red-500' : 'border-gray-500'
+                }`}
+                aria-invalid={!!errors.displayName}
+                aria-describedby={errors.displayName ? 'display-name-error' : 'display-name-help'}
+                aria-required="true"
+                placeholder="Enter your display name"
+                disabled={loading}
+                autoComplete="name"
+                data-testid="signup-display-name-input"
+              />
+            </div>
+            <div id="display-name-help" className="sr-only">
+              Enter your preferred display name (2-50 characters)
+            </div>
+            {errors.displayName && (
+              <p
+                id="display-name-error"
+                className="text-red-400 text-sm"
+                role="alert"
+                data-testid="signup-display-name-error"
+              >
+                {errors.displayName}
+              </p>
+            )}
+          </div>
+
+          {/* Birthdate Field */}
+          <div className="space-y-2">
+            <label htmlFor="birthDate" className="block text-sm font-medium text-white">
+              Birthdate
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Calendar className="h-5 w-5 text-gray-400" aria-hidden="true" />
+              </div>
+              <input
+                id="birthDate"
+                type="date"
+                value={formData.birthDate}
+                onChange={(e) => handleInputChange('birthDate', e.target.value)}
+                className={`block w-full pl-10 pr-3 py-3 border rounded-md bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors ${
+                  errors.birthDate ? 'border-red-500' : 'border-gray-500'
+                }`}
+                aria-invalid={!!errors.birthDate}
+                aria-describedby={errors.birthDate ? 'birthdate-error' : 'birthdate-help'}
+                aria-required="true"
+                disabled={loading}
+                data-testid="signup-birthdate-input"
+              />
+            </div>
+            <div id="birthdate-help" className="sr-only">
+              Enter your birthdate (must be at least 13 years old)
+            </div>
+            {errors.birthDate && (
+              <p
+                id="birthdate-error"
+                className="text-red-400 text-sm"
+                role="alert"
+                data-testid="signup-birthdate-error"
+              >
+                {errors.birthDate}
               </p>
             )}
           </div>
