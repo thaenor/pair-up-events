@@ -22,7 +22,7 @@ const EmailSignupForm: React.FC = React.memo(() => {
     firstName: '',
     displayName: '',
     birthDate: '',
-    gender: '' as Gender
+    gender: ''
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -31,11 +31,7 @@ const EmailSignupForm: React.FC = React.memo(() => {
 
   // Handle input changes with useCallback
   const handleInputChange = useCallback((field: keyof FormData, value: string) => {
-    if (field === 'gender') {
-      updateField(field, value as Gender);
-    } else {
-      updateField(field, value);
-    }
+    updateField(field, value);
 
     // Real-time validation for immediate feedback
     const updatedFormData = { ...formData, [field]: value };
@@ -69,7 +65,11 @@ const EmailSignupForm: React.FC = React.memo(() => {
     }
 
     try {
-      await signUpWithEmail(formData.email, formData.password, formData.firstName, formData.displayName, formData.birthDate, formData.gender);
+      // Ensure gender is a valid Gender value before calling signUpWithEmail
+      if (!formData.gender) {
+        throw new Error('Gender is required');
+      }
+      await signUpWithEmail(formData.email, formData.password, formData.firstName, formData.displayName, formData.birthDate, formData.gender as Gender);
       setRegistrationSuccess(true);
       toast.success('Account created successfully! Please check your email to verify your account.');
       
