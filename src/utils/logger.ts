@@ -1,10 +1,9 @@
 /**
  * Centralized logging utility for the application
  * Provides consistent error handling and logging across all components
- * Integrates with Sentry for production error tracking
+ * Console logging only - Sentry integration handled separately where needed
  */
 
-import { captureException, captureMessage } from '@/lib/sentry';
 
 export enum LogLevel {
   ERROR = 'error',
@@ -32,13 +31,6 @@ class Logger {
     if (this.isDevelopment) {
       console.error('🚨 [ERROR]', logData);
     }
-
-    // Send to Sentry (environment filtering handled by Sentry config)
-    if (error instanceof Error) {
-      captureException(error);
-    } else {
-      captureMessage(message, 'error');
-    }
   }
 
   /**
@@ -50,9 +42,6 @@ class Logger {
     if (this.isDevelopment) {
       console.warn('⚠️ [WARN]', logData);
     }
-
-    // Send warnings to Sentry (environment filtering handled by Sentry config)
-    captureMessage(message, 'warning');
   }
 
   /**

@@ -72,6 +72,7 @@ export {
   validateEmail,
   validateBirthDate,
   validateGender,
+  isGender,
   validateUserProfile,
   
   // Event validation

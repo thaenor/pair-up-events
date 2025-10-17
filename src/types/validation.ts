@@ -12,6 +12,7 @@ import type {
   ValidationResult,
   EventValidationResult
 } from './firestore';
+import { GENDER } from './firestore';
 
 // ============================================================================
 // VALIDATION CONSTANTS
@@ -169,12 +170,19 @@ export function validateBirthDate(birthDate: string): ValidationResult {
 }
 
 export function validateGender(gender: Gender): ValidationResult {
-  const validGenders: Gender[] = ['male', 'female', 'non-binary', 'prefer-not-to-say'];
+  const validGenders: Gender[] = [GENDER.MALE, GENDER.FEMALE, GENDER.NON_BINARY, GENDER.PREFER_NOT_TO_SAY];
   
   return {
     isValid: validGenders.includes(gender),
     errors: validGenders.includes(gender) ? [] : ['Please select a valid gender']
   };
+}
+
+// Type guard to check if a string is a valid Gender
+export function isGender(value: string | null): value is Gender {
+  if (!value) return false;
+  const validGenders: Gender[] = [GENDER.MALE, GENDER.FEMALE, GENDER.NON_BINARY, GENDER.PREFER_NOT_TO_SAY];
+  return validGenders.includes(value as Gender);
 }
 
 export function validateEventTitle(title: string): ValidationResult {

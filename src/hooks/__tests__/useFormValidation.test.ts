@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { useFormValidation } from '../useFormValidation';
+import { GENDER } from '@/types';
 
 describe('useFormValidation', () => {
   let hook: ReturnType<typeof useFormValidation>;
@@ -144,7 +145,7 @@ describe('useFormValidation', () => {
         firstName: 'John',
         displayName: 'John Doe',
         birthDate: '1990-01-01',
-        gender: 'male'
+        gender: GENDER.MALE
       };
 
       const errors = hook.validateForm(validFormData);

@@ -17,7 +17,7 @@ export interface FormData {
   firstName: string;
   displayName: string;
   birthDate: string;
-  gender: string;
+  gender: Gender | null;
 }
 
 export interface FormErrors extends Record<string, string | undefined> {
@@ -73,8 +73,11 @@ export const useFormValidation = () => {
   }, []);
 
   // Gender validation using new validation function
-  const validateGenderField = useCallback((gender: string): string | null => {
-    const result = validateGender(gender as Gender);
+  const validateGenderField = useCallback((gender: Gender | null): string | null => {
+    if (!gender) {
+      return 'Gender is required';
+    }
+    const result = validateGender(gender);
     return result.isValid ? null : result.errors[0] || 'Invalid gender';
   }, []);
 

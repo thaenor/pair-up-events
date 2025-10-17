@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import ProfileDetailsForm from "../profile-details-form";
 import { PROFILE_MESSAGES } from "@/constants/profile";
+import { GENDER } from "@/types";
 
 const toastSuccess = vi.fn();
 const toastError = vi.fn();
@@ -21,7 +22,7 @@ describe("ProfileDetailsForm", () => {
     firstName: "John",
     displayName: "PairUp Pioneers",
     birthDate: "1996-04-15",
-    gender: "non-binary",
+    gender: GENDER.NON_BINARY,
   } as Parameters<typeof ProfileDetailsForm>[0]["profile"];
 
   beforeEach(() => {

@@ -7,6 +7,7 @@ import LoadingSpinner from '@/components/atoms/LoadingSpinner';
 import { useAuth } from '@/hooks/useAuth';
 import { useFormState } from '@/hooks/useFormState';
 import { useFormValidation, FormData } from '@/hooks/useFormValidation';
+import { GENDER } from '@/types';
 import { trackFormEvent } from '@/lib/analytics';
 
 const EmailSignupForm: React.FC = React.memo(() => {
@@ -21,7 +22,7 @@ const EmailSignupForm: React.FC = React.memo(() => {
     firstName: '',
     displayName: '',
     birthDate: '',
-    gender: ''
+    gender: null
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -30,7 +31,12 @@ const EmailSignupForm: React.FC = React.memo(() => {
 
   // Handle input changes with useCallback
   const handleInputChange = useCallback((field: keyof FormData, value: string) => {
-    updateField(field, value);
+    // Handle gender field specially to convert empty string to null
+    if (field === 'gender') {
+      updateField(field, value === '' ? null : value);
+    } else {
+      updateField(field, value);
+    }
 
     // Real-time validation for immediate feedback
     const updatedFormData = { ...formData, [field]: value };
@@ -342,7 +348,7 @@ const EmailSignupForm: React.FC = React.memo(() => {
             <div className="relative">
               <select
                 id="gender"
-                value={formData.gender}
+                value={formData.gender || ''}
                 onChange={(e) => handleInputChange('gender', e.target.value)}
                 className={`block w-full px-3 py-3 border rounded-md bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors ${
                   errors.gender ? 'border-red-500' : 'border-gray-500'
@@ -354,10 +360,10 @@ const EmailSignupForm: React.FC = React.memo(() => {
                 data-testid="signup-gender-input"
               >
                 <option value="" className="bg-gray-800 text-white">Select your gender</option>
-                <option value="male" className="bg-gray-800 text-white">Male</option>
-                <option value="female" className="bg-gray-800 text-white">Female</option>
-                <option value="non-binary" className="bg-gray-800 text-white">Non-binary</option>
-                <option value="prefer-not-to-say" className="bg-gray-800 text-white">Prefer not to say</option>
+                <option value={GENDER.MALE} className="bg-gray-800 text-white">Male</option>
+                <option value={GENDER.FEMALE} className="bg-gray-800 text-white">Female</option>
+                <option value={GENDER.NON_BINARY} className="bg-gray-800 text-white">Non-binary</option>
+                <option value={GENDER.PREFER_NOT_TO_SAY} className="bg-gray-800 text-white">Prefer not to say</option>
               </select>
             </div>
             <div id="gender-help" className="sr-only">

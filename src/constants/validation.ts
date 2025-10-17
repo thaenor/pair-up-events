@@ -1,3 +1,5 @@
+import { GENDER } from '@/types';
+
 export const EMAIL_VALIDATION = {
   FAKE_DOMAINS: [
     'example.com',
@@ -60,7 +62,7 @@ export const BIRTHDATE_VALIDATION = {
 } as const;
 
 export const GENDER_VALIDATION = {
-  VALID_VALUES: ['male', 'female', 'non-binary', 'prefer-not-to-say']
+  VALID_VALUES: [GENDER.MALE, GENDER.FEMALE, GENDER.NON_BINARY, GENDER.PREFER_NOT_TO_SAY]
 } as const;
 
 export const EVENT_VALIDATION = {

@@ -5,6 +5,7 @@ import { useContext } from "react";
 import { AuthProvider } from "../AuthProvider";
 import { AuthContext } from "../AuthContext";
 import type { AuthContextType } from "@/lib/firebase/types";
+import { GENDER } from "@/types";
 
 const mockAuth = vi.hoisted(() => ({
   currentUser: null as unknown,
@@ -40,7 +41,7 @@ vi.mock("@/lib/firebase", () => ({
   deleteUser: (...args: unknown[]) => mockDeleteUser(...args),
 }));
 
-vi.mock("@/lib/sentry", () => ({
+vi.mock("@sentry/react", () => ({
   setUser: (...args: unknown[]) => mockSetUser(...args),
   captureException: (...args: unknown[]) => mockCaptureException(...args),
   captureMessage: (...args: unknown[]) => mockCaptureMessage(...args),
@@ -99,7 +100,7 @@ describe("AuthProvider", () => {
     });
   };
 
-  it("initializes auth state and synchronizes with Sentry", async () => {
+  it("initializes auth state without calling Sentry in development", async () => {
     renderProvider();
 
     await resolveAuth({ uid: "123", email: "member@pairup.events" });
@@ -108,14 +109,18 @@ describe("AuthProvider", () => {
       expect(TestConsumer.latest?.loading).toBe(false);
       expect(TestConsumer.latest?.user).toEqual({ uid: "123", email: "member@pairup.events" });
     });
-    expect(mockSetUser).toHaveBeenCalledWith({ id: "123", email: "member@pairup.events" });
+    
+    // In development, Sentry should not be called
+    expect(mockSetUser).not.toHaveBeenCalled();
 
     await resolveAuth(null);
 
     await waitFor(() => {
       expect(TestConsumer.latest?.user).toBeNull();
     });
-    expect(mockSetUser).toHaveBeenCalledWith(null);
+    
+    // In development, Sentry should not be called
+    expect(mockSetUser).not.toHaveBeenCalled();
   });
 
   it("signs in with email and toggles loading state", async () => {
@@ -176,7 +181,7 @@ describe("AuthProvider", () => {
     mockCreateUserProfile.mockResolvedValueOnce(undefined);
 
     await act(async () => {
-      await TestConsumer.latest!.signUpWithEmail("new@pairup.events", "password");
+      await TestConsumer.latest!.signUpWithEmail("new@pairup.events", "password", "John", "John Doe", "1990-01-01", GENDER.MALE);
     });
 
     expect(mockCreateUserWithEmailAndPassword).toHaveBeenCalledWith(
@@ -188,6 +193,10 @@ describe("AuthProvider", () => {
       expect.objectContaining({
         id: "456",
         email: "new@pairup.events",
+        firstName: "John",
+        displayName: "John Doe",
+        birthDate: "1990-01-01",
+        gender: GENDER.MALE,
       })
     );
     expect(mockSendEmailVerification).toHaveBeenCalledWith(newUser);
