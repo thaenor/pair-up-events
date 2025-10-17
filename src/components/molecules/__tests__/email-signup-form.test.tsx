@@ -3,6 +3,7 @@ import { MemoryRouter, useNavigate } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi, type MockedFunction } from "vitest";
 
 import EmailSignupForm from "../email-signup-form";
+import { GENDER } from "@/types";
 
 const mockSignUpWithEmail = vi.fn();
 const mockClearError = vi.fn();
@@ -49,7 +50,7 @@ describe("EmailSignupForm", () => {
     fireEvent.change(screen.getByTestId("signup-first-name-input"), { target: { value: "John" } });
     fireEvent.change(screen.getByTestId("signup-display-name-input"), { target: { value: "John Doe" } });
     fireEvent.change(screen.getByTestId("signup-birthdate-input"), { target: { value: "1990-01-01" } });
-    fireEvent.change(screen.getByTestId("signup-gender-input"), { target: { value: "male" } });
+    fireEvent.change(screen.getByTestId("signup-gender-input"), { target: { value: GENDER.MALE } });
     fireEvent.change(screen.getByTestId("signup-password-input"), { target: { value: "ValidPass1" } });
     fireEvent.change(screen.getByTestId("signup-confirm-password-input"), { target: { value: "ValidPass1" } });
   };
@@ -109,7 +110,7 @@ describe("EmailSignupForm", () => {
     fireEvent.click(screen.getByTestId("signup-submit-button"));
 
     await waitFor(() => {
-      expect(mockSignUpWithEmail).toHaveBeenCalledWith("hello@pairup.events", "ValidPass1", "John", "John Doe", "1990-01-01", "male");
+      expect(mockSignUpWithEmail).toHaveBeenCalledWith("hello@pairup.events", "ValidPass1", "John", "John Doe", "1990-01-01", GENDER.MALE);
       expect(mockToastSuccess).toHaveBeenCalledWith("Account created successfully! Please check your email to verify your account.");
       expect(mockNavigate).toHaveBeenCalledWith("/profile");
       expect(screen.getByTestId("signup-success")).toBeInTheDocument();

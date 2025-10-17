@@ -7,7 +7,7 @@ import LoadingSpinner from '@/components/atoms/LoadingSpinner';
 import { useAuth } from '@/hooks/useAuth';
 import { useFormState } from '@/hooks/useFormState';
 import { useFormValidation, FormData } from '@/hooks/useFormValidation';
-import { Gender } from '@/types';
+import { Gender, GENDER } from '@/types';
 import { trackFormEvent } from '@/lib/analytics';
 
 const EmailSignupForm: React.FC = React.memo(() => {
@@ -359,10 +359,10 @@ const EmailSignupForm: React.FC = React.memo(() => {
                 data-testid="signup-gender-input"
               >
                 <option value="" className="bg-gray-800 text-white">Select your gender</option>
-                <option value="male" className="bg-gray-800 text-white">Male</option>
-                <option value="female" className="bg-gray-800 text-white">Female</option>
-                <option value="non-binary" className="bg-gray-800 text-white">Non-binary</option>
-                <option value="prefer-not-to-say" className="bg-gray-800 text-white">Prefer not to say</option>
+                <option value={GENDER.MALE} className="bg-gray-800 text-white">Male</option>
+                <option value={GENDER.FEMALE} className="bg-gray-800 text-white">Female</option>
+                <option value={GENDER.NON_BINARY} className="bg-gray-800 text-white">Non-binary</option>
+                <option value={GENDER.PREFER_NOT_TO_SAY} className="bg-gray-800 text-white">Prefer not to say</option>
               </select>
             </div>
             <div id="gender-help" className="sr-only">

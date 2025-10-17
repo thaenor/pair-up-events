@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 
 import { PROFILE_COPY, PROFILE_MESSAGES } from '@/constants/profile';
 import type { UserProfile, UserProfileUpdate, Gender } from '@/types';
+import { GENDER } from '@/types';
 import { validateFirstName, validateDisplayName, validateBirthDate, validateGender } from '@/types';
 import { trackProfileEvent, trackFormEvent } from '@/lib/analytics';
 
@@ -223,10 +224,10 @@ export const ProfileDetailsForm: React.FC<ProfileDetailsFormProps> = ({
             aria-describedby={errors.gender ? 'gender-error' : undefined}
           >
             <option value="">{PROFILE_COPY.DETAILS.GENDER_PLACEHOLDER}</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="non-binary">Non-binary</option>
-            <option value="prefer-not-to-say">Prefer not to say</option>
+            <option value={GENDER.MALE}>Male</option>
+            <option value={GENDER.FEMALE}>Female</option>
+            <option value={GENDER.NON_BINARY}>Non-binary</option>
+            <option value={GENDER.PREFER_NOT_TO_SAY}>Prefer not to say</option>
           </select>
           {errors.gender && (
             <p id="gender-error" className="mt-1 text-sm text-red-600" role="alert">

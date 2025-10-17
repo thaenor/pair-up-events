@@ -5,6 +5,7 @@ import { useContext } from "react";
 import { AuthProvider } from "../AuthProvider";
 import { AuthContext } from "../AuthContext";
 import type { AuthContextType } from "@/lib/firebase/types";
+import { GENDER } from "@/types";
 
 const mockAuth = vi.hoisted(() => ({
   currentUser: null as unknown,
@@ -180,7 +181,7 @@ describe("AuthProvider", () => {
     mockCreateUserProfile.mockResolvedValueOnce(undefined);
 
     await act(async () => {
-      await TestConsumer.latest!.signUpWithEmail("new@pairup.events", "password", "John", "John Doe", "1990-01-01", "male");
+      await TestConsumer.latest!.signUpWithEmail("new@pairup.events", "password", "John", "John Doe", "1990-01-01", GENDER.MALE);
     });
 
     expect(mockCreateUserWithEmailAndPassword).toHaveBeenCalledWith(
@@ -195,7 +196,7 @@ describe("AuthProvider", () => {
         firstName: "John",
         displayName: "John Doe",
         birthDate: "1990-01-01",
-        gender: "male",
+        gender: GENDER.MALE,
       })
     );
     expect(mockSendEmailVerification).toHaveBeenCalledWith(newUser);

@@ -54,13 +54,15 @@ export const DISPLAY_NAME_VALIDATION = {
   REGEX: /^[a-zA-Z\s\-'.]+$/
 } as const;
 
+import { GENDER } from '@/types';
+
 export const BIRTHDATE_VALIDATION = {
   MIN_AGE: 13,
   MAX_AGE: 120
 } as const;
 
 export const GENDER_VALIDATION = {
-  VALID_VALUES: ['male', 'female', 'non-binary', 'prefer-not-to-say']
+  VALID_VALUES: [GENDER.MALE, GENDER.FEMALE, GENDER.NON_BINARY, GENDER.PREFER_NOT_TO_SAY]
 } as const;
 
 export const EVENT_VALIDATION = {
