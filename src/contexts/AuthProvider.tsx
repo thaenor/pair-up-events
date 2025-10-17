@@ -15,7 +15,7 @@ import {
 import { AuthContextType, AuthState } from '@/lib/firebase/types';
 import { AuthContext } from './AuthContext';
 import { getAuthErrorMessage } from '@/utils/authErrorMessages';
-import { setUser } from '@/lib/sentry';
+import { setUser } from '@sentry/react';
 import { createUserProfile, deleteUserProfile } from '@/lib/firebase/user-profile';
 import { logError, logWarning } from '@/utils/logger';
 import { trackAuthEvent } from '@/lib/analytics';
@@ -76,7 +76,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         error: options?.suppressErrorState ? prev.error : errorMessage,
       }));
 
-      setUser(null);
+      // Clear Sentry user context in production
+      if (import.meta.env.PROD) {
+        setUser(null);
+      }
 
       return { auth: null, error } as const;
     }
@@ -105,14 +108,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         error: null,
       });
 
-      // Update Sentry user context
-      if (user) {
-        setUser({
-          id: user.uid,
-          email: user.email || undefined,
-        });
-      } else {
-        setUser(null);
+      // Update Sentry user context in production
+      if (import.meta.env.PROD) {
+        if (user) {
+          setUser({
+            id: user.uid,
+            email: user.email || undefined,
+          });
+        } else {
+          setUser(null);
+        }
       }
     });
 

@@ -1,4 +1,5 @@
 import type { User } from 'firebase/auth';
+import type { Gender } from '@/types';
 
 // Re-export Firebase types for convenience
 export type { User } from 'firebase/auth';
@@ -13,7 +14,7 @@ export interface AuthState {
 // Authentication context type
 export interface AuthContextType extends AuthState {
   signInWithEmail: (email: string, password: string) => Promise<void>;
-  signUpWithEmail: (email: string, password: string, firstName: string, displayName: string, birthDate: string, gender: string) => Promise<void>;
+  signUpWithEmail: (email: string, password: string, firstName: string, displayName: string, birthDate: string, gender: Gender) => Promise<void>;
   sendEmailVerification: () => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
   deleteUserAccount: () => Promise<void>;
