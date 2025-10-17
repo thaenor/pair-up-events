@@ -142,24 +142,3 @@ export const trackFormEvent = (formName: string, action: 'submit' | 'error' | 's
   });
 };
 
-/**
- * Track PWA-related events
- * @param action - The PWA action (install, prompt, etc.)
- */
-export const trackPWAEvent = (action: 'install' | 'prompt' | 'dismiss'): void => {
-  trackEvent('pwa_event', {
-    event_category: 'pwa',
-    event_label: action,
-  });
-};
-
-/**
- * Track notification events
- * @param action - The notification action (permission_request, permission_granted, etc.)
- */
-export const trackNotificationEvent = (action: 'permission_request' | 'permission_granted' | 'permission_denied' | 'received'): void => {
-  trackEvent('notification_event', {
-    event_category: 'notifications',
-    event_label: action,
-  });
-};
