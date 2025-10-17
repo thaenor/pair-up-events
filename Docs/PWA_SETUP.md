@@ -1,33 +1,17 @@
 # PWA Setup Guide
 
-This guide explains how to set up the Progressive Web App (PWA) functionality and Firebase Cloud Messaging for push notifications.
+This guide explains how to set up the Progressive Web App (PWA) functionality for offline caching and installability.
 
 ## PWA Features Implemented
 
 - ✅ Web App Manifest
 - ✅ Service Worker for offline functionality
-- ✅ Push notifications via Firebase Cloud Messaging
 - ✅ Install prompt for mobile and desktop
 - ✅ Offline caching
-- ✅ Background sync capabilities
 
-## Firebase Cloud Messaging Setup
+## Firebase Setup
 
-### 1. Enable Firebase Cloud Messaging
-
-1. Go to your Firebase Console
-2. Navigate to your project
-3. Go to "Project Settings" > "Cloud Messaging" tab
-4. Note down your Server Key (you'll need this for sending notifications)
-
-### 2. Generate VAPID Keys
-
-1. In Firebase Console, go to "Project Settings" > "Cloud Messaging" tab
-2. Scroll down to "Web configuration"
-3. Click "Generate key pair" under "Web push certificates"
-4. Copy the key pair and add it to your environment variables
-
-### 3. Environment Variables
+### Environment Variables
 
 Add these environment variables to your `.env` file:
 
@@ -39,18 +23,9 @@ VITE_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=your_project_id
 VITE_FIREBASE_APP_ID=1:123456789:web:abcdef123456
 VITE_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
-VITE_FIREBASE_MESSAGING_SENDER_ID=123456789
-
-# Firebase Cloud Messaging VAPID Key
-# Get this from Firebase Console > Project Settings > Cloud Messaging > Web push certificates
-VITE_FIREBASE_VAPID_KEY=your_vapid_key_here
 ```
 
-**Important**: Make sure you have ALL the Firebase configuration values, especially the `appId` which is required for Firebase Cloud Messaging to work properly.
-
-### 4. Update Firebase Configuration
-
-The Firebase configuration in `src/lib/firebase/config.ts` should include the messaging service. This is already set up in the code.
+**Note**: No VAPID key or messaging configuration is needed for the current PWA implementation.
 
 ## PWA Icons
 
@@ -67,9 +42,8 @@ For better PWA support, consider creating specific icon sizes:
 
 The service worker (`/public/sw.js`) handles:
 - Offline caching of static assets
-- Background sync
-- Push notification handling
 - Cache management
+- Offline fallback functionality
 
 ## Testing PWA Features
 
@@ -77,58 +51,13 @@ The service worker (`/public/sw.js`) handles:
 
 1. Open the app in Chrome/Edge
 2. Look for the install prompt or click the install button in the address bar
-3. The PWA install prompt component will also appear
 
-### 2. Test Push Notifications
-
-1. Grant notification permissions when prompted
-2. Use the Firebase Console to send test notifications
-3. Or use the Firebase Admin SDK to send notifications programmatically
-
-### 3. Test Offline Functionality
+### 2. Test Offline Functionality
 
 1. Install the PWA
 2. Go offline (disable network in DevTools)
 3. The app should still work with cached content
 
-## Sending Push Notifications
-
-### Using Firebase Console
-
-1. Go to Firebase Console > Cloud Messaging
-2. Click "Send your first message"
-3. Enter notification details
-4. Select target (all users or specific tokens)
-5. Send the message
-
-### Using Firebase Admin SDK (Server-side)
-
-```javascript
-const admin = require('firebase-admin');
-
-// Initialize Firebase Admin
-const serviceAccount = require('./path/to/serviceAccountKey.json');
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
-
-// Send notification
-const message = {
-  notification: {
-    title: 'New Event Available!',
-    body: 'Check out the latest events in your area'
-  },
-  token: 'user_fcm_token_here'
-};
-
-admin.messaging().send(message)
-  .then((response) => {
-    console.log('Successfully sent message:', response);
-  })
-  .catch((error) => {
-    console.log('Error sending message:', error);
-  });
-```
 
 ## PWA Manifest Configuration
 
@@ -154,12 +83,6 @@ The manifest file (`/public/manifest.json`) includes:
 2. Ensure the service worker file is accessible at `/sw.js`
 3. Check Content Security Policy settings
 
-### Push Notifications Not Working
-
-1. Verify VAPID key is correctly set
-2. Check notification permissions
-3. Ensure Firebase project has Cloud Messaging enabled
-4. Check browser console for FCM errors
 
 ### PWA Not Installable
 
@@ -171,14 +94,11 @@ The manifest file (`/public/manifest.json`) includes:
 ## Security Considerations
 
 - Always use HTTPS in production
-- Validate notification payloads
-- Implement proper authentication for notification endpoints
+- Implement proper authentication for API endpoints
 - Use secure token storage
-- Regularly rotate VAPID keys
 
 ## Performance Optimization
 
 - Implement proper cache strategies
-- Use background sync for offline actions
 - Optimize service worker bundle size
 - Implement lazy loading for PWA features
