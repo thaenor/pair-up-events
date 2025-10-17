@@ -1,3 +1,5 @@
+import { GENDER } from '@/types';
+
 export const EMAIL_VALIDATION = {
   FAKE_DOMAINS: [
     'example.com',
@@ -53,8 +55,6 @@ export const DISPLAY_NAME_VALIDATION = {
   MAX_LENGTH: 50,
   REGEX: /^[a-zA-Z\s\-'.]+$/
 } as const;
-
-import { GENDER } from '@/types';
 
 export const BIRTHDATE_VALIDATION = {
   MIN_AGE: 13,

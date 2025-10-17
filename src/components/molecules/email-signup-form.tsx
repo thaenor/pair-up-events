@@ -7,7 +7,7 @@ import LoadingSpinner from '@/components/atoms/LoadingSpinner';
 import { useAuth } from '@/hooks/useAuth';
 import { useFormState } from '@/hooks/useFormState';
 import { useFormValidation, FormData } from '@/hooks/useFormValidation';
-import { GENDER, isGender } from '@/types';
+import { GENDER } from '@/types';
 import { trackFormEvent } from '@/lib/analytics';
 
 const EmailSignupForm: React.FC = React.memo(() => {
@@ -70,10 +70,6 @@ const EmailSignupForm: React.FC = React.memo(() => {
     }
 
     try {
-      // Ensure gender is a valid Gender value before calling signUpWithEmail
-      if (!formData.gender || !isGender(formData.gender)) {
-        throw new Error('Please select a valid gender');
-      }
       await signUpWithEmail(formData.email, formData.password, formData.firstName, formData.displayName, formData.birthDate, formData.gender);
       setRegistrationSuccess(true);
       toast.success('Account created successfully! Please check your email to verify your account.');
