@@ -22,7 +22,7 @@ const EmailSignupForm: React.FC = React.memo(() => {
     firstName: '',
     displayName: '',
     birthDate: '',
-    gender: ''
+    gender: null
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -31,7 +31,12 @@ const EmailSignupForm: React.FC = React.memo(() => {
 
   // Handle input changes with useCallback
   const handleInputChange = useCallback((field: keyof FormData, value: string) => {
-    updateField(field, value);
+    // Handle gender field specially to convert empty string to null
+    if (field === 'gender') {
+      updateField(field, value === '' ? null : value);
+    } else {
+      updateField(field, value);
+    }
 
     // Real-time validation for immediate feedback
     const updatedFormData = { ...formData, [field]: value };
@@ -347,7 +352,7 @@ const EmailSignupForm: React.FC = React.memo(() => {
             <div className="relative">
               <select
                 id="gender"
-                value={formData.gender}
+                value={formData.gender || ''}
                 onChange={(e) => handleInputChange('gender', e.target.value)}
                 className={`block w-full px-3 py-3 border rounded-md bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors ${
                   errors.gender ? 'border-red-500' : 'border-gray-500'

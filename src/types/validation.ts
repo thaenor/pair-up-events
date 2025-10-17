@@ -179,7 +179,8 @@ export function validateGender(gender: Gender): ValidationResult {
 }
 
 // Type guard to check if a string is a valid Gender
-export function isGender(value: string): value is Gender {
+export function isGender(value: string | null): value is Gender {
+  if (!value) return false;
   const validGenders: Gender[] = [GENDER.MALE, GENDER.FEMALE, GENDER.NON_BINARY, GENDER.PREFER_NOT_TO_SAY];
   return validGenders.includes(value as Gender);
 }
