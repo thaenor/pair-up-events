@@ -1028,17 +1028,83 @@ The system combines photography of real people in motion with card-based floatin
 
 # **8. Accessibility & UX**
 
-Pair Up Events is designed to meet **WCAG 2.1 AA** compliance.
+Accessibility and usability are at the core of **Pair Up Events**, ensuring that every user — regardless of ability, device, or comfort level — can enjoy seamless, inclusive interaction.  
+The system adheres to **WCAG 2.2 AA standards**, prioritizing clarity, control, and comfort.  
+It’s designed to feel **warm, trustworthy, and supportive**, helping users focus on connection, not complexity.
 
-✅ Implemented accessibility features:
-- `aria-label`, `aria-live`, and `aria-invalid` attributes
-- Focus management in modals and navigation
-- Skip link component for keyboard navigation
-- `useAccessibility` hook for focus traps and announcements
-- Screen-reader-friendly toast notifications (`role="alert"`)
-- Proper color contrast verified with tooling
-
-Accessibility is reviewed monthly and tested with `@testing-library/jest-axe`.
+```json
+{
+  "accessibility_ux": {
+    "conformance_level": "WCAG 2.2 AA",
+    "core_principles": {
+      "perceivable": "All text, icons, and media maintain adequate contrast and provide alternatives (alt-text, ARIA labels).",
+      "operable": "All controls are keyboard-accessible with visible focus states.",
+      "understandable": "Microcopy and system feedback use friendly, consistent language.",
+      "robust": "Fully compatible with screen readers, assistive technologies, and device settings."
+    },
+    "motion_policy": {
+      "default_behavior": "Subtle organic animations for depth and flow (card elevation, fade, slide).",
+      "prefers_reduced_motion": {
+        "detected_via": "CSS media query prefers-reduced-motion",
+        "behavior": "Disable parallax and bouncing animations, retain fade-only transitions.",
+        "user_toggle_available": true
+      },
+      "transition_timing": "150–250ms, ease-out",
+      "motion_tone": "Calm and natural — no abrupt or flashing movement."
+    },
+    "text_and_readability": {
+      "base_font_size": "16px minimum",
+      "scaling": "Up to 200% without breaking layout",
+      "contrast_ratio_minimum": "4.5:1",
+      "high_contrast_mode": "Available as a toggle under user settings",
+      "line_spacing": "1.5x font size",
+      "font_family": {
+        "headlines": "Outfit",
+        "body": "Manrope"
+      }
+    },
+    "interaction_design": {
+      "keyboard_navigation": {
+        "tab_index_order": "Logical and consistent with visual flow",
+        "focus_state_style": "1px outline with 4px offset, #27E9F3 glow",
+        "skip_links": "Enabled for major layout sections"
+      },
+      "touch_targets": {
+        "min_size": "44x44px",
+        "spacing": "8px minimum between interactive elements"
+      },
+      "feedback": {
+        "visual": "Hover, press, and focus feedback on all buttons and links.",
+        "auditory": "Optional subtle sound feedback for actions (toggleable)."
+      }
+    },
+    "pair_safety_features": {
+      "privacy_defaults": "Event locations visible only to confirmed pairs.",
+      "pre_meet_confirmation": "Both pairs must confirm attendance before seeing exact address.",
+      "report_feature": "Every event card includes 'Report Event' button.",
+      "post_event_feedback": "Simple, friendly UX for rating experiences.",
+      "emotional_safety_tone": "Encouraging, reassuring, non-judgmental microcopy."
+    },
+    "microcopy_tone": {
+      "tone_keywords": ["warm", "trustworthy", "encouraging", "clear"],
+      "examples": {
+        "empty_state": "No pair-ups yet — ready to start something new?",
+        "form_hint": "Keep it short and friendly — others will see your event title!",
+        "confirmation_message": "You’re all set! Time to discover your next shared moment."
+      }
+    },
+    "assistive_technologies_support": {
+      "screen_reader_labels": "All interactive and visual elements include descriptive ARIA labels.",
+      "semantic_html_usage": "Use of native HTML5 landmarks for navigation.",
+      "voice_control": "Tested for speech recognition compatibility (Apple Voice Control, Dragon)."
+    },
+    "cross_references": {
+      "visual_design": "Contrast and spacing rules align with visual design tone.",
+      "animations": "Motion rules defined in Animations & Micro-interactions.",
+      "design_tokens": "Accessible color and typography tokens referenced for consistency."
+    }
+  }
+}
 
 ---
 
