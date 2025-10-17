@@ -7,6 +7,7 @@ import LoadingSpinner from '@/components/atoms/LoadingSpinner';
 import { useAuth } from '@/hooks/useAuth';
 import { useFormState } from '@/hooks/useFormState';
 import { useFormValidation, FormData } from '@/hooks/useFormValidation';
+import { Gender } from '@/types';
 import { trackFormEvent } from '@/lib/analytics';
 
 const EmailSignupForm: React.FC = React.memo(() => {
@@ -21,7 +22,7 @@ const EmailSignupForm: React.FC = React.memo(() => {
     firstName: '',
     displayName: '',
     birthDate: '',
-    gender: ''
+    gender: '' as Gender
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -30,7 +31,11 @@ const EmailSignupForm: React.FC = React.memo(() => {
 
   // Handle input changes with useCallback
   const handleInputChange = useCallback((field: keyof FormData, value: string) => {
-    updateField(field, value);
+    if (field === 'gender') {
+      updateField(field, value as Gender);
+    } else {
+      updateField(field, value);
+    }
 
     // Real-time validation for immediate feedback
     const updatedFormData = { ...formData, [field]: value };
