@@ -5,7 +5,7 @@ import { Suspense, lazy, useEffect, useMemo } from "react";
 import { AuthProvider } from "./contexts/AuthProvider";
 import { UserProfileProvider } from "./contexts/UserProfileProvider";
 import ErrorBoundary from "./components/ErrorBoundary";
-import { PWAInstallPrompt } from "./components/molecules/pwa-install-prompt";
+// PWA install prompt removed - now using lazy initialization
 import { initializeAnalytics } from "./lib/analytics";
 import { PageTracker } from "./components/PageTracker";
 import LoadingSpinner from "./components/atoms/LoadingSpinner";
@@ -62,7 +62,7 @@ const App = () => {
             richColors={true}
             closeButton={true}
           />
-          <PWAInstallPrompt />
+          {/* PWA install prompt removed - now using lazy initialization */}
         </ErrorBoundary>
         </BrowserRouter>
       </UserProfileProvider>

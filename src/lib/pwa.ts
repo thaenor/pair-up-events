@@ -1,87 +1,22 @@
 import { logInfo, logError } from '@/utils/logger';
 
-// PWA Install Prompt Event Interface
-interface BeforeInstallPromptEvent extends Event {
-  prompt(): Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
-}
-
-export interface PWAInstallPrompt {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
-}
+// PWA Install Prompt functionality removed - users can install via browser controls
 
 export interface PWAService {
-  isInstallable: boolean;
   isInstalled: boolean;
-  installPrompt: PWAInstallPrompt | null;
   registerServiceWorker: () => Promise<boolean>;
-  requestInstall: () => Promise<boolean>;
 }
 
 class PWAManager implements PWAService {
-  private _installPrompt: PWAInstallPrompt | null = null;
-  private deferredPrompt: BeforeInstallPromptEvent | null = null;
-
   constructor() {
-    this.setupInstallPrompt();
+    // Only check installation status - no install prompt functionality
     this.checkInstallationStatus();
-  }
-
-  get isInstallable(): boolean {
-    return this.installPrompt !== null;
   }
 
   get isInstalled(): boolean {
     return window.matchMedia('(display-mode: standalone)').matches ||
            (window.navigator as Navigator & { standalone?: boolean }).standalone === true ||
            document.referrer.includes('android-app://');
-  }
-
-  get installPrompt(): PWAInstallPrompt | null {
-    return this._installPrompt;
-  }
-
-  private setupInstallPrompt(): void {
-    window.addEventListener('beforeinstallprompt', (event) => {
-      logInfo('PWA install prompt available', {
-        component: 'PWAManager',
-        action: 'beforeinstallprompt',
-      });
-
-      // Prevent the mini-infobar from appearing on mobile
-      event.preventDefault();
-      
-      // Stash the event so it can be triggered later
-      this.deferredPrompt = event;
-      
-      this._installPrompt = {
-        prompt: async () => {
-          if (this.deferredPrompt) {
-            this.deferredPrompt.prompt();
-            const { outcome } = await this.deferredPrompt.userChoice;
-            logInfo('PWA install prompt result', {
-              component: 'PWAManager',
-              action: 'installPrompt',
-              additionalData: { outcome },
-            });
-            this.deferredPrompt = null;
-            this._installPrompt = null;
-          }
-        },
-        userChoice: this.deferredPrompt?.userChoice || Promise.resolve({ outcome: 'dismissed' as const }),
-      };
-    });
-
-    window.addEventListener('appinstalled', () => {
-      logInfo('PWA installed successfully', {
-        component: 'PWAManager',
-        action: 'appinstalled',
-      });
-      
-      this.deferredPrompt = null;
-      this._installPrompt = null;
-    });
   }
 
   private checkInstallationStatus(): void {
@@ -152,27 +87,7 @@ class PWAManager implements PWAService {
     }
   }
 
-  async requestInstall(): Promise<boolean> {
-    if (!this.installPrompt) {
-      logError('Install prompt not available', {
-        component: 'PWAManager',
-        action: 'requestInstall',
-      });
-      return false;
-    }
-
-    try {
-      await this.installPrompt.prompt();
-      return true;
-    } catch (error) {
-      logError('Install request failed', {
-        component: 'PWAManager',
-        action: 'requestInstall',
-        error: error instanceof Error ? error.message : 'Unknown error',
-      });
-      return false;
-    }
-  }
+  // Install prompt functionality removed - users can install via browser controls
 }
 
 // Create singleton instance

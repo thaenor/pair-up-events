@@ -1,7 +1,6 @@
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { defineConfig } from "vite";
-import { firebaseMessagingPlugin } from "./vite-plugin-firebase-messaging.js";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -15,7 +14,6 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    firebaseMessagingPlugin(),
     {
       name: 'html-transform',
       transformIndexHtml(html) {

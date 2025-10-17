@@ -1,12 +1,9 @@
 import { useState, useEffect } from 'react';
-import { pwaService, PWAInstallPrompt } from '@/lib/pwa';
+import { pwaService } from '@/lib/pwa';
 
 export interface PWAHook {
-  isInstallable: boolean;
   isInstalled: boolean;
-  installPrompt: PWAInstallPrompt | null;
   registerServiceWorker: () => Promise<boolean>;
-  requestInstall: () => Promise<boolean>;
   isServiceWorkerRegistered: boolean;
 }
 
@@ -24,11 +21,8 @@ export const usePWA = (): PWAHook => {
   }, []);
 
   return {
-    isInstallable: pwaService.isInstallable,
     isInstalled: pwaService.isInstalled,
-    installPrompt: pwaService.installPrompt,
     registerServiceWorker: pwaService.registerServiceWorker,
-    requestInstall: pwaService.requestInstall,
     isServiceWorkerRegistered,
   };
 };
