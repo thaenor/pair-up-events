@@ -1,9 +1,16 @@
 import React from 'react';
-import { Construction } from 'lucide-react';
+import { Construction, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/organisms/Navigation';
 import MobileBottomNavigation from '@/components/organisms/MobileBottomNavigation';
 
 const EventsPage: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleCreateEvent = () => {
+    navigate('/events/create');
+  };
+
   return (
     <div className="min-h-screen bg-pairup-cream">
       <Navigation />
@@ -11,10 +18,20 @@ const EventsPage: React.FC = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <img src="/Logo.png" alt="PairUp Events" className="h-12 mx-auto mb-6" />
-          <h1 className="text-4xl font-bold text-pairup-darkBlue mb-2 flex items-center justify-center">
+          <h1 className="text-4xl font-bold text-pairup-darkBlue mb-4 flex items-center justify-center">
             <Construction className="h-8 w-8 mr-3 text-pairup-cyan" />
             My Events
           </h1>
+          
+          {/* Create Event Button */}
+          <button
+            onClick={handleCreateEvent}
+            className="inline-flex items-center rounded-lg border border-pairup-cyan bg-pairup-cyan px-6 py-3 text-base font-semibold text-pairup-darkBlue transition-colors hover:bg-pairup-cyan/90 focus:outline-none focus:ring-2 focus:ring-pairup-cyan shadow-sm"
+            data-testid="create-event-button"
+          >
+            <Plus className="h-5 w-5 mr-2" />
+            Create Event
+          </button>
         </div>
 
         {/* Under Construction Message */}
@@ -45,9 +62,21 @@ const EventsPage: React.FC = () => {
               </ul>
             </div>
 
-            <p className="text-pairup-darkBlue/60 text-sm">
-              Stay tuned for updates! In the meantime, you can explore events on the main page.
-            </p>
+            <div className="space-y-4">
+              <p className="text-pairup-darkBlue/60 text-sm">
+                Stay tuned for updates! In the meantime, you can create your first event.
+              </p>
+              
+              {/* Secondary Create Event Button */}
+              <button
+                onClick={handleCreateEvent}
+                className="inline-flex items-center rounded-lg border border-pairup-cyan bg-white px-5 py-2 text-sm font-semibold text-pairup-darkBlue transition-colors hover:bg-pairup-cyan/20 focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+                data-testid="create-event-button-secondary"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Create Your First Event
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -11,6 +11,7 @@ export { default as InviteFriendSection } from "./molecules/invite-friend-sectio
 // Organisms
 export { default as BenefitsSection } from "./organisms/BenefitsSection";
 export { default as EarlyAccessSection } from "./organisms/EarlyAccessSection";
+export { default as EventCreationForm } from "./organisms/EventCreationForm";
 export { default as Footer } from "./organisms/Footer";
 export { default as HeroSection } from "./organisms/HeroSection";
 export { default as HowItWorksSection } from "./organisms/HowItWorksSection";

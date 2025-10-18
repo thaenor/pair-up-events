@@ -255,22 +255,30 @@ export function validateEventCapacity(capacity: number): ValidationResult {
   };
 }
 
-export function validateEventPairs(pairs: Event['pairs']): ValidationResult {
+export function validateEventPairs(pairs: Event['pairs'], allowEmpty: boolean = false): ValidationResult {
   const errors: string[] = [];
   
+  // If allowing empty pairs (for draft events), only validate when pairs are present
+  if (allowEmpty) {
+    const hasAnyUser = pairs.pair1.userA || pairs.pair1.userB || pairs.pair2.userC || pairs.pair2.userD;
+    if (!hasAnyUser) {
+      return { isValid: true, errors: [] }; // Empty pairs are valid for drafts
+    }
+  }
+  
   if (!pairs.pair1.userA || !pairs.pair1.userB) {
-    errors.push('Pair 1 must have both User A and User B');
+    errors.push('First pair must have both participants');
   }
   
   if (!pairs.pair2.userC || !pairs.pair2.userD) {
-    errors.push('Pair 2 must have both User C and User D');
+    errors.push('Second pair must have both participants');
   }
   
-  // Check for duplicate users
-  const allUsers = [pairs.pair1.userA, pairs.pair1.userB, pairs.pair2.userC, pairs.pair2.userD];
+  // Check for duplicate users (only if we have users)
+  const allUsers = [pairs.pair1.userA, pairs.pair1.userB, pairs.pair2.userC, pairs.pair2.userD].filter(id => id !== '');
   const uniqueUsers = new Set(allUsers);
-  if (uniqueUsers.size !== 4) {
-    errors.push('All four participants must be unique users');
+  if (allUsers.length > 0 && uniqueUsers.size !== allUsers.length) {
+    errors.push('All participants must be unique');
   }
   
   return {
@@ -280,7 +288,7 @@ export function validateEventPairs(pairs: Event['pairs']): ValidationResult {
 }
 
 export function validateEventStatus(status: EventStatus): ValidationResult {
-  const validStatuses: EventStatus[] = ['pending', 'live', 'confirmed', 'completed', 'cancelled'];
+  const validStatuses: EventStatus[] = ['draft', 'pending', 'live', 'confirmed', 'completed', 'cancelled'];
   
   return {
     isValid: validStatuses.includes(status),
@@ -468,7 +476,8 @@ export function validateEvent(event: Partial<Event>): EventValidationResult {
   }
   
   if (event.pairs) {
-    const pairsResult = validateEventPairs(event.pairs);
+    const allowEmpty = event.status === 'draft';
+    const pairsResult = validateEventPairs(event.pairs, allowEmpty);
     pairsValid = pairsResult.isValid;
     errors.push(...pairsResult.errors);
   }

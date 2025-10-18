@@ -20,7 +20,7 @@ import type {
 // ============================================================================
 
 export function isEventStatus(status: string): status is EventStatus {
-  return ['pending', 'live', 'confirmed', 'completed', 'cancelled'].includes(status);
+  return ['draft', 'pending', 'live', 'confirmed', 'completed', 'cancelled'].includes(status);
 }
 
 export function isEventVisibility(visibility: string): visibility is EventVisibility {
@@ -37,6 +37,10 @@ export function isEventConfirmed(event: Event): boolean {
 
 export function isEventCompleted(event: Event): boolean {
   return event.status === 'completed';
+}
+
+export function isEventDraft(event: Event): boolean {
+  return event.status === 'draft';
 }
 
 export function isEventPending(event: Event): boolean {

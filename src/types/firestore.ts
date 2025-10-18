@@ -5,6 +5,7 @@ import { Timestamp } from 'firebase/firestore';
 // ============================================================================
 
 export const EVENT_STATUS = {
+  DRAFT: 'draft',
   PENDING: 'pending',
   LIVE: 'live', 
   CONFIRMED: 'confirmed',
@@ -224,6 +225,8 @@ export interface EventPreferences {
   comfortableLanguages: string[];
   duoVibe: Vibe[];
   connectionIntention: ConnectionIntention;
+  parentPreference?: string;
+  availabilityNotes?: string;
 }
 
 export interface EventCounts {
