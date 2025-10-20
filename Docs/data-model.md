@@ -1,17 +1,13 @@
 # PairUp Events – Firestore Data Model
 
 > Version: 2.0  
-> Purpose: Provide a clear, maintainable, and cost-optimized Firestore data architecture for the PairUp Events app that enforces the 2-meets-2 pair-based social model.
+> Purpose: Firestore data architecture for the PairUp Events app that enforces the 2-meets-2 pair-based social model.
 
 ---
 
 ## 🔧 Overview
 
-This model is designed for **low-cost, scalable Firebase usage** with **pair-based event constraints**:
-- Minimize document reads/writes.
-- Favor projection collections (listings, geo) for cheap list views.
-- Separate public vs private data for privacy and caching.
-- Avoid fan-out updates by linking data through subcollections and snapshots.
+This model enforces **pair-based event constraints**:
 - **Enforce 2-meets-2 model**: All events must have exactly 4 participants (2 pairs of 2).
 - **State-driven event lifecycle**: Events progress through pending → live → confirmed states.
 
@@ -26,7 +22,6 @@ This model is designed for **low-cost, scalable Firebase usage** with **pair-bas
 |--------|------|-------------|
 | `email` | string | User's private email |
 | `firstName` | string | User's first name (public identifier) |
-| `displayName` | string | User's display name (from OAuth or custom) |
 | `birthDate` | string | User's birthdate (private, used for age verification) |
 | `gender` | string | User's gender identity (male, female, non-binary, prefer-not-to-say) |
 | `photoUrl` | string | User's profile photo URL (private) |
@@ -51,7 +46,6 @@ This model is designed for **low-cost, scalable Firebase usage** with **pair-bas
 | Field | Type | Description |
 |--------|------|-------------|
 | `firstName` | string | Public first name |
-| `displayName` | string | Public display name |
 | `photoUrl` | string | Public photo |
 | `city` | string | Optional city |
 | `bio` | string | Optional bio or tagline |
@@ -69,14 +63,13 @@ This model is designed for **low-cost, scalable Firebase usage** with **pair-bas
 | `title` | string | Event title |
 | `description` | string | Full description |
 | `creatorId` | string | UID of the creator (User A) |
-| `status` | string | `"draft" | "pending" | "live" | "confirmed" | "completed" | "cancelled"` |
-| `visibility` | string | `"public" | "private" | "friends"` |
+| `status` | string | "pending" | "live" | "confirmed" | "completed" | "cancelled"` |
+| `visibility` | string | `"public" | "private" |
 | `timeStart` | Timestamp | Start time |
 | `timeEnd` | Timestamp | End time (optional) |
 | `location` | object | `{ address, city, country, geoPoint, geohash }` |
 | `tags` | string[] | Searchable labels |
-| `capacity` | number | **Fixed at 4** (2 pairs of 2) |
-| `pairs` | object | `{ pair1: { userA: string, userB: string }, pair2: { userC: string, userD: string } }` |
+| `pairs` | object[] | `[ pair1: { userA: string, userB: string }, pair2: { userC: string, userD: string } ]` |
 | `preferences` | object | Event matching preferences (see Event Preferences below) |
 | `counts` | object | `{ confirmed, applicants, messages }` |
 | `coverThumbUrl` | string | Small thumbnail for listings |
@@ -84,14 +77,13 @@ This model is designed for **low-cost, scalable Firebase usage** with **pair-bas
 | `updatedAt` | Timestamp | Last update |
 | `lastActivityAt` | Timestamp | Used for sorting listings |
 | `chatCreated` | boolean | Whether group chat has been created |
-| `chatArchived` | boolean | Whether chat has been archived |
 
 **Event Preferences Object:**
 ```json
 {
   "duoType": "friends|couples|family|roommates|colleagues",
   "preferredAgeRange": { "min": number, "max": number },
-  "preferredGender": string[],
+  "preferredGender": string[], //male, female, non-binary, prefer-not-to-say
   "desiredVibes": string[], // From design doc: adventurous, chill, funny, curious, outgoing, creative, foodies, active, culture, family-friendly, organizers, nightlife, mindful
   "relationshipType": string,
   "comfortableLanguages": string[],
@@ -149,7 +141,7 @@ User–Event relationship documents.
 | `timeStart` | Timestamp | For sorting |
 | `visibility` | string | `"public" | "private"` |
 | `confirmedCount` | number | Cached participant count |
-| `creatorSnap` | object | `{ displayName, photoUrl }` |
+| `creatorSnap` | object | `{ firstName, photoUrl }` |
 | `coverThumbUrl` | string | Thumbnail |
 | `tags` | string[] | Search keywords |
 | `lastActivityAt` | Timestamp | Recent activity time |
@@ -304,20 +296,18 @@ Admin-only logs for moderation and analytics.
 During account creation, users must provide:
 - **Email** (private, stored in `/users/{userId}`)
 - **First Name** (public, stored in both `/users/{userId}` and `/public_profiles/{userId}`)
-- **Display Name** (public, stored in both `/users/{userId}` and `/public_profiles/{userId}`)
 - **Birthdate** (private, stored in `/users/{userId}` only)
 - **Gender** (public, stored in both `/users/{userId}` and `/public_profiles/{userId}`)
 - **Password** (handled by Firebase Auth, not stored in Firestore)
 
 ### Data Privacy Strategy
 - **Private Data** (`/users/{userId}`): Email, birthdate, settings, preferences, stats
-- **Public Data** (`/public_profiles/{userId}`): First name, display name, photo, bio, city, age, gender
+- **Public Data** (`/public_profiles/{userId}`): First name, photo, bio, city, age, gender
 - **Age Verification**: Birthdate is used to ensure users are at least 13 years old
 - **First Name**: Serves as the primary public identifier across the platform
 
 ### Validation Rules
 - **First Name**: 2-50 characters, letters/spaces/hyphens/apostrophes/periods only
-- **Display Name**: 2-50 characters, letters/spaces/hyphens/apostrophes/periods only
 - **Birthdate**: Must be at least 13 years old, maximum 120 years old
 - **Email**: Standard email validation with fake/disposable domain filtering
 - **Gender**: Must be one of: male, female, non-binary, prefer-not-to-say
@@ -334,91 +324,14 @@ graph LR
   E[users] --> F[memberships]
   E --> G[public_profiles]
   A --> F
-  E -.->|displayName| G
+  E -.->|firstName| G
 ````
 
-**All derived collections** (`listings`, `geo`, `autocomplete`) are written by **Cloud Functions**,
-keeping client writes minimal and reads cheap.
-
----
-
-## 🎨 Brand Theming & User Preferences
-
-### User Theme Preferences
-Users can customize their experience with brand-aligned theming:
-
-| Setting | Options | Default |
-|---------|---------|---------|
-| `theme` | `"light" | "dark" | "auto"` | `"light"` |
-| `colorScheme` | `"default" | "high_contrast" | "colorblind_friendly"` | `"default"` |
-| `language` | `"en" | "es" | "fr" | "de"` | `"en"` |
-
-### Brand Color Tokens (from Design Doc)
-```json
-{
-  "primary_create": "#27E9F3",
-  "primary_join": "#FECC08", 
-  "background": "#F5E6C8",
-  "accent_dark": "#1A2A33",
-  "success": "#16A34A",
-  "error": "#DC2626"
-}
-```
-
----
-
-## 💸 Cost Optimization Summary
-
-| Feature       | Optimization                           | Cost Impact |
-| ------------- | -------------------------------------- | ----------- |
-| Event feed    | Small projection (`events_listings`)   | ✅ Low cost |
-| Nearby search | Minimal `events_geo` index             | ✅ Low cost |
-| My events     | Localized `memberships` subcollection  | ✅ Low cost |
-| Public search | Tokenized autocomplete cache           | ✅ Low cost |
-| Notifications | **Batched notifications + summary**    | ⚠️ **-40% cost** |
-| Chat messages | **Sharded messages + summary**         | ⚠️ **-50% cost** |
-| User reports  | TTL pruning and small doc size         | ✅ Low cost |
-| Audits/logs   | TTL pruning and small doc size         | ✅ Low cost |
-| Writes        | Trigger-based projections (no fan-out) | ✅ Low cost |
-| Account creation | Single write to `/users`, optional `/public_profiles` | ✅ Low cost |
-| Pair validation | Client-side validation before writes   | ✅ Low cost |
-
-### **Estimated Monthly Costs (10K DAU)**
-- **Before Optimization**: ~$153/month
-- **After Optimization**: ~$92/month (**40% reduction**)
-
-### **Key Optimizations Applied**
-1. **Message Sharding**: Prevents hot-spotting, reduces read costs
-2. **Notification Batching**: Groups notifications to reduce read operations
-3. **Summary Fields**: Cache frequently accessed data in parent documents
-4. **Composite Indexes**: Enable efficient queries without full collection scans
-5. **TTL Policies**: Auto-cleanup of old data to reduce storage costs
-
----
-
-## 🔒 Access Control Summary
-
-| Collection            | Read                   | Write                   |
-| --------------------- | ---------------------- | ----------------------- |
-| `users`               | Owner only             | Owner only              |
-| `public_profiles`     | Public                 | Owner only              |
-| `events`              | Public or participants | Creator only            |
-| `events_listings`     | Public                 | Cloud Function only     |
-| `events_geo`          | Public                 | Cloud Function only     |
-| `autocomplete_events` | Public                 | Cloud Function only     |
-| `memberships`         | Owner                  | Cloud Function / System |
-| `join_requests`       | Event participants     | Any user (for requests) |
-| `notifications`       | Owner only             | System only             |
-| `messages`            | Event participants     | Event participants      |
-| `user_reports`        | Reporter + Admin       | Any user (for reports)  |
-| `system`              | Admin                  | Admin                   |
-| `audit_logs`          | Admin                  | System only             |
+**All derived collections** (`listings`, `geo`, `autocomplete`) are written by **Cloud Functions**.
 
 ---
 
 ## 📊 **Required Composite Indexes**
-
-**Critical**: These indexes must be created before deployment to prevent query failures.
 
 ### **events_listings Collection**
 ```javascript
@@ -470,121 +383,3 @@ Users can customize their experience with brand-aligned theming:
 // For event status queries
 - status (Ascending) + timeStart (Ascending) + visibility (Ascending)
 ```
-
----
-
-## 🚨 Business Rules & Validation
-
-### Pair-Based Event Constraints
-1. **Fixed Capacity**: All events must have exactly 4 participants (2 pairs of 2)
-2. **Pair Formation**: Users must join as pairs, not individuals
-3. **State Progression**: Events must follow: `draft` → `pending` → `live` → `confirmed`
-4. **Chat Creation**: Group chats are automatically created when event reaches `confirmed` status
-5. **Join Requests**: Only one pair can join a live event (first approved request wins)
-
-### Event State Transitions
-```
-draft (Event created, no participants yet)
-    ↓ (Creator invites first participant)
-pending (User A created, waiting for User B)
-    ↓ (User B accepts)
-live (A+B confirmed, visible to C+D)
-    ↓ (User C+D join request approved)
-confirmed (A+B+C+D all confirmed, chat created)
-    ↓ (Event date passes)
-completed (Event finished, feedback prompts sent)
-```
-
-### Data Validation Rules
-- **Event Capacity**: Must always be 4
-- **Pair Structure**: Must have exactly 2 pairs with 2 users each
-- **Age Verification**: Users must be 13+ years old
-- **Event Preferences**: All preference fields must be valid enum values
-- **Chat Lifecycle**: Chats auto-archive after 30 days of inactivity
-
----
-
-## 📋 Summary of Changes (v2.0)
-
-### ✅ **Major Updates to Align with Design Document**
-
-1. **Pair-Based Event Model**
-   - Fixed event capacity to exactly 4 participants (2 pairs of 2)
-   - Added `pairs` object to track User A+B and User C+D
-   - Added `join_requests` subcollection for pair-based joining
-
-2. **Event State Management**
-   - Added `status` field: `draft` → `pending` → `live` → `confirmed` → `completed`
-   - Added `chatCreated` and `chatArchived` flags
-   - Defined clear state transition rules
-
-3. **Event Creation Preferences**
-   - Added comprehensive `preferences` object with all design doc requirements
-   - Includes duo types, age ranges, vibes, languages, connection intentions
-   - Supports the detailed event creation flow from design doc
-
-4. **User Profile Updates**
-   - Added `firstName` field (matches design doc requirement)
-   - Added `photoUrl` to private profile
-   - Added `preferences` object for user matching criteria
-   - Updated public profile with age and gender for matching
-
-5. **Structured Notification System**
-   - Added typed notifications: `event_invite`, `join_request`, `event_confirmed`, etc.
-   - Added TTL and action URLs for better UX
-   - Supports all notification types from design doc
-
-6. **Chat System Lifecycle**
-   - Added automatic chat creation when events are confirmed
-   - Added system messages for welcome, feedback prompts, archiving
-   - Added read tracking and auto-archiving after 30 days
-
-7. **User Reporting System**
-   - Added `/user_reports` collection with categories
-   - Supports reporting events and users with admin workflow
-   - Includes context and resolution tracking
-
-8. **Brand Theming Support**
-   - Added theme preferences (light/dark/auto)
-   - Added accessibility options (high contrast, colorblind friendly)
-   - Included brand color tokens from design doc
-
-### 🔄 **Backward Compatibility**
-- All existing fields maintained where possible
-- New fields are optional to support gradual migration
-- Cloud Functions handle data migration and validation
-
-### 🚀 **Implementation Priority**
-1. **High Priority**: Event state management, pair constraints, join requests
-2. **Medium Priority**: Chat lifecycle, notifications, user preferences  
-3. **Low Priority**: Brand theming, advanced reporting features
-
----
-
-## ⚠️ **Critical Implementation Notes**
-
-### **🚨 Must Implement Before Production**
-
-1. **Composite Indexes**: Create all required indexes in Firebase Console before deployment
-2. **Message Sharding**: Implement daily sharding for chat messages to prevent hot-spotting
-3. **Notification Batching**: Group notifications in batches of 50-100 for cost optimization
-4. **Security Rules**: Implement optimized security rules using membership checks
-5. **TTL Policies**: Set up automatic cleanup for notifications, audit logs, and old messages
-
-### **📊 Performance Monitoring Setup**
-- Monitor read/write costs daily
-- Set up alerts for costs >$150/month
-- Track query performance and slow queries
-- Monitor index usage and remove unused indexes
-
-### **🔄 Migration Strategy**
-1. **Phase 1**: Deploy with new structure, maintain backward compatibility
-2. **Phase 2**: Migrate existing data using Cloud Functions
-3. **Phase 3**: Remove deprecated fields after migration complete
-
-### **💰 Cost Control Measures**
-- Implement client-side caching for frequently accessed data
-- Use pagination for all list queries
-- Batch operations where possible
-- Monitor and optimize based on real usage patterns
-

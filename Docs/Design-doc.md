@@ -392,19 +392,44 @@ Accessible via burger menu:
 
 ### Create Event Flow
 
-#### Page 1: Event Details
+#### Tab 1: Event Details
 - Upload image  
-- Activity (text input/dropdown)  
+- Activity (text input/dropdown)
 - Date (exact or flexible + comment)  
 - Suggested location (city + place)  
 - Country  
 - Cost indicator (optional)  
-- **Next → Who do you want to meet?**
+- **Button: Who is your duo?**
 
-#### Page 2: Who do you want to meet?
-- Duo type (Friends, Couples, etc.)  
-- Preferred age range  
-- Preferred gender  
+#### Tab 2: Your Duo
+- What is the first name of your duo? (Text box for first name)
+- What is the age of your duo? (Text box for age)
+- What is the gender? (dropdown:female, male, non-binary, prefer not to say)
+- What type of pair are you? (dropdown:friend, partner, child, parent, sibling)
+- What languages do you both feel comfortable using? (Select all that apply)
+ (dropdown with the most used global languages: english, spanish, french, german, portuguese, italian, dutch...  + text field to add additional)
+- How would you describe your vibe as a duo? (Select all that apply) ( - Adventurous  
+  - Chill & Relaxed  
+  - Funny & Playful  
+  - Curious & Open-Minded  
+  - Outgoing & Social  
+  - Creative  
+  - Foodies  
+  - Active & Sporty  
+  - Culture Lovers  
+  - Family-Friendly  
+  - Organizers  
+  - Nightlife Lovers  
+  - Mindful & Calm)
+- What’s your intention for connecting with another pair? (Select all that apply) 
+  (dropdown: Just making new friends, Sharing an experience, Networking, Open to romantic sparks, Just curious + textbox with 'other')
+  - **Button: Preferences: Their Duo**
+
+
+#### Tab 3: Their Duo
+- Duo type (Friends, Couples, parents, siblings, no preference.)  
+- Preferred age range (textbox for number dash textbox for number )
+- Is there a gender mix you’d feel most comfortable meeting with? (Select genders same as above)
 - Desired vibe(s):  
   - Adventurous  
   - Chill & Relaxed  
@@ -418,19 +443,11 @@ Accessible via burger menu:
   - Family-Friendly  
   - Organizers  
   - Nightlife Lovers  
-  - Mindful & Calm  
+  - Mindful & Calm
 
-#### Duo Info
-- Who is your duo? (names)  
-- Relationship type  
-- Comfortable languages  
-- Duo vibe (multi-select)  
-- Connection intention:
-  - Just making new friends  
-  - Sharing an experience  
-  - Networking  
-  - Open to romantic sparks  
-  - Just curious  
+(Optional) Anything you’d like the other duo to know in advance? (Eg. Hows your availability or would you like to bring a child or a pet) (Textbox: This information is public)
+
+
 
 #### Final Step
 > “Copy link and invite your duo to join this event.”  

@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 
 import Navigation from '@/components/organisms/Navigation';
 import MobileBottomNavigation from '@/components/organisms/MobileBottomNavigation';
-import EventCreationForm, { type EventCreationFormData } from '../components/organisms/EventCreationForm';
+import TabbedEventCreationForm, { type TabbedEventCreationFormData } from '../components/organisms/TabbedEventCreationForm';
 import { useAuth } from '@/hooks/useAuth';
 import { createEvent } from '@/lib/firebase/events';
 import { trackFormEvent } from '@/lib/analytics';
@@ -16,7 +16,7 @@ const EventsCreatePage: React.FC = () => {
   const navigate = useNavigate();
   const [isCreating, setIsCreating] = useState(false);
 
-  const handleSubmit = async (formData: EventCreationFormData) => {
+  const handleSubmit = async (formData: TabbedEventCreationFormData) => {
     if (!user) {
       toast.error('You must be logged in to create an event');
       return;
@@ -37,7 +37,7 @@ const EventsCreatePage: React.FC = () => {
 
       const eventData: Omit<Event, 'createdAt' | 'updatedAt' | 'lastActivityAt'> = {
         title: formData.title,
-        description: formData.description + (formData.otherNotes ? `\n\nAdditional notes: ${formData.otherNotes}` : ''),
+        description: formData.description + (formData.additionalNotes ? `\n\nAdditional notes: ${formData.additionalNotes}` : ''),
         creatorId: user.uid,
         status: 'draft' as EventStatus,
         visibility: 'public' as EventVisibility,
@@ -56,16 +56,16 @@ const EventsCreatePage: React.FC = () => {
           pair2: { userC: '', userD: '' }
         },
         preferences: {
-          duoType: formData.duoType,
-          preferredAgeRange: formData.ageRange,
-          preferredGender: formData.genderMix,
-          desiredVibes: formData.vibes,
+          duoType: formData.preferredDuoType as DuoType,
+          preferredAgeRange: formData.preferredAgeRange,
+          preferredGender: formData.preferredGender,
+          desiredVibes: formData.desiredVibes,
           relationshipType: '',
-          comfortableLanguages: [],
-          duoVibe: [],
-          connectionIntention: 'friends',
+          comfortableLanguages: formData.comfortableLanguages,
+          duoVibe: formData.duoVibes,
+          connectionIntention: formData.connectionIntention,
           parentPreference: formData.parentPreference,
-          availabilityNotes: formData.availabilityNotes
+          availabilityNotes: ''
         },
         counts: { confirmed: 0, applicants: 0, messages: 0 },
         chatCreated: false,
@@ -120,7 +120,7 @@ const EventsCreatePage: React.FC = () => {
           </p>
         </div>
 
-        <EventCreationForm onSubmit={handleSubmit} isCreating={isCreating} />
+        <TabbedEventCreationForm onSubmit={handleSubmit} isCreating={isCreating} />
       </div>
       <MobileBottomNavigation />
     </div>
