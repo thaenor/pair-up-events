@@ -16,7 +16,7 @@ const AuthPage = lazy(() => import("./pages/auth"));
 const LoginPage = lazy(() => import("./pages/login"));
 const ProfilePage = lazy(() => import("./pages/profile"));
 const EventsPage = lazy(() => import("./pages/events"));
-const EventsCreatePage = lazy(() => import("./pages/events-create"));
+const EventsCreatePage = lazy(() => import("./pages/events-create").then(module => ({ default: module.EventsCreatePage })));
 const MessengerPage = lazy(() => import("./pages/messenger"));
 const TermsOfServicePage = lazy(() => import("./pages/terms-of-service"));
 const PrivacyPolicyPage = lazy(() => import("./pages/privacy-policy"));

@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+import { InviteShareRow } from '@/components/molecules/invite-share-row';
 
 import type { DuoType, Gender, Vibe } from '@/types';
 import { 
@@ -17,16 +20,7 @@ export interface TabbedEventCreationFormData {
   timeStart: Date | null;
   cost: string;
   
-  // Tab 2: Your Duo
-  duoName: string;
-  duoAge: number;
-  duoGender: Gender;
-  duoType: DuoType;
-  comfortableLanguages: string[];
-  duoVibes: Vibe[];
-  connectionIntention: string;
-  otherIntention: string;
-  
+  // Tab 2: Your Duo - removed all fields, only invite functionality
   // Tab 3: Their Duo
   preferredDuoType: DuoType | '';
   preferredAgeRange: { min: number; max: number };
@@ -37,8 +31,9 @@ export interface TabbedEventCreationFormData {
 }
 
 export type TabbedEventCreationFormProps = {
-  onSubmit: (formData: TabbedEventCreationFormData) => Promise<void>;
   isCreating: boolean;
+  onCreateInitial: (formData: Pick<TabbedEventCreationFormData, 'title' | 'description' | 'activityType' | 'country' | 'city' | 'timeStart' | 'cost'>) => Promise<string>;
+  onFinalize: (eventId: string, formData: TabbedEventCreationFormData) => Promise<void>;
 };
 
 // Activity type options
@@ -85,26 +80,6 @@ const VIBE_OPTIONS = [
   { value: 'mindful', label: 'Mindful & Calm' }
 ];
 
-// Language options
-const LANGUAGE_OPTIONS = [
-  { value: 'english', label: 'English' },
-  { value: 'spanish', label: 'Spanish' },
-  { value: 'french', label: 'French' },
-  { value: 'german', label: 'German' },
-  { value: 'portuguese', label: 'Portuguese' },
-  { value: 'italian', label: 'Italian' },
-  { value: 'dutch', label: 'Dutch' }
-];
-
-// Connection intention options
-const CONNECTION_INTENTIONS = [
-  { value: 'friends', label: 'Just making new friends' },
-  { value: 'experience', label: 'Sharing an experience' },
-  { value: 'networking', label: 'Networking' },
-  { value: 'romantic', label: 'Open to romantic sparks' },
-  { value: 'curious', label: 'Just curious' }
-];
-
 // Parent preference options
 const PARENT_PREFERENCES = [
   { value: 'yes-with-kids', label: 'Yes, with kids' },
@@ -114,10 +89,12 @@ const PARENT_PREFERENCES = [
 ];
 
 export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = ({
-  onSubmit,
   isCreating,
+  onCreateInitial,
+  onFinalize,
 }) => {
   const [currentTab, setCurrentTab] = useState(1);
+  const [eventId, setEventId] = useState<string | null>(null);
   const isDisabled = isCreating;
   
   // Form state
@@ -130,16 +107,6 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
     city: '',
     timeStart: null,
     cost: '',
-    
-    // Tab 2: Your Duo
-    duoName: '',
-    duoAge: 25,
-    duoGender: 'prefer-not-to-say' as Gender,
-    duoType: 'friends' as DuoType,
-    comfortableLanguages: [],
-    duoVibes: [],
-    connectionIntention: '',
-    otherIntention: '',
     
     // Tab 3: Their Duo
     preferredDuoType: '' as DuoType | '',
@@ -168,15 +135,19 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
       if (!formData.title.trim()) {
         newErrors.title = 'Activity title is required';
       } else {
-        const titleError = validateEventTitle(formData.title);
-        if (titleError) newErrors.title = titleError;
+        const titleResult = validateEventTitle(formData.title);
+        if (!titleResult.isValid && titleResult.errors.length > 0) {
+          newErrors.title = titleResult.errors[0];
+        }
       }
       
       if (!formData.description.trim()) {
         newErrors.description = 'Activity description is required';
       } else {
-        const descError = validateEventDescription(formData.description);
-        if (descError) newErrors.description = descError;
+        const descResult = validateEventDescription(formData.description);
+        if (!descResult.isValid && descResult.errors.length > 0) {
+          newErrors.description = descResult.errors[0];
+        }
       }
       
       if (!formData.activityType) {
@@ -190,40 +161,15 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
       if (!formData.city.trim()) {
         newErrors.city = 'City is required';
       }
-    } else if (currentTab === 2) {
-      // Validate Tab 2: Your Duo
-      if (!formData.duoName.trim()) {
-        newErrors.duoName = 'Duo name is required';
-      }
-      
-      if (formData.duoAge < 13 || formData.duoAge > 120) {
-        newErrors.duoAge = 'Age must be between 13 and 120';
-      }
-      
-      if (!formData.duoType) {
-        newErrors.duoType = 'Pair type is required';
-      }
-      
-      if (formData.comfortableLanguages.length === 0) {
-        newErrors.comfortableLanguages = 'At least one language is required';
-      }
-      
-      if (formData.duoVibes.length === 0) {
-        newErrors.duoVibes = 'At least one vibe is required';
-      }
-      
-      if (!formData.connectionIntention) {
-        newErrors.connectionIntention = 'Connection intention is required';
-      }
     } else if (currentTab === 3) {
       // Validate Tab 3: Their Duo
       if (!formData.preferredDuoType) {
         newErrors.preferredDuoType = 'Preferred duo type is required';
       }
       
-      const ageError = validateAgeRange(formData.preferredAgeRange);
-      if (ageError) {
-        newErrors.preferredAgeRange = ageError;
+      const ageResult = validateAgeRange(formData.preferredAgeRange);
+      if (!ageResult.isValid && ageResult.errors.length > 0) {
+        newErrors.preferredAgeRange = ageResult.errors[0];
       }
       
       if (formData.desiredVibes.length === 0) {
@@ -235,10 +181,24 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleNext = () => {
-    if (validateCurrentTab()) {
-      setCurrentTab(prev => Math.min(prev + 1, 3));
+  const handleNext = async () => {
+    if (!validateCurrentTab()) return;
+    if (currentTab === 1) {
+      // Create initial event draft/pending
+      const id = await onCreateInitial({
+        title: formData.title,
+        description: formData.description,
+        activityType: formData.activityType,
+        country: formData.country,
+        city: formData.city,
+        timeStart: formData.timeStart,
+        cost: formData.cost,
+      });
+      setEventId(id);
+      setCurrentTab(2);
+      return;
     }
+    setCurrentTab(prev => Math.min(prev + 1, 3));
   };
 
   const handlePrevious = () => {
@@ -247,12 +207,12 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateCurrentTab()) {
-      await onSubmit(formData);
-    }
+    if (!validateCurrentTab()) return;
+    if (!eventId) return;
+    await onFinalize(eventId, formData);
   };
 
-  const handleVibeChange = (vibe: Vibe, checked: boolean, field: 'duoVibes' | 'desiredVibes') => {
+  const handleVibeChange = (vibe: Vibe, checked: boolean, field: 'desiredVibes') => {
     if (checked) {
       updateFormData(field, [...formData[field], vibe]);
     } else {
@@ -265,14 +225,6 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
       updateFormData('preferredGender', [...formData.preferredGender, gender]);
     } else {
       updateFormData('preferredGender', formData.preferredGender.filter(g => g !== gender));
-    }
-  };
-
-  const handleLanguageChange = (language: string, checked: boolean) => {
-    if (checked) {
-      updateFormData('comfortableLanguages', [...formData.comfortableLanguages, language]);
-    } else {
-      updateFormData('comfortableLanguages', formData.comfortableLanguages.filter(l => l !== language));
     }
   };
 
@@ -310,15 +262,17 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
           value={formData.title}
           onChange={e => updateFormData('title', e.target.value)}
           disabled={isDisabled}
-          className={`w-full rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
-            errors.title 
-              ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-              : 'border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan'
+          className={`w-full rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
+            errors.title
+              ? 'border-red-300 focus-visible:border-red-500 focus-visible:ring-red-500' 
+              : 'border-gray-200 focus-visible:border-pairup-cyan focus-visible:ring-pairup-cyan'
           }`}
           placeholder="e.g., Coffee and conversation, Hiking adventure, Board game night"
+          aria-invalid={!!errors.title}
+          aria-describedby={errors.title ? 'activity-title-error' : undefined}
         />
         {errors.title && (
-          <p className="text-sm text-red-600">{errors.title}</p>
+          <p id="activity-title-error" className="text-sm text-red-600" role="alert">{errors.title}</p>
         )}
       </div>
 
@@ -332,10 +286,10 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
           value={formData.activityType}
           onChange={e => updateFormData('activityType', e.target.value)}
           disabled={isDisabled}
-          className={`w-full rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
-            errors.activityType 
-              ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-              : 'border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan'
+          className={`w-full rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
+            errors.activityType
+              ? 'border-red-300 focus-visible:border-red-500 focus-visible:ring-red-500' 
+              : 'border-gray-200 focus-visible:border-pairup-cyan focus-visible:ring-pairup-cyan'
           }`}
         >
           <option value="">Select activity type</option>
@@ -361,15 +315,17 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
           onChange={e => updateFormData('description', e.target.value)}
           disabled={isDisabled}
           rows={4}
-          className={`w-full rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
-            errors.description 
-              ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-              : 'border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan'
+          className={`w-full rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
+            errors.description
+              ? 'border-red-300 focus-visible:border-red-500 focus-visible:ring-red-500' 
+              : 'border-gray-200 focus-visible:border-pairup-cyan focus-visible:ring-pairup-cyan'
           }`}
           placeholder="Tell us more about what you'd like to do..."
+          aria-invalid={!!errors.description}
+          aria-describedby={errors.description ? 'activity-description-error' : undefined}
         />
         {errors.description && (
-          <p className="text-sm text-red-600">{errors.description}</p>
+          <p id="activity-description-error" className="text-sm text-red-600" role="alert">{errors.description}</p>
         )}
       </div>
 
@@ -384,7 +340,7 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
           value={formData.timeStart ? formData.timeStart.toISOString().slice(0, 16) : ''}
           onChange={e => updateFormData('timeStart', e.target.value ? new Date(e.target.value) : null)}
           disabled={isDisabled}
-          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
+          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
         />
       </div>
 
@@ -400,10 +356,10 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
             value={formData.country}
             onChange={e => updateFormData('country', e.target.value)}
             disabled={isDisabled}
-            className={`w-full rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
+            className={`w-full rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
               errors.country 
-                ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                : 'border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan'
+                ? 'border-red-300 focus-visible:border-red-500 focus-visible:ring-red-500' 
+                : 'border-gray-200 focus-visible:border-pairup-cyan focus-visible:ring-pairup-cyan'
             }`}
             placeholder="e.g., Germany, Spain, France"
           />
@@ -422,10 +378,10 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
             value={formData.city}
             onChange={e => updateFormData('city', e.target.value)}
             disabled={isDisabled}
-            className={`w-full rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
+            className={`w-full rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
               errors.city 
-                ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                : 'border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan'
+                ? 'border-red-300 focus-visible:border-red-500 focus-visible:ring-red-500' 
+                : 'border-gray-200 focus-visible:border-pairup-cyan focus-visible:ring-pairup-cyan'
             }`}
             placeholder="e.g., Berlin, Madrid, Paris"
           />
@@ -446,7 +402,7 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
           value={formData.cost}
           onChange={e => updateFormData('cost', e.target.value)}
           disabled={isDisabled}
-          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
+          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
           placeholder="e.g., Free, €10-15 per person, Pay your own way"
         />
       </div>
@@ -460,186 +416,41 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
           Your Duo
         </h3>
         <p className="text-sm text-pairup-darkBlue/70">
-          Tell us about your pair
+          Invite your partner to join this event
         </p>
       </div>
 
-      {/* Duo Name */}
-      <div className="space-y-2">
-        <label htmlFor="duo-name" className="text-sm font-medium text-pairup-darkBlue/80">
-          What is the first name of your duo? *
-        </label>
-        <input
-          id="duo-name"
-          type="text"
-          value={formData.duoName}
-          onChange={e => updateFormData('duoName', e.target.value)}
-          disabled={isDisabled}
-          className={`w-full rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
-            errors.duoName 
-              ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-              : 'border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan'
-          }`}
-          placeholder="e.g., Alex, Sarah & Mike"
-        />
-        {errors.duoName && (
-          <p className="text-sm text-red-600">{errors.duoName}</p>
-        )}
-      </div>
+      {/* Invite Your Duo */}
+      <InviteShareRow
+        eventId={eventId}
+        isDisabled={isDisabled}
+        inviteMessage="Join my event on PairUp!"
+      />
 
-      {/* Duo Age */}
-      <div className="space-y-2">
-        <label htmlFor="duo-age" className="text-sm font-medium text-pairup-darkBlue/80">
-          What is the age of your duo? *
-        </label>
-        <input
-          id="duo-age"
-          type="number"
-          min="13"
-          max="120"
-          value={formData.duoAge}
-          onChange={e => updateFormData('duoAge', parseInt(e.target.value) || 25)}
-          disabled={isDisabled}
-          className={`w-full rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
-            errors.duoAge 
-              ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-              : 'border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan'
-          }`}
-        />
-        {errors.duoAge && (
-          <p className="text-sm text-red-600">{errors.duoAge}</p>
-        )}
-      </div>
-
-      {/* Duo Gender */}
-      <div className="space-y-2">
-        <label htmlFor="duo-gender" className="text-sm font-medium text-pairup-darkBlue/80">
-          What is the gender? *
-        </label>
-        <select
-          id="duo-gender"
-          value={formData.duoGender}
-          onChange={e => updateFormData('duoGender', e.target.value as Gender)}
-          disabled={isDisabled}
-          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {GENDER_OPTIONS.map(gender => (
-            <option key={gender.value} value={gender.value}>
-              {gender.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Duo Type */}
-      <div className="space-y-2">
-        <label htmlFor="duo-type" className="text-sm font-medium text-pairup-darkBlue/80">
-          What type of pair are you? *
-        </label>
-        <select
-          id="duo-type"
-          value={formData.duoType}
-          onChange={e => updateFormData('duoType', e.target.value as DuoType)}
-          disabled={isDisabled}
-          className={`w-full rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
-            errors.duoType 
-              ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-              : 'border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan'
-          }`}
-        >
-          {DUO_TYPES.map(type => (
-            <option key={type.value} value={type.value}>
-              {type.label}
-            </option>
-          ))}
-        </select>
-        {errors.duoType && (
-          <p className="text-sm text-red-600">{errors.duoType}</p>
-        )}
-      </div>
-
-      {/* Languages */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-pairup-darkBlue/80">
-          What languages do you both feel comfortable using? *
-        </label>
-        <div className="grid grid-cols-2 gap-2">
-          {LANGUAGE_OPTIONS.map(language => (
-            <label key={language.value} className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={formData.comfortableLanguages.includes(language.value)}
-                onChange={e => handleLanguageChange(language.value, e.target.checked)}
-                disabled={isDisabled}
-                className="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
-              />
-              <span className="text-sm text-pairup-darkBlue">{language.label}</span>
-            </label>
-          ))}
+      {/* Explanation text */}
+      <div className="bg-pairup-cyan/10 border border-pairup-cyan/20 rounded-lg p-4">
+        <div className="flex items-start space-x-3">
+          <div className="flex-shrink-0">
+            <div className="w-8 h-8 bg-pairup-cyan/20 rounded-full flex items-center justify-center">
+              <span className="text-pairup-cyan text-sm">💡</span>
+            </div>
+          </div>
+          <div className="flex-1">
+            <h4 className="text-sm font-medium text-pairup-darkBlue mb-1">
+              How to invite your duo
+            </h4>
+            <p className="text-sm text-pairup-darkBlue/70 leading-relaxed">
+              Use the share button above to send an invite link to your partner. They can click the link to join this event and confirm your duo. Once they join, you'll both be able to see potential matches and start connecting with other pairs!
+            </p>
+          </div>
         </div>
-        {errors.comfortableLanguages && (
-          <p className="text-sm text-red-600">{errors.comfortableLanguages}</p>
-        )}
       </div>
 
-      {/* Duo Vibe */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-pairup-darkBlue/80">
-          How would you describe your vibe as a duo? *
-        </label>
-        <div className="grid grid-cols-2 gap-2">
-          {VIBE_OPTIONS.map(vibe => (
-            <label key={vibe.value} className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={formData.duoVibes.includes(vibe.value as Vibe)}
-                onChange={e => handleVibeChange(vibe.value as Vibe, e.target.checked, 'duoVibes')}
-                disabled={isDisabled}
-                className="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
-              />
-              <span className="text-sm text-pairup-darkBlue">{vibe.label}</span>
-            </label>
-          ))}
-        </div>
-        {errors.duoVibes && (
-          <p className="text-sm text-red-600">{errors.duoVibes}</p>
-        )}
-      </div>
-
-      {/* Connection Intention */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-pairup-darkBlue/80">
-          What's your intention for connecting with another pair? *
-        </label>
-        <div className="space-y-2">
-          {CONNECTION_INTENTIONS.map(intention => (
-            <label key={intention.value} className="flex items-center space-x-2">
-              <input
-                type="radio"
-                name="connectionIntention"
-                value={intention.value}
-                checked={formData.connectionIntention === intention.value}
-                onChange={e => updateFormData('connectionIntention', e.target.value)}
-                disabled={isDisabled}
-                className="text-pairup-cyan focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
-              />
-              <span className="text-sm text-pairup-darkBlue">{intention.label}</span>
-            </label>
-          ))}
-        </div>
-        {formData.connectionIntention === 'other' && (
-          <input
-            type="text"
-            value={formData.otherIntention}
-            onChange={e => updateFormData('otherIntention', e.target.value)}
-            disabled={isDisabled}
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
-            placeholder="Please specify..."
-          />
-        )}
-        {errors.connectionIntention && (
-          <p className="text-sm text-red-600">{errors.connectionIntention}</p>
-        )}
+      {/* Additional info */}
+      <div className="text-center">
+        <p className="text-xs text-pairup-darkBlue/60">
+          Don't worry if your partner isn't ready yet - you can always come back and invite them later from your event dashboard.
+        </p>
       </div>
     </div>
   );
@@ -665,10 +476,10 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
           value={formData.preferredDuoType}
           onChange={e => updateFormData('preferredDuoType', e.target.value as DuoType | '')}
           disabled={isDisabled}
-          className={`w-full rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
+          className={`w-full rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
             errors.preferredDuoType 
-              ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-              : 'border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan'
+              ? 'border-red-300 focus-visible:border-red-500 focus-visible:ring-red-500' 
+              : 'border-gray-200 focus-visible:border-pairup-cyan focus-visible:ring-pairup-cyan'
           }`}
         >
           <option value="">Select preferred duo type</option>
@@ -699,10 +510,10 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
               min: parseInt(e.target.value) || 18 
             })}
             disabled={isDisabled}
-            className={`flex-1 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
+            className={`flex-1 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
               errors.preferredAgeRange 
-                ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                : 'border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan'
+                ? 'border-red-300 focus-visible:border-red-500 focus-visible:ring-red-500' 
+                : 'border-gray-200 focus-visible:border-pairup-cyan focus-visible:ring-pairup-cyan'
             }`}
             placeholder="Min"
           />
@@ -717,10 +528,10 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
               max: parseInt(e.target.value) || 65 
             })}
             disabled={isDisabled}
-            className={`flex-1 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
+            className={`flex-1 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
               errors.preferredAgeRange 
-                ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                : 'border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan'
+                ? 'border-red-300 focus-visible:border-red-500 focus-visible:ring-red-500' 
+                : 'border-gray-200 focus-visible:border-pairup-cyan focus-visible:ring-pairup-cyan'
             }`}
             placeholder="Max"
           />
@@ -743,7 +554,7 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
                 checked={formData.preferredGender.includes(gender.value as Gender)}
                 onChange={e => handleGenderChange(gender.value as Gender, e.target.checked)}
                 disabled={isDisabled}
-                className="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded border-gray-300 text-pairup-cyan focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
               />
               <span className="text-sm text-pairup-darkBlue">{gender.label}</span>
             </label>
@@ -767,7 +578,7 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
                 checked={formData.desiredVibes.includes(vibe.value as Vibe)}
                 onChange={e => handleVibeChange(vibe.value as Vibe, e.target.checked, 'desiredVibes')}
                 disabled={isDisabled}
-                className="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded border-gray-300 text-pairup-cyan focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
               />
               <span className="text-sm text-pairup-darkBlue">{vibe.label}</span>
             </label>
@@ -793,7 +604,7 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
                 checked={formData.parentPreference === pref.value}
                 onChange={e => updateFormData('parentPreference', e.target.value)}
                 disabled={isDisabled}
-                className="text-pairup-cyan focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
+                className="text-pairup-cyan focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
               />
               <span className="text-sm text-pairup-darkBlue">{pref.label}</span>
             </label>
@@ -812,7 +623,7 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
           onChange={e => updateFormData('additionalNotes', e.target.value)}
           disabled={isDisabled}
           rows={3}
-          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
+          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
           placeholder="e.g., How's your availability or would you like to bring a child or a pet"
         />
         <p className="text-xs text-pairup-darkBlue/60">
@@ -825,7 +636,22 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
   return (
     <div className="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg p-6 mb-8">
       {/* Tab Navigation */}
-      <div className="flex border-b border-gray-200 mb-6">
+      <div
+        className="flex border-b border-gray-200 mb-6"
+        role="tablist"
+        aria-label="Create event steps"
+        onKeyDown={event => {
+          const key = event.key;
+          if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(key)) return;
+          event.preventDefault();
+          const ids = [1,2,3];
+          const currentIndex = ids.indexOf(currentTab);
+          if (key === 'ArrowRight') setCurrentTab(ids[Math.min(currentIndex + 1, ids.length - 1)]);
+          if (key === 'ArrowLeft') setCurrentTab(ids[Math.max(currentIndex - 1, 0)]);
+          if (key === 'Home') setCurrentTab(1);
+          if (key === 'End') setCurrentTab(3);
+        }}
+      >
         {[
           { id: 1, label: 'Event Details', icon: '🎉' },
           { id: 2, label: 'Your Duo', icon: '👥' },
@@ -836,11 +662,16 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
             type="button"
             onClick={() => setCurrentTab(tab.id)}
             disabled={isDisabled}
-            className={`flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
+            id={`tab-${tab.id}`}
+            role="tab"
+            aria-selected={currentTab === tab.id}
+            aria-controls={`tabpanel-${tab.id}`}
+            className={twMerge(clsx(
+              'flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60',
               currentTab === tab.id
                 ? 'border-pairup-cyan text-pairup-cyan'
                 : 'border-transparent text-pairup-darkBlue/60 hover:text-pairup-darkBlue hover:border-gray-300'
-            }`}
+            ))}
           >
             <span className="mr-2">{tab.icon}</span>
             {tab.label}
@@ -850,9 +681,36 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
 
       {/* Tab Content */}
       <form onSubmit={handleSubmit}>
-        {currentTab === 1 && renderTab1()}
-        {currentTab === 2 && renderTab2()}
-        {currentTab === 3 && renderTab3()}
+        <div
+          id="tabpanel-1"
+          role="tabpanel"
+          aria-labelledby="tab-1"
+          aria-live="polite"
+          hidden={currentTab !== 1}
+        >
+          <h3 className="sr-only">Event Details</h3>
+          {currentTab === 1 && renderTab1()}
+        </div>
+        <div
+          id="tabpanel-2"
+          role="tabpanel"
+          aria-labelledby="tab-2"
+          aria-live="polite"
+          hidden={currentTab !== 2}
+        >
+          <h3 className="sr-only">Your Duo</h3>
+          {currentTab === 2 && renderTab2()}
+        </div>
+        <div
+          id="tabpanel-3"
+          role="tabpanel"
+          aria-labelledby="tab-3"
+          aria-live="polite"
+          hidden={currentTab !== 3}
+        >
+          <h3 className="sr-only">Their Duo</h3>
+          {currentTab === 3 && renderTab3()}
+        </div>
 
         {/* Navigation Buttons */}
         <div className="flex justify-between mt-8">
@@ -860,7 +718,7 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
             type="button"
             onClick={handlePrevious}
             disabled={currentTab === 1 || isDisabled}
-            className="px-4 py-2 text-sm font-medium text-pairup-darkBlue border border-gray-300 rounded-lg hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+            className={twMerge(clsx('px-4 py-2 text-sm font-medium text-pairup-darkBlue border border-gray-300 rounded-lg hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60'))}
           >
             Previous
           </button>
@@ -871,7 +729,7 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
                 type="button"
                 onClick={handleNext}
                 disabled={isDisabled}
-                className="px-4 py-2 text-sm font-medium text-white bg-pairup-cyan rounded-lg hover:bg-pairup-cyan/90 disabled:cursor-not-allowed disabled:opacity-60"
+                className={twMerge(clsx('px-4 py-2 text-sm font-medium text-white bg-pairup-cyan rounded-lg hover:bg-pairup-cyan/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60'))}
               >
                 Next
               </button>
@@ -879,7 +737,7 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
               <button
                 type="submit"
                 disabled={isDisabled}
-                className="px-6 py-2 text-sm font-medium text-white bg-pairup-cyan rounded-lg hover:bg-pairup-cyan/90 disabled:cursor-not-allowed disabled:opacity-60"
+                className={twMerge(clsx('px-6 py-2 text-sm font-medium text-white bg-pairup-cyan rounded-lg hover:bg-pairup-cyan/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60'))}
               >
                 {isDisabled ? 'Saving Draft...' : 'Save as Draft'}
               </button>

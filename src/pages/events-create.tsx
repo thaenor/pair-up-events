@@ -1,90 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import Navigation from '@/components/organisms/Navigation';
 import MobileBottomNavigation from '@/components/organisms/MobileBottomNavigation';
-import TabbedEventCreationForm, { type TabbedEventCreationFormData } from '../components/organisms/TabbedEventCreationForm';
+import { TabbedEventCreationForm } from '../components/organisms/TabbedEventCreationForm';
 import { useAuth } from '@/hooks/useAuth';
-import { createEvent } from '@/lib/firebase/events';
-import { trackFormEvent } from '@/lib/analytics';
-import type { Event, EventStatus, EventVisibility } from '@/types';
-import { nowTimestamp } from '@/types';
+import { useCreateEventFlow } from '@/hooks/useCreateEventFlow';
 
 const EventsCreatePage: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [isCreating, setIsCreating] = useState(false);
 
-  const handleSubmit = async (formData: TabbedEventCreationFormData) => {
-    if (!user) {
-      toast.error('You must be logged in to create an event');
-      return;
-    }
-
-    setIsCreating(true);
-    trackFormEvent('event_creation', 'start');
-
-    try {
-      // Generate tags from activity type and title
-      const generateTags = (activityType: string, title: string): string[] => {
-        const tags = [activityType.toLowerCase()];
-        const words = title.toLowerCase().split(/\s+/)
-          .filter(w => w.length > 3)
-          .slice(0, 3);
-        return [...tags, ...words].slice(0, 5);
-      };
-
-      const eventData: Omit<Event, 'createdAt' | 'updatedAt' | 'lastActivityAt'> = {
-        title: formData.title,
-        description: formData.description + (formData.additionalNotes ? `\n\nAdditional notes: ${formData.additionalNotes}` : ''),
-        creatorId: user.uid,
-        status: 'draft' as EventStatus,
-        visibility: 'public' as EventVisibility,
-        timeStart: formData.timeStart || nowTimestamp(),
-        location: {
-          country: formData.country,
-          city: formData.city,
-          address: '',
-          geoPoint: { latitude: 0, longitude: 0 },
-          geohash: ''
-        },
-        tags: generateTags(formData.activityType, formData.title),
-        capacity: 4,
-        pairs: {
-          pair1: { userA: '', userB: '' },
-          pair2: { userC: '', userD: '' }
-        },
-        preferences: {
-          duoType: formData.preferredDuoType as DuoType,
-          preferredAgeRange: formData.preferredAgeRange,
-          preferredGender: formData.preferredGender,
-          desiredVibes: formData.desiredVibes,
-          relationshipType: '',
-          comfortableLanguages: formData.comfortableLanguages,
-          duoVibe: formData.duoVibes,
-          connectionIntention: formData.connectionIntention,
-          parentPreference: formData.parentPreference,
-          availabilityNotes: ''
-        },
-        counts: { confirmed: 0, applicants: 0, messages: 0 },
-        chatCreated: false,
-        chatArchived: false
-      };
-
-      await createEvent(eventData);
-      
-      trackFormEvent('event_creation', 'submit');
-      toast.success('Event saved as draft! You can invite participants later.');
-      navigate('/events');
-    } catch (error) {
-      console.error('Error creating event:', error);
-      trackFormEvent('event_creation', 'error');
-      toast.error('Failed to create event. Please try again.');
-    } finally {
-      setIsCreating(false);
-    }
-  };
+  const {
+    isCreating,
+    onCreateInitial,
+    onFinalize,
+  } = useCreateEventFlow(user?.uid, navigate, toast);
 
   if (!user) {
     return (
@@ -120,11 +52,15 @@ const EventsCreatePage: React.FC = () => {
           </p>
         </div>
 
-        <TabbedEventCreationForm onSubmit={handleSubmit} isCreating={isCreating} />
+        <TabbedEventCreationForm
+          isCreating={isCreating}
+          onCreateInitial={onCreateInitial}
+          onFinalize={onFinalize}
+        />
       </div>
       <MobileBottomNavigation />
     </div>
   );
 };
 
-export default EventsCreatePage;
+export { EventsCreatePage };

@@ -1,3 +1,8 @@
+import type { EventStatus } from '@/types';
+
+// Centralized unpublished status reference aligned with data-model.md
+export const UNPUBLISHED_STATUS: EventStatus = 'draft';
+
 import type {
   UserProfile,
   PublicProfile,
