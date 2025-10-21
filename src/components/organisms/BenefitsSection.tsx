@@ -1,4 +1,5 @@
 import { Calendar, Map, MapPin, Users } from "lucide-react";
+import { FeatureCard, Section } from "@/components";
 
 const benefits = [
     {
@@ -29,37 +30,23 @@ const benefits = [
 
 const BenefitsSection = () => {
     return (
-        <section
+        <Section
             id="benefits"
-            className="py-16 md:py-24 px-4 md:px-8 bg-pairup-cream"
+            title="Why Pair Up?"
+            description="We're reimagining how people meet and connect, making it more comfortable and meaningful"
+            background="cream"
         >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-16">
-                    <h2 className="text-3xl font-bold mb-4">Why Pair Up?</h2>
-                    <p className="text-lg text-pairup-darkBlue/80 max-w-2xl mx-auto">
-                        We're reimagining how people meet and connect, making it
-                        more comfortable and meaningful
-                    </p>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-8">
-                    {benefits.map((benefit, index) => (
-                        <div
-                            key={index}
-                            className="bg-white/20 p-8 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
-                        >
-                            <div className="mb-6">{benefit.icon}</div>
-                            <h3 className="text-xl font-semibold mb-3 text-pairup-darkBlue">
-                                {benefit.title}
-                            </h3>
-                            <p className="text-pairup-darkblue/80">
-                                {benefit.description}
-                            </p>
-                        </div>
-                    ))}
-                </div>
+            <div className="grid md:grid-cols-2 gap-8">
+                {benefits.map((benefit, index) => (
+                    <FeatureCard
+                        key={index}
+                        icon={benefit.icon}
+                        title={benefit.title}
+                        description={benefit.description}
+                    />
+                ))}
             </div>
-        </section>
+        </Section>
     );
 };
 

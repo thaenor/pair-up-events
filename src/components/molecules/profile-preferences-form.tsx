@@ -1,6 +1,7 @@
 import React, { FormEventHandler, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
+import { Button, Textarea } from '@/components';
 import { PROFILE_COPY, PROFILE_MESSAGES } from '@/constants/profile';
 import type { UserProfile, UserProfileUpdate } from '@/types/user-profile';
 import { trackProfileEvent, trackFormEvent } from '@/lib/analytics';
@@ -69,65 +70,79 @@ export const ProfilePreferencesForm: React.FC<ProfilePreferencesFormProps> = ({
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <label className="flex flex-col text-sm font-medium text-pairup-darkBlue/80 md:col-span-2">
-          {PROFILE_COPY.PREFERENCES.FUN_FACT_LABEL}
-          <textarea
+        <div className="md:col-span-2">
+          <label htmlFor="fun-fact" className="block text-sm font-medium text-pairup-darkBlue/80 mb-2">
+            {PROFILE_COPY.PREFERENCES.FUN_FACT_LABEL}
+          </label>
+          <Textarea
+            id="fun-fact"
             value={funFact}
             onChange={event => setFunFact(event.target.value)}
             disabled={isDisabled}
-            className="mt-2 h-24 resize-none rounded-lg border border-gray-200 bg-white px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-24"
             placeholder={PROFILE_COPY.PREFERENCES.FUN_FACT_PLACEHOLDER}
             data-testid="profile-preferences-fun-fact"
           />
-        </label>
+        </div>
 
-        <label className="flex flex-col text-sm font-medium text-pairup-darkBlue/80">
-          {PROFILE_COPY.PREFERENCES.LIKES_LABEL}
-          <textarea
+        <div>
+          <label htmlFor="likes" className="block text-sm font-medium text-pairup-darkBlue/80 mb-2">
+            {PROFILE_COPY.PREFERENCES.LIKES_LABEL}
+          </label>
+          <Textarea
+            id="likes"
             value={likes}
             onChange={event => setLikes(event.target.value)}
             disabled={isDisabled}
-            className="mt-2 h-24 resize-none rounded-lg border border-gray-200 bg-white px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-24"
             placeholder={PROFILE_COPY.PREFERENCES.LIKES_PLACEHOLDER}
             data-testid="profile-preferences-likes"
           />
-        </label>
+        </div>
 
-        <label className="flex flex-col text-sm font-medium text-pairup-darkBlue/80">
-          {PROFILE_COPY.PREFERENCES.DISLIKES_LABEL}
-          <textarea
+        <div>
+          <label htmlFor="dislikes" className="block text-sm font-medium text-pairup-darkBlue/80 mb-2">
+            {PROFILE_COPY.PREFERENCES.DISLIKES_LABEL}
+          </label>
+          <Textarea
+            id="dislikes"
             value={dislikes}
             onChange={event => setDislikes(event.target.value)}
             disabled={isDisabled}
-            className="mt-2 h-24 resize-none rounded-lg border border-gray-200 bg-white px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-24"
             placeholder={PROFILE_COPY.PREFERENCES.DISLIKES_PLACEHOLDER}
             data-testid="profile-preferences-dislikes"
           />
-        </label>
+        </div>
 
-        <label className="flex flex-col text-sm font-medium text-pairup-darkBlue/80 md:col-span-2">
-          {PROFILE_COPY.PREFERENCES.HOBBIES_LABEL}
-          <textarea
+        <div className="md:col-span-2">
+          <label htmlFor="hobbies" className="block text-sm font-medium text-pairup-darkBlue/80 mb-2">
+            {PROFILE_COPY.PREFERENCES.HOBBIES_LABEL}
+          </label>
+          <Textarea
+            id="hobbies"
             value={hobbies}
             onChange={event => setHobbies(event.target.value)}
             disabled={isDisabled}
-            className="mt-2 h-24 resize-none rounded-lg border border-gray-200 bg-white px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-24"
             placeholder={PROFILE_COPY.PREFERENCES.HOBBIES_PLACEHOLDER}
             data-testid="profile-preferences-hobbies"
           />
-        </label>
+        </div>
       </div>
 
 
       <div className="mt-6 flex justify-end">
-        <button
+        <Button
           type="submit"
-          disabled={isSaving}
-          className="inline-flex items-center rounded-lg border border-pairup-cyan bg-white px-5 py-2 text-sm font-semibold text-pairup-darkBlue transition-colors hover:bg-pairup-cyan/20 focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
+          variant="secondary"
+          size="md"
+          loading={isSaving}
+          loadingText={PROFILE_COPY.PREFERENCES.SUBMIT_LOADING}
           data-testid="profile-preferences-submit"
         >
-          {isSaving ? PROFILE_COPY.PREFERENCES.SUBMIT_LOADING : PROFILE_COPY.PREFERENCES.SUBMIT_IDLE}
-        </button>
+          {PROFILE_COPY.PREFERENCES.SUBMIT_IDLE}
+        </Button>
       </div>
     </form>
   );

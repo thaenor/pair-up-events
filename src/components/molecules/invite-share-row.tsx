@@ -1,6 +1,7 @@
 import React from 'react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { ShareButton } from '@/components';
 
 export type InviteShareRowProps = {
   eventId: string | null;
@@ -66,30 +67,24 @@ export const InviteShareRow: React.FC<InviteShareRowProps> = ({
           data-testid="invite-link-input"
         />
         <div className="flex gap-2">
-          <button
-            type="button"
+          <ShareButton
+            variant="copy"
             onClick={handleCopyLink}
             disabled={!eventId || isDisabled}
-            className={twMerge(clsx(
-              "px-3 py-2 text-sm font-medium text-pairup-darkBlue border border-gray-300 rounded-lg hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
-            ))}
             aria-label="Copy invite link"
             data-testid="invite-copy-btn"
           >
             Copy link
-          </button>
-          <button
-            type="button"
+          </ShareButton>
+          <ShareButton
+            variant="share"
             onClick={handleShare}
             disabled={!eventId || isDisabled}
-            className={twMerge(clsx(
-              "px-3 py-2 text-sm font-medium text-white bg-pairup-cyan rounded-lg hover:bg-pairup-cyan/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
-            ))}
             aria-label="Share invite link"
             data-testid="invite-share-btn"
           >
             Share…
-          </button>
+          </ShareButton>
         </div>
       </div>
     </div>

@@ -45,8 +45,8 @@ const DUO_TYPES = [
   { value: 'friends', label: 'Friends' },
   { value: 'couples', label: 'Partners' },
   { value: 'family', label: 'Parents' },
-  { value: 'roommates', label: 'Siblings' },
-  { value: 'colleagues', label: 'Other' }
+  { value: 'roommates', label: 'Roommates' },
+  { value: 'colleagues', label: 'Colleagues' }
 ];
 
 // Gender options
@@ -68,6 +68,8 @@ const VIBE_OPTIONS = [
   { value: 'foodies', label: 'Foodies' },
   { value: 'active', label: 'Active & Sporty' },
   { value: 'culture', label: 'Culture Lovers' },
+  { value: 'family-friendly', label: 'Family-Friendly' },
+  { value: 'organizers', label: 'Organizers' },
   { value: 'nightlife', label: 'Nightlife Lovers' },
   { value: 'mindful', label: 'Mindful & Calm' }
 ];

@@ -1,6 +1,7 @@
 import React, { FormEventHandler, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
+import { Button, FormField, Input, Select } from '@/components';
 import { PROFILE_COPY, PROFILE_MESSAGES } from '@/constants/profile';
 import type { UserProfile, UserProfileUpdate, Gender } from '@/types';
 import { GENDER } from '@/types';
@@ -127,127 +128,101 @@ export const ProfileDetailsForm: React.FC<ProfileDetailsFormProps> = ({
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <label htmlFor="profile-first-name" className="flex flex-col text-sm font-medium text-pairup-darkBlue/80">
-          First Name *
-          <input
+        <FormField
+          label="First Name"
+          id="profile-first-name"
+          error={errors.firstName}
+          required
+          errorTestId="profile-details-first-name-error"
+        >
+          <Input
             id="profile-first-name"
             type="text"
             value={firstName}
             onChange={event => setFirstName(event.target.value)}
             disabled={isDisabled}
-            className={`mt-2 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
-              errors.firstName 
-                ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                : 'border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan'
-            }`}
             placeholder="Enter your first name"
             data-testid="profile-details-first-name"
             aria-label="Your first name"
-            aria-invalid={!!errors.firstName}
-            aria-describedby={errors.firstName ? 'first-name-error' : undefined}
           />
-          {errors.firstName && (
-            <p id="first-name-error" className="mt-1 text-sm text-red-600" role="alert">
-              {errors.firstName}
-            </p>
-          )}
-        </label>
+        </FormField>
 
-        <label htmlFor="profile-display-name" className="flex flex-col text-sm font-medium text-pairup-darkBlue/80">
-          {PROFILE_COPY.DETAILS.DISPLAY_NAME_LABEL}
-          <input
+        <FormField
+          label={PROFILE_COPY.DETAILS.DISPLAY_NAME_LABEL}
+          id="profile-display-name"
+          error={errors.displayName}
+          required
+          errorTestId="profile-details-display-name-error"
+        >
+          <Input
             id="profile-display-name"
             type="text"
             value={displayName}
             onChange={event => setDisplayName(event.target.value)}
             disabled={isDisabled}
-            className={`mt-2 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
-              errors.displayName 
-                ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                : 'border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan'
-            }`}
             placeholder={PROFILE_COPY.DETAILS.DISPLAY_NAME_PLACEHOLDER}
             data-testid="profile-details-display-name"
             aria-label="Your display name"
-            aria-invalid={!!errors.displayName}
-            aria-describedby={errors.displayName ? 'display-name-error' : undefined}
           />
-          {errors.displayName && (
-            <p id="display-name-error" className="mt-1 text-sm text-red-600" role="alert">
-              {errors.displayName}
-            </p>
-          )}
-        </label>
+        </FormField>
 
 
-        <label htmlFor="profile-birth-date" className="flex flex-col text-sm font-medium text-pairup-darkBlue/80">
-          {PROFILE_COPY.DETAILS.BIRTH_DATE_LABEL}
-          <input
+        <FormField
+          label={PROFILE_COPY.DETAILS.BIRTH_DATE_LABEL}
+          id="profile-birth-date"
+          error={errors.birthDate}
+          required
+          errorTestId="profile-details-birth-date-error"
+        >
+          <Input
             id="profile-birth-date"
             type="date"
             value={birthDate}
             onChange={event => setBirthDate(event.target.value)}
             disabled={isDisabled}
-            className={`mt-2 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
-              errors.birthDate 
-                ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                : 'border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan'
-            }`}
             placeholder={PROFILE_COPY.DETAILS.BIRTH_DATE_PLACEHOLDER}
             data-testid="profile-details-birth-date"
             aria-label="Your birth date"
-            aria-invalid={!!errors.birthDate}
-            aria-describedby={errors.birthDate ? 'birth-date-error' : undefined}
           />
-          {errors.birthDate && (
-            <p id="birth-date-error" className="mt-1 text-sm text-red-600" role="alert">
-              {errors.birthDate}
-            </p>
-          )}
-        </label>
+        </FormField>
 
-        <label htmlFor="profile-gender" className="flex flex-col text-sm font-medium text-pairup-darkBlue/80">
-          {PROFILE_COPY.DETAILS.GENDER_LABEL}
-          <select
+        <FormField
+          label={PROFILE_COPY.DETAILS.GENDER_LABEL}
+          id="profile-gender"
+          error={errors.gender}
+          required
+          errorTestId="profile-details-gender-error"
+        >
+          <Select
             id="profile-gender"
             value={gender}
             onChange={event => setGender(event.target.value as Gender | '')}
             disabled={isDisabled}
-            className={`mt-2 rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
-              errors.gender 
-                ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                : 'border-gray-200 focus:border-pairup-cyan focus:ring-pairup-cyan'
-            }`}
             data-testid="profile-details-gender"
             aria-label="Your gender"
-            aria-invalid={!!errors.gender}
-            aria-describedby={errors.gender ? 'gender-error' : undefined}
           >
             <option value="">{PROFILE_COPY.DETAILS.GENDER_PLACEHOLDER}</option>
             <option value={GENDER.MALE}>Male</option>
             <option value={GENDER.FEMALE}>Female</option>
             <option value={GENDER.NON_BINARY}>Non-binary</option>
             <option value={GENDER.PREFER_NOT_TO_SAY}>Prefer not to say</option>
-          </select>
-          {errors.gender && (
-            <p id="gender-error" className="mt-1 text-sm text-red-600" role="alert">
-              {errors.gender}
-            </p>
-          )}
-        </label>
+          </Select>
+        </FormField>
 
       </div>
 
 
       <div className="mt-6 flex justify-end">
-        <button
+        <Button
           type="submit"
-          disabled={isSaving}
-          className="inline-flex items-center rounded-lg border border-pairup-cyan bg-pairup-cyan px-5 py-2 text-sm font-semibold text-pairup-darkBlue transition-colors hover:bg-pairup-cyan/90 focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
+          variant="primary"
+          size="md"
+          loading={isSaving}
+          loadingText={PROFILE_COPY.DETAILS.SUBMIT_LOADING}
           data-testid="profile-details-submit"
         >
-          {isSaving ? PROFILE_COPY.DETAILS.SUBMIT_LOADING : PROFILE_COPY.DETAILS.SUBMIT_IDLE}
-        </button>
+          {PROFILE_COPY.DETAILS.SUBMIT_IDLE}
+        </Button>
       </div>
     </form>
   );

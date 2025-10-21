@@ -3,7 +3,7 @@ import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
-import LoadingSpinner from '@/components/atoms/LoadingSpinner';
+import { Button, FormField, Icon, Input } from '@/components';
 import { useAuth } from '@/hooks/useAuth';
 import { useFormState } from '@/hooks/useFormState';
 import { trackFormEvent } from '@/lib/analytics';
@@ -132,66 +132,59 @@ const EmailLoginForm: React.FC = React.memo(() => {
       </div>
 
       {/* Email Field */}
-      <div className="space-y-2">
-        <label htmlFor="email" className="block text-sm font-medium text-white">
-          Email Address
-        </label>
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Mail className="h-5 w-5 text-gray-400" />
-          </div>
-          <input
-            id="email"
-            type="email"
-            value={formData.email}
-            onChange={(e) => handleInputChange('email', e.target.value)}
-            className={`block w-full pl-10 pr-3 py-3 border rounded-md bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors ${
-              errors.email ? 'border-red-500' : 'border-gray-500'
-            }`}
-            aria-invalid={!!errors.email}
-            aria-describedby={errors.email ? 'email-error email-help' : 'email-help'}
-            placeholder="Enter your email"
-            disabled={loading}
-            data-testid="login-email-input"
-          />
-        </div>
-        <div id="email-help" className="sr-only">
-          Enter your email address to sign in
-        </div>
-        {errors.email && (
-          <p
-            id="email-error"
-            className="text-red-400 text-sm"
-            role="alert"
-            data-testid="login-email-error"
-          >
-            {errors.email}
-          </p>
-        )}
-      </div>
+      <FormField
+        label="Email Address"
+        id="email"
+        error={errors.email}
+        helpText="Enter your email address to sign in"
+        required
+        errorTestId="login-email-error"
+        theme="dark"
+      >
+        <Input
+          id="email"
+          type="email"
+          value={formData.email}
+          onChange={(e) => handleInputChange('email', e.target.value)}
+          placeholder="Enter your email"
+          disabled={loading}
+          data-testid="login-email-input"
+          theme="dark"
+          icon={
+            <Icon size="md" theme="dark">
+              <Mail className="h-5 w-5" />
+            </Icon>
+          }
+          iconPosition="left"
+        />
+      </FormField>
 
       {/* Password Field */}
-      <div className="space-y-2">
-        <label htmlFor="password" className="block text-sm font-medium text-white">
-          Password
-        </label>
+      <FormField
+        label="Password"
+        id="password"
+        error={errors.password}
+        helpText="Enter your password to sign in"
+        required
+        errorTestId="login-password-error"
+        theme="dark"
+      >
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Lock className="h-5 w-5 text-gray-400" />
-          </div>
-          <input
+          <Input
             id="password"
             type={showPassword ? 'text' : 'password'}
             value={formData.password}
             onChange={(e) => handleInputChange('password', e.target.value)}
-            className={`block w-full pl-10 pr-12 py-3 border rounded-md bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors ${
-              errors.password ? 'border-red-500' : 'border-gray-500'
-            }`}
-            aria-invalid={!!errors.password}
-            aria-describedby={errors.password ? 'password-error password-help' : 'password-help'}
             placeholder="Enter your password"
             disabled={loading}
             data-testid="login-password-input"
+            theme="dark"
+            icon={
+              <Icon size="md" theme="dark">
+                <Lock className="h-5 w-5" />
+              </Icon>
+            }
+            iconPosition="left"
           />
           <button
             type="button"
@@ -202,44 +195,29 @@ const EmailLoginForm: React.FC = React.memo(() => {
             aria-pressed={showPassword}
             data-testid="login-password-toggle"
           >
-            {showPassword ? (
-              <EyeOff className="h-5 w-5 text-gray-400 hover:text-white transition-colors" />
-            ) : (
-              <Eye className="h-5 w-5 text-gray-400 hover:text-white transition-colors" />
-            )}
+            <Icon size="md" theme="dark">
+              {showPassword ? (
+                <EyeOff className="h-5 w-5 hover:text-white transition-colors" />
+              ) : (
+                <Eye className="h-5 w-5 hover:text-white transition-colors" />
+              )}
+            </Icon>
           </button>
         </div>
-        <div id="password-help" className="sr-only">
-          Enter your password to sign in
-        </div>
-        {errors.password && (
-          <p
-            id="password-error"
-            className="text-red-400 text-sm"
-            role="alert"
-            data-testid="login-password-error"
-          >
-            {errors.password}
-          </p>
-        )}
-      </div>
+      </FormField>
 
       {/* Submit Button */}
-      <button
+      <Button
         type="submit"
-        disabled={loading}
-        className="w-full flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-pairup-darkBlue bg-pairup-cyan hover:bg-pairup-cyan/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pairup-cyan disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        variant="primary"
+        size="lg"
+        loading={loading}
+        loadingText="Signing In..."
+        fullWidth
         data-testid="login-submit-button"
       >
-        {loading ? (
-          <>
-            <LoadingSpinner size="sm" className="mr-2" />
-            Signing In...
-          </>
-        ) : (
-          'Sign In'
-        )}
-      </button>
+        Sign In
+      </Button>
 
       {/* Sign Up Link */}
       <div className="text-center">

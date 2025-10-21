@@ -3,7 +3,7 @@ import { Mail, Lock, Eye, EyeOff, User, Calendar } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
-import LoadingSpinner from '@/components/atoms/LoadingSpinner';
+import { Button, FormField, Icon, Input, Select } from '@/components';
 import { useAuth } from '@/hooks/useAuth';
 import { useFormState } from '@/hooks/useFormState';
 import { useFormValidation, FormData } from '@/hooks/useFormValidation';
@@ -179,232 +179,172 @@ const EmailSignupForm: React.FC = React.memo(() => {
       {!registrationSuccess && (
         <>
           {/* Email Field */}
-          <div className="space-y-2">
-            <label htmlFor="email" className="block text-sm font-medium text-white">
-              Email Address
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="h-5 w-5 text-gray-400" aria-hidden="true" />
-              </div>
-              <input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
-                className={`block w-full pl-10 pr-3 py-3 border rounded-md bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors ${
-                  errors.email ? 'border-red-500' : 'border-gray-500'
-                }`}
-                aria-invalid={!!errors.email}
-                aria-describedby={errors.email ? 'email-error' : 'email-help'}
-                aria-required="true"
-                placeholder="Enter your email"
-                disabled={loading}
-                autoComplete="email"
-                data-testid="signup-email-input"
-              />
-            </div>
-            <div id="email-help" className="sr-only">
-              Enter a valid email address for your account
-            </div>
-            {errors.email && (
-              <p
-                id="email-error"
-                className="text-red-400 text-sm"
-                role="alert"
-                data-testid="signup-email-error"
-              >
-                {errors.email}
-              </p>
-            )}
-          </div>
+          <FormField
+            label="Email Address"
+            id="email"
+            error={errors.email}
+            helpText="Enter a valid email address for your account"
+            required
+            errorTestId="signup-email-error"
+            theme="dark"
+          >
+            <Input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => handleInputChange('email', e.target.value)}
+              placeholder="Enter your email"
+              disabled={loading}
+              autoComplete="email"
+              data-testid="signup-email-input"
+              theme="dark"
+              icon={
+                <Icon size="md" theme="dark">
+                  <Mail className="h-5 w-5" />
+                </Icon>
+              }
+              iconPosition="left"
+            />
+          </FormField>
 
           {/* First Name Field */}
-          <div className="space-y-2">
-            <label htmlFor="firstName" className="block text-sm font-medium text-white">
-              First Name *
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <User className="h-5 w-5 text-gray-400" aria-hidden="true" />
-              </div>
-              <input
-                id="firstName"
-                type="text"
-                value={formData.firstName}
-                onChange={(e) => handleInputChange('firstName', e.target.value)}
-                className={`block w-full pl-10 pr-3 py-3 border rounded-md bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors ${
-                  errors.firstName ? 'border-red-500' : 'border-gray-500'
-                }`}
-                aria-invalid={!!errors.firstName}
-                aria-describedby={errors.firstName ? 'first-name-error' : 'first-name-help'}
-                aria-required="true"
-                placeholder="Enter your first name"
-                disabled={loading}
-                autoComplete="given-name"
-                data-testid="signup-first-name-input"
-              />
-            </div>
-            <div id="first-name-help" className="sr-only">
-              Enter your first name (2-50 characters)
-            </div>
-            {errors.firstName && (
-              <p
-                id="first-name-error"
-                className="text-red-400 text-sm"
-                role="alert"
-                data-testid="signup-first-name-error"
-              >
-                {errors.firstName}
-              </p>
-            )}
-          </div>
+          <FormField
+            label="First Name"
+            id="firstName"
+            error={errors.firstName}
+            helpText="Enter your first name (2-50 characters)"
+            required
+            errorTestId="signup-first-name-error"
+            theme="dark"
+          >
+            <Input
+              id="firstName"
+              type="text"
+              value={formData.firstName}
+              onChange={(e) => handleInputChange('firstName', e.target.value)}
+              placeholder="Enter your first name"
+              disabled={loading}
+              autoComplete="given-name"
+              data-testid="signup-first-name-input"
+              theme="dark"
+              icon={
+                <Icon size="md" theme="dark">
+                  <User className="h-5 w-5" />
+                </Icon>
+              }
+              iconPosition="left"
+            />
+          </FormField>
 
           {/* Display Name Field */}
-          <div className="space-y-2">
-            <label htmlFor="displayName" className="block text-sm font-medium text-white">
-              Display Name
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <User className="h-5 w-5 text-gray-400" aria-hidden="true" />
-              </div>
-              <input
-                id="displayName"
-                type="text"
-                value={formData.displayName}
-                onChange={(e) => handleInputChange('displayName', e.target.value)}
-                className={`block w-full pl-10 pr-3 py-3 border rounded-md bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors ${
-                  errors.displayName ? 'border-red-500' : 'border-gray-500'
-                }`}
-                aria-invalid={!!errors.displayName}
-                aria-describedby={errors.displayName ? 'display-name-error' : 'display-name-help'}
-                aria-required="true"
-                placeholder="Enter your display name"
-                disabled={loading}
-                autoComplete="name"
-                data-testid="signup-display-name-input"
-              />
-            </div>
-            <div id="display-name-help" className="sr-only">
-              Enter your preferred display name (2-50 characters)
-            </div>
-            {errors.displayName && (
-              <p
-                id="display-name-error"
-                className="text-red-400 text-sm"
-                role="alert"
-                data-testid="signup-display-name-error"
-              >
-                {errors.displayName}
-              </p>
-            )}
-          </div>
+          <FormField
+            label="Display Name"
+            id="displayName"
+            error={errors.displayName}
+            helpText="Enter your preferred display name (2-50 characters)"
+            required
+            errorTestId="signup-display-name-error"
+            theme="dark"
+          >
+            <Input
+              id="displayName"
+              type="text"
+              value={formData.displayName}
+              onChange={(e) => handleInputChange('displayName', e.target.value)}
+              placeholder="Enter your display name"
+              disabled={loading}
+              autoComplete="name"
+              data-testid="signup-display-name-input"
+              theme="dark"
+              icon={
+                <Icon size="md" theme="dark">
+                  <User className="h-5 w-5" />
+                </Icon>
+              }
+              iconPosition="left"
+            />
+          </FormField>
 
           {/* Birthdate Field */}
-          <div className="space-y-2">
-            <label htmlFor="birthDate" className="block text-sm font-medium text-white">
-              Birthdate
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Calendar className="h-5 w-5 text-gray-400" aria-hidden="true" />
-              </div>
-              <input
-                id="birthDate"
-                type="date"
-                value={formData.birthDate}
-                onChange={(e) => handleInputChange('birthDate', e.target.value)}
-                className={`block w-full pl-10 pr-3 py-3 border rounded-md bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors ${
-                  errors.birthDate ? 'border-red-500' : 'border-gray-500'
-                }`}
-                aria-invalid={!!errors.birthDate}
-                aria-describedby={errors.birthDate ? 'birthdate-error' : 'birthdate-help'}
-                aria-required="true"
-                disabled={loading}
-                data-testid="signup-birthdate-input"
-              />
-            </div>
-            <div id="birthdate-help" className="sr-only">
-              Enter your birthdate (must be at least 13 years old)
-            </div>
-            {errors.birthDate && (
-              <p
-                id="birthdate-error"
-                className="text-red-400 text-sm"
-                role="alert"
-                data-testid="signup-birthdate-error"
-              >
-                {errors.birthDate}
-              </p>
-            )}
-          </div>
+          <FormField
+            label="Birthdate"
+            id="birthDate"
+            error={errors.birthDate}
+            helpText="Enter your birthdate (must be at least 13 years old)"
+            required
+            errorTestId="signup-birthdate-error"
+            theme="dark"
+          >
+            <Input
+              id="birthDate"
+              type="date"
+              value={formData.birthDate}
+              onChange={(e) => handleInputChange('birthDate', e.target.value)}
+              disabled={loading}
+              data-testid="signup-birthdate-input"
+              theme="dark"
+              icon={
+                <Icon size="md" theme="dark">
+                  <Calendar className="h-5 w-5" />
+                </Icon>
+              }
+              iconPosition="left"
+            />
+          </FormField>
 
           {/* Gender Field */}
-          <div className="space-y-2">
-            <label htmlFor="gender" className="block text-sm font-medium text-white">
-              Gender *
-            </label>
-            <div className="relative">
-              <select
-                id="gender"
-                value={formData.gender || ''}
-                onChange={(e) => handleInputChange('gender', e.target.value)}
-                className={`block w-full px-3 py-3 border rounded-md bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors ${
-                  errors.gender ? 'border-red-500' : 'border-gray-500'
-                }`}
-                aria-invalid={!!errors.gender}
-                aria-describedby={errors.gender ? 'gender-error' : 'gender-help'}
-                aria-required="true"
-                disabled={loading}
-                data-testid="signup-gender-input"
-              >
-                <option value="" className="bg-gray-800 text-white">Select your gender</option>
-                <option value={GENDER.MALE} className="bg-gray-800 text-white">Male</option>
-                <option value={GENDER.FEMALE} className="bg-gray-800 text-white">Female</option>
-                <option value={GENDER.NON_BINARY} className="bg-gray-800 text-white">Non-binary</option>
-                <option value={GENDER.PREFER_NOT_TO_SAY} className="bg-gray-800 text-white">Prefer not to say</option>
-              </select>
-            </div>
-            <div id="gender-help" className="sr-only">
-              Select your gender identity
-            </div>
-            {errors.gender && (
-              <p
-                id="gender-error"
-                className="text-red-400 text-sm"
-                role="alert"
-                data-testid="signup-gender-error"
-              >
-                {errors.gender}
-              </p>
-            )}
-          </div>
+          <FormField
+            label="Gender"
+            id="gender"
+            error={errors.gender}
+            helpText="Select your gender identity"
+            required
+            errorTestId="signup-gender-error"
+            theme="dark"
+          >
+            <Select
+              id="gender"
+              value={formData.gender || ''}
+              onChange={(e) => handleInputChange('gender', e.target.value)}
+              disabled={loading}
+              data-testid="signup-gender-input"
+              theme="dark"
+            >
+              <option value="" className="bg-gray-800 text-white">Select your gender</option>
+              <option value={GENDER.MALE} className="bg-gray-800 text-white">Male</option>
+              <option value={GENDER.FEMALE} className="bg-gray-800 text-white">Female</option>
+              <option value={GENDER.NON_BINARY} className="bg-gray-800 text-white">Non-binary</option>
+              <option value={GENDER.PREFER_NOT_TO_SAY} className="bg-gray-800 text-white">Prefer not to say</option>
+            </Select>
+          </FormField>
 
           {/* Password Field */}
-          <div className="space-y-2">
-            <label htmlFor="password" className="block text-sm font-medium text-white">
-              Password
-            </label>
+          <FormField
+            label="Password"
+            id="password"
+            error={errors.password}
+            helpText="Password must be at least 8 characters with uppercase, lowercase, and numbers"
+            required
+            errorTestId="signup-password-error"
+            theme="dark"
+          >
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-gray-400" aria-hidden="true" />
-              </div>
-              <input
+              <Input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 value={formData.password}
                 onChange={(e) => handleInputChange('password', e.target.value)}
-                className={`block w-full pl-10 pr-12 py-3 border rounded-md bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors ${
-                  errors.password ? 'border-red-500' : 'border-gray-500'
-                }`}
-                aria-invalid={!!errors.password}
-                aria-describedby={errors.password ? 'password-error password-help' : 'password-help'}
-                aria-required="true"
                 placeholder="Create a password"
                 disabled={loading}
                 autoComplete="new-password"
                 data-testid="signup-password-input"
+                theme="dark"
+                icon={
+                  <Icon size="md" theme="dark">
+                    <Lock className="h-5 w-5" />
+                  </Icon>
+                }
+                iconPosition="left"
               />
               <button
                 type="button"
@@ -415,52 +355,44 @@ const EmailSignupForm: React.FC = React.memo(() => {
                 aria-pressed={showPassword}
                 data-testid="signup-password-toggle"
               >
-                {showPassword ? (
-                  <EyeOff className="h-5 w-5 text-gray-400 hover:text-white transition-colors" aria-hidden="true" />
-                ) : (
-                  <Eye className="h-5 w-5 text-gray-400 hover:text-white transition-colors" aria-hidden="true" />
-                )}
+                <Icon size="md" theme="dark">
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5 hover:text-white transition-colors" />
+                  ) : (
+                    <Eye className="h-5 w-5 hover:text-white transition-colors" />
+                  )}
+                </Icon>
               </button>
             </div>
-            <div id="password-help" className="sr-only">
-              Password must be at least 8 characters with uppercase, lowercase, and numbers
-            </div>
-            {errors.password && (
-              <p
-                id="password-error"
-                className="text-red-400 text-sm"
-                role="alert"
-                data-testid="signup-password-error"
-              >
-                {errors.password}
-              </p>
-            )}
-          </div>
+          </FormField>
 
           {/* Confirm Password Field */}
-          <div className="space-y-2">
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-white">
-              Confirm Password
-            </label>
+          <FormField
+            label="Confirm Password"
+            id="confirmPassword"
+            error={errors.confirmPassword}
+            helpText="Re-enter your password to confirm it matches"
+            required
+            errorTestId="signup-confirm-password-error"
+            theme="dark"
+          >
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-gray-400" aria-hidden="true" />
-              </div>
-              <input
+              <Input
                 id="confirmPassword"
                 type={showConfirmPassword ? 'text' : 'password'}
                 value={formData.confirmPassword}
                 onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                className={`block w-full pl-10 pr-12 py-3 border rounded-md bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors ${
-                  errors.confirmPassword ? 'border-red-500' : 'border-gray-500'
-                }`}
-                aria-invalid={!!errors.confirmPassword}
-                aria-describedby={errors.confirmPassword ? 'confirm-password-error confirm-password-help' : 'confirm-password-help'}
-                aria-required="true"
                 placeholder="Confirm your password"
                 disabled={loading}
                 autoComplete="new-password"
                 data-testid="signup-confirm-password-input"
+                theme="dark"
+                icon={
+                  <Icon size="md" theme="dark">
+                    <Lock className="h-5 w-5" />
+                  </Icon>
+                }
+                iconPosition="left"
               />
               <button
                 type="button"
@@ -471,45 +403,30 @@ const EmailSignupForm: React.FC = React.memo(() => {
                 aria-pressed={showConfirmPassword}
                 data-testid="signup-confirm-password-toggle"
               >
-                {showConfirmPassword ? (
-                  <EyeOff className="h-5 w-5 text-gray-400 hover:text-white transition-colors" aria-hidden="true" />
-                ) : (
-                  <Eye className="h-5 w-5 text-gray-400 hover:text-white transition-colors" aria-hidden="true" />
-                )}
+                <Icon size="md" theme="dark">
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-5 w-5 hover:text-white transition-colors" />
+                  ) : (
+                    <Eye className="h-5 w-5 hover:text-white transition-colors" />
+                  )}
+                </Icon>
               </button>
             </div>
-            <div id="confirm-password-help" className="sr-only">
-              Re-enter your password to confirm it matches
-            </div>
-            {errors.confirmPassword && (
-              <p
-                id="confirm-password-error"
-                className="text-red-400 text-sm"
-                role="alert"
-                data-testid="signup-confirm-password-error"
-              >
-                {errors.confirmPassword}
-              </p>
-            )}
-          </div>
+          </FormField>
 
           {/* Submit Button */}
-          <button
+          <Button
             type="submit"
-            disabled={loading}
-            className="w-full flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-pairup-darkBlue bg-pairup-cyan hover:bg-pairup-cyan/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pairup-cyan disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            aria-describedby="submit-help"
+            variant="primary"
+            size="lg"
+            loading={loading}
+            loadingText="Creating Account..."
+            fullWidth
             data-testid="signup-submit-button"
+            aria-describedby="submit-help"
           >
-            {loading ? (
-              <>
-                <LoadingSpinner size="sm" className="mr-2" aria-hidden="true" />
-                <span aria-live="polite">Creating Account...</span>
-              </>
-            ) : (
-              'Create Account & Continue'
-            )}
-          </button>
+            Create Account & Continue
+          </Button>
           <div id="submit-help" className="sr-only">
             Click to create your account and start connecting with other pairs
           </div>

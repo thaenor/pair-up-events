@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { Button, FormField, Input, Select, Textarea } from '@/components';
 import { InviteShareRow } from '@/components/molecules/invite-share-row';
 
 import type { DuoType, Gender, Vibe } from '@/types';
@@ -251,161 +252,151 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
         </div>
       </div>
 
-      {/* Activity Title */}
-      <div className="space-y-2">
-        <label htmlFor="activity-title" className="text-sm font-medium text-pairup-darkBlue/80">
-          What activity do you want to do? *
-        </label>
-        <input
-          id="activity-title"
-          type="text"
-          value={formData.title}
-          onChange={e => updateFormData('title', e.target.value)}
-          disabled={isDisabled}
-          className={`w-full rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
-            errors.title
-              ? 'border-red-300 focus-visible:border-red-500 focus-visible:ring-red-500' 
-              : 'border-gray-200 focus-visible:border-pairup-cyan focus-visible:ring-pairup-cyan'
-          }`}
-          placeholder="e.g., Coffee and conversation, Hiking adventure, Board game night"
-          aria-invalid={!!errors.title}
-          aria-describedby={errors.title ? 'activity-title-error' : undefined}
-        />
-        {errors.title && (
-          <p id="activity-title-error" className="text-sm text-red-600" role="alert">{errors.title}</p>
-        )}
-      </div>
+       {/* Activity Title */}
+       <FormField
+         label="What activity do you want to do?"
+         id="activity-title"
+         error={errors.title}
+         helpText="Tell us about the activity you want to do with another pair"
+         required
+         theme="light"
+       >
+         <Input
+           id="activity-title"
+           type="text"
+           value={formData.title}
+           onChange={e => updateFormData('title', e.target.value)}
+           disabled={isDisabled}
+           placeholder="e.g., Coffee and conversation, Hiking adventure, Board game night"
+           variant={errors.title ? "error" : "default"}
+           theme="light"
+         />
+       </FormField>
 
-      {/* Activity Type */}
-      <div className="space-y-2">
-        <label htmlFor="activity-type" className="text-sm font-medium text-pairup-darkBlue/80">
-          Activity type *
-        </label>
-        <select
-          id="activity-type"
-          value={formData.activityType}
-          onChange={e => updateFormData('activityType', e.target.value)}
-          disabled={isDisabled}
-          className={`w-full rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
-            errors.activityType
-              ? 'border-red-300 focus-visible:border-red-500 focus-visible:ring-red-500' 
-              : 'border-gray-200 focus-visible:border-pairup-cyan focus-visible:ring-pairup-cyan'
-          }`}
-        >
-          <option value="">Select activity type</option>
-          {ACTIVITY_TYPES.map(type => (
-            <option key={type.value} value={type.value}>
-              {type.label}
-            </option>
-          ))}
-        </select>
-        {errors.activityType && (
-          <p className="text-sm text-red-600">{errors.activityType}</p>
-        )}
-      </div>
+       {/* Activity Type */}
+       <FormField
+         label="Activity type"
+         id="activity-type"
+         error={errors.activityType}
+         helpText="What kind of activity is this?"
+         required
+         theme="light"
+       >
+         <Select
+           id="activity-type"
+           value={formData.activityType}
+           onChange={e => updateFormData('activityType', e.target.value)}
+           disabled={isDisabled}
+           variant={errors.activityType ? "error" : "default"}
+           theme="light"
+         >
+           <option value="">Select activity type</option>
+           {ACTIVITY_TYPES.map(type => (
+             <option key={type.value} value={type.value}>
+               {type.label}
+             </option>
+           ))}
+         </Select>
+       </FormField>
 
-      {/* Description */}
-      <div className="space-y-2">
-        <label htmlFor="activity-description" className="text-sm font-medium text-pairup-darkBlue/80">
-          Describe your activity *
-        </label>
-        <textarea
-          id="activity-description"
-          value={formData.description}
-          onChange={e => updateFormData('description', e.target.value)}
-          disabled={isDisabled}
-          rows={4}
-          className={`w-full rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
-            errors.description
-              ? 'border-red-300 focus-visible:border-red-500 focus-visible:ring-red-500' 
-              : 'border-gray-200 focus-visible:border-pairup-cyan focus-visible:ring-pairup-cyan'
-          }`}
-          placeholder="Tell us more about what you'd like to do..."
-          aria-invalid={!!errors.description}
-          aria-describedby={errors.description ? 'activity-description-error' : undefined}
-        />
-        {errors.description && (
-          <p id="activity-description-error" className="text-sm text-red-600" role="alert">{errors.description}</p>
-        )}
-      </div>
+       {/* Description */}
+       <FormField
+         label="Describe your activity"
+         id="activity-description"
+         error={errors.description}
+         helpText="Tell us more about what you'd like to do"
+         required
+         theme="light"
+       >
+         <Textarea
+           id="activity-description"
+           value={formData.description}
+           onChange={e => updateFormData('description', e.target.value)}
+           disabled={isDisabled}
+           rows={4}
+           placeholder="Tell us more about what you'd like to do..."
+           variant={errors.description ? "error" : "default"}
+           theme="light"
+         />
+       </FormField>
 
-      {/* Date */}
-      <div className="space-y-2">
-        <label htmlFor="time-start" className="text-sm font-medium text-pairup-darkBlue/80">
-          When do you want to meet? (optional)
-        </label>
-        <input
-          id="time-start"
-          type="datetime-local"
-          value={formData.timeStart ? formData.timeStart.toISOString().slice(0, 16) : ''}
-          onChange={e => updateFormData('timeStart', e.target.value ? new Date(e.target.value) : null)}
-          disabled={isDisabled}
-          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
-        />
-      </div>
+       {/* Date */}
+       <FormField
+         label="When do you want to meet?"
+         id="time-start"
+         helpText="Optional - you can set this later"
+         theme="light"
+       >
+         <Input
+           id="time-start"
+           type="datetime-local"
+           value={formData.timeStart ? formData.timeStart.toISOString().slice(0, 16) : ''}
+           onChange={e => updateFormData('timeStart', e.target.value ? new Date(e.target.value) : null)}
+           disabled={isDisabled}
+           theme="light"
+         />
+       </FormField>
 
-      {/* Location */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label htmlFor="country" className="text-sm font-medium text-pairup-darkBlue/80">
-            Country *
-          </label>
-          <input
-            id="country"
-            type="text"
-            value={formData.country}
-            onChange={e => updateFormData('country', e.target.value)}
-            disabled={isDisabled}
-            className={`w-full rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
-              errors.country 
-                ? 'border-red-300 focus-visible:border-red-500 focus-visible:ring-red-500' 
-                : 'border-gray-200 focus-visible:border-pairup-cyan focus-visible:ring-pairup-cyan'
-            }`}
-            placeholder="e.g., Germany, Spain, France"
-          />
-          {errors.country && (
-            <p className="text-sm text-red-600">{errors.country}</p>
-          )}
-        </div>
+       {/* Location */}
+       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+         <FormField
+           label="Country"
+           id="country"
+           error={errors.country}
+           helpText="Which country?"
+           required
+           theme="light"
+         >
+           <Input
+             id="country"
+             type="text"
+             value={formData.country}
+             onChange={e => updateFormData('country', e.target.value)}
+             disabled={isDisabled}
+             placeholder="e.g., Germany, Spain, France"
+             variant={errors.country ? "error" : "default"}
+             theme="light"
+           />
+         </FormField>
 
-        <div className="space-y-2">
-          <label htmlFor="city" className="text-sm font-medium text-pairup-darkBlue/80">
-            City *
-          </label>
-          <input
-            id="city"
-            type="text"
-            value={formData.city}
-            onChange={e => updateFormData('city', e.target.value)}
-            disabled={isDisabled}
-            className={`w-full rounded-lg border px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
-              errors.city 
-                ? 'border-red-300 focus-visible:border-red-500 focus-visible:ring-red-500' 
-                : 'border-gray-200 focus-visible:border-pairup-cyan focus-visible:ring-pairup-cyan'
-            }`}
-            placeholder="e.g., Berlin, Madrid, Paris"
-          />
-          {errors.city && (
-            <p className="text-sm text-red-600">{errors.city}</p>
-          )}
-        </div>
-      </div>
+         <FormField
+           label="City"
+           id="city"
+           error={errors.city}
+           helpText="Which city?"
+           required
+           theme="light"
+         >
+           <Input
+             id="city"
+             type="text"
+             value={formData.city}
+             onChange={e => updateFormData('city', e.target.value)}
+             disabled={isDisabled}
+             placeholder="e.g., Berlin, Madrid, Paris"
+             variant={errors.city ? "error" : "default"}
+             theme="light"
+           />
+         </FormField>
+       </div>
 
-      {/* Cost */}
-      <div className="space-y-2">
-        <label htmlFor="cost" className="text-sm font-medium text-pairup-darkBlue/80">
-          Cost indicator (optional)
-        </label>
-        <input
-          id="cost"
-          type="text"
-          value={formData.cost}
-          onChange={e => updateFormData('cost', e.target.value)}
-          disabled={isDisabled}
-          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-base text-pairup-darkBlue shadow-sm focus:border-pairup-cyan focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60"
-          placeholder="e.g., Free, €10-15 per person, Pay your own way"
-        />
-      </div>
+       {/* Cost */}
+       <FormField
+         label="Cost indicator"
+         id="cost"
+         helpText="Optional - rough estimate of cost per person"
+         theme="light"
+       >
+         <Input
+           id="cost"
+           type="text"
+           value={formData.cost}
+           onChange={e => updateFormData('cost', e.target.value)}
+           disabled={isDisabled}
+           placeholder="e.g., Free, €10-15 per person, Pay your own way"
+           theme="light"
+         />
+       </FormField>
     </div>
   );
 
@@ -712,38 +703,43 @@ export const TabbedEventCreationForm: React.FC<TabbedEventCreationFormProps> = (
           {currentTab === 3 && renderTab3()}
         </div>
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-between mt-8">
-          <button
-            type="button"
-            onClick={handlePrevious}
-            disabled={currentTab === 1 || isDisabled}
-            className={twMerge(clsx('px-4 py-2 text-sm font-medium text-pairup-darkBlue border border-gray-300 rounded-lg hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60'))}
-          >
-            Previous
-          </button>
+          {/* Navigation Buttons */}
+          <div className="flex justify-between mt-8">
+            <Button
+              type="button"
+              variant="outline"
+              size="md"
+              onClick={handlePrevious}
+              disabled={currentTab === 1 || isDisabled}
+            >
+              Previous
+            </Button>
 
-          <div className="flex gap-2">
-            {currentTab < 3 ? (
-              <button
-                type="button"
-                onClick={handleNext}
-                disabled={isDisabled}
-                className={twMerge(clsx('px-4 py-2 text-sm font-medium text-white bg-pairup-cyan rounded-lg hover:bg-pairup-cyan/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60'))}
-              >
-                Next
-              </button>
-            ) : (
-              <button
-                type="submit"
-                disabled={isDisabled}
-                className={twMerge(clsx('px-6 py-2 text-sm font-medium text-white bg-pairup-cyan rounded-lg hover:bg-pairup-cyan/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60'))}
-              >
-                {isDisabled ? 'Saving Draft...' : 'Save as Draft'}
-              </button>
-            )}
+            <div className="flex gap-2">
+              {currentTab < 3 ? (
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="md"
+                  onClick={handleNext}
+                  disabled={isDisabled}
+                >
+                  Next
+                </Button>
+              ) : (
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="md"
+                  loading={isDisabled}
+                  loadingText="Saving Draft..."
+                  disabled={isDisabled}
+                >
+                  Save as Draft
+                </Button>
+              )}
+            </div>
           </div>
-        </div>
       </form>
     </div>
   );
