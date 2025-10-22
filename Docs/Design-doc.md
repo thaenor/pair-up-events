@@ -1110,21 +1110,134 @@ It’s designed to feel **warm, trustworthy, and supportive**, helping users foc
 
 # **9. Responsive Design**
 
-**Approach:**
-Mobile-first layouts that gracefully expand to tablet and desktop.
+The Responsive Design section defines how Pair Up Events adapts across viewports — from desktop web to future mobile — preserving layout, accessibility, and the playful, warm-organic visual tone.  
+Design is **mobile-first in behavior** but web-first in current implementation: components are responsive by default and include explicit adaptive rules for smaller screens.
 
-| Breakpoint | Width | Description |
-|-------------|--------|-------------|
-| `sm` | 640px | Mobile |
-| `md` | 768px | Tablet |
-| `lg` | 1024px | Desktop |
-| `xl` | 1280px | Large desktop |
-
-**Responsive Patterns:**
-- Hamburger navigation for mobile
-- Collapsible sidebars
-- Stacked forms and cards
-- Adaptive grid with auto-fit columns
+```json
+{
+  "responsive_design": {
+    "principles": {
+      "mobile_first_behavior": "Components should be designed to scale down gracefully; stacking prioritized content vertically for narrow viewports.",
+      "progressive_enhancement": "Add enhancements for larger screens (multi-column layouts, denser information), but retain core interactions at all sizes.",
+      "consistency": "Maintain visual hierarchy and accessible touch targets across breakpoints.",
+      "preserve_brand_vibe": "Warm-organic and inviting aesthetics preserved via spacing, elevation, and imagery cropping rules."
+    },
+    "breakpoints": {
+      "xs": {
+        "max_width": 479,
+        "usage": "Phones (portrait)"
+      },
+      "sm": {
+        "min_width": 480,
+        "max_width": 767,
+        "usage": "Phones (landscape) / small tablets"
+      },
+      "md": {
+        "min_width": 768,
+        "max_width": 1023,
+        "usage": "Tablets / small laptop"
+      },
+      "lg": {
+        "min_width": 1024,
+        "max_width": 1439,
+        "usage": "Desktop"
+      },
+      "xl": {
+        "min_width": 1440,
+        "usage": "Large desktop / wide displays"
+      }
+    },
+    "grid_system": {
+      "base": "12-column responsive grid",
+      "gutter": "16px (xs), 20px (sm), 24px (md+)",
+      "container_widths": {
+        "sm": "100%",
+        "md": "720px",
+        "lg": "1024px",
+        "xl": "1280px"
+      },
+      "fluid_behavior": "Columns collapse to single column below 768px; components span full width unless otherwise noted."
+    },
+    "spacing_scale_and_layout": {
+      "spacing_tokens_reference": "See Design Tokens & Theming",
+      "default_padding_card": "16px (xs), 20px (sm), 24px (md+)",
+      "stacking_rules": "Vertical stack for narrow screens; horizontal arrangements reflow to stack at md breakpoint.",
+      "max_content_width": "Use container widths to avoid overly long lines for readability"
+    },
+    "typography_responsiveness": {
+      "scaling_strategy": "Responsive modular scale using relative units (rem) so text scales with root font size.",
+      "headline_behavior": "Headlines truncate at two lines on xs; allow wrap on md+ with larger size token.",
+      "body_text": "Minimum 16px equivalent at all breakpoints for readability."
+    },
+    "component_responsive_rules": {
+      "Button": {
+        "full_width_on_mobile": true,
+        "icon_buttons": "keep square touch target 44x44px",
+        "stacking_behavior": "Multiple CTAs stack vertically at xs/sm"
+      },
+      "Card": {
+        "grid_behavior": "1-column on xs/sm, 2-column on md, 3-column on lg+,",
+        "interactive_expansion": "Tap reveals expanded content on mobile instead of hover-based reveals",
+        "image_crop": "Use focal-point cropping to keep faces visible; fallback to center-crop"
+      },
+      "Navbar": {
+        "mobile_behavior": "Collapsed hamburger menu at md and below",
+        "sticky_on_desktop": true,
+        "actions_positioning": "Primary actions remain visible as bottom sheet or sticky footer on mobile when relevant"
+      },
+      "Modal": {
+        "mobile_behavior": "Full-screen modal for complex forms on xs/sm; centered overlay for md+",
+        "dismiss_gesture": "Allow swipe-down to dismiss on mobile (with confirmation for destructive actions)",
+        "focus_management": "Trap focus and return to triggering element after close"
+      },
+      "Forms": {
+        "layout": "Single-column flow on xs/sm; two-column forms only on lg+ where it improves scanning",
+        "input_sizes": "Larger inputs and touch targets on mobile; condensed layouts on desktop if space allows"
+      },
+      "EventCard / PairProfileCard": {
+        "compact_variant": "Show condensed metadata (title, time, tag) on xs; reveal full details on tap/expand",
+        "avatars": "Stack avatars horizontally on md+; collapse to single grouped avatar with '+n' indicator on xs"
+      },
+      "Chat": {
+        "layout": "Full-width chat on mobile with header compacted; split-pane on desktop to show feed + chat side-by-side",
+        "input_behaviour": "Sticky composer above keyboard on mobile; auto-scroll on new messages"
+      }
+    },
+    "imagery_and_media": {
+      "hero_and_collage": {
+        "responsive_crop_rules": "Preserve faces and key interaction points using focal-point metadata; collapse collage into carousel on narrow viewports",
+        "image_density": "Serve appropriately sized assets (1x, 2x, 3x) based on device pixel ratio"
+      },
+      "video": {
+        "behavior": "Autoplay muted preview on desktop with user control; disable autoplay on mobile to save bandwidth",
+        "captioning": "All videos must include captions and transcripts"
+      }
+    },
+    "navigation_and_patterns": {
+      "primary_navigation": {
+        "desktop": "Top nav with visible CTAs and search",
+        "mobile": "Hamburger + bottom action bar for primary CTAs (Create / Find)",
+        "search": "Search becomes full-screen on mobile for better discovery"
+      },
+      "actions_and_cta_visibility": "PrimaryCreate and PrimaryFind CTAs must remain accessible within two taps on mobile"
+    },
+    "performance_considerations": {
+      "asset_loading": "Lazy-load offscreen images, prioritize above-the-fold assets",
+      "css_and_js": "Critical CSS inlined for first paint; defer non-critical scripts",
+      "responsive_images": "Use srcset and sizes attributes to deliver appropriate images"
+    },
+    "accessibility_notes_for_responsive": {
+      "touch_targets": "Maintain minimum 44x44px target across breakpoints",
+      "focus_visibility": "Ensure visible focus state even when layout changes",
+      "orientation": "Layouts should work in both portrait and landscape; avoid critical UI only visible in one orientation"
+    },
+    "cross_references": {
+      "design_tokens": "Spacing, radius, and breakpoint tokens are defined in Design Tokens & Theming",
+      "visual_design": "Maintain card elevation and image treatment as defined in Visual Design",
+      "accessibility": "Follow Accessibility & UX rules for touch targets, focus, and motion reduction"
+    }
+  }
+}
 
 ---
 
