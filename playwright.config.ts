@@ -15,10 +15,27 @@ export default defineConfig({
   },
 
   projects: [
+    // Desktop Browser - Chrome only
     {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
+        headless: true,
+      },
+    },
+    // Mobile Devices - Android
+    {
+      name: 'android-pixel5',
+      use: {
+        ...devices['Pixel 5'],
+        headless: true,
+      },
+    },
+    // Mobile Devices - iOS
+    {
+      name: 'ios-iphone12',
+      use: {
+        ...devices['iPhone 12'],
         headless: true,
       },
     },

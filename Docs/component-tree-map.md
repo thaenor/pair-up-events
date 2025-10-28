@@ -7,10 +7,55 @@ This document provides a complete map of all components in the PairUp Events app
 ```
 App.tsx
 └── BrowserRouter
-    └── ErrorBoundary
+    └── AuthErrorBoundary
         └── Suspense (with LoadingSpinner fallback)
             └── Routes
+                └── NetworkStatus (global network status indicator)
 ```
+
+## Auth Components
+
+Located in: `src/components/molecules/Auth/`
+
+### AuthErrorDisplay
+
+- **File**: `src/components/molecules/Auth/AuthErrorDisplay.tsx`
+- **Purpose**: Displays authentication errors with contextual icons and retry options
+- **Props**: error, onRetry, onClear, showRetry, className
+- **Features**: Error type detection, retryable error handling, contextual messaging
+- **Tests**: `src/components/molecules/Auth/__tests__/AuthErrorDisplay.test.tsx` (14 tests)
+
+### AuthRetryButton
+
+- **File**: `src/components/molecules/Auth/AuthRetryButton.tsx`
+- **Purpose**: Provides retry functionality for authentication operations
+- **Props**: onRetry, disabled, loading, children
+- **Features**: Loading states, disabled states, customizable content
+
+### NetworkStatus
+
+- **File**: `src/components/molecules/Auth/NetworkStatus.tsx`
+- **Purpose**: Global network status indicator
+- **Features**: Online/offline detection, visual indicators, automatic updates
+- **Tests**: `src/components/molecules/Auth/__tests__/NetworkStatus.test.tsx` (14 tests)
+
+## Error Boundaries
+
+Located in: `src/components/`
+
+### AuthErrorBoundary
+
+- **File**: `src/components/AuthErrorBoundary.tsx`
+- **Purpose**: Catches authentication-related errors with specialized recovery options
+- **Features**: Retry mechanisms, navigation to login, graceful fallbacks, development-only logging
+- **Props**: children, fallback, onError, maxRetries
+- **Tests**: `src/components/__tests__/AuthErrorBoundary.test.tsx` (13 tests)
+
+### ErrorBoundary
+
+- **File**: `src/components/ErrorBoundary.tsx`
+- **Purpose**: General error boundary for application-wide error handling
+- **Features**: Error catching, fallback UI, error reporting
 
 ## Hooks
 
@@ -130,11 +175,13 @@ Profile
 
 ```
 Events
-├── div (container)
-│ Use── Navigation
-│   ├── div (main content)
-│   │   └── h1 (Title)
-│   └── MobileBottomNavigation
+├── useRequireAuth (authentication guard)
+├── LoadingSpinner (while auth loading)
+└── div (container)
+    ├── Navigation
+    ├── div (main content)
+    │   └── h1 (Title)
+    └── MobileBottomNavigation
 ```
 
 ### `/events/create` (Create Event Page)
@@ -143,12 +190,14 @@ Events
 
 ```
 EventsCreate
-├── div (container)
-│   ├── Navigation
-│   ├── div (main content)
-│   │   ├── h1 (Title)
-│   │   └── p (Description)
-│   └── MobileBottomNavigation
+├── useRequireAuth (authentication guard)
+├── LoadingSpinner (while auth loading)
+└── div (container)
+    ├── Navigation
+    ├── div (main content)
+    │   ├── h1 (Title)
+    │   └── p (Description)
+    └── MobileBottomNavigation
 ```
 
 ### `/messenger` (Messenger Page)
@@ -225,17 +274,15 @@ Invite
 
 ```
 ContactUs
-├── useRequireAuth (authentication guard)
-├── LoadingSpinner (while auth loading)
-└── div (container)
-    ├── Navigation
-    ├── div (main content)
-    │   ├── h1 (Title)
-    │   └── p (Coming soon message)
-    └── MobileBottomNavigation
+├── div (container)
+│   ├── Navigation
+│   ├── div (main content)
+│   │   ├── h1 (Title)
+│   │   └── p (Coming soon message)
+│   └── MobileBottomNavigation
 ```
 
-**Note**: Contact form UI is TODO.
+**Note**: Public page - no authentication required. Contact form UI is TODO.
 
 ### `/about` (About Page)
 
@@ -243,17 +290,15 @@ ContactUs
 
 ```
 About
-├── useRequireAuth (authentication guard)
-├── LoadingSpinner (while auth loading)
-└── div (container)
-    ├── Navigation
-    ├── div (main content)
-    │   ├── h1 (Title)
-    │   └── p (Coming soon message)
-    └── MobileBottomNavigation
+├── div (container)
+│   ├── Navigation
+│   ├── div (main content)
+│   │   ├── h1 (Title)
+│   │   └── p (Coming soon message)
+│   └── MobileBottomNavigation
 ```
 
-**Note**: About us content is TODO.
+**Note**: Public page - no authentication required. About us content is TODO.
 
 ### `/terms-of-service` (Terms Page)
 
@@ -307,11 +352,12 @@ NotFound
 **Component Counts** (Verified December 2024):
 
 - **Atoms**: 5 components
-- **Molecules**: 10 components (organized in 5 feature folders: Auth, Profile, Events, Invite, Form)
+- **Molecules**: 13 components (organized in 5 feature folders: Auth, Profile, Events, Invite, Form)
 - **Organisms**: 9 components (organized in 3 feature folders: Navigation, Landing, Events)
 - **Templates**: 2 components
 - **Pages**: 14 pages (Index, auth, login, profile, events, events-create, messenger, settings, invite, contact-us, about, NotFound, terms-of-service, privacy-policy)
 - **Hooks**: 2 hooks (useAuth, useRequireAuth)
+- **Error Boundaries**: 1 component (AuthErrorBoundary)
 
 ### Atoms (Basic Building Blocks)
 
@@ -355,14 +401,33 @@ Located in: `src/components/molecules/`
 1. **EmailLoginForm** (`email-login-form.tsx`)
    - Uses useAuth hook for login functionality
    - Form validation and error handling
-   - Toast notifications for feedback
+   - Single error display via AuthErrorDisplay component
+   - Toast notifications for validation errors only
 
 2. **EmailSignupForm** (`email-signup-form.tsx`)
    - Uses useAuth hook for signup functionality
    - Collects firstName, lastName, birthDate, gender
+   - Single error display via AuthErrorDisplay component
    - TODO: Save profile data to Firestore
 
-3. **AccountControls** (`account-controls.tsx`)
+3. **AuthErrorDisplay** (`AuthErrorDisplay.tsx`)
+   - Displays authentication errors with contextual icons
+   - Error types: network, auth, config, unknown
+   - Conditional retry button for retryable errors
+   - Conditional descriptions to avoid redundancy
+
+4. **AuthRetryButton** (`AuthRetryButton.tsx`)
+   - Specialized retry button for authentication operations
+   - Shows loading state and retry count
+   - Integrated with AuthErrorDisplay component
+
+5. **NetworkStatus** (`NetworkStatus.tsx`)
+   - Displays offline status indicator only (no online indicator)
+   - Shows warning message when network is disconnected
+   - Non-blocking UI with pointer-events-none
+   - Returns null when online to reduce visual noise
+
+6. **AccountControls** (`account-controls.tsx`)
    - Uses useAuth hook for logout, resetPassword, and account deletion
    - Sign out functionality with redirect to login
    - Password reset modal with email input and validation
@@ -418,6 +483,8 @@ Located in: `src/components/organisms/`
    - Backdrop click to close
    - Loading state during logout
    - Uses LoadingSpinner for logout operation
+   - Z-index: z-20 (modal overlay - just above content)
+   - Animation: Position-based slide animation (right-[-100%] to right-0)
 
 3. **MobileBottomNavigation** (`MobileBottomNavigation.tsx`)
    - Icon buttons for mobile navigation
@@ -453,12 +520,25 @@ Located in: `src/components/templates/`
    - Includes Navigation, Footer, MobileBottomNavigation
    - Wraps page content
 
+### Error Boundaries
+
+Located in: `src/components/`
+
+1. **AuthErrorBoundary** (`AuthErrorBoundary.tsx`)
+   - Catches authentication-related errors
+   - Provides retry mechanism with exponential backoff
+   - Custom fallback UI with navigation options
+   - Integrated with useAuth hook for error recovery
+
 ## Component Dependencies
 
 ### Authentication System
 
 - **useAuth**: Used by EmailLoginForm, EmailSignupForm, AccountControls
 - **useRequireAuth**: Used by Profile page for authentication guard
+- **AuthErrorBoundary**: Catches authentication errors globally
+- **AuthErrorDisplay**: Displays authentication errors in forms
+- **NetworkStatus**: Shows offline status indicator only
 - **Firebase Auth**: Integrated through useAuth hook
 
 ### Navigation System
@@ -494,6 +574,9 @@ Located in: `src/components/templates/`
 
 - ✅ Authentication system (login, signup, logout) with useAuth hook
 - ✅ Authentication guard (useRequireAuth) for protected routes
+- ✅ Authentication error handling with single display strategy
+- ✅ Error boundaries for authentication failures with retry mechanisms
+- ✅ Network status monitoring and user feedback
 - ✅ Profile page with auth protection and loading states
 - ✅ Settings page with account controls
 - ✅ Sidebar navigation with logout functionality
@@ -526,6 +609,58 @@ See `TODO.md` for comprehensive list of pending work, including:
 6. **NavigationLink Molecule**: Icon + text navigation button pattern
 7. **CTAButton Molecule**: Specialized hero CTA button with consistent styling
 
+## Testing Infrastructure
+
+### Unit Tests
+
+- **Coverage**: Components, hooks, utilities
+- **Framework**: Vitest + React Testing Library
+- **Location**: `src/components/__tests__/`, `src/hooks/__tests__/`
+- **Test Files**:
+  - `useAuth.test.ts` - Authentication hook testing
+  - `AuthErrorBoundary.test.tsx` - Error boundary testing
+  - `AuthErrorDisplay.test.tsx` - Error display component testing
+  - `NetworkStatus.test.tsx` - Network status component testing
+
+### E2E Tests
+
+- **Coverage**: Complete user flows, authentication, navigation
+- **Framework**: Playwright
+- **Location**: `tests/e2e/`
+- **Cross-Browser Support**:
+  - **Desktop**: Chromium (Chrome), Firefox, WebKit (Safari)
+  - **Mobile**: Android Pixel 5/7, iPhone 12/13
+  - **Tablet**: Galaxy Tab S4, iPad Pro
+- **Total Environments**: 9 testing configurations
+- **Test Count**: 486 tests across all environments
+- **Test Files**:
+  - `auth.spec.ts` - Authentication flow testing
+  - `auth-error-handling.spec.ts` - Error handling scenarios
+  - `account-management.spec.ts` - Account management features
+  - `sidebar.spec.ts` - Navigation and sidebar functionality
+  - `page-snapshots.spec.ts` - Visual regression testing
+  - `landing-page.spec.ts` - Landing page functionality
+  - `login-page.spec.ts` - Login page testing
+
+### Testing Commands
+
+```bash
+# Run all browsers and devices
+npx playwright test
+
+# Run specific browser
+npx playwright test --project=firefox
+
+# Run specific mobile device
+npx playwright test --project=android-pixel5
+
+# Run iOS simulation
+npx playwright test --project=ios-iphone13
+
+# Run tablet testing
+npx playwright test --project=android-tablet
+```
+
 ## Notes
 
 - All components use Tailwind CSS for styling
@@ -534,6 +669,6 @@ See `TODO.md` for comprehensive list of pending work, including:
 - Form validation: Basic validation with error handling and toast notifications
 - Firebase integration: Auth fully implemented, Firestore integration planned
 - Authentication: Complete with useAuth hook and useRequireAuth guard
-- Testing: Comprehensive E2E tests with Playwright, unit tests for components
+- Testing: Comprehensive E2E tests with Playwright across 9 environments, unit tests for components
 - Responsive design: Mobile-first approach with md: breakpoints
 - Architecture: Direct imports (no barrel exports), atomic design principles

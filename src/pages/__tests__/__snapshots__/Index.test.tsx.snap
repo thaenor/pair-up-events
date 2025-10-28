@@ -143,15 +143,17 @@ exports[`Index > should match snapshot 1`] = `
     </div>
     <div
       aria-hidden="true"
-      class="fixed inset-0 bg-black/50 z-50 transition-opacity duration-300 opacity-0 pointer-events-none"
+      class="fixed inset-0 bg-black/50 z-30 transition-opacity duration-300 opacity-0 pointer-events-none"
       data-testid="sidebar-backdrop"
+      style="z-index: 30;"
     />
     <div
       aria-hidden="true"
       aria-label="Navigation menu"
       aria-modal="true"
-      class="fixed top-0 right-0 h-full w-full max-w-sm bg-pairup-darkBlue shadow-2xl z-50 transform transition-transform duration-300 ease-out translate-x-full"
+      class="fixed top-0 right-0 h-full w-full max-w-sm bg-pairup-darkBlue shadow-2xl z-40 transition-all duration-300 ease-out right-[-100%]"
       role="dialog"
+      style="z-index: 40;"
     >
       <div
         class="h-full flex flex-col"
@@ -473,7 +475,7 @@ exports[`Index > should match snapshot 1`] = `
             class="grid md:grid-cols-2 gap-6 items-center"
           >
             <div
-              class="animate-fade-in mt-16 sm:mt-64 md:mt-0 relative z-10"
+              class="animate-fade-in mt-16 sm:mt-64 md:mt-0"
               id="headline-cta"
               style="animation-delay: 0.2s;"
             >
@@ -565,7 +567,7 @@ exports[`Index > should match snapshot 1`] = `
               </div>
             </div>
             <div
-              class="relative w-full -mt-24 sm:-mt-10 md:mt-0 mt-10 animate-fade-in flex items-center justify-center"
+              class="relative w-full -mt-24 sm:-mt-10 md:mt-0 animate-fade-in flex items-center justify-center"
               id="hero-image"
               style="animation-delay: 0.5s;"
             >

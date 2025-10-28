@@ -1,13 +1,12 @@
 import React from 'react'
 import Navigation from '@/components/organisms/Navigation/Navigation'
 import MobileBottomNavigation from '@/components/organisms/Navigation/MobileBottomNavigation'
-import LoadingSpinner from '@/components/atoms/LoadingSpinner'
-import useRequireAuth from '@/hooks/useRequireAuth'
 
 /**
  * Contact Us Page
  *
  * Placeholder page for contact form functionality.
+ * This page is accessible to both logged-in and logged-out users.
  *
  * @component
  * @example
@@ -16,20 +15,10 @@ import useRequireAuth from '@/hooks/useRequireAuth'
  * ```
  *
  * @features
- * - Authentication guard (useRequireAuth)
+ * - Public access (no authentication required)
  * - TODO: Contact form implementation
  */
 const ContactUsPage: React.FC = () => {
-  const { loading } = useRequireAuth()
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-pairup-cream flex items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    )
-  }
-
   return (
     <div className="min-h-screen bg-pairup-cream">
       <Navigation />

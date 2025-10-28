@@ -124,11 +124,15 @@ test.describe('Authentication Flow', () => {
     await page.fill('[data-testid="login-password-input"]', 'wrongpassword')
     await page.click('[data-testid="login-submit-button"]')
 
-    // Should see error toast (sonner)
+    // Should see error in AuthErrorDisplay component
+    await expect(page.locator('[data-testid="auth-error-display"]')).toBeVisible({ timeout: 5000 })
     await expect(page.locator('text=/No account found|Invalid/i')).toBeVisible({ timeout: 5000 })
 
     // Should remain on login page
     await expect(page).toHaveURL('/login')
+
+    // Should not show retry button for non-retryable errors
+    await expect(page.locator('text=/Try Again/i')).not.toBeVisible()
   })
 
   test('Signup with existing email shows error', async ({ page }) => {
@@ -150,6 +154,9 @@ test.describe('Authentication Flow', () => {
 
     // Should remain on signup page
     await expect(page).toHaveURL('/signup')
+
+    // Should not show retry button for non-retryable errors
+    await expect(page.locator('text=/Try Again/i')).not.toBeVisible()
   })
 
   test('Check for console errors during auth flow', async ({ page }) => {

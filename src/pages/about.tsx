@@ -1,13 +1,12 @@
 import React from 'react'
 import Navigation from '@/components/organisms/Navigation/Navigation'
 import MobileBottomNavigation from '@/components/organisms/Navigation/MobileBottomNavigation'
-import LoadingSpinner from '@/components/atoms/LoadingSpinner'
-import useRequireAuth from '@/hooks/useRequireAuth'
 
 /**
  * About Page
  *
  * Provides information about the PairUp Events platform and team.
+ * This page is accessible to both logged-in and logged-out users.
  *
  * @component
  * @example
@@ -16,20 +15,10 @@ import useRequireAuth from '@/hooks/useRequireAuth'
  * ```
  *
  * @features
- * - Authentication guard (useRequireAuth)
+ * - Public access (no authentication required)
  * - TODO: About us content implementation
  */
 const AboutPage: React.FC = () => {
-  const { loading } = useRequireAuth()
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-pairup-cream flex items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    )
-  }
-
   return (
     <div className="min-h-screen bg-pairup-cream">
       <Navigation />

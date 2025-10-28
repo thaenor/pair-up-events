@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
 import LoadingSpinner from '@/components/atoms/LoadingSpinner'
+import AuthErrorDisplay from './AuthErrorDisplay'
+import AuthRetryButton from './AuthRetryButton'
 import useAuth from '@/hooks/useAuth'
 
 // Extracted form field component
@@ -64,7 +66,7 @@ const FormField = ({
 )
 
 const EmailSignupForm: React.FC = React.memo(() => {
-  const { signup } = useAuth()
+  const { signup, authError, clearError } = useAuth()
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
     firstName: '',
@@ -78,6 +80,8 @@ const EmailSignupForm: React.FC = React.memo(() => {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [signupError, setSignupError] = useState<string | null>(null)
+  const [retryCount, setRetryCount] = useState(0)
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -106,6 +110,7 @@ const EmailSignupForm: React.FC = React.memo(() => {
     }
 
     setLoading(true)
+    setSignupError(null)
 
     // TODO: Save profile data (firstName, lastName, birthDate, gender) to Firestore users/{userId}
     // collection after successful authentication. Create userProfile service in src/lib/firebase/
@@ -113,12 +118,62 @@ const EmailSignupForm: React.FC = React.memo(() => {
 
     if (result.success) {
       toast.success('Account created successfully!')
+      setRetryCount(0)
       navigate('/profile')
     } else {
-      toast.error(result.error || 'Signup failed')
+      setSignupError(result.error || 'Signup failed')
+      if (result.retryable) {
+        setRetryCount(prev => prev + 1)
+      }
+      // Error is displayed via AuthErrorDisplay component - no toast needed
     }
 
     setLoading(false)
+  }
+
+  const handleRetry = async () => {
+    // Validate passwords match
+    if (formData.password !== formData.confirmPassword) {
+      toast.error('Passwords do not match')
+      return
+    }
+
+    // Validate required fields
+    if (
+      !formData.email ||
+      !formData.password ||
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.birthDate ||
+      !formData.gender
+    ) {
+      toast.error('Please fill in all required fields')
+      return
+    }
+
+    setLoading(true)
+    setSignupError(null)
+
+    const result = await signup(formData.email, formData.password)
+
+    if (result.success) {
+      toast.success('Account created successfully!')
+      setRetryCount(0)
+      navigate('/profile')
+    } else {
+      setSignupError(result.error || 'Signup failed')
+      if (result.retryable) {
+        setRetryCount(prev => prev + 1)
+      }
+    }
+
+    setLoading(false)
+  }
+
+  const handleClearError = () => {
+    setSignupError(null)
+    setRetryCount(0)
+    clearError()
   }
 
   const togglePasswordVisibility = () => {
@@ -138,6 +193,49 @@ const EmailSignupForm: React.FC = React.memo(() => {
           activities.
         </p>
       </div>
+
+      {/* Auth Error Display */}
+      {authError && (
+        <AuthErrorDisplay
+          error={authError}
+          onRetry={handleRetry}
+          onClear={handleClearError}
+          showRetry={authError.retryable}
+        />
+      )}
+
+      {/* Signup Error Display */}
+      {signupError && !authError && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="flex items-start">
+            <div className="flex-shrink-0 text-red-500">
+              <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <div className="ml-3 flex-1">
+              <h3 className="text-sm font-medium text-red-800">Signup Failed</h3>
+              <div className="mt-1 text-sm text-red-700">
+                <p>{signupError}</p>
+              </div>
+              <div className="mt-3">
+                <AuthRetryButton
+                  onRetry={handleRetry}
+                  error={signupError}
+                  retryCount={retryCount}
+                  maxRetries={3}
+                  variant="outline"
+                  size="sm"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Name Fields */}
       <div className="grid grid-cols-2 gap-4">

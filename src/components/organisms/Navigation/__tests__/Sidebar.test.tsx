@@ -42,9 +42,9 @@ describe('Sidebar', () => {
       </MemoryRouter>
     )
 
-    // Check that sidebar has translate-x-full class for hidden state
+    // Check that sidebar has right-[-100%] class for hidden state
     const sidebar = container.querySelector('[role="dialog"]')
-    expect(sidebar).toHaveClass('translate-x-full')
+    expect(sidebar).toHaveClass('right-[-100%]')
   })
 
   it('should call onClose when close button is clicked', async () => {

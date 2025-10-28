@@ -114,24 +114,26 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onLogout, isLoggingO
     <>
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 bg-black/50 z-50 transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-black/50 z-30 transition-opacity duration-300 ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={onClose}
         aria-hidden="true"
         data-testid="sidebar-backdrop"
+        style={{ zIndex: 30 }}
       />
 
       {/* Sidebar */}
       <div
         ref={sidebarRef}
-        className={`fixed top-0 right-0 h-full w-full max-w-sm bg-pairup-darkBlue shadow-2xl z-50 transform transition-transform duration-300 ease-out ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed top-0 right-0 h-full w-full max-w-sm bg-pairup-darkBlue shadow-2xl z-40 transition-all duration-300 ease-out ${
+          isOpen ? 'right-0' : 'right-[-100%]'
         }`}
         role="dialog"
         aria-modal="true"
         aria-label="Navigation menu"
         aria-hidden={!isOpen}
+        style={{ zIndex: 40 }}
       >
         <div className="h-full flex flex-col">
           {/* Sidebar Header */}

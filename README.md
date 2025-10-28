@@ -94,19 +94,35 @@ npm run ci
 
 This single command runs all quality checks (linting, testing, and building) that CI pipelines expect to pass. Use this command every time you make changes to validate everything is working as expected.
 
+### E2E Testing
+
+E2E tests are run locally using Husky pre-commit hooks to ensure all functionality works before commits are made. The GitHub Actions CI pipeline focuses on unit tests, linting, and building to keep deployment fast and reliable.
+
+**Local E2E Testing:**
+
+- E2E tests run automatically before each commit via Husky
+- Manual E2E testing: `npm run test:e2e`
+- E2E tests with UI: `npm run test:e2e:ui`
+- View E2E reports: `npm run test:e2e:report`
+
+**CI Pipeline:**
+
+- Unit tests, linting, and building run on every push/PR
+- GitHub Pages deployment happens automatically on main branch pushes
+- E2E tests are excluded from CI to maintain fast deployment cycles
+
 ## Deployment Notes
 
+- The application is automatically deployed to GitHub Pages on pushes to the main branch.
 - Ensure Firebase Authentication is configured for the providers exposed in the UI.
 - Provide the required Firebase and Sentry environment variables in your deployment platform.
 - If you customise the early access form, update `src/lib/config.ts` with the new Brevo embed URL.
-- See [GITHUB_SECRETS_SETUP.md](./GITHUB_SECRETS_SETUP.md) for detailed deployment configuration.
 
 With the prerequisites in place, you can iterate on the Pair Up Events experience or extend it with additional routes and Firebase-backed functionality.
 
 ## Supporting Documentation
 
 - [FIREBASE_SETUP.md](./FIREBASE_SETUP.md) – Firebase project and OAuth configuration steps.
-- [GITHUB_SECRETS_SETUP.md](./GITHUB_SECRETS_SETUP.md) – GitHub Actions secret management guidance.
 - [Gemini.md](./Gemini.md) – Full operational protocol for AI coding assistants (reproduced below for convenience).
 
 ## Agentic Coding Guidelines

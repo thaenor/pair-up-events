@@ -1,8 +1,20 @@
 import React from 'react'
 import Navigation from '@/components/organisms/Navigation/Navigation'
 import MobileBottomNavigation from '@/components/organisms/Navigation/MobileBottomNavigation'
+import LoadingSpinner from '@/components/atoms/LoadingSpinner'
+import useRequireAuth from '@/hooks/useRequireAuth'
 
 const EventsCreatePage: React.FC = () => {
+  const { loading } = useRequireAuth()
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-pairup-cream flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-pairup-cream">
       <Navigation />

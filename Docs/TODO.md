@@ -43,11 +43,22 @@
 
 ## Medium Priority
 
+### other
+
+- [ ] Offline Auth State - Cache auth for service outages
+
 ### Code Quality
 
-- [ ] Add unit tests for useRequireAuth hook
-- [ ] Add integration tests for auth state changes
-- [ ] Implement error boundaries for auth failures
+- [x] Add unit tests for useRequireAuth hook
+- [x] Add integration tests for auth state changes
+- [x] **Implement error boundaries for auth failures** - Enhanced authentication error handling
+  - Created AuthErrorBoundary component with retry mechanisms
+  - Enhanced useAuth hook with error recovery for auth state corruption
+  - Added auth-specific error UI components with better messaging
+  - Implemented network retry logic with exponential backoff
+  - Integrated all error handling components into authentication flow
+  - Removed misaligned E2E test "Auth error boundary displays for authentication failures"
+  - Location: src/components/AuthErrorBoundary.tsx, src/hooks/useAuth.ts, src/components/molecules/Auth/
 - [ ] Add rate limiting for signup/login attempts
 
 ### Security

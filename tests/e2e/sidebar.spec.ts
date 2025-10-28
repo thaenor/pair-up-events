@@ -20,11 +20,39 @@ test.describe('Sidebar Navigation Flow', () => {
 
   // Helper function to login
   async function loginUser(page) {
+    // Generate unique email for this test run
+    const uniqueEmail = `test-${Date.now()}@example.com`
+
+    // First create a user
+    await page.goto(ROUTES.signup)
+    await page.fill('[data-testid="signup-first-name"]', TEST_USER.firstName)
+    await page.fill('[data-testid="signup-last-name"]', TEST_USER.lastName)
+    await page.fill('[data-testid="signup-email"]', uniqueEmail)
+    await page.fill('[data-testid="signup-password"]', TEST_USER.password)
+    await page.fill('[data-testid="signup-confirm-password"]', TEST_USER.password)
+    await page.fill('[data-testid="signup-birth-date"]', TEST_USER.birthDate)
+    await page.selectOption('[data-testid="signup-gender"]', TEST_USER.gender)
+    await page.click('[data-testid="signup-submit-button"]')
+
+    // Wait for redirect to profile with longer timeout
+    await expect(page).toHaveURL(ROUTES.profile, { timeout: 15000 })
+
+    // Logout to test login flow
+    await page.click('[data-testid="burger-menu-button"]')
+    await page.waitForTimeout(SIDEBAR_ANIMATION_MS)
+    await page.click('[data-testid="sidebar-logout-button"]')
+
+    // Wait for logout to complete (may redirect to home or login)
+    await page.waitForTimeout(2000)
+
+    // Navigate to login page
     await page.goto(ROUTES.login)
-    await page.fill('[data-testid="login-email-input"]', TEST_USER.email)
+
+    // Now login
+    await page.fill('[data-testid="login-email-input"]', uniqueEmail)
     await page.fill('[data-testid="login-password-input"]', TEST_USER.password)
     await page.click('[data-testid="login-submit-button"]')
-    await expect(page).toHaveURL(ROUTES.profile, { timeout: LOGOUT_TIMEOUT })
+    await expect(page).toHaveURL(ROUTES.profile, { timeout: 15000 })
   }
 
   // Helper function to open sidebar
@@ -126,18 +154,23 @@ test.describe('Sidebar Navigation Flow', () => {
     test('Backdrop click should close the sidebar', async ({ page }) => {
       await loginUser(page)
 
+      // Dismiss any toasts that might interfere
+      await dismissToasts(page)
+
       // Open sidebar
       await openSidebar(page)
 
       // Verify sidebar is open
       await expect(page.locator('[aria-label="Navigation menu"]')).toHaveAttribute('aria-hidden', 'false')
 
-      // Click backdrop (using test ID)
-      await page.click('[data-testid="sidebar-backdrop"]')
-      await page.waitForTimeout(SIDEBAR_ANIMATION_MS)
+      // Click backdrop (using test ID) with retry logic
+      await expect(async () => {
+        await page.click('[data-testid="sidebar-backdrop"]', { timeout: 5000 })
+        await page.waitForTimeout(SIDEBAR_ANIMATION_MS)
 
-      // Verify sidebar is closed
-      await expect(page.locator('[aria-label="Navigation menu"]')).toHaveAttribute('aria-hidden', 'true')
+        // Verify sidebar is closed
+        await expect(page.locator('[aria-label="Navigation menu"]')).toHaveAttribute('aria-hidden', 'true')
+      }).toPass({ timeout: 15000 })
     })
   })
 

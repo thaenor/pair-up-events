@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
 import LoadingSpinner from '@/components/atoms/LoadingSpinner'
+import AuthErrorDisplay from './AuthErrorDisplay'
 import useAuth from '@/hooks/useAuth'
 
 type LoginFormData = {
@@ -12,11 +13,12 @@ type LoginFormData = {
 }
 
 const EmailLoginForm: React.FC = React.memo(() => {
-  const { login } = useAuth()
+  const { login, authError, clearError } = useAuth()
   const navigate = useNavigate()
   const [formData, setFormData] = useState({ email: '', password: '' })
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  // Removed loginError state - using authError from useAuth instead
 
   const handleInputChange = (field: keyof LoginFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -32,17 +34,51 @@ const EmailLoginForm: React.FC = React.memo(() => {
     }
 
     setLoading(true)
+    // Clear any existing auth error
+    clearError()
 
     const result = await login(formData.email, formData.password)
 
     if (result.success) {
       toast.success('Logged in successfully!')
-      navigate('/profile')
+      // Wait a moment for auth state to update before navigating
+      setTimeout(() => {
+        navigate('/profile')
+      }, 100)
     } else {
-      toast.error(result.error || 'Login failed')
+      // Error is now handled by authError state in useAuth hook
+      // Error is displayed via AuthErrorDisplay component - no toast needed
     }
 
     setLoading(false)
+  }
+
+  const handleRetry = async () => {
+    if (!formData.email || !formData.password) {
+      toast.error('Please fill in all fields')
+      return
+    }
+
+    setLoading(true)
+    // Clear any existing auth error
+    clearError()
+
+    const result = await login(formData.email, formData.password)
+
+    if (result.success) {
+      toast.success('Logged in successfully!')
+      setTimeout(() => {
+        navigate('/profile')
+      }, 100)
+    } else {
+      // Error is now handled by authError state in useAuth hook
+    }
+
+    setLoading(false)
+  }
+
+  const handleClearError = () => {
+    clearError()
   }
 
   const togglePasswordVisibility = () => {
@@ -62,6 +98,16 @@ const EmailLoginForm: React.FC = React.memo(() => {
           Welcome back! Sign in to access your account and continue connecting with other pairs!
         </p>
       </div>
+
+      {/* Auth Error Display - now handles all authentication errors */}
+      {authError && (
+        <AuthErrorDisplay
+          error={authError}
+          onRetry={handleRetry}
+          onClear={handleClearError}
+          showRetry={authError.retryable}
+        />
+      )}
 
       {/* Email Field */}
       <div className="space-y-2">

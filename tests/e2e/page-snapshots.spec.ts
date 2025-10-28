@@ -242,16 +242,7 @@ test.describe('Page Snapshots - Protected Pages', () => {
 
 test.describe('Protected Page Redirect Behavior', () => {
   test('Protected pages redirect to login when not authenticated', async ({ page }) => {
-    const protectedPages = [
-      '/profile',
-      '/events',
-      '/events/create',
-      '/messenger',
-      '/settings',
-      '/invite',
-      '/contact-us',
-      '/about',
-    ]
+    const protectedPages = ['/profile', '/events', '/events/create', '/messenger', '/settings', '/invite']
 
     for (const path of protectedPages) {
       await page.goto(path)
@@ -260,6 +251,15 @@ test.describe('Protected Page Redirect Behavior', () => {
       expect(currentUrl).toMatch(/login|\//)
 
       await page.goto('/')
+    }
+  })
+
+  test('Public pages are accessible without authentication', async ({ page }) => {
+    const publicPages = ['/', '/login', '/signup', '/about', '/contact-us', '/terms-of-service', '/privacy-policy']
+
+    for (const path of publicPages) {
+      await page.goto(path)
+      await expect(page).toHaveURL(path, { timeout: 5000 })
     }
   })
 })

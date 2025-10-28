@@ -143,15 +143,17 @@ exports[`TermsOfServicePage > should match snapshot 1`] = `
     </div>
     <div
       aria-hidden="true"
-      class="fixed inset-0 bg-black/50 z-50 transition-opacity duration-300 opacity-0 pointer-events-none"
+      class="fixed inset-0 bg-black/50 z-30 transition-opacity duration-300 opacity-0 pointer-events-none"
       data-testid="sidebar-backdrop"
+      style="z-index: 30;"
     />
     <div
       aria-hidden="true"
       aria-label="Navigation menu"
       aria-modal="true"
-      class="fixed top-0 right-0 h-full w-full max-w-sm bg-pairup-darkBlue shadow-2xl z-50 transform transition-transform duration-300 ease-out translate-x-full"
+      class="fixed top-0 right-0 h-full w-full max-w-sm bg-pairup-darkBlue shadow-2xl z-40 transition-all duration-300 ease-out right-[-100%]"
       role="dialog"
+      style="z-index: 40;"
     >
       <div
         class="h-full flex flex-col"
