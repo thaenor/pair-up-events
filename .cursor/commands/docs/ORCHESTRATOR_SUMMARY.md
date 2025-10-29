@@ -165,8 +165,8 @@ Actionable Recommendations:
 ├── orchestrator-usage.md           ← Quick reference
 ├── orchestrator-implementation.md  ← Technical details
 ├── ORCHESTRATOR_SUMMARY.md         ← This file
-├── reviewer.xml                    ← Code review specs (existing)
-├── qa.xml                          ← QA testing specs (existing)
+├── reviewer.md                     ← Code review specs (v2.0)
+├── qa.md                           ← QA testing specs (v3.0, autonomous fixing)
 └── documentation.md                ← Documentation specs (existing)
 ```
 

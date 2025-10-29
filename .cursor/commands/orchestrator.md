@@ -1,190 +1,119 @@
-# Orchestrator: Automated Multi-Agent Workflow
+# Orchestrator: Multi-Agent CI/CD Pipeline
 
-You are a workflow orchestrator agent. Your role is to coordinate and execute a comprehensive multi-agent pipeline that validates code changes, ensures quality, and updates documentation.
+**Role**: Coordinate a 3-phase pipeline that validates code changes, ensures test coverage, and updates documentation.
 
-## Pipeline Overview
-
-This orchestrator manages the following sequential workflow:
+## Pipeline Flow
 
 ```
-User Input/Prompt
-    ↓
-1. REVIEWER AGENT (Code Quality Review)
-    ↓
-2. QA AGENT (Testing & Coverage)
-    ↓
-3. DOCUMENTATION AGENT (Update Specs & Docs)
-    ↓
-Final Report & Summary
+User Input → Code Review → QA & Testing → Documentation → Final Report
 ```
 
 ---
 
-## Execution Protocol
+## Phase 1: Code Review
 
-### Phase 1: Code Review Execution
+**Delegate to**: `reviewer.md`
 
-**Agent**: Reviewer Agent  
-**Command File**: `.cursor/commands/reviewer.xml`
+**Execute**:
 
-**Your Actions**:
-
-1. Extract and analyze all staged and unstaged code changes
-2. Generate comprehensive code review report analyzing:
-   - Logic issues (algorithmic efficiency, edge cases, control flow)
-   - Style consistency (naming conventions, formatting, code complexity)
-   - Potential bugs (memory management, exception handling, type safety)
-3. Output report in markdown format with severity levels
-4. Pass findings to QA phase
-
-**Expected Output**:
-
-- Markdown report with categorized issues
-- Severity ratings (Low, Medium, High, Critical)
-- Recommended solutions for each issue
+1. Analyze all staged/unstaged changes
+2. Generate markdown report with:
+   - Logic issues (efficiency, edge cases, control flow)
+   - Style violations (naming, formatting, complexity)
+   - Potential bugs (memory, exceptions, type safety)
+   - Severity: Critical / High / Medium / Low
+   - Solutions for each issue
+3. Pass findings to Phase 2
 
 ---
 
-### Phase 2: QA & Testing Execution
+## Phase 2: QA & Testing
 
-**Agent**: QA Agent  
-**Command File**: `.cursor/commands/qa.xml`
+**Delegate to**: `qa.md`
 
-**Your Actions**:
+**Execute**:
 
-1. Validate existing test suite:
-   - Run full test suite (unit and Playwright tests)
-   - Identify all failing tests with detailed error analysis
-2. Assess coverage for new/modified code:
-   - Determine unit test coverage gaps
-   - Identify missing Playwright/E2E tests
-   - Cross-reference with code changes from Phase 1
-3. Generate testing report including:
-   - Test failure analysis with root causes
-   - Coverage gaps and recommendations
-   - Unit test coverage % and E2E coverage %
-   - New tests needed based on code changes
-
-**Expected Output**:
-
-- Markdown test validation report
-- Failed test details and recommendations
-- Coverage summary and gaps
-- Prioritized list of tests to add
+1. Run full test suite (unit + Playwright)
+2. Analyze failures with root causes
+3. Assess coverage gaps for modified code (cross-reference Phase 1)
+4. Generate report with:
+   - Test pass rate and failure details
+   - Coverage % (unit and E2E)
+   - Prioritized list of missing tests
+5. Pass coverage data to Phase 3
 
 ---
 
-### Phase 3: Documentation Update Execution
+## Phase 3: Documentation
 
-**Agent**: Documentation Agent  
-**Command File**: `.cursor/commands/documentation.md`
+**Delegate to**: `documentation.md`
 
-**Your Actions**:
+**Execute**:
 
-1. Update CHANGELOG.md with:
-   - Summary of all code changes from Phase 1
-   - Test coverage improvements from Phase 2
-   - Breaking changes (if any)
-   - New features or modifications
-
-2. Update component-tree-map.md:
-   - Add new components (if any)
-   - Update modified component descriptions
-   - Add structural changes notes
-   - Update component counts
-
-3. Validate JSDoc comments:
-   - Ensure JSDoc matches implementation
-   - Update props, types, and examples where needed
-
+1. Update `CHANGELOG.md`:
+   - Code changes summary (from Phase 1)
+   - Test coverage improvements (from Phase 2)
+   - Breaking changes, new features
+2. Update `component-tree-map.md`:
+   - New/modified components
+   - Structure changes, updated counts
+3. Validate and update JSDoc comments
 4. Generate documentation report
 
-**Expected Output**:
+---
 
-- Updated CHANGELOG.md
-- Updated component-tree-map.md
-- Updated JSDoc comments in affected files
-- Documentation validation report
+## Orchestrator Protocol
+
+### Execution Rules
+
+- **Sequence**: Always execute phases 1→2→3 in order
+- **Context**: Pass relevant findings between phases
+- **Failures**: Log all issues but continue pipeline (fail-safe)
+- **Output**: Consolidate all reports into final summary
+
+### Final Report Format
+
+```markdown
+## ORCHESTRATOR PIPELINE REPORT
+
+### Phase 1: Code Review
+
+Critical: X | High: X | Medium: X | Low: X
+
+### Phase 2: QA & Testing
+
+Test Pass Rate: X% | Coverage Δ: ±X% | Tests Needed: X
+
+### Phase 3: Documentation
+
+Files Updated: X | Components Changed: X | Breaking Changes: X
+
+### Status: [PASS | WARNING | REVIEW_REQUIRED]
+
+### Recommendations
+
+1. [Priority action items]
+2. [Blockers or critical issues]
+```
 
 ---
 
-## Orchestrator Responsibilities
+## Invocation
 
-As the orchestrator, you must:
+**Trigger**: When user references this file or requests full pipeline validation
 
-1. **Sequence Management**: Execute phases in order (Review → QA → Docs)
+**Your Actions**:
 
-2. **Context Passing**:
-   - Pass code change context from Review to QA
-   - Pass coverage findings from QA to Documentation
-   - Maintain complete context throughout pipeline
-
-3. **Output Consolidation**:
-   Create a comprehensive final report including:
-   - Executive summary
-   - Review findings summary
-   - Test coverage results
-   - Documentation changes
-   - Overall quality metrics
-
-4. **Failure Handling**:
-   - If review finds critical issues: Flag in report, continue to QA
-   - If QA finds missing tests: Document in report, recommend priorities
-   - Document all blockers or warnings
-
-5. **Quality Gate Reporting**:
-
-   ```
-   ORCHESTRATOR PIPELINE REPORT
-   ==============================
-
-   Phase 1: Code Review
-   - Critical Issues: X
-   - High Issues: X
-   - Medium Issues: X
-   - Low Issues: X
-
-   Phase 2: QA & Testing
-   - Test Pass Rate: X%
-   - Coverage Change: ±X%
-   - New Tests Recommended: X
-
-   Phase 3: Documentation
-   - Files Updated: X
-   - Component Changes: X
-   - Breaking Changes: X
-
-   OVERALL STATUS: [PASS/WARNING/REVIEW_RECOMMENDED]
-   ```
-
----
-
-## Workflow Invocation
-
-When you receive this prompt:
-
-1. Acknowledge the orchestrator is starting
-2. Execute each phase sequentially
-3. Consolidate findings from each agent
-4. Generate final pipeline report
-5. Provide actionable recommendations
-
----
-
-## Agent Integration Notes
-
-- **Reviewer**: Focuses on code quality against `.cursor/config.json` standards
-- **QA**: Ensures test coverage aligned with code changes
-- **Documentation**: Keeps specs and maps current with implementation
-
-Each agent maintains context from previous phases to ensure cohesive workflow.
+1. Confirm orchestrator start
+2. Execute phases 1→2→3 sequentially
+3. Generate consolidated final report
+4. Provide prioritized action items
 
 ---
 
 ## Success Criteria
 
-✅ Code review completed with categorized findings  
-✅ All tests validated; gaps identified  
-✅ Documentation updated and verified  
-✅ Comprehensive final report generated  
+✅ All phases complete  
+✅ Cross-phase context maintained  
+✅ Final report generated  
 ✅ Actionable recommendations provided

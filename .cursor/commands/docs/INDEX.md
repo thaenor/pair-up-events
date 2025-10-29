@@ -38,15 +38,15 @@
 
 #### **See the main agent directive**
 
-→ Read: [orchestrator.md](./orchestrator.md)
+→ Read: [orchestrator.md](../orchestrator.md)
 
 #### **Understand specific review standards**
 
-→ Read: [reviewer.xml](./reviewer.xml)
+→ Read: [reviewer.md](../reviewer.md)
 
 #### **Learn about QA requirements**
 
-→ Read: [qa.xml](./qa.xml)
+→ Read: [qa.md](../qa.md)
 
 #### **Understand documentation standards**
 
@@ -160,7 +160,7 @@
 
 ### Agent Specifications
 
-#### `reviewer.xml`
+#### `reviewer.md`
 
 **Purpose**: Code review agent specifications  
 **Coverage**:
@@ -169,13 +169,18 @@
 - Style consistency checks
 - Potential bugs detection
 - Severity levels (Critical, High, Medium, Low)
+- React/TypeScript/Firestore-specific checks
 - Output format requirements
 
-#### `qa.xml`
+#### `qa.md` ⚡ Enhanced
 
-**Purpose**: QA and testing agent specifications  
+**Purpose**: QA and testing agent specifications with autonomous fixing  
 **Coverage**:
 
+- CI validation (`npm run ci`)
+- Autonomous bug fixing
+- Report generation for complex issues
+- Memory system (persistent reports)
 - Test suite validation
 - Coverage analysis
 - Gap identification
@@ -191,6 +196,7 @@
 - CHANGELOG.md updates
 - Component tree map updates
 - JSDoc validation
+- Architecture Decision Records (ADRs)
 - Documentation workflow
 - File update procedures
 
@@ -234,9 +240,9 @@
 | orchestrator-implementation.md | Developers      | 15 min   | Technical Details       |
 | ORCHESTRATOR_SUMMARY.md        | Quick Overview  | 5 min    | What Was Created        |
 | orchestrator.md                | Reference       | 5 min    | Agent Directive         |
-| reviewer.xml                   | Reference       | 5 min    | Review Standards        |
-| qa.xml                         | Reference       | 5 min    | QA Standards            |
-| documentation.md               | Reference       | 5 min    | Documentation Standards |
+| reviewer.md                    | Reference       | 10 min   | Review Standards        |
+| qa.md                          | Reference       | 10 min   | QA Standards + Auto-Fix |
+| documentation.md               | Reference       | 10 min   | Documentation Standards |
 
 ---
 
@@ -301,7 +307,7 @@
 1. README.md (Complete read)
 2. ARCHITECTURE.md (Complete read)
 3. orchestrator-implementation.md (Complete read)
-4. Review agent specs: reviewer.xml, qa.xml, documentation.md
+4. Review agent specs: reviewer.md, qa.md, documentation.md
 5. Start using: `@orchestrator` with full understanding
 
 ### Path 4: Reference User (As needed)
@@ -324,8 +330,8 @@ Have all files been created?
 - [x] ORCHESTRATOR_SUMMARY.md - Deliverables summary
 - [x] ARCHITECTURE.md - System diagrams
 - [x] INDEX.md - This file
-- [x] reviewer.xml - Code review specs (existing)
-- [x] qa.xml - QA testing specs (existing)
+- [x] reviewer.md - Code review specs (v2.0)
+- [x] qa.md - QA testing specs (v3.0, autonomous fixing)
 - [x] documentation.md - Documentation specs (existing)
 
 **Total Files**: 10 (7 new + 3 existing)
@@ -366,8 +372,8 @@ I've completed my code changes. Please validate everything.
 | "What's the technical flow?"            | ARCHITECTURE.md                    |
 | "What output will I get?"               | orchestrator-implementation.md     |
 | "When should I use each command?"       | README.md                          |
-| "What are the review standards?"        | reviewer.xml                       |
-| "What are the QA standards?"            | qa.xml                             |
+| "What are the review standards?"        | reviewer.md                        |
+| "What are the QA standards?"            | qa.md                              |
 | "What are the documentation standards?" | documentation.md                   |
 
 ---
@@ -392,8 +398,8 @@ I've completed my code changes. Please validate everything.
 | ORCHESTRATOR_SUMMARY.md        | ~9.3KB    | Markdown |
 | ARCHITECTURE.md                | ~12KB     | Markdown |
 | INDEX.md                       | This file | Markdown |
-| reviewer.xml                   | ~3.3KB    | XML      |
-| qa.xml                         | ~4KB      | XML      |
+| reviewer.md                    | ~14KB     | Markdown |
+| qa.md                          | ~14KB     | Markdown |
 | documentation.md               | ~2KB      | Markdown |
 
 **Total Documentation**: ~70KB (comprehensive coverage)

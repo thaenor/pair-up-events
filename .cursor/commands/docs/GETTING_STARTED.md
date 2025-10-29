@@ -184,8 +184,8 @@ All orchestrator files are in: `.cursor/commands/`
 ├── ARCHITECTURE.md             ← System diagrams
 ├── ORCHESTRATOR_SUMMARY.md     ← What was created
 │
-├── reviewer.xml                ← Code review specs
-├── qa.xml                      ← Testing specs
+├── reviewer.md                 ← Code review specs
+├── qa.md                       ← Testing specs (autonomous fixing)
 └── documentation.md            ← Documentation specs
 ```
 

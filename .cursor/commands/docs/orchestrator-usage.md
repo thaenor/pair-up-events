@@ -132,8 +132,8 @@ Actionable Recommendations:
 
 The orchestrator references three command specifications:
 
-1. **`.cursor/commands/reviewer.xml`** - Code quality standards
-2. **`.cursor/commands/qa.xml`** - Testing requirements
+1. **`.cursor/commands/reviewer.md`** - Code quality standards
+2. **`.cursor/commands/qa.md`** - Testing requirements (with autonomous fixing)
 3. **`.cursor/commands/documentation.md`** - Documentation standards
 
 All commands follow your project's `.cursor/config.json` configuration.

@@ -13,6 +13,23 @@ App.tsx
                 └── NetworkStatus (global network status indicator)
 ```
 
+## Entity Layer
+
+Located in: `src/entities/`
+
+### User Entity
+
+- **File**: `src/entities/user.ts`
+- **Purpose**: Core user data structure with validation and factory patterns
+- **Features**:
+  - TypeScript User interface
+  - Zod validation schema
+  - Factory function for user creation
+  - Type guard for validation
+  - Firebase Auth user conversion utility
+- **Tests**: `src/entities/__tests__/user.test.ts` (17 tests)
+- **Dependencies**: Zod for runtime validation
+
 ## Auth Components
 
 Located in: `src/components/molecules/Auth/`

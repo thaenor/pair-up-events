@@ -107,7 +107,7 @@ Please validate all changes through the complete pipeline.
 
 ### Phase 1: Reviewer Agent
 
-**File**: `.cursor/commands/reviewer.xml`
+**File**: `.cursor/commands/reviewer.md`
 
 **Input Context**:
 
@@ -141,7 +141,7 @@ Please validate all changes through the complete pipeline.
 
 ### Phase 2: QA Agent
 
-**File**: `.cursor/commands/qa.xml`
+**File**: `.cursor/commands/qa.md` (v3.0 with autonomous fixing)
 
 **Input Context**:
 

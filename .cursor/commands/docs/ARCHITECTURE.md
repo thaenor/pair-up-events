@@ -200,7 +200,7 @@ Phase 1 (Review)
 │  └──────────┬───────────────┬──────────────────┘   │
 │             │               │                      │
 │    ┌────────▼─────┐ ┌──────▼────────┐ ┌───────────▼────┐
-│    │ reviewer.xml  │ │   qa.xml      │ │documentation.md│
+│    │ reviewer.md   │ │   qa.md      │ │documentation.md│
 │    │               │ │               │ │                │
 │    │ Phase 1:      │ │ Phase 2:      │ │ Phase 3:       │
 │    │ Code Review   │ │ QA & Testing  │ │ Documentation  │
@@ -375,8 +375,8 @@ Auto mode: CI/CD integration
 │   ├── orchestrator-usage.md   (Quick reference)
 │   ├── orchestrator-implementation.md (Technical guide)
 │   │
-│   ├── reviewer.xml            (Phase 1 specs)
-│   ├── qa.xml                  (Phase 2 specs)
+│   ├── reviewer.md             (Phase 1 specs)
+│   ├── qa.md                   (Phase 2 specs, autonomous fixing)
 │   ├── documentation.md        (Phase 3 specs)
 │   │
 │   ├── ARCHITECTURE.md         (This file)
