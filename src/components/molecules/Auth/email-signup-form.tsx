@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Mail, Lock, Eye, EyeOff, User, Calendar } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -7,6 +7,9 @@ import LoadingSpinner from '@/components/atoms/LoadingSpinner'
 import AuthErrorDisplay from './AuthErrorDisplay'
 import AuthRetryButton from './AuthRetryButton'
 import useAuth from '@/hooks/useAuth'
+import { createPrivateUserData, createPublicUserData } from '@/entities/user/user-service'
+import { calculateAgeFromBirthDate } from '@/entities/user/user-data-helpers'
+import { useUserProfile } from '@/contexts/UserContext'
 
 // Extracted form field component
 const FormField = ({
@@ -66,7 +69,8 @@ const FormField = ({
 )
 
 const EmailSignupForm: React.FC = React.memo(() => {
-  const { signup, authError, clearError } = useAuth()
+  const { signup, authError, clearError, user } = useAuth()
+  const { refreshProfile } = useUserProfile()
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
     firstName: '',
@@ -82,6 +86,7 @@ const EmailSignupForm: React.FC = React.memo(() => {
   const [loading, setLoading] = useState(false)
   const [signupError, setSignupError] = useState<string | null>(null)
   const [retryCount, setRetryCount] = useState(0)
+  const [pendingProfileCreation, setPendingProfileCreation] = useState(false)
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -112,23 +117,22 @@ const EmailSignupForm: React.FC = React.memo(() => {
     setLoading(true)
     setSignupError(null)
 
-    // TODO: Save profile data (firstName, lastName, birthDate, gender) to Firestore users/{userId}
-    // collection after successful authentication. Create userProfile service in src/lib/firebase/
     const result = await signup(formData.email, formData.password)
 
     if (result.success) {
+      // Set flag to create profile once user is available
+      setPendingProfileCreation(true)
       toast.success('Account created successfully!')
       setRetryCount(0)
-      navigate('/profile')
+      // Don't navigate yet - wait for profile creation
     } else {
       setSignupError(result.error || 'Signup failed')
       if (result.retryable) {
         setRetryCount(prev => prev + 1)
       }
       // Error is displayed via AuthErrorDisplay component - no toast needed
+      setLoading(false)
     }
-
-    setLoading(false)
   }
 
   const handleRetry = async () => {
@@ -157,17 +161,18 @@ const EmailSignupForm: React.FC = React.memo(() => {
     const result = await signup(formData.email, formData.password)
 
     if (result.success) {
+      // Set flag to create profile once user is available
+      setPendingProfileCreation(true)
       toast.success('Account created successfully!')
       setRetryCount(0)
-      navigate('/profile')
+      // Don't navigate yet - wait for profile creation
     } else {
       setSignupError(result.error || 'Signup failed')
       if (result.retryable) {
         setRetryCount(prev => prev + 1)
       }
+      setLoading(false)
     }
-
-    setLoading(false)
   }
 
   const handleClearError = () => {
@@ -183,6 +188,87 @@ const EmailSignupForm: React.FC = React.memo(() => {
   const toggleConfirmPasswordVisibility = () => {
     setShowConfirmPassword(prev => !prev)
   }
+
+  // Create profile after successful signup when user becomes available
+  useEffect(() => {
+    if (!pendingProfileCreation || !user?.uid) {
+      return
+    }
+
+    const createProfile = async () => {
+      try {
+        const birthDate = new Date(formData.birthDate)
+
+        // Validate birthDate
+        if (isNaN(birthDate.getTime())) {
+          throw new Error('Invalid birth date')
+        }
+
+        const age = calculateAgeFromBirthDate(birthDate)
+        const now = new Date()
+
+        // Prepare private data
+        const privateData = {
+          email: formData.email,
+          firstName: formData.firstName,
+          lastName: formData.lastName || undefined,
+          birthDate,
+          gender: formData.gender as 'male' | 'female' | 'non-binary' | 'prefer-not-to-say',
+          createdAt: now,
+        }
+
+        // Prepare public data
+        const publicData = {
+          firstName: formData.firstName,
+          lastName: formData.lastName || undefined,
+          gender: formData.gender as 'male' | 'female' | 'non-binary' | 'prefer-not-to-say',
+          age,
+        }
+
+        // Create both collections in parallel
+        const [privateResult, publicResult] = await Promise.all([
+          createPrivateUserData(user.uid, privateData, user.uid),
+          createPublicUserData(user.uid, publicData, user.uid),
+        ])
+
+        // Check for failures
+        if (!privateResult.success) {
+          const error = privateResult as Extract<typeof privateResult, { success: false }>
+          throw new Error(`Failed to create private data: ${error.error}`)
+        }
+        if (!publicResult.success) {
+          const error = publicResult as Extract<typeof publicResult, { success: false }>
+          throw new Error(`Failed to create public data: ${error.error}`)
+        }
+
+        // Refresh profile in context
+        await refreshProfile()
+
+        setPendingProfileCreation(false)
+        setLoading(false)
+        navigate('/profile')
+      } catch (error) {
+        console.error('Failed to create user profile:', error)
+        toast.error('Account created but failed to save profile. Please complete your profile manually.')
+        setPendingProfileCreation(false)
+        setLoading(false)
+        // Still navigate to profile page so user can complete it manually
+        navigate('/profile')
+      }
+    }
+
+    createProfile()
+  }, [
+    pendingProfileCreation,
+    user?.uid,
+    formData.email,
+    formData.firstName,
+    formData.lastName,
+    formData.birthDate,
+    formData.gender,
+    refreshProfile,
+    navigate,
+  ])
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-6" data-testid="signup-form">

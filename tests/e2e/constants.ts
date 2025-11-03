@@ -15,27 +15,3 @@ export const TEST_TIMEOUTS = {
   /** Toast dismissal wait time */
   TOAST_DISMISSAL: 100,
 } as const
-
-/**
- * Test user data for E2E authentication flows
- */
-export const E2E_TEST_USER = {
-  email: `e2e-test-${Date.now()}@example.com`,
-  password: 'SecurePass123!',
-  firstName: 'E2E',
-  lastName: 'Tester',
-  birthDate: '1995-06-15',
-  gender: 'prefer-not-to-say',
-} as const
-
-/**
- * Snapshot test user data for visual regression tests
- */
-export const SNAPSHOT_TEST_USER = {
-  email: `e2e-snapshot-${Date.now()}@example.com`,
-  password: 'SecurePass123!',
-  firstName: 'E2E',
-  lastName: 'Snapshot',
-  birthDate: '1995-06-15',
-  gender: 'prefer-not-to-say',
-} as const

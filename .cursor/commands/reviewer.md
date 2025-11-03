@@ -3,7 +3,7 @@
 **Version**: 2.0  
 **Purpose**: Advanced Comprehensive Code Analysis with Enhanced Bug Detection  
 **Mode**: Review Only - Non-Destructive Analysis  
-**Output Format**: Markdown Report with Actionable Insights
+**Output Format**: Short 2-sentence summary with fix proposals (no markdown files)
 
 ---
 
@@ -306,62 +306,25 @@
 
 ---
 
-### Step 4: Report Generation
+### Step 4: Summary Generation
 
-**Objective**: Generate comprehensive, actionable report
+**Objective**: Generate very short, succinct summary (maximum 2 sentences)
 
-**Report Structure**:
+**Output Requirements**:
 
-#### Executive Summary
+1. **Status**: ✅ Pass / 🟡 Issues Found / 🔴 Critical Issues
+2. **Summary**: 1-2 sentences describing main findings
+3. **Fix Proposal**: Brief, actionable fix if possible (1 sentence max)
 
-- Total issues found
-- Critical issues count
-- High priority count
-- Overall code health score (0-100)
-- Top 3 concerns
+**Example Output**:
 
-#### Critical Bugs
+```
+✅ Pass - No critical issues found. Code quality is excellent with proper error handling and type safety.
 
-- Bug description
-- File and line location
-- Why it's critical
-- Potential impact
-- Recommended fix with code example
-- Related best practices
+OR
 
-#### High Priority Issues
-
-- Issue category
-- Specific location
-- Impact assessment
-- Recommended solution
-- Effort estimate (low/medium/high)
-
-#### Medium Priority Improvements
-
-- Issue description
-- Location
-- Improvement benefit
-- Suggested approach
-
-#### Low Priority Suggestions
-
-- Suggestion
-- Location
-- Benefit
-
-#### Positive Patterns
-
-- Good practices found
-- Well-implemented patterns
-- Code worth highlighting
-
-#### Recommendations
-
-- Prioritized action items
-- Quick wins (easy fixes with high impact)
-- Long-term improvements
-- Learning resources
+🔴 Critical Issues - Found 2 critical bugs: unhandled promise rejection in useAuth.ts:45 and memory leak from unsubscribed Firestore listener in useEvents.ts:78. Fix: Add try-catch with error logging and ensure listener cleanup in useEffect return.
+```
 
 ---
 
@@ -491,123 +454,23 @@
 
 ---
 
-## Output Report Template
+## Output Summary Format
 
-```markdown
-# 🔍 Code Review Analysis Report
+**DO NOT** generate markdown files. Instead, provide a short 2-sentence summary directly to the orchestrator:
 
-## Executive Summary
+**Format**:
 
-**Overall Code Health Score**: XX/100 (Status)
-
-- 🔴 **Critical Issues**: X
-- 🟠 **High Priority**: X
-- 🟡 **Medium Priority**: X
-- 🟢 **Low Priority**: X
-
-**Top Concerns**:
-
-1. [Brief description]
-2. [Brief description]
-3. [Brief description]
-
-**Quick Wins** (Easy fixes with high impact):
-
-- [List 2-3 quick wins]
-
----
-
-## 🔴 Critical Bugs (Must Fix Before Merge)
-
-### 1. [Bug Category]: [Brief Description]
-
-**Location**: `file.tsx:line`
-
-**Issue**:
-[Clear explanation of the bug]
-
-**Why Critical**:
-[Explain the potential impact]
-
-**Current Code**:
-\`\`\`typescript
-// Problematic code
-\`\`\`
-
-**Recommended Fix**:
-\`\`\`typescript
-// Corrected code with explanation
-\`\`\`
-
-**Related**: [Link to docs/best practices]
-
----
-
-## 🟠 High Priority Issues
-
-| Category   | Location    | Issue         | Impact   | Fix Effort |
-| ---------- | ----------- | ------------- | -------- | ---------- |
-| [Category] | file.tsx:42 | [Description] | [Impact] | Medium     |
-
-### Detailed Analysis
-
-[Detailed explanations for each high-priority issue]
-
----
-
-## 🟡 Medium Priority Improvements
-
-| Category   | Location    | Improvement   | Benefit   |
-| ---------- | ----------- | ------------- | --------- |
-| [Category] | file.tsx:15 | [Description] | [Benefit] |
-
----
-
-## 🟢 Low Priority Suggestions
-
-- **file.tsx:8**: [Suggestion] - [Small benefit]
-
----
-
-## ✅ Positive Patterns Found
-
-- **Good Practice**: [Description of well-implemented pattern]
-- **Strong Type Safety**: [Example of good typing]
-- **Clean Architecture**: [Well-structured code example]
-
----
-
-## 📋 Prioritized Action Plan
-
-### Immediate (Before Merge)
-
-1. [Critical fix 1]
-2. [Critical fix 2]
-
-### Short Term (This Sprint)
-
-1. [High priority fix 1]
-2. [High priority fix 2]
-
-### Long Term (Future Improvements)
-
-1. [Medium priority improvement 1]
-2. [Medium priority improvement 2]
-
----
-
-## 📚 Learning Resources
-
-- [Relevant documentation links]
-- [Best practices guides]
-- [Pattern examples]
-
----
-
-**Review completed on**: [Timestamp]
-**Files analyzed**: [Count]
-**Lines reviewed**: [Count]
 ```
+[Status] [1-2 sentence summary] [Fix proposal if applicable]
+```
+
+**Examples**:
+
+- ✅ **Pass**: "Code review completed with no critical issues found. All code follows best practices with proper error handling."
+
+- 🟡 **Issues Found**: "Found 3 high-priority issues including missing error boundaries and unused imports. Fix: Add ErrorBoundary wrapper and remove unused imports."
+
+- 🔴 **Critical Issues**: "Critical bug detected: unhandled promise rejection in useAuth.ts:45 causing silent failures. Fix: Add try-catch with error logging and user notification."
 
 ---
 

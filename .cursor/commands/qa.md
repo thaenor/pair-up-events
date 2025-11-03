@@ -1,7 +1,7 @@
 # QA Testing Agent
 
-**Version**: 3.0 (Enhanced with Autonomous Fixing)  
-**Purpose**: Advanced Comprehensive Test Coverage and Quality Validation with Autonomous Bug Fixing
+**Version**: 3.1 (Enhanced with Snapshot Validation & Autonomous Fixing)  
+**Purpose**: Advanced Comprehensive Test Coverage and Quality Validation with Intelligent Snapshot Analysis and Autonomous Bug Fixing
 
 ---
 
@@ -39,7 +39,7 @@
 
 **Command**: Run `npm run ci`
 
-- This executes: `format:fix && lint && test && build`
+- This executes: `format && lint && test && build`
 - **Note**: E2E tests are excluded (as per project setup)
 
 **Workflow**:
@@ -56,13 +56,14 @@ Categorize each error as either:
 
 **Easy Fixes** (Auto-fixable):
 
-- ✅ Formatting issues (Prettier already runs via format:fix)
+- ✅ Formatting issues (Prettier already runs via format)
 - ✅ Simple lint errors (unused imports, missing semicolons, etc.)
 - ✅ Missing or incorrect type annotations that can be inferred
 - ✅ Import order issues
 - ✅ Simple test assertion fixes (typos, wrong expectations)
 - ✅ Missing return statements in simple functions
 - ✅ Unused variables that can be removed
+- ✅ **Snapshot test failures** (after validation - see Snapshot Validation Process)
 
 **Complex Fixes** (Requires Report):
 
@@ -74,6 +75,180 @@ Categorize each error as either:
 - ❌ Flaky tests requiring investigation
 - ❌ Dependencies or configuration issues
 
+#### Step 2.5: Snapshot Test Failure Detection & Validation (NEW)
+
+**Objective**: Automatically handle snapshot test failures with intelligent analysis
+
+**When triggered**: When test failures include snapshot mismatches
+
+**Process**:
+
+1. **Identify Snapshot Failures**:
+   - Parse test output for snapshot mismatch errors
+   - Extract failing snapshot file paths
+   - Identify corresponding component/test files
+   - Locate both old (git HEAD) and new snapshot files
+
+2. **Retrieve Snapshots**:
+   - Read old snapshot from git: `git show HEAD:{snapshot_path}`
+   - Read new snapshot from filesystem: `{snapshot_path}`
+   - Read corresponding test file to understand what's being tested
+   - Read source component file to understand what changed
+
+3. **Deep Comparison Analysis**:
+
+   **For each snapshot failure**:
+
+   a. **Context Analysis**:
+   - Review git diff of source component files
+   - Identify what UI/logic changes were made
+   - Review test file to understand test intent
+   - Check if test mocks were updated
+
+   b. **Snapshot Diff Analysis**:
+   - Compare old vs new snapshot line-by-line
+   - Categorize differences:
+     - **Structural changes** (new/removed elements, attributes)
+     - **Content changes** (text values, class names, IDs)
+     - **State changes** (disabled states, visibility, data attributes)
+     - **Formatting changes** (whitespace, attribute order)
+
+   c. **Change Classification**:
+
+   **INTENDED Changes** (Result of intentional UI modifications):
+   - ✅ New elements added that match code changes
+   - ✅ Removed elements that match code removal
+   - ✅ Modified content that matches prop/state changes
+   - ✅ Attribute changes that match styling/logic updates
+   - ✅ Class name changes that match CSS/styling updates
+   - ✅ Data values that match updated test data/mocks
+   - ✅ Structural changes that match component refactoring
+
+   **UNINTENDED Changes** (Potential bugs or test issues):
+   - ❌ Unexpected element additions/removals
+   - ❌ Missing expected elements
+   - ❌ Content changes without corresponding code changes
+   - ❌ Class/attribute changes without styling/logic changes
+   - ❌ State changes (disabled, hidden) without code changes
+   - ❌ Test mock issues causing wrong snapshots
+   - ❌ Missing mocks causing error states in snapshots
+   - ❌ Broken components rendering error boundaries
+
+4. **Reasoning & Decision**:
+
+   **If changes are INTENDED**:
+   - ✅ Update snapshot automatically using `vitest -u` or `npm test -- -u`
+   - Log action: "Snapshot updated for {component}: Changes reflect intended UI modifications"
+   - Continue to next snapshot failure
+
+   **If changes are UNINTENDED**:
+   - ❌ **DO NOT** update snapshot
+   - Create detailed report (see Snapshot Validation Report format)
+   - Include:
+     - Specific differences found
+     - Reasoning why changes are unintended
+     - Potential root causes
+     - Recommended fixes
+   - Continue analysis (don't block pipeline)
+
+5. **Snapshot Validation Report Format**:
+
+   **Location**: `Docs/agent-reports/snapshot-{component}-{timestamp}.md`
+
+   ````markdown
+   # Snapshot Validation Report: {Component Name}
+
+   **Date**: {Timestamp}
+   **Status**: 🔴 Unintended Changes Detected
+   **Priority**: {Critical/High/Medium/Low}
+   **Snapshot File**: `{path/to/snapshot.snap}`
+   **Test File**: `{path/to/test.tsx}`
+   **Component File**: `{path/to/component.tsx}`
+
+   ## Snapshot Comparison Summary
+
+   | Change Type | Count | Status            |
+   | ----------- | ----- | ----------------- |
+   | Structural  | X     | ❌ Unintended     |
+   | Content     | X     | ❌ Unintended     |
+   | Attributes  | X     | ❌ Unintended     |
+   | Formatting  | X     | ✅ Safe to ignore |
+
+   ## Detailed Differences
+
+   ### Difference 1: [Description]
+
+   **Old Snapshot**:
+
+   ```html
+   {old HTML/component structure}
+   ```
+   ````
+
+   **New Snapshot**:
+
+   ```html
+   {new HTML/component structure}
+   ```
+
+   **Reasoning**:
+   {Explain why this change is unintended}
+   - No corresponding code change in component
+   - Test mock missing/incorrect
+   - Component rendering error state
+   - Unexpected prop/state change
+
+   ## Root Cause Analysis
+
+   {Detailed analysis of why unintended changes occurred}
+
+   ## Code Changes Review
+
+   ```typescript
+   // Show relevant code diff or code section
+   ```
+
+   **What Changed**: {Description}
+   **Why Change is Problematic**: {Explanation}
+
+   ## Test Setup Analysis
+
+   **Mocks Present**: ✅/❌
+   **Mocks Correct**: ✅/❌
+   **Missing Mocks**: {List}
+
+   ## Recommended Fixes
+   1. {Fix 1}
+   2. {Fix 2}
+   3. {Fix 3}
+
+   ## Impact Assessment
+   - **User-Facing Impact**: {Yes/No}
+   - **Functional Impact**: {High/Medium/Low/None}
+   - **UI Impact**: {High/Medium/Low/None}
+
+   ## Next Steps
+   - [ ] Verify component renders correctly manually
+   - [ ] Check if test mocks need updating
+   - [ ] Review component logic changes
+   - [ ] Update snapshot after fixes applied
+
+   ```
+
+   ```
+
+6. **Output Decision Summary**:
+
+   For each snapshot failure, output:
+
+   ```
+   📸 Snapshot: {snapshot_path}
+   ├─ Status: {✅ Intended / ❌ Unintended / ⚠️ Requires Review}
+   ├─ Action: {Updated / Reported / Needs Manual Review}
+   ├─ Reasoning: {Brief explanation}
+   └─ Details: {See report / Auto-updated}
+   ```
+
 #### Step 3: Autonomous Fixing Loop
 
 **Repeat until no more easy fixes or max iterations reached (max 5)**:
@@ -84,6 +259,7 @@ Categorize each error as either:
      - ESLint with `--fix` flag if applicable
      - Manual code edits for simple issues
      - Test file corrections
+   - **Snapshot updates** (only for intended changes - see Step 2.5)
 
 2. **Rerun CI**:
    - Execute `npm run ci` again
@@ -227,6 +403,20 @@ Categorize each error as either:
 
 ### Phase 4: Test Failure Analysis
 
+#### Snapshot Test Failures (NEW - Priority Handling)
+
+**Special handling for snapshot test failures**:
+
+Snapshot test failures are handled separately with deep analysis:
+
+1. **Immediate Detection**: Identify snapshot failures in test output
+2. **Context Gathering**: Retrieve old/new snapshots, test files, component files
+3. **Deep Analysis**: Compare snapshots with code changes to determine intent
+4. **Intelligent Decision**: Auto-update if intended, report if unintended
+5. **Documentation**: Create detailed reports for unintended changes
+
+See **Step 2.5: Snapshot Test Failure Detection & Validation** in Phase 1 for complete process.
+
 #### Failure Tracking Fields
 
 For each failure, track:
@@ -245,6 +435,16 @@ For each failure, track:
 - Priority (Critical/High/Medium/Low)
 
 #### Failure Classification
+
+##### Snapshot Mismatch
+
+- **Description**: Snapshot test shows differences from expected
+- **Priority**: Variable (depends on analysis)
+- **Action**:
+  - If intended: Auto-update snapshot
+  - If unintended: Report and investigate
+  - If unclear: Report for manual review
+- **Special Process**: See Step 2.5 for detailed validation workflow
 
 ##### Regression
 
@@ -623,6 +823,7 @@ Check for:
 - Detailed failure analysis
 - Root cause identification
 - Fix recommendations
+- **Snapshot failures** (with validation reasoning - see Step 2.5)
 
 #### Flaky Tests
 
@@ -809,8 +1010,12 @@ Check for:
 
 - **Max Auto-Fix Iterations**: 5
 - **Report Location**: `Docs/agent-reports/`
-- **Auto-Fix Types**: Formatting, simple lint errors, unused imports, simple test fixes
-- **Report Complex Issues**: Test failures, build errors, type system issues, architectural problems
+- **Auto-Fix Types**: Formatting, simple lint errors, unused imports, simple test fixes, **snapshot updates (intended changes only)**
+- **Report Complex Issues**: Test failures, build errors, type system issues, architectural problems, **unintended snapshot changes**
+- **Snapshot Validation**: Automatic with reasoning-based decision making
+  - Intended changes: Auto-update snapshots
+  - Unintended changes: Generate detailed reports
+  - Ambiguous changes: Generate reports for manual review
 
 ### Reporting
 

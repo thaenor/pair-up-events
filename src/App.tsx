@@ -6,6 +6,7 @@ import ErrorBoundary from './components/ErrorBoundary'
 import AuthErrorBoundary from './components/AuthErrorBoundary'
 import NetworkStatus from './components/molecules/Auth/NetworkStatus'
 import LoadingSpinner from './components/atoms/LoadingSpinner'
+import { UserProvider } from './contexts/UserContext'
 
 const IndexPage = lazy(() => import('./pages/Index'))
 const NotFoundPage = lazy(() => import('./pages/NotFound'))
@@ -37,30 +38,32 @@ const App = () => {
   )
 
   return (
-    <BrowserRouter future={{ v7_relativeSplatPath: true }}>
+    <BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
       <ErrorBoundary>
         <AuthErrorBoundary>
-          <Suspense fallback={loadingFallback}>
-            <Routes>
-              <Route path="/" element={<IndexPage />} />
-              <Route path="/signup" element={<AuthPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/events" element={<EventsPage />} />
-              <Route path="/events/create" element={<EventsCreatePage />} />
-              <Route path="/messenger" element={<MessengerPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-              <Route path="/invite" element={<InvitePage />} />
-              <Route path="/contact-us" element={<ContactUsPage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/terms-of-service" element={<TermsOfServicePage />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-              <Route path="/404" element={<NotFoundPage />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </Suspense>
-          <Toaster position="top-right" expand={true} richColors={true} closeButton={true} />
-          <NetworkStatus />
+          <UserProvider>
+            <Suspense fallback={loadingFallback}>
+              <Routes>
+                <Route path="/" element={<IndexPage />} />
+                <Route path="/signup" element={<AuthPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/events" element={<EventsPage />} />
+                <Route path="/events/create" element={<EventsCreatePage />} />
+                <Route path="/messenger" element={<MessengerPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/invite" element={<InvitePage />} />
+                <Route path="/contact-us" element={<ContactUsPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                <Route path="/404" element={<NotFoundPage />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+            </Suspense>
+            <Toaster position="top-right" expand={true} richColors={true} closeButton={true} />
+            <NetworkStatus />
+          </UserProvider>
         </AuthErrorBoundary>
       </ErrorBoundary>
     </BrowserRouter>

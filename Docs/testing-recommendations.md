@@ -105,7 +105,7 @@ The project now includes comprehensive E2E tests using Firebase Auth Emulator:
 - Session persistence testing
 - Console error monitoring
 
-Run tests: `npm run test:e2e:emulator`
+Run tests: `npm run test:e2e`
 
 See `tests/e2e/README.md` for more details.
 

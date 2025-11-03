@@ -52,7 +52,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onScrollToEarlyAccess }) => {
           </div>
           <div
             id="hero-image"
-            className="relative w-full -mt-24 sm:-mt-10 md:mt-0 animate-fade-in flex items-center justify-center"
+            className="relative w-full mt-8 sm:mt-10 md:mt-0 animate-fade-in flex items-center justify-center"
             style={{ animationDelay: '0.5s' }}
           >
             <picture className="w-full max-w-2xl">

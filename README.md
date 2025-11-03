@@ -102,8 +102,7 @@ E2E tests are run locally using Husky pre-commit hooks to ensure all functionali
 
 - E2E tests run automatically before each commit via Husky
 - Manual E2E testing: `npm run test:e2e`
-- E2E tests with UI: `npm run test:e2e:ui`
-- View E2E reports: `npm run test:e2e:report`
+- For HTML reports: Set `E2E_REPORT=html` environment variable before running `npm run test:e2e`
 
 **CI Pipeline:**
 

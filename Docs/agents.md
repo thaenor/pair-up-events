@@ -25,7 +25,7 @@ Codex supports the PairUp engineering team by:
 5. **Verification Discipline:** Every change must pass:
 
    ```bash
-   npm run format:fix
+   npm run format
    npm run lint -- --fix
    npm test
    npm run build
@@ -266,7 +266,7 @@ import { Navigation } from '@/components/organisms'
 - If a directive conflicts with observed code patterns: **stop, report, and request clarification.**
 - If a new component’s purpose overlaps an existing one: **recommend reuse** instead of duplication.
 - Codex must prefer **lightweight, composable UI blocks** over monolithic pages.
-- After every iteration: run `format:fix → lint → test → build` before finalizing.
+- After every iteration: run `format → lint → test → build` before finalizing.
 
 ---
 
@@ -282,7 +282,7 @@ import { Navigation } from '@/components/organisms'
 | 💬 6  | Respect Firestore schema & efficiency     |
 | 🧱 7  | Use Tailwind utilities only               |
 | 🔍 8  | Add tests with `data-testid`              |
-| ✨ 9  | Run `npm run format:fix` to format code   |
+| ✨ 9  | Run `npm run format` to format code       |
 | ✅ 10 | Run `npm run ci` (lint, test, build)      |
 | 🔍 11 | Self-review for DRY compliance            |
 | 💬 12 | Add meaningful comments only              |
@@ -298,7 +298,7 @@ import { Navigation } from '@/components/organisms'
 
 **Recent Updates (v1.3):**
 
-- Added Prettier formatting step (`npm run format:fix`) to all code change workflows
+- Added Prettier formatting step (`npm run format`) to all code change workflows
 - Updated verification discipline to include automatic code formatting
 - Modified checklist to ensure formatted code before linting and testing
 

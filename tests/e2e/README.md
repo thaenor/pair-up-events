@@ -1,85 +1,76 @@
-# E2E Authentication Tests
+# E2E Tests
 
 ## Running Tests
 
-### With Firebase Emulator (Recommended)
+### Prerequisites
 
-```bash
-npm run test:e2e:emulator
-```
+Before running E2E tests, you must have the following services running:
 
-### Manual Setup
+1. **Build the application**:
 
-1. Start Firebase Emulator:
+   ```bash
+   npm run build
+   ```
 
+2. **Start the preview server** (runs on port 8080):
+
+   ```bash
+   npm run preview
+   ```
+
+3. **Start Firebase Auth Emulator** (runs on port 9099):
    ```bash
    npm run emulator:start
    ```
 
-2. Start dev server:
+### Running Tests
 
-   ```bash
-   npm run dev
-   ```
+Once both servers are running, execute tests:
 
-3. Run tests:
-   ```bash
-   npx playwright test tests/e2e/auth.spec.ts
-   ```
+```bash
+npm run test:e2e
+```
+
+This command:
+
+- Runs all E2E tests sequentially
+- Uses shared browser context for account/session reuse
+- Expects app at `http://localhost:8080` and Firebase emulator at `http://localhost:9099`
+
+### HTML Reports
+
+To generate HTML reports for debugging:
+
+```bash
+E2E_REPORT=html npm run test:e2e
+```
 
 ## Test Coverage
 
-### Authentication Flow Tests (`auth.spec.ts`)
+### Happy Path Flow (`e2e-flow.spec.ts`)
 
-- Full signup flow
-- Login with credentials
-- Logout functionality
-- Session persistence across reloads
-- Session sharing across tabs
-- Error handling for invalid credentials
-- Error handling for duplicate emails
-- Console error monitoring
-- **NEW**: Retry button visibility for error types
+- Public page validation (landing, login)
+- Security validation (protected page redirects, public page accessibility)
+- Account registration
+- Session persistence (reload, tabs)
+- Enhanced sidebar functionality (open/close, ESC, backdrop, accessibility)
+- Page navigation (Events, Events Create, Messenger, Settings, Invite, Contact Us, About, Terms of Service, Privacy Policy with screenshots)
+- Sidebar navigation to all pages
+- Account management features (password reset modal, account controls visibility)
+- Logout and re-authentication
 
-### Authentication Error Handling Tests (`auth-error-handling.spec.ts`)
+### Error Handling (`auth-error-handling.spec.ts`)
 
-- **NEW**: Network error handling with retry mechanism
-- **NEW**: Auth error boundary display and functionality
-- **NEW**: Invalid credentials error UI validation
-- **NEW**: Duplicate email signup error UI validation
-- **NEW**: Network status indicator (online/offline)
-- **NEW**: Retry mechanism for network failures
-- **NEW**: Error boundary navigation (Home/Login)
-- **NEW**: Console error monitoring during error scenarios
+- Login with invalid credentials shows error
+- Signup with existing email shows error
 
-### Page Snapshot Tests (`page-snapshots.spec.ts`)
+## Test Execution
 
-- Full-page screenshots for visual regression
-- Console error monitoring
-- Authentication flow validation for protected pages
-- Protected page redirect validation
-
-### Account Management Tests (`account-management.spec.ts`)
-
-- Password reset functionality
-- Account deletion workflow
-- Profile management features
-
-### Sidebar Tests (`sidebar.spec.ts`)
-
-- Sidebar navigation and interaction
-- Mobile responsiveness
-- User menu functionality
-
-## Test Account Cleanup
-
-Tests use the Firebase Auth Emulator, so accounts are automatically cleaned up when the emulator stops. No manual cleanup required.
+Tests run sequentially using a shared browser context for account/session reuse. The first test creates an account, and subsequent tests reuse that authenticated session, making tests faster and more realistic.
 
 ## Test Files
 
-- `auth.spec.ts` - Comprehensive authentication flow tests
-- `auth-error-handling.spec.ts` - **NEW** Authentication error handling and recovery tests
-- `sidebar.spec.ts` - Sidebar navigation and interaction tests
-- `account-management.spec.ts` - Account management features (password reset, account deletion)
-- `page-snapshots.spec.ts` - Visual regression tests for all pages
-- `test-helpers.ts` - Shared test constants and utilities
+- `e2e-flow.spec.ts` - Happy path flow (~40 tests)
+- `auth-error-handling.spec.ts` - Error handling (2 tests)
+- `helpers.ts` - Shared test utilities
+- `constants.ts` - Test timeout constants

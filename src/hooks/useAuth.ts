@@ -32,7 +32,8 @@ type AuthErrorType = 'network' | 'auth' | 'config' | 'unknown'
 /**
  * Enhanced authentication error with additional context
  */
-interface AuthError extends Error {
+export interface AuthError {
+  message: string
   type: AuthErrorType
   retryable: boolean
   originalError?: unknown
@@ -97,10 +98,7 @@ const useAuth = () => {
    */
   const retryAuthState = useCallback(() => {
     if (retryCountRef.current >= maxRetries) {
-      const error = new Error('Maximum retry attempts reached') as AuthError
-      error.type = 'unknown'
-      error.retryable = false
-      setAuthError(error)
+      setAuthError({ message: 'Maximum retry attempts reached', type: 'unknown', retryable: false })
       return
     }
 
@@ -128,10 +126,7 @@ const useAuth = () => {
    */
   const initializeAuthState = useCallback(() => {
     if (!auth) {
-      const error = new Error('Authentication not configured') as AuthError
-      error.type = 'config'
-      error.retryable = false
-      setAuthError(error)
+      setAuthError({ message: 'Authentication not configured', type: 'config', retryable: false })
       setLoading(false)
       return
     }
@@ -258,10 +253,7 @@ const useAuth = () => {
   const login = useCallback(
     async (email: string, password: string): Promise<AuthResult> => {
       if (!auth) {
-        const error = new Error('Authentication not configured') as AuthError
-        error.type = 'config'
-        error.retryable = false
-        setAuthError(error)
+        setAuthError({ message: 'Authentication not configured', type: 'config', retryable: false })
         return { success: false, error: 'Authentication not configured', retryable: false }
       }
 
@@ -299,10 +291,7 @@ const useAuth = () => {
   const signup = useCallback(
     async (email: string, password: string): Promise<AuthResult> => {
       if (!auth) {
-        const error = new Error('Authentication not configured') as AuthError
-        error.type = 'config'
-        error.retryable = false
-        setAuthError(error)
+        setAuthError({ message: 'Authentication not configured', type: 'config', retryable: false })
         return { success: false, error: 'Authentication not configured', retryable: false }
       }
 
@@ -406,12 +395,12 @@ const createAuthError = (error: unknown): AuthError => {
   const code = errorObj?.code || ''
   const message = getErrorMessage(code)
 
-  const authError = new Error(message) as AuthError
-  authError.type = getErrorType(code)
-  authError.retryable = isRetryableError(code)
-  authError.originalError = error
-
-  return authError
+  return {
+    message,
+    type: getErrorType(code),
+    retryable: isRetryableError(code),
+    originalError: error,
+  }
 }
 
 /**

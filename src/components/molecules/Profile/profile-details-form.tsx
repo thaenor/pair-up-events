@@ -1,12 +1,21 @@
 import React, { useState } from 'react'
 
+type ProfileDetails = {
+  firstName?: string
+  lastName?: string
+  email?: string
+  birthDate?: string
+  gender?: string
+  bio?: string
+}
+
 export type ProfileDetailsFormProps = {
-  profile: unknown
-  onSubmit: (updates: unknown) => Promise<void>
+  profile: ProfileDetails
+  onSubmit: (updates: ProfileDetails) => Promise<void>
   isSaving: boolean
 }
 
-export const ProfileDetailsForm: React.FC<ProfileDetailsFormProps> = ({ profile, isSaving }) => {
+export const ProfileDetailsForm: React.FC<ProfileDetailsFormProps> = ({ profile, onSubmit, isSaving }) => {
   const [firstName, setFirstName] = useState(profile?.firstName || '')
   const [lastName, setLastName] = useState(profile?.lastName || '')
   const [email, setEmail] = useState(profile?.email || '')
@@ -14,9 +23,16 @@ export const ProfileDetailsForm: React.FC<ProfileDetailsFormProps> = ({ profile,
   const [gender, setGender] = useState(profile?.gender || '')
   const [bio, setBio] = useState(profile?.bio || '')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Form submission removed
+    await onSubmit({
+      firstName,
+      lastName,
+      email,
+      birthDate,
+      gender,
+      bio,
+    })
   }
 
   return (

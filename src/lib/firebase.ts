@@ -1,6 +1,8 @@
+/// <reference types="vite/client" />
 import { getApp, getApps, initializeApp, type FirebaseApp } from 'firebase/app'
 import { getAuth, type Auth, connectAuthEmulator } from 'firebase/auth'
-import { getFirestore, type Firestore } from 'firebase/firestore'
+import { getFirestore, type Firestore, connectFirestoreEmulator } from 'firebase/firestore'
+import { getStorage, type FirebaseStorage, connectStorageEmulator } from 'firebase/storage'
 
 /**
  * Firebase project configuration object
@@ -38,11 +40,13 @@ export const firebaseConfig = {
  * @property {FirebaseApp | null} app - Firebase app instance
  * @property {Auth | null} auth - Firebase authentication instance
  * @property {Firestore | null} db - Firestore database instance
+ * @property {FirebaseStorage | null} storage - Firebase Storage instance
  */
 type FirebaseResources = {
   app: FirebaseApp | null
   auth: Auth | null
   db: Firestore | null
+  storage: FirebaseStorage | null
 }
 
 /**
@@ -67,19 +71,20 @@ export const isFirebaseConfigured = Object.values(firebaseConfig).every(value =>
  * Initialize Firebase app and services
  *
  * Creates or retrieves the existing Firebase app instance and initializes
- * associated services (Auth and Firestore). Returns null values if
+ * associated services (Auth, Firestore, and Storage). Returns null values if
  * configuration is incomplete.
  *
- * @returns {FirebaseResources} Object containing app, auth, and db instances
+ * @returns {FirebaseResources} Object containing app, auth, db, and storage instances
  * @returns {FirebaseApp | null} returns.app - Firebase app instance
  * @returns {Auth | null} returns.auth - Authentication service
  * @returns {Firestore | null} returns.db - Firestore database
+ * @returns {FirebaseStorage | null} returns.storage - Firebase Storage service
  *
  * @throws {Error} Logs error if Firebase initialization fails
  *
  * @example
  * ```ts
- * const { app, auth, db } = initializeFirebase();
+ * const { app, auth, db, storage } = initializeFirebase();
  * if (auth) {
  *   signInWithEmailAndPassword(auth, email, password);
  * }
@@ -92,6 +97,7 @@ const initializeFirebase = (): FirebaseResources => {
       app: null,
       auth: null,
       db: null,
+      storage: null,
     }
   }
 
@@ -101,16 +107,17 @@ const initializeFirebase = (): FirebaseResources => {
     app: existingApp,
     auth: getAuth(existingApp),
     db: getFirestore(existingApp),
+    storage: getStorage(existingApp),
   }
 }
 
-const { app, auth, db } = initializeFirebase()
+const { app, auth, db, storage } = initializeFirebase()
 
 /**
- * Connect to Firebase Auth Emulator when running locally
+ * Connect to Firebase Emulators when running locally
  *
- * Automatically connects to the local Firebase Auth Emulator on localhost
- * to enable offline authentication testing without affecting production data.
+ * Automatically connects to the local Firebase Emulators (Auth, Firestore, and Storage) on localhost
+ * to enable offline testing without affecting production data.
  * Only activates in development environment when running on localhost and
  * VITE_USE_EMULATOR is not explicitly set to 'false'.
  *
@@ -121,22 +128,63 @@ const { app, auth, db } = initializeFirebase()
  * // Set VITE_USE_EMULATOR=false to disable and use live Firebase
  * ```
  */
-// Connect to Auth Emulator when running locally
+// Connect to Emulators when running locally
 const shouldUseEmulator = import.meta.env.VITE_USE_EMULATOR !== 'false' && window.location.hostname === 'localhost'
 
-if (auth && shouldUseEmulator) {
-  try {
-    // Check if emulator is already connected
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const authInstance = auth as any
-    const isAlreadyConnected = authInstance._delegate?._config?.emulator
+if (shouldUseEmulator) {
+  // Connect to Auth Emulator
+  if (auth) {
+    try {
+      // Check if emulator is already connected
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const authInstance = auth as any
+      const isAlreadyConnected = authInstance._delegate?._config?.emulator
 
-    if (!isAlreadyConnected) {
-      connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true })
+      if (!isAlreadyConnected) {
+        connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true })
+      }
+    } catch (error) {
+      console.warn('Firebase Auth Emulator connection failed:', error)
+      // Emulator might not be running - continue with production auth
     }
-  } catch (error) {
-    console.warn('Firebase Auth Emulator connection failed:', error)
-    // Emulator might not be running - continue with production auth
+  }
+
+  // Connect to Firestore Emulator
+  if (db) {
+    try {
+      // Firestore emulator runs on port 8081 (8080 is used by Vite dev server)
+      // We need to check if already connected by checking the host
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const dbInstance = db as any
+      const isFirestoreEmulatorConnected =
+        dbInstance._settings?.host === 'localhost:8081' || dbInstance._delegate?._settings?.host === 'localhost:8081'
+
+      if (!isFirestoreEmulatorConnected) {
+        connectFirestoreEmulator(db, 'localhost', 8081)
+      }
+    } catch (error) {
+      console.warn('Firebase Firestore Emulator connection failed:', error)
+      // Emulator might not be running - continue with production Firestore
+    }
+  }
+
+  // Connect to Storage Emulator
+  if (storage) {
+    try {
+      // Storage emulator runs on port 9199 (default Firebase Storage emulator port)
+      // We need to check if already connected by checking the host
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const storageInstance = storage as any
+      const isStorageEmulatorConnected =
+        storageInstance._delegate?._host === 'localhost:9199' || storageInstance._host === 'localhost:9199'
+
+      if (!isStorageEmulatorConnected) {
+        connectStorageEmulator(storage, 'localhost', 9199)
+      }
+    } catch (error) {
+      console.warn('Firebase Storage Emulator connection failed:', error)
+      // Emulator might not be running - continue with production Storage
+    }
   }
 }
 
@@ -149,4 +197,4 @@ if (auth && shouldUseEmulator) {
  * @type {FirebaseApp | null}
  * @constant
  */
-export { app, auth, db }
+export { app, auth, db, storage }

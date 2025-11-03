@@ -1,12 +1,19 @@
 import React, { useState } from 'react'
 
+type ProfilePreferences = {
+  funFact?: string
+  hobbies?: string[]
+  preferredVibes?: string[]
+  ageRangePreference?: { min?: number; max?: number }
+}
+
 export type ProfilePreferencesFormProps = {
-  profile: unknown
-  onSubmit: (updates: unknown) => Promise<void>
+  profile: ProfilePreferences
+  onSubmit: (updates: ProfilePreferences) => Promise<void>
   isSaving: boolean
 }
 
-export const ProfilePreferencesForm: React.FC<ProfilePreferencesFormProps> = ({ profile, isSaving }) => {
+export const ProfilePreferencesForm: React.FC<ProfilePreferencesFormProps> = ({ profile, onSubmit, isSaving }) => {
   const [funFact, setFunFact] = useState(profile?.funFact || '')
   const [hobbies, setHobbies] = useState(profile?.hobbies || [])
   const [preferredVibes, setPreferredVibes] = useState(profile?.preferredVibes || [])
@@ -15,9 +22,14 @@ export const ProfilePreferencesForm: React.FC<ProfilePreferencesFormProps> = ({ 
     max: profile?.ageRangePreference?.max || 65,
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Form submission removed
+    await onSubmit({
+      funFact,
+      hobbies,
+      preferredVibes,
+      ageRangePreference,
+    })
   }
 
   const hobbyOptions = [

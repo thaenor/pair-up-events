@@ -11,6 +11,17 @@ vi.mock('@/hooks/useRequireAuth', () => ({
   }),
 }))
 
+// Add to src/pages/__tests__/profile.test.tsx
+vi.mock('@/contexts/UserContext', () => ({
+  useUserProfile: () => ({
+    userProfile: null, // or mock user data for testing
+    loading: false,
+    updateProfile: vi.fn(),
+    error: null,
+    refreshProfile: vi.fn(),
+  }),
+}))
+
 describe('ProfilePage', () => {
   it('should match snapshot', () => {
     const { container } = render(

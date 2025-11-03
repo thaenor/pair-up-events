@@ -567,7 +567,7 @@ exports[`Index > should match snapshot 1`] = `
               </div>
             </div>
             <div
-              class="relative w-full -mt-24 sm:-mt-10 md:mt-0 animate-fade-in flex items-center justify-center"
+              class="relative w-full mt-8 sm:mt-10 md:mt-0 animate-fade-in flex items-center justify-center"
               id="hero-image"
               style="animation-delay: 0.5s;"
             >

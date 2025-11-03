@@ -10,7 +10,7 @@
 - [Architecture Overview](#-architecture-overview)
 - [Core Collections](#-core-collections)
   - [users](#1-usersuser id)
-  - [publicUsers](#2-publicusersuser id)
+  - [publicProfiles](#2-publicprofilesuser id)
   - [events](#3-eventsevent id)
 - [Discovery Collections](#-discovery-collections)
   - [publicListings](#1-publiclistingsevent id)
@@ -36,7 +36,7 @@ PairUp Events enforces a **2-meets-2 model**: All events have exactly 4 particip
 graph TB
     subgraph "Core Collections"
         U[users]
-        PU[publicUsers]
+        PU[publicProfiles]
         E[events]
     end
 
@@ -85,6 +85,7 @@ graph TB
 | -------------------- | ----------------- | ---------------------------------------------------------------------------- |
 | `email`              | string            | User's private email                                                         |
 | `firstName`          | string            | User's first name (public identifier)                                        |
+| `lastName`           | string (optional) | User's last name (public identifier)                                         |
 | `birthDate`          | string            | User's birthdate (private, used for age verification)                        |
 | `gender`             | string            | User's gender identity (`male`, `female`, `non-binary`, `prefer-not-to-say`) |
 | `photoUrl`           | string (optional) | User's profile photo URL                                                     |
@@ -108,6 +109,8 @@ graph TB
   colorScheme: "default" | "high_contrast" | "colorblind_friendly"
 }
 ```
+
+> Note: The `settings` object (emailNotifications, pushNotifications, language, theme, colorScheme) is deferred and will be implemented in a later phase. See January 2025 entry in `Docs/CHANGELOG.md` for details.
 
 **Preferences Object:**
 
@@ -213,7 +216,7 @@ graph TB
 
 ---
 
-### 2. `publicUsers/{userId}`
+### 2. `publicProfiles/{userId}`
 
 **Purpose**: Public-facing user profiles, accessible by all authenticated users.
 
@@ -222,6 +225,7 @@ graph TB
 | Field       | Type              | Description                                  |
 | ----------- | ----------------- | -------------------------------------------- |
 | `firstName` | string            | Public first name                            |
+| `lastName`  | string (optional) | Public last name                             |
 | `photoUrl`  | string (optional) | Public profile photo                         |
 | `city`      | string (optional) | User's city                                  |
 | `bio`       | string (optional) | Bio or tagline                               |
@@ -722,21 +726,23 @@ publicListings.where('tags', 'array-contains', 'hiking').where('visibility', '==
 During account creation, users must provide:
 
 - **Email** (private, stored in `/users/{userId}`)
-- **First Name** (public, stored in both `/users/{userId}` and `/publicUsers/{userId}`)
+- **First Name** (public, stored in both `/users/{userId}` and `/publicProfiles/{userId}`)
+- **Last Name** (optional, public, stored in both `/users/{userId}` and `/publicProfiles/{userId}`)
 - **Birthdate** (private, stored in `/users/{userId}` only)
-- **Gender** (public, stored in both `/users/{userId}` and `/publicUsers/{userId}`)
+- **Gender** (public, stored in both `/users/{userId}` and `/publicProfiles/{userId}`)
 - **Password** (handled by Firebase Auth, not stored in Firestore)
 
 ### Data Privacy Strategy
 
 - **Private Data** (`/users/{userId}`): Email, birthdate, settings, preferences, fun facts, likes/dislikes, hobbies
-- **Public Data** (`/publicUsers/{userId}`): First name, photo, bio, city, age (calculated), gender
+- **Public Data** (`/publicProfiles/{userId}`): First name, last name, photo, bio, city, age (calculated), gender
 - **Age Verification**: Birthdate is used to ensure users meet age requirements
-- **First Name**: Serves as the primary public identifier across the platform
+- **First Name & Last Name**: Serve as the primary public identifiers across the platform
 
 ### Validation Rules
 
 - **First Name**: 2-50 characters, letters/spaces/hyphens/apostrophes/periods only
+- **Last Name**: 2-50 characters (optional), letters/spaces/hyphens/apostrophes/periods only
 - **Birthdate**: Must be at least 13 years old, maximum 120 years old
 - **Email**: Standard email validation with disposable domain filtering
 - **Gender**: Must be one of: `male`, `female`, `non-binary`, `prefer-not-to-say`

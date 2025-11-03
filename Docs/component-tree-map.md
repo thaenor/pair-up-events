@@ -173,8 +173,15 @@ Profile
     │   ├── h1 (Title)
     │   ├── Info card
     │   ├── ProfilePictureUpload
-    │   │   ├── img (current photo or placeholder)
-    │   │   └── Button (Upload)
+    │   │   ├── img (current photo or placeholder icon)
+    │   │   ├── Button (Upload with camera icon overlay)
+    │   │   ├── Button (Upload Photo)
+    │   │   ├── Button (Remove Photo) - shown when photo exists
+    │   │   ├── input[type="file"] (hidden file input)
+    │   │   └── Modal (Delete Confirmation)
+    │   │       ├── AlertTriangle icon
+    │   │       ├── Confirmation text
+    │   │       └── Button actions (Cancel, Remove Photo)
     │   ├── ProfileDetailsForm
     │   │   ├── Input fields (First Name, Last Name, Email, Birth Date, Gender)
     │   │   └── textarea (Bio)
@@ -455,7 +462,46 @@ Located in: `src/components/molecules/`
 #### Profile Molecules (`src/components/molecules/Profile/`)
 
 1. **ProfilePictureUpload** (`profile-picture-upload.tsx`)
-   - TODO: Implement Firebase Storage upload
+   - **Purpose**: Upload, manage, and delete user profile pictures with Firebase Storage integration
+   - **Props**:
+     - `currentPhotoUrl?: string | null` - Current profile picture URL
+     - `onPhotoUpdate: (photoUrl: string | null) => Promise<void>` - Callback when photo is updated
+     - `isLoading?: boolean` - External loading state
+     - `className?: string` - Additional CSS classes
+   - **State**:
+     - `isUploading` - Upload progress state
+     - `isDeleting` - Delete operation state
+     - `showDeleteConfirmation` - Modal visibility state
+   - **Features**:
+     - File validation (type: JPG, PNG, WebP; max size: 5MB)
+     - Client-side image compression (max 800x800px, quality 0.8)
+     - Firebase Storage upload/delete
+     - Upload progress indicators
+     - Accessible confirmation modal for deletion (replaces `window.confirm`)
+     - Proper memory management (URL.revokeObjectURL cleanup)
+     - Error handling with user-friendly toast notifications
+   - **Dependencies**:
+     - `useAuth` - For user authentication
+     - `validateImageFile`, `compressImage` from `src/lib/image-utils.ts`
+     - `uploadProfilePicture`, `deleteProfilePicture` from `src/lib/storage-service.ts`
+     - `Modal` - For confirmation dialog
+     - `Button` - For action buttons
+     - `toast` from `sonner` - For user feedback
+   - **Tests**: Ready for unit tests (linting and type checking pass)
+   - **Accessibility**:
+     - Accessible modal with ARIA labels
+     - Keyboard navigation support
+     - Screen reader friendly
+   - **Performance**:
+     - Image compression reduces upload time and storage costs
+     - Memory leaks prevented with proper URL cleanup
+   - **Security**:
+     - Input validation prevents malicious files
+     - Firebase Storage rules enforce size/type limits
+   - **Related Files**:
+     - `src/lib/image-utils.ts` - Image validation and compression utilities
+     - `src/lib/storage-service.ts` - Firebase Storage service functions
+     - `firebase/storage.rules` - Firebase Storage security rules
 
 2. **ProfileDetailsForm** (`profile-details-form.tsx`)
    - TODO: Save profile details to Firestore
@@ -595,6 +641,12 @@ Located in: `src/components/`
 - ✅ Error boundaries for authentication failures with retry mechanisms
 - ✅ Network status monitoring and user feedback
 - ✅ Profile page with auth protection and loading states
+- ✅ **Profile picture upload feature** with Firebase Storage integration
+  - Image validation and compression (native Canvas API)
+  - Firebase Storage upload/delete functionality
+  - Accessible confirmation modal
+  - Memory leak prevention
+  - Proper error handling with Firebase error codes
 - ✅ Settings page with account controls
 - ✅ Sidebar navigation with logout functionality
 - ✅ New pages: settings, invite, contact-us, about
@@ -608,12 +660,11 @@ Located in: `src/components/`
 
 ### TODO Features
 
-See `TODO.md` for comprehensive list of pending work, including:
+See `Docs/Backlog.md` for comprehensive list of pending work, including:
 
 - Profile data persistence to Firestore
 - Password reset flow
 - Account deletion
-- Profile picture upload
 - Profile details and preferences save
 
 ## Identified Opportunities for Atomic Design

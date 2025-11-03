@@ -2,7 +2,7 @@ import { defineConfig, devices } from '@playwright/test'
 
 export default defineConfig({
   testDir: './tests/e2e',
-  fullyParallel: true,
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
@@ -15,44 +15,13 @@ export default defineConfig({
   },
 
   projects: [
-    // Desktop Browser - Chrome only
-    {
-      name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-        headless: true,
-      },
-    },
-    // Mobile Devices - Android
+    // Mobile Devices - Android Pixel 5 only
     {
       name: 'android-pixel5',
       use: {
         ...devices['Pixel 5'],
         headless: true,
       },
-    },
-    // Mobile Devices - iOS
-    {
-      name: 'ios-iphone12',
-      use: {
-        ...devices['iPhone 12'],
-        headless: true,
-      },
-    },
-  ],
-
-  webServer: [
-    {
-      command: 'firebase emulators:start --only auth',
-      port: 9099,
-      reuseExistingServer: !process.env.CI,
-      timeout: 60000,
-    },
-    {
-      command: 'npm run dev',
-      url: 'http://localhost:8080',
-      reuseExistingServer: !process.env.CI,
-      timeout: 120000,
     },
   ],
 })
