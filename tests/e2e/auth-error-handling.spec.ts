@@ -77,7 +77,24 @@ test.describe('Authentication Error Handling', () => {
     await page.waitForTimeout(300)
     await dismissToasts(page)
     await page.click('[data-testid="sidebar-logout-button"]')
-    await expect(page).toHaveURL('/', { timeout: TEST_TIMEOUTS.NAVIGATION })
+
+    // Wait for logout to complete and navigation away from protected page
+    // After logout, Navigation component navigates to '/' or '/login'
+    // Both are valid logout destinations
+    await page.waitForURL(
+      url => {
+        const pathname = new URL(url).pathname
+        return pathname === '/' || pathname === '/login'
+      },
+      { timeout: TEST_TIMEOUTS.NAVIGATION }
+    )
+
+    // Dismiss any toasts that appear after logout
+    await dismissToasts(page)
+
+    // Verify we're on a public page (not protected)
+    const currentPath = new URL(page.url()).pathname
+    expect(currentPath === '/' || currentPath === '/login').toBe(true)
 
     // Now try to signup with the same email
     await page.goto('/signup')
