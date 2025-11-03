@@ -1,6 +1,6 @@
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { ZodError } from 'zod'
-import { db, auth } from '@/lib/firebase'
+import { db } from '@/lib/firebase'
 import type { PrivateUserData, PublicUserData } from '@/entities/user'
 import { privateUserDataSchema, publicUserDataSchema } from '@/entities/user'
 import { parseFirestorePrivateData, toFirestorePrivateData, toFirestorePublicData } from './user-data-helpers'
@@ -110,22 +110,21 @@ export async function loadPublicUserData(userId: string): Promise<LoadResult<Pub
  *
  * @param userId - The unique identifier of the user.
  * @param data - PrivateUserData to create.
- * @param currentUserId - Optional current user ID from authenticated context.
- *                        Passing this parameter prevents race conditions when auth state changes during async operations.
+ * @param currentUserId - Current user ID from authenticated context.
+ *                        Required to prevent race conditions when auth state changes during async operations.
  * @returns A Promise that resolves to SaveResult indicating success or failure with error details.
  */
 export async function createPrivateUserData(
   userId: string,
   data: Partial<PrivateUserData>,
-  currentUserId?: string
+  currentUserId: string
 ): Promise<SaveResult> {
   if (!db) {
     return { success: false, error: 'Firestore database is not initialized', errorType: 'network' }
   }
 
   // Verify user is authenticated and matches userId
-  const actualCurrentUserId = currentUserId ?? auth?.currentUser?.uid
-  if (!actualCurrentUserId || actualCurrentUserId !== userId) {
+  if (!currentUserId || currentUserId !== userId) {
     return {
       success: false,
       error: 'You do not have permission to create this profile',
@@ -182,22 +181,21 @@ export async function createPrivateUserData(
  *
  * @param userId - The unique identifier of the user.
  * @param data - PublicUserData to create.
- * @param currentUserId - Optional current user ID from authenticated context.
- *                        Passing this parameter prevents race conditions when auth state changes during async operations.
+ * @param currentUserId - Current user ID from authenticated context.
+ *                        Required to prevent race conditions when auth state changes during async operations.
  * @returns A Promise that resolves to SaveResult indicating success or failure with error details.
  */
 export async function createPublicUserData(
   userId: string,
   data: Partial<PublicUserData>,
-  currentUserId?: string
+  currentUserId: string
 ): Promise<SaveResult> {
   if (!db) {
     return { success: false, error: 'Firestore database is not initialized', errorType: 'network' }
   }
 
   // Verify user is authenticated and matches userId
-  const actualCurrentUserId = currentUserId ?? auth?.currentUser?.uid
-  if (!actualCurrentUserId || actualCurrentUserId !== userId) {
+  if (!currentUserId || currentUserId !== userId) {
     return {
       success: false,
       error: 'You do not have permission to create this profile',
@@ -254,22 +252,21 @@ export async function createPublicUserData(
  *
  * @param userId - The unique identifier of the user.
  * @param data - Partial PrivateUserData to save.
- * @param currentUserId - Optional current user ID from authenticated context.
- *                        Passing this parameter prevents race conditions when auth state changes during async operations.
+ * @param currentUserId - Current user ID from authenticated context.
+ *                        Required to prevent race conditions when auth state changes during async operations.
  * @returns A Promise that resolves to SaveResult indicating success or failure with error details.
  */
 export async function savePrivateUserData(
   userId: string,
   data: Partial<PrivateUserData>,
-  currentUserId?: string
+  currentUserId: string
 ): Promise<SaveResult> {
   if (!db) {
     return { success: false, error: 'Firestore database is not initialized', errorType: 'network' }
   }
 
   // Verify user is authenticated and matches userId
-  const actualCurrentUserId = currentUserId ?? auth?.currentUser?.uid
-  if (!actualCurrentUserId || actualCurrentUserId !== userId) {
+  if (!currentUserId || currentUserId !== userId) {
     return {
       success: false,
       error: 'You do not have permission to update this profile',
@@ -337,22 +334,21 @@ export async function savePrivateUserData(
  *
  * @param userId - The unique identifier of the user.
  * @param data - Partial PublicUserData to save.
- * @param currentUserId - Optional current user ID from authenticated context.
- *                        Passing this parameter prevents race conditions when auth state changes during async operations.
+ * @param currentUserId - Current user ID from authenticated context.
+ *                        Required to prevent race conditions when auth state changes during async operations.
  * @returns A Promise that resolves to SaveResult indicating success or failure with error details.
  */
 export async function savePublicUserData(
   userId: string,
   data: Partial<PublicUserData>,
-  currentUserId?: string
+  currentUserId: string
 ): Promise<SaveResult> {
   if (!db) {
     return { success: false, error: 'Firestore database is not initialized', errorType: 'network' }
   }
 
   // Verify user is authenticated and matches userId
-  const actualCurrentUserId = currentUserId ?? auth?.currentUser?.uid
-  if (!actualCurrentUserId || actualCurrentUserId !== userId) {
+  if (!currentUserId || currentUserId !== userId) {
     return {
       success: false,
       error: 'You do not have permission to update this profile',

@@ -33,11 +33,6 @@ import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore'
 
 vi.mock('@/lib/firebase', () => ({
   db: {},
-  auth: {
-    currentUser: {
-      uid: 'test-user-id',
-    },
-  },
 }))
 
 import {
@@ -47,7 +42,6 @@ import {
   savePublicUserData,
 } from '@/entities/user/user-service'
 import { calculateAgeFromBirthDate } from '@/entities/user/user-data-helpers'
-import * as firebaseModule from '@/lib/firebase'
 
 // Type the mocks properly
 const mockedGetDoc = vi.mocked(getDoc)
@@ -233,37 +227,23 @@ describe('User Service', () => {
     })
 
     it('should return permission error if user is not authenticated', async () => {
-      const originalAuth = firebaseModule.auth
-      ;(firebaseModule as any).auth = { currentUser: null }
-
-      const result = await savePrivateUserData('test-user-id', { firstName: 'New' }, undefined)
+      const result = await savePrivateUserData('test-user-id', { firstName: 'New' }, '')
 
       expect(result.success).toBe(false)
       if (!result.success) {
         const error = result as Extract<typeof result, { success: false }>
         expect(error.errorType).toBe('permission')
       }
-
-      ;(firebaseModule as any).auth = originalAuth
     })
 
     it('should return permission error if userId does not match authenticated user', async () => {
-      const originalAuth = firebaseModule.auth
-      ;(firebaseModule as any).auth = {
-        currentUser: {
-          uid: 'different-user-id',
-        },
-      }
-
-      const result = await savePrivateUserData('test-user-id', { firstName: 'New' }, undefined)
+      const result = await savePrivateUserData('test-user-id', { firstName: 'New' }, 'different-user-id')
 
       expect(result.success).toBe(false)
       if (!result.success) {
         const error = result as Extract<typeof result, { success: false }>
         expect(error.errorType).toBe('permission')
       }
-
-      ;(firebaseModule as any).auth = originalAuth
     })
 
     it('should return validation error for invalid data', async () => {
@@ -313,18 +293,13 @@ describe('User Service', () => {
     })
 
     it('should return permission error if user is not authenticated', async () => {
-      const originalAuth = firebaseModule.auth
-      ;(firebaseModule as any).auth = { currentUser: null }
-
-      const result = await savePublicUserData('test-user-id', { firstName: 'New' }, undefined)
+      const result = await savePublicUserData('test-user-id', { firstName: 'New' }, '')
 
       expect(result.success).toBe(false)
       if (!result.success) {
         const error = result as Extract<typeof result, { success: false }>
         expect(error.errorType).toBe('permission')
       }
-
-      ;(firebaseModule as any).auth = originalAuth
     })
 
     it('should return validation error for invalid data', async () => {

@@ -206,7 +206,8 @@ test.describe('E2E Happy Path Flow', () => {
   })
 
   // Setup check for tests that require authentication (after account creation)
-  test.beforeEach(async (_, testInfo) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  test.beforeEach(async ({ page }, testInfo) => {
     // Only check account creation for tests that run AFTER the registration test
     // The registration test itself should be allowed to run
     // PHASE 1 and PHASE 2 tests don't need authentication

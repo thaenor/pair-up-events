@@ -2,12 +2,12 @@
 
 ## High Priority
 
-### Auth Race Condition in User Service
+### ~~Auth Race Condition in User Service~~ ✅ RESOLVED
 
-**Location**: `src/entities/user/user-service.ts:127,210`
+**Location**: `src/entities/user/user-service.ts`
 **Issue**: Direct `auth?.currentUser?.uid` access in async functions can cause race conditions if user logs out mid-operation
-**Fix**: Re-check auth state before Firestore operations or pass userId from authenticated context
-**Impact**: Could lead to permission errors or incorrect data access
+**Fix**: Made `currentUserId` parameter required in all user service functions to enforce explicit passing from authenticated context
+**Resolution**: Updated `createPrivateUserData`, `createPublicUserData`, `savePrivateUserData`, and `savePublicUserData` to require `currentUserId` parameter, eliminating race condition risk
 
 ### E2E Test Network Idle Timeout
 
