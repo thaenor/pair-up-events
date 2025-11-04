@@ -411,3 +411,25 @@ export async function createPersistentTestAccount(page: Page) {
 
   return testUser
 }
+
+/**
+ * Creates a test image buffer for E2E profile picture upload tests.
+ * Returns a valid 1x1 PNG image buffer that can be used with setInputFiles.
+ *
+ * @returns Buffer containing a valid PNG image
+ *
+ * @example
+ * const testImage = createTestImageBuffer()
+ * await fileInput.setInputFiles({
+ *   name: 'test-profile.png',
+ *   mimeType: 'image/png',
+ *   buffer: testImage,
+ * })
+ */
+export function createTestImageBuffer(): Buffer {
+  // Base64-encoded 1x1 transparent PNG (valid PNG format)
+  return Buffer.from(
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+    'base64'
+  )
+}

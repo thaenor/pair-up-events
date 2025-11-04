@@ -567,7 +567,22 @@ Located in: `src/components/organisms/`
 
 #### Events Organisms (`src/components/organisms/Events/`)
 
-1. **EventCreationForm** (`EventCreationForm.tsx`)
+1. **ChatInterface** (`ChatInterface.tsx`)
+   - **Features**: Chat interface with avatars for user and AI messages
+   - **Avatar Integration**:
+     - User messages: Profile picture from UserContext (with User icon from lucide-react fallback) at bottom-right
+     - AI messages: PairUp Events logo with dark background (#1A2A33) at bottom-left, using `object-fit: contain` with padding to ensure full logo visibility within circular container
+     - Applied to all message types including event previews and typing indicator
+   - Chat UI for AI-powered event creation
+   - Uses `@chatscope/chat-ui-kit-react` components
+   - Features: Message rendering, typing indicators, event preview cards
+   - Props: messages, onSendMessage, isLoading, onConfirmEvent
+   - Performance: Memoized message rendering
+   - Testing: Comprehensive data-testid attributes
+   - Error handling: Wrapped in ErrorBoundary at parent level
+   - Accessibility: ARIA labels, touch-optimized, iOS momentum scrolling
+
+2. **EventCreationForm** (`EventCreationForm.tsx`)
 
 ### Templates (Page Layouts)
 

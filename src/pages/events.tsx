@@ -1,13 +1,79 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Plus, Calendar, MapPin, Clock } from 'lucide-react'
 import Navigation from '@/components/organisms/Navigation/Navigation'
 import MobileBottomNavigation from '@/components/organisms/Navigation/MobileBottomNavigation'
 import LoadingSpinner from '@/components/atoms/LoadingSpinner'
+import { Button } from '@/components/atoms/button'
 import useRequireAuth from '@/hooks/useRequireAuth'
+import useAuth from '@/hooks/useAuth'
+import { loadAllEvents } from '@/entities/event/event-service'
+import type { DraftEventData } from '@/entities/event/event'
+import { toast } from 'sonner'
 
 const EventsPage: React.FC = () => {
   const { loading } = useRequireAuth()
+  const { user } = useAuth()
+  const navigate = useNavigate()
+  const [events, setEvents] = useState<(DraftEventData & { eventId: string })[]>([])
+  const [isLoadingEvents, setIsLoadingEvents] = useState(true)
 
-  if (loading) {
+  useEffect(() => {
+    const fetchEvents = async () => {
+      if (!user?.uid) {
+        setIsLoadingEvents(false)
+        return
+      }
+
+      setIsLoadingEvents(true)
+      const result = await loadAllEvents(user.uid)
+
+      if (result.success) {
+        setEvents(result.data)
+      } else {
+        console.error('Failed to load events:', 'error' in result ? result.error : 'Unknown error')
+        toast.error('Failed to load events. Please refresh the page.')
+      }
+      setIsLoadingEvents(false)
+    }
+
+    fetchEvents()
+  }, [user?.uid])
+
+  const handleCreateEvent = () => {
+    navigate('/events/create')
+  }
+
+  const handleEventClick = (eventId: string) => {
+    navigate('/events/create', { state: { eventId } })
+  }
+
+  const formatDate = (date?: Date): string => {
+    if (!date) return 'Date TBD'
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    })
+  }
+
+  const formatTime = (date?: Date): string => {
+    if (!date) return 'Time TBD'
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+    })
+  }
+
+  const formatLocation = (location?: { address?: string; city?: string }): string => {
+    if (!location) return 'Location TBD'
+    const parts: string[] = []
+    if (location.address) parts.push(location.address)
+    if (location.city) parts.push(location.city)
+    return parts.join(', ') || 'Location TBD'
+  }
+
+  if (loading || isLoadingEvents) {
     return (
       <div className="min-h-screen bg-pairup-cream flex items-center justify-center">
         <LoadingSpinner />
@@ -21,7 +87,90 @@ const EventsPage: React.FC = () => {
       <div className="container mx-auto px-4 py-8 max-w-4xl pt-24 pb-20 md:pb-8">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-pairup-darkBlue mb-4 flex items-center justify-center">My Events</h1>
+          <div className="flex justify-center mt-6">
+            <Button
+              onClick={handleCreateEvent}
+              variant="primary"
+              size="lg"
+              icon={<Plus className="w-5 h-5" />}
+              className="min-h-[44px]"
+              aria-label="Create new event"
+            >
+              Create New Event
+            </Button>
+          </div>
         </div>
+
+        {/* Events List */}
+        {events.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-pairup-darkBlue/70 text-lg mb-4">No events yet</p>
+            <p className="text-pairup-darkBlue/50 text-sm">Create your first event to get started!</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {events.map(event => (
+              <button
+                key={event.eventId}
+                onClick={() => handleEventClick(event.eventId)}
+                className="w-full text-left bg-white border-2 border-pairup-darkBlue rounded-lg p-4 md:p-6 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-pairup-darkBlue focus:ring-offset-2"
+                aria-label={`View event: ${event.title || event.activity || 'Untitled'}`}
+              >
+                {/* Status Badge */}
+                <div className="flex items-center justify-between mb-3">
+                  <span
+                    className={`inline-block px-2 py-1 text-xs font-semibold rounded ${
+                      event.status === 'draft' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'
+                    }`}
+                  >
+                    {event.status === 'draft' ? 'Draft' : 'Published'}
+                  </span>
+                </div>
+
+                {/* Event Title */}
+                <h3 className="text-xl md:text-2xl font-bold text-pairup-darkBlue mb-2">
+                  {event.title || event.activity || 'Untitled Event'}
+                </h3>
+
+                {/* Event Description */}
+                {event.description && (
+                  <p className="text-gray-700 text-sm md:text-base mb-4 line-clamp-2">{event.description}</p>
+                )}
+
+                {/* Event Details */}
+                <div className="space-y-2 text-sm md:text-base">
+                  {/* Activity */}
+                  {event.activity && (
+                    <div className="flex items-center gap-2 text-gray-700">
+                      <span className="text-base md:text-lg">🎯</span>
+                      <span>{event.activity}</span>
+                    </div>
+                  )}
+
+                  {/* Date & Time */}
+                  <div className="flex items-center gap-2 text-gray-700">
+                    <Calendar className="w-4 h-4 md:w-5 md:h-5" />
+                    <span>{formatDate(event.timeStart)}</span>
+                    {event.timeStart && (
+                      <>
+                        <Clock className="w-4 h-4 md:w-5 md:h-5 ml-2" />
+                        <span>{formatTime(event.timeStart)}</span>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Location */}
+                  {event.location && (
+                    <div className="flex items-center gap-2 text-gray-700">
+                      <MapPin className="w-4 h-4 md:w-5 md:h-5" />
+                      <span>{formatLocation(event.location)}</span>
+                    </div>
+                  )}
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
       <MobileBottomNavigation />
     </div>

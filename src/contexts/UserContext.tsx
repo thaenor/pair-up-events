@@ -151,7 +151,31 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [user?.uid, loadProfile])
 
   /**
-   * Update user profile in Firestore and local state
+   * Update user profile in Firestore and local state optimistically.
+   *
+   * Saves updates to Firestore and immediately updates local state without waiting
+   * for a refresh. If no profile exists yet, creates a new profile object with the updates.
+   * Does not refresh from Firestore after update to prevent overwriting optimistic state.
+   *
+   * @param {Object} updates - Profile updates to apply
+   * @param {Partial<PrivateUserData>} [updates.private] - Private user data updates
+   * @param {Partial<PublicUserData>} [updates.public] - Public user data updates
+   * @returns {Promise<void>} Resolves when update completes
+   * @throws {Error} If user is not authenticated or update fails
+   *
+   * @example
+   * ```tsx
+   * await updateProfile({
+   *   public: { photoURL: 'https://example.com/photo.jpg' },
+   *   private: { photoURL: 'https://example.com/photo.jpg' }
+   * })
+   * ```
+   *
+   * @note
+   * - Uses optimistic updates - local state updates immediately
+   * - Creates new profile object if prevProfile is null
+   * - Does not refresh after update (profile refreshed on next page load)
+   * - Prevents race conditions by not overwriting optimistic state
    */
   const updateProfile = useCallback(
     async (updates: { private?: Partial<PrivateUserData>; public?: Partial<PublicUserData> }) => {
@@ -198,20 +222,32 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Update local state optimistically using functional update to prevent race conditions
         setUserProfile(prevProfile => {
           if (!prevProfile) {
-            // If no profile exists, return as-is (will refresh after)
-            return prevProfile
+            // If no profile exists, create one with the updates
+            const newProfile: UserProfileData = {
+              private: Object.keys(privateUpdates).length > 0 ? ({ ...privateUpdates } as PrivateUserData) : null,
+              public: Object.keys(publicUpdates).length > 0 ? ({ ...publicUpdates } as PublicUserData) : null,
+            }
+            return newProfile
           }
 
-          return {
-            private: prevProfile.private ? { ...prevProfile.private, ...privateUpdates } : null,
-            public: prevProfile.public ? { ...prevProfile.public, ...publicUpdates } : null,
+          const updated: UserProfileData = {
+            private: prevProfile.private
+              ? ({ ...prevProfile.private, ...privateUpdates } as PrivateUserData)
+              : Object.keys(privateUpdates).length > 0
+                ? ({ ...privateUpdates } as PrivateUserData)
+                : null,
+            public: prevProfile.public
+              ? ({ ...prevProfile.public, ...publicUpdates } as PublicUserData)
+              : Object.keys(publicUpdates).length > 0
+                ? ({ ...publicUpdates } as PublicUserData)
+                : null,
           }
+          return updated
         })
 
-        // If profile wasn't loaded, refresh it
-        if (!userProfile) {
-          await refreshProfile()
-        }
+        // Don't refresh profile after update - the optimistic update is sufficient
+        // Refreshing could overwrite our changes if there are any issues loading from Firestore
+        // The profile will be refreshed on next page load anyway
 
         toast.success('Profile updated successfully')
       } catch (err) {

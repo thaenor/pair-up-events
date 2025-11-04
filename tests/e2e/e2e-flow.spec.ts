@@ -24,6 +24,7 @@ import {
   createPersistentTestAccount,
   openSidebar,
   dismissToasts,
+  createTestImageBuffer,
 } from './helpers'
 import { TEST_TIMEOUTS } from './constants'
 
@@ -82,10 +83,9 @@ test.describe('E2E Happy Path Flow', () => {
       await blockTrackingServices(page)
 
       await page.goto('/')
-      await page.waitForLoadState('networkidle')
+      await expect(page.getByTestId('main-navigation')).toBeVisible()
 
       // Check that main navigation is visible
-      await expect(page.getByTestId('main-navigation')).toBeVisible()
 
       // Verify the navigation contains the logo
       const logoImg = page.getByTestId('main-navigation').locator('img[alt="Pair Up Events logo"]').first()
@@ -104,8 +104,6 @@ test.describe('E2E Happy Path Flow', () => {
 
       await page.goto('/login')
       await expect(page).toHaveURL('/login')
-
-      await page.waitForLoadState('networkidle')
 
       // Verify login form is visible
       const emailInput = page.locator('input[type="email"]')
@@ -713,7 +711,256 @@ test.describe('E2E Happy Path Flow', () => {
   })
 
   // ============================================================================
-  // PHASE 8: ACCOUNT MANAGEMENT FEATURES
+  // PHASE 8: PROFILE IMAGE UPLOAD
+  // ============================================================================
+
+  // Test: Profile image upload functionality
+  test('Profile picture upload section is visible', async () => {
+    const page = await sharedContext.newPage()
+
+    try {
+      await blockTrackingServices(page)
+      await page.goto('/profile')
+
+      // Verify profile page loaded
+      await expect(page.getByRole('heading', { name: 'Your Profile', exact: true })).toBeVisible()
+
+      // Verify profile picture section is visible
+      await expect(page.getByRole('heading', { name: 'Profile Picture' })).toBeVisible()
+
+      // Verify upload button is visible
+      const uploadButton = page.locator('button:has-text("Upload Photo")')
+      await expect(uploadButton).toBeVisible()
+
+      // Verify help text is visible
+      await expect(
+        page.locator('text=/Upload a clear photo of yourself. JPG, PNG formats supported. Max 5MB./')
+      ).toBeVisible()
+    } finally {
+      await page.close()
+    }
+  })
+
+  test('Upload profile picture successfully', async () => {
+    const page = await sharedContext.newPage()
+
+    try {
+      await blockTrackingServices(page)
+      await page.goto('/profile')
+
+      // Wait for profile page to load
+      await expect(page.getByRole('heading', { name: 'Your Profile', exact: true })).toBeVisible()
+
+      // Dismiss any toasts
+      await dismissToasts(page)
+
+      // Get the file input (hidden)
+      const fileInput = page.locator('input[type="file"][accept="image/*"]')
+      await expect(fileInput).toBeVisible({ visible: false })
+
+      // Upload the test image
+      await fileInput.setInputFiles({
+        name: 'test-profile.png',
+        mimeType: 'image/png',
+        buffer: createTestImageBuffer(),
+      })
+
+      // Wait for the success toast (either one indicates upload completion)
+      // Note: Both "Profile updated successfully" and "Profile picture uploaded successfully" may appear
+      await expect(
+        page.locator('text=/Profile updated successfully|Profile picture uploaded successfully/').first()
+      ).toBeVisible({
+        timeout: 15000,
+      })
+
+      // Wait for the second toast to appear (both toasts should show)
+      await page.waitForTimeout(500)
+
+      // Dismiss all toasts
+      await dismissToasts(page)
+
+      // Wait for React state update to propagate and component to re-render
+      // The upload triggers: Storage upload -> onPhotoUpdate -> UserContext state update -> ProfilePage re-render
+      // This should cause the "Remove Photo" button to appear without needing a page reload
+      await page.waitForTimeout(2000)
+
+      // Verify the "Remove Photo" button is visible (only appears when currentPhotoUrl exists)
+      // This is the key indicator that the upload was successful and state was updated
+      const removeButton = page.locator('button:has-text("Remove Photo")')
+      await expect(removeButton).toBeVisible({ timeout: 10000 })
+
+      // Verify the profile image is also visible
+      const profileImage = page.locator('img[alt="Profile"]')
+      await expect(profileImage).toBeVisible({ timeout: 5000 })
+
+      // Verify the image has a src (indicating it was uploaded)
+      const imageSrc = await profileImage.getAttribute('src')
+      expect(imageSrc).toBeTruthy()
+      expect(imageSrc?.length).toBeGreaterThan(0)
+      expect(imageSrc).toContain('localhost:9199') // Verify it's using Storage emulator
+
+      // Dismiss toasts
+      await dismissToasts(page)
+    } finally {
+      await page.close()
+    }
+  })
+
+  test('Delete profile picture with confirmation', async () => {
+    const page = await sharedContext.newPage()
+
+    try {
+      await blockTrackingServices(page)
+      await page.goto('/profile')
+
+      // Wait for profile page to load
+      await expect(page.getByRole('heading', { name: 'Your Profile', exact: true })).toBeVisible()
+
+      // Dismiss any toasts
+      await dismissToasts(page)
+
+      // Check if profile picture exists (may or may not from previous test)
+      const profileImage = page.locator('img[alt="Profile"]')
+      const hasImage = await profileImage.isVisible().catch(() => false)
+
+      if (!hasImage) {
+        // Upload a test image first if one doesn't exist
+        const fileInput = page.locator('input[type="file"][accept="image/*"]')
+        await fileInput.setInputFiles({
+          name: 'test-profile.png',
+          mimeType: 'image/png',
+          buffer: createTestImageBuffer(),
+        })
+
+        // Wait for upload to complete
+        await expect(page.locator('text=/Profile picture uploaded successfully/')).toBeVisible({
+          timeout: 15000,
+        })
+
+        // Wait for "Remove Photo" button to appear (indicates profile updated and component re-rendered)
+        const removeButtonCheck = page.locator('button:has-text("Remove Photo")')
+        await expect(removeButtonCheck).toBeVisible({ timeout: 15000 })
+
+        // Now verify the image is visible
+        await expect(profileImage).toBeVisible({ timeout: 5000 })
+
+        await dismissToasts(page)
+      }
+
+      // Verify "Remove Photo" button is visible (only shows when image exists)
+      const removeButton = page.locator('button:has-text("Remove Photo")')
+      await expect(removeButton).toBeVisible()
+
+      // Click remove button
+      await removeButton.click()
+
+      // Wait for delete confirmation modal
+      await expect(page.locator('h3:has-text("Remove Profile Picture")')).toBeVisible({
+        timeout: TEST_TIMEOUTS.NAVIGATION,
+      })
+
+      // Verify modal content
+      await expect(page.locator('text=/Are you sure you want to remove your profile picture?/')).toBeVisible()
+      await expect(
+        page.locator('text=/This action cannot be undone. Your profile picture will be permanently deleted./')
+      ).toBeVisible()
+
+      // Confirm deletion
+      const confirmButton = page.locator('button:has-text("Remove Photo"):not([disabled])').last()
+      await confirmButton.click()
+
+      // Wait for success toast
+      await expect(page.locator('text=/Profile picture removed successfully/')).toBeVisible({
+        timeout: 15000,
+      })
+
+      // Verify profile image is removed (check for absence of image)
+      await page.waitForTimeout(TEST_TIMEOUTS.ANIMATION)
+
+      // Verify the profile image is no longer visible
+      await expect(profileImage).not.toBeVisible({ timeout: 5000 })
+
+      // Verify "Remove Photo" button is no longer visible (only shows when image exists)
+      await expect(removeButton).not.toBeVisible()
+
+      await dismissToasts(page)
+    } finally {
+      await page.close()
+    }
+  })
+
+  test('Cancel delete profile picture confirmation', async () => {
+    const page = await sharedContext.newPage()
+
+    try {
+      await blockTrackingServices(page)
+      await page.goto('/profile')
+
+      // Wait for profile page to load
+      await expect(page.getByRole('heading', { name: 'Your Profile', exact: true })).toBeVisible()
+
+      // Dismiss any toasts
+      await dismissToasts(page)
+
+      // Check if profile picture exists
+      const profileImage = page.locator('img[alt="Profile"]')
+      const hasImage = await profileImage.isVisible().catch(() => false)
+
+      if (!hasImage) {
+        // Upload a test image first if one doesn't exist
+        const fileInput = page.locator('input[type="file"][accept="image/*"]')
+        await fileInput.setInputFiles({
+          name: 'test-profile.png',
+          mimeType: 'image/png',
+          buffer: createTestImageBuffer(),
+        })
+
+        // Wait for upload to complete
+        await expect(page.locator('text=/Profile picture uploaded successfully/')).toBeVisible({
+          timeout: 15000,
+        })
+
+        // Wait for "Remove Photo" button to appear (indicates profile updated and component re-rendered)
+        const removeButtonCheck = page.locator('button:has-text("Remove Photo")')
+        await expect(removeButtonCheck).toBeVisible({ timeout: 15000 })
+
+        // Now verify the image is visible
+        await expect(profileImage).toBeVisible({ timeout: 5000 })
+
+        await dismissToasts(page)
+      }
+
+      // Click remove button
+      const removeButton = page.locator('button:has-text("Remove Photo")')
+      await expect(removeButton).toBeVisible()
+      await removeButton.click()
+
+      // Wait for delete confirmation modal
+      await expect(page.locator('h3:has-text("Remove Profile Picture")')).toBeVisible({
+        timeout: TEST_TIMEOUTS.NAVIGATION,
+      })
+
+      // Cancel deletion
+      const cancelButton = page.locator('button:has-text("Cancel")')
+      await cancelButton.click()
+
+      // Wait for modal to close
+      await expect(page.locator('h3:has-text("Remove Profile Picture")')).not.toBeVisible({
+        timeout: TEST_TIMEOUTS.NAVIGATION,
+      })
+
+      // Verify profile image is still visible (not deleted)
+      await expect(profileImage).toBeVisible()
+
+      // Verify "Remove Photo" button is still visible
+      await expect(removeButton).toBeVisible()
+    } finally {
+      await page.close()
+    }
+  })
+
+  // ============================================================================
+  // PHASE 9: ACCOUNT MANAGEMENT FEATURES
   // ============================================================================
 
   // Test 5: Test account management features
@@ -990,7 +1237,7 @@ test.describe('E2E Happy Path Flow', () => {
   })
 
   // ============================================================================
-  // PHASE 9: LOGOUT AND RE-AUTHENTICATION
+  // PHASE 10: LOGOUT AND RE-AUTHENTICATION
   // ============================================================================
 
   // Final test: Logout

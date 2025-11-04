@@ -43,6 +43,34 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // ─────────── DRAFT EVENTS ───────────
+    // Path: users/{userId}/ownEvents/{eventId}
+    // Draft events created by users during event creation flow
+    match /users/{userId}/ownEvents/{eventId} {
+      // Only the event owner can read and create their own draft events
+      allow read, create: if isOwner(userId);
+      
+      // Only the event owner can update their own draft events
+      allow update: if isOwner(userId);
+      
+      // Soft deletion handled by setting isDeleted flag (no hard delete)
+      allow delete: if false;
+
+      // ─────────── CHAT HISTORY ───────────
+      // Path: users/{userId}/ownEvents/{eventId}/chatHistory/{messageId}
+      // Chat messages for AI-powered event creation conversation
+      match /chatHistory/{messageId} {
+        // Only the event owner can read and create chat messages
+        allow read, create: if isOwner(userId);
+        
+        // Chat messages are immutable once created (no updates)
+        allow update: if false;
+        
+        // Chat messages are not deleted (preserve conversation history)
+        allow delete: if false;
+      }
+    }
+
     // ─────────── RULE FUNCTIONS ───────────
     function isValidProfileUpdate() {
       // Prevents tampering with system fields

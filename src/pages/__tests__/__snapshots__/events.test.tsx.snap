@@ -459,6 +459,61 @@ exports[`EventsPage > should match snapshot 1`] = `
       >
         My Events
       </h1>
+      <div
+        class="flex justify-center mt-6"
+      >
+        <button
+          aria-disabled="false"
+          aria-label="Create new event"
+          class="inline-flex items-center justify-center gap-2 font-medium rounded-md transition-colors disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 text-base px-5 py-2.5 h-12 bg-pairup-cyan text-pairup-darkBlue hover:bg-pairup-cyan/90 focus:ring-pairup-cyan min-h-[44px]"
+          type="button"
+        >
+          <span
+            class="flex items-center gap-2"
+            data-testid="button-content"
+          >
+            <span
+              class="flex items-center"
+              data-testid="button-icon-left"
+            >
+              <svg
+                class="lucide lucide-plus w-5 h-5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5 12h14"
+                />
+                <path
+                  d="M12 5v14"
+                />
+              </svg>
+            </span>
+            Create New Event
+          </span>
+        </button>
+      </div>
+    </div>
+    <div
+      class="text-center py-12"
+    >
+      <p
+        class="text-pairup-darkBlue/70 text-lg mb-4"
+      >
+        No events yet
+      </p>
+      <p
+        class="text-pairup-darkBlue/50 text-sm"
+      >
+        Create your first event to get started!
+      </p>
     </div>
   </div>
   <nav

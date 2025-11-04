@@ -56,6 +56,11 @@ export const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
       // Upload to Firebase Storage
       const downloadURL = await uploadProfilePicture(user.uid, compressedFile)
 
+      // Validate the URL before passing it on
+      if (!downloadURL || downloadURL.length === 0) {
+        throw new Error('Upload succeeded but received invalid download URL')
+      }
+
       // Update profile with new photo URL
       await onPhotoUpdate(downloadURL)
 

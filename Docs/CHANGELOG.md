@@ -23,6 +23,128 @@
 
 ### Added
 
+- **Chat Interface Avatars** (`src/components/organisms/Events/ChatInterface.tsx`)
+  - **Feature**: Added profile picture avatars to chat messages for both user and AI messages
+  - **User Messages**: Display user's profile picture from UserContext (with fallback to User icon from lucide-react) positioned at bottom-right
+  - **AI Messages**: Display PairUp Events logo with dark background (#1A2A33) positioned at bottom-left
+  - **Technical Changes**:
+    - Integrated `useUserProfile` hook to access user profile data
+    - Added `Avatar` component from `@chatscope/chat-ui-kit-react` to all message types
+    - Implemented User icon fallback (from lucide-react) for user avatars when no photoURL is available
+    - Added circular avatar styling via CSS (minimum 26px, 32px default) to ensure proper display
+    - Applied dark background (#1A2A33) to AI avatars for better visual distinction
+    - Applied avatars to regular messages, event preview messages, and typing indicator
+  - **Why**: Improves visual identification of message senders and enhances chat UX
+  - **Impact**: Chat interface now clearly shows who sent each message with visual avatars, using User icon for users without profile pictures
+  - **Testing**: All 234 unit tests passing, 16 new avatar tests added, snapshots updated, E2E tests passing (43/43)
+
+### Fixed
+
+- **User Avatar Broken Image Fallback** (`src/components/organisms/Events/ChatInterface.tsx`)
+  - **Issue**: User avatars with broken/invalid image URLs displayed broken image icons instead of fallback
+  - **Problem**: ChatScope's Message component only accepts Avatar as direct child, causing wrapper component to be rejected by PropTypes validation
+  - **Solution**: Removed wrapper component, moved image validation to ChatInterface level using useEffect, and use CSS to display User icon SVG when image fails or no src provided
+  - **Technical Changes**:
+    - Removed `AvatarWithErrorHandling` wrapper component that was being rejected by ChatScope PropTypes
+    - Moved image validation logic to ChatInterface component level using `useEffect` with `Image` pre-validation
+    - Simplified `renderAvatar` to always return ChatScope Avatar component directly (no wrapper)
+    - Added `data-user-fallback` attribute to trigger CSS fallback with User icon SVG via `::before` pseudo-element
+    - CSS hides Avatar's image/initials content and displays User icon SVG when `data-user-fallback="true"` is set
+  - **Why**: Ensures broken user avatar images always show User icon instead of broken image icon, improving UX
+  - **Impact**: User avatars now properly display User icon fallback when profile picture is missing or fails to load
+
+- **AI Avatar Logo Size Fix** (`src/components/organisms/Events/ChatInterface.tsx`)
+  - **Issue**: AI avatar logo (company logo) didn't fit entirely within the circular bubble container
+  - **Problem**: Logo was being cropped or extending beyond the 32px circular avatar container
+  - **Solution**: Changed AI avatar image styling to use `object-fit: contain` instead of `cover` with 6px padding
+  - **Technical Changes**:
+    - Added specific CSS rule for AI avatars: `[data-ai-avatar="true"] img` with `object-fit: contain` and `padding: 6px`
+    - This ensures the full logo is visible within the circular container without cropping
+    - User avatars still use `object-fit: cover` for proper profile picture display
+  - **Why**: Ensures the company logo is fully visible and properly contained within the avatar bubble
+  - **Impact**: AI avatar now displays the complete logo within the circular container with proper spacing
+
+- **ChatInterface Bottom Nav Overlap Issue** (`src/components/organisms/Events/ChatInterface.tsx`)
+  - **Issue**: Mobile bottom navigation slightly overlapped chat interface container on `/events/create` page
+  - **Problem**: `MOBILE_HEADER_FOOTER_HEIGHT` constant (240px) underestimated actual header+footer space needed (top nav ~96px + page header ~80px + bottom nav ~70px + buffer = ~270px)
+  - **Solution**: Increased `MOBILE_HEADER_FOOTER_HEIGHT` from 240px to 270px
+  - **Technical Changes**:
+    - Updated constant with detailed calculation comment for future maintainability
+    - Added documentation note explaining React best practice: use `data-testid` instead of `id` attributes
+    - IDs should only be used for accessibility (ARIA), form labels, or URL anchors
+  - **Why**: Provides proper clearance for fixed bottom navigation without overlap
+  - **Impact**: Chat interface now displays with proper spacing, no visual overlap on mobile devices
+  - **Testing**: All 152 unit tests passing, build successful, TypeScript validation passed
+
+- **ChatInterface Height Calculation Bug** (`src/components/organisms/Events/ChatInterface.tsx`)
+  - **Issue**: Chat interface appeared very small due to invalid Tailwind CSS height calculation
+  - **Problem**: Template literals used inside Tailwind className string (`h-[calc(100dvh-${MOBILE_HEADER_FOOTER_HEIGHT}px)]`) don't work - Tailwind compiles at build time and cannot interpolate JavaScript variables
+  - **Solution**: Moved dynamic height calculation to inline `style` prop with responsive media query using scoped `<style>` tag
+  - **Technical Changes**:
+    - Replaced invalid Tailwind class with inline `style={{ height: calc(100dvh - 270px) }}` for mobile
+    - Added scoped `<style>` tag with `@media (min-width: 768px)` for desktop height calculation
+    - Maintained all other Tailwind utilities in className for static styles
+  - **Why**: Inline styles are the recommended React/Tailwind pattern for runtime-computed values that cannot be statically analyzed at build time
+  - **Impact**: Chat interface now fills viewport correctly on both mobile and desktop, providing proper UX for AI-powered event creation flow
+  - **Testing**: All 152 unit tests passing, build successful, TypeScript validation passed
+
+- **Console Errors and Accessibility Violations - Chatscope Integration**
+  - **Issue #1: TypingIndicator Invalid Placement** (`src/components/organisms/Events/ChatInterface.tsx`)
+    - **Problem**: TypingIndicator placed as direct child of ChatContainer violated chatscope's strict PropTypes validation
+    - **Error**: `"TypingIndicator2" is not a valid child for ChatContainer2. Allowed types: ConversationHeader2, MessageList, MessageInput, InputToolbox2`
+    - **Solution**: Wrapped TypingIndicator inside Message component with Message.CustomContent, rendered as last message in MessageList when loading
+    - **Why**: Chatscope enforces strict component hierarchy - TypingIndicator must be a child of Message, not ChatContainer or MessageList directly
+    - **Impact**: Eliminated "Failed prop type" console warnings during chat loading states
+  - **Issue #2: EventPreviewCard Invalid Child** (`src/components/organisms/Events/ChatInterface.tsx`)
+    - **Problem**: EventPreviewCard wrapped in plain `<div>` violated Message component's child validation
+    - **Error**: `"div" is not a valid child for Message2. Allowed types: Avatar, MessageHeader2, MessageFooter2, MessageHtmlContent2, MessageTextContent2, MessageImageContent2, MessageCustomContent2`
+    - **Solution**: Replaced `<div>` wrapper with `<Message.CustomContent>` component
+    - **Why**: Chatscope Message component only accepts specific child component types for proper styling and structure
+    - **Impact**: Eliminated "Failed prop type" console warnings when AI returns parseable event data
+  - **Issue #3: Sidebar aria-hidden Focus Conflict** (`src/components/organisms/Navigation/Sidebar.tsx`)
+    - **Problem**: When sidebar closes, `aria-hidden="true"` set but focused button inside retained focus, violating WCAG accessibility
+    - **Error**: `Blocked aria-hidden on an element because its descendant retained focus`
+    - **Solution**: Enhanced focus trap useEffect to blur any focused element inside sidebar when `isOpen` becomes false
+    - **Why**: WCAG 2.1 Level A requirement - elements with `aria-hidden="true"` must not contain focused descendants
+    - **Impact**: Eliminated "Blocked aria-hidden" console errors, improved screen reader compatibility
+  - **Technical Changes**:
+    - Moved TypingIndicator from ChatContainer child to Message.CustomContent inside MessageList
+    - Changed EventPreviewCard wrapper from `<div>` to `<Message.CustomContent>`
+    - Added `isLoading` to useMemo dependencies to dynamically render typing indicator
+    - Added focus blur logic in Sidebar's focus trap useEffect when closing
+  - **Testing**: All 152 unit tests passing with fixes
+
+### Added
+
+- **ChatInterface Component Optimizations** (`src/components/organisms/Events/ChatInterface.tsx`)
+  - Added `useMemo` optimization for message rendering to prevent unnecessary re-renders
+  - Implemented error boundary wrapper in parent component (`src/pages/events-create.tsx`)
+  - Extracted responsive height constants (`MOBILE_HEADER_FOOTER_HEIGHT`, `DESKTOP_HEADER_FOOTER_HEIGHT`)
+  - Added comprehensive `data-testid` attributes for improved testing infrastructure
+  - Enhanced JSDoc documentation with chatscope integration notes and implementation rationale
+  - **Why**: Improve performance, error resilience, and testability of chat interface
+  - **How**:
+    - Memoization prevents message list re-rendering on every component update
+    - Error boundary provides graceful failure handling for external library components
+    - Named constants improve code maintainability and readability
+    - Test attributes enable better component testing coverage
+  - **Features**:
+    - Performance: Message list only re-renders when messages or callbacks change
+    - Resilience: Errors in chat interface show toast notification instead of breaking page
+    - Maintainability: Layout constants documented and centralized
+    - Testing: All interactive elements have data-testid attributes
+  - **Impact**: Improved UX (faster rendering, graceful errors), better testing coverage, enhanced code quality
+  - **Performance**:
+    - Reduced unnecessary re-renders via useMemo (messages array transformation)
+    - Tailwind class usage (replaced inline `style={{ padding: '0' }}` with `className="p-0"`)
+  - **Accessibility**:
+    - Existing ARIA attributes preserved
+    - Error handling provides user feedback via toast notifications
+  - **Visual Changes**:
+    - Rounded corners (`rounded-2xl`) applied to chat container for modern, smooth appearance
+    - Shadow (`shadow-md`) added for depth and visual separation
+    - Maintained responsive design and mobile-first approach
+
 - **Profile Image Upload Feature** (`src/components/molecules/Profile/profile-picture-upload.tsx`, `src/lib/image-utils.ts`, `src/lib/storage-service.ts`)
   - Complete implementation of profile picture upload functionality with Firebase Storage integration
   - **Why**: Enable users to upload and manage their profile pictures, completing the profile customization feature that was previously only UI-ready
@@ -54,6 +176,35 @@
 
 ### Fixed
 
+- **Auth Race Condition in User Service** (`src/entities/user/user-service.ts`)
+  - Made `currentUserId` parameter required in all user service functions (`createPrivateUserData`, `createPublicUserData`, `savePrivateUserData`, `savePublicUserData`)
+  - **Why**: Direct `auth?.currentUser?.uid` access in async functions caused race conditions if user logged out mid-operation, leading to potential permission errors or incorrect data access
+  - **Impact**: Breaking change - callers must now explicitly pass `user.uid` (production code already does this, so no runtime impact)
+  - **Solution**: Removed optional `currentUserId?` parameter and fallback to `auth?.currentUser?.uid`, enforcing explicit passing from authenticated context
+  - **Root Cause**: Async operations could read stale auth state between function start and Firestore operation
+  - **Security**: Eliminates race condition risk, ensures consistent authentication state throughout operations
+  - **Testing**: Updated all tests to pass `userId` explicitly; all 152 unit tests passing
+  - **Migration**: No migration needed - production code (`email-signup-form.tsx`, `UserContext.tsx`) already passes `user.uid`
+  - **Related**: Resolves backlog issue "Auth Race Condition in User Service"
+
+- **E2E Test Network Idle Timeout** (`tests/e2e/e2e-flow.spec.ts:85,108`)
+  - Replaced `waitForLoadState('networkidle')` with element-based waiting strategies
+  - **Why**: `networkidle` was unreliable due to GTM and long-lived connections, causing test timeouts
+  - **Impact**: More reliable E2E tests, eliminates flaky timeouts
+  - **Solution**:
+    - Line 85: Replaced with `await expect(page.getByTestId('main-navigation')).toBeVisible()`
+    - Line 108: Removed redundant `networkidle` wait (element-based wait already present)
+  - **Testing**: All 39 E2E tests passing; tests now use explicit element visibility checks
+  - **Performance**: Tests run faster and more reliably
+  - **Related**: Resolves backlog issue "E2E Test Network Idle Timeout"
+
+- **E2E Test beforeEach Syntax Error** (`tests/e2e/e2e-flow.spec.ts:209`)
+  - Fixed invalid destructuring pattern in Playwright `beforeEach` hook
+  - **Why**: Playwright requires proper fixture destructuring; `async (_, testInfo) =>` syntax is invalid
+  - **Impact**: E2E tests were failing with syntax error preventing execution
+  - **Solution**: Changed to `async ({ page }, testInfo) =>` with ESLint disable comment for unused `page` parameter (required by Playwright API but not used in hook body)
+  - **Testing**: All 39 E2E tests now execute successfully
+
 - **Memory Leak in Image Compression** (`src/lib/image-utils.ts:166`)
   - Added `URL.revokeObjectURL()` cleanup in all code paths (success, error, edge cases)
   - **Why**: Prevent memory leaks from unrevoked object URLs created by `URL.createObjectURL()`
@@ -71,6 +222,51 @@
   - **Why**: `window.confirm()` is not accessible and doesn't match app design system
   - **Impact**: Better accessibility, consistent UI patterns
   - **Solution**: Implemented Modal with proper ARIA attributes, keyboard support, and design system integration
+
+- **UserContext Optimistic State Update Bug** (`src/contexts/UserContext.tsx:199-218`)
+  - Fixed critical bug where profile updates were silently skipped when `prevProfile` was `null`
+  - **Why**: When `updateProfile` was called with `photoURL` and no profile existed yet, the state update function would return early without applying updates, causing uploaded images to never appear in the UI
+  - **Root Cause**: The `setUserProfile` callback checked `if (!prevProfile)` and returned `prevProfile` (null) without creating a new profile object with the updates
+  - **Impact**: Critical bug - profile picture uploads and other profile updates would save to Firestore but never display in UI, causing user confusion
+  - **Solution**:
+    - Now creates a new profile object with the updates when `prevProfile` is `null`
+    - Removed `refreshProfile()` call after update to prevent overwriting optimistic state (refresh was causing validation errors with partial profile data)
+    - Optimistic update is sufficient and prevents race conditions with Firestore refresh
+  - **Testing**: All 43 E2E tests passing, including profile picture upload tests
+  - **Performance**: Eliminated unnecessary Firestore reads after updates
+  - **Related**: Profile picture upload feature, E2E test fixes
+
+- **Profile Picture Upload URL Validation** (`src/components/molecules/Profile/profile-picture-upload.tsx:59-62`)
+  - Added validation to ensure download URL is non-empty before proceeding
+  - **Why**: Storage emulator or network issues could return empty/invalid URLs, causing silent failures
+  - **Impact**: Better error handling and user feedback if upload returns invalid URL
+  - **Solution**: Validates `downloadURL` length before calling `onPhotoUpdate`, throws descriptive error if invalid
+
+### Testing
+
+- **Profile Image Upload E2E Tests** (`tests/e2e/e2e-flow.spec.ts`)
+  - Added 4 comprehensive E2E tests for profile image upload and deletion
+  - **Coverage**:
+    - Profile picture upload section visibility
+    - Successful image upload with verification
+    - Image deletion with confirmation modal
+    - Cancel deletion flow
+  - **Test Improvements**:
+    - Created `createTestImageBuffer()` helper function for reusable test image generation (`tests/e2e/helpers.ts`)
+    - Fixed race condition by waiting for "Remove Photo" button (indicates component re-render) before checking image visibility
+    - Improved selector robustness (removed fragile `svg.lucide.lucide-user` selector, uses image absence check instead)
+    - Added proper toast dismissal before UI checks to prevent blocking
+    - Added wait for React state propagation (2s) after upload completes before checking for UI updates
+    - Added verification that Storage emulator URL is used (`localhost:9199`)
+  - **Why**: Ensure profile image upload feature works correctly end-to-end
+  - **Impact**: Prevents regressions, catches integration issues early
+  - **Flakiness Fixes**:
+    - Fixed timing race condition: Upload → Storage → Toast → Firestore Update → Context Refresh → Component Re-render → Image Appears
+    - Test now waits for "Remove Photo" button (appears when `currentPhotoUrl` is set) before checking image, ensuring component has fully updated
+    - Proper toast dismissal prevents UI elements from being blocked
+    - State propagation wait ensures React has completed re-render cycle
+  - **Testing**: All 43 E2E tests passing; tests verify full upload and deletion flow
+  - **Related**: Profile image upload feature, `ProfilePictureUpload` component, UserContext bug fix
 
 ### Performance
 
@@ -285,43 +481,18 @@ class="relative w-full -mt-24 sm:-mt-10 md:mt-0 animate-fade-in"
 **Type**: Enhancement  
 **Scope**: UI Components & Testing
 
-### Objective
+### Summary
 
-Refine UI component styling and update test snapshots to reflect improved z-index management and CSS class optimizations.
+Refined UI component styling, improved z-index management, and updated test snapshots.
 
 ### Key Changes
 
-#### 1. Z-Index Management Improvements
+- **Z-Index Management**: Updated sidebar z-index values, added explicit styling attributes
+- **CSS Optimizations**: Removed unnecessary classes from HeroSection and Navigation
+- **Test Snapshots**: Updated 14 snapshot files, added snapshots for new auth components (AuthErrorDisplay, NetworkStatus, AuthRetryButton)
+- **Component Structure**: Enhanced error handling with AuthErrorBoundary and related components
 
-- **Sidebar Component**: Updated z-index values from `z-50` to `z-30` (backdrop) and `z-40` (panel)
-- **Explicit Styling**: Added inline `style="z-index: X"` attributes for better layering control
-- **Impact**: Prevents z-index conflicts and improves component layering hierarchy
-
-#### 2. CSS Class Optimizations
-
-- **HeroSection**: Removed unnecessary `relative z-10` class from headline container
-- **Navigation**: Updated transition classes from `transform transition-transform` to `transition-all`
-- **Impact**: Cleaner CSS structure and more consistent animation behavior
-
-#### 3. Test Snapshot Updates
-
-- **Updated Snapshots**: 14 snapshot files updated to reflect new component structure
-- **New Auth Components**: Added snapshots for AuthErrorDisplay, NetworkStatus, and AuthRetryButton
-- **Test Coverage**: All 99 unit tests passing with updated visual regression tests
-
-#### 4. Component Structure Improvements
-
-- **AuthErrorBoundary**: New error boundary component for better error handling
-- **AuthErrorDisplay**: Dedicated component for displaying authentication errors
-- **NetworkStatus**: Component for network connectivity status
-- **AuthRetryButton**: Retry functionality for failed authentication attempts
-
-### Technical Impact
-
-- **Visual Consistency**: All changes maintain existing visual appearance
-- **Code Quality**: Improved CSS organization and z-index management
-- **Test Reliability**: Updated snapshots ensure accurate visual regression testing
-- **Error Handling**: Enhanced authentication error management
+**Impact**: Improved component layering, cleaner CSS structure, all 99 unit tests passing with updated visual regression tests.
 
 ---
 
@@ -331,42 +502,13 @@ Refine UI component styling and update test snapshots to reflect improved z-inde
 **Type**: Optimization  
 **Scope**: Testing Infrastructure
 
-### Objective
+### Summary
 
-Reduce the total number of devices running for E2E Playwright tests to improve test execution speed and resource usage while maintaining comprehensive coverage.
+Reduced Playwright device configurations from 9 to 3 devices for faster test execution while maintaining core platform coverage.
 
-### Key Changes
+**Changes**: Reduced from 9 devices (Chrome, Firefox, Safari, Pixel 5, Pixel 7, iPhone 12, iPhone 13, tablets) to 3 devices (Chrome Desktop, Android Pixel 5, iOS iPhone 12)
 
-#### 1. Device Configuration Reduction
-
-- **Before**: 9 device configurations (Chrome, Firefox, Safari, Pixel 5, Pixel 7, iPhone 12, iPhone 13, Galaxy Tab S4, iPad Pro)
-- **After**: 3 device configurations (Chrome Desktop, Android Pixel 5, iOS iPhone 12)
-- **Impact**: Reduced test execution time by ~67% while maintaining core platform coverage
-
-#### 2. Test Coverage Maintained
-
-- **Desktop**: Chrome browser (most common desktop browser)
-- **Mobile Android**: Pixel 5 (representative Android device)
-- **Mobile iOS**: iPhone 12 (representative iOS device)
-- **Removed**: Firefox, Safari, tablets, and duplicate mobile devices
-
-#### 3. Configuration Benefits
-
-- **Faster CI/CD**: Significantly reduced test execution time
-- **Resource Efficiency**: Lower memory and CPU usage
-- **Maintained Quality**: Core platform coverage preserved
-- **Easier Maintenance**: Fewer device-specific issues to debug
-
-### Files Modified
-
-- `playwright.config.ts`: Updated projects array to include only 3 device configurations
-
-### Test Results
-
-- **Total Tests**: 162 tests across 7 files
-- **Device Coverage**: 3 devices (54 tests per device)
-- **Execution Time**: ~3.2 minutes for Chrome (down from ~9+ minutes previously)
-- **Status**: ✅ All tests passing
+**Impact**: 67% reduction in test execution time (~9+ minutes to ~3.2 minutes), maintained core platform coverage, all tests passing.
 
 ---
 
@@ -376,45 +518,18 @@ Reduce the total number of devices running for E2E Playwright tests to improve t
 **Type**: Bug Fix  
 **Scope**: Testing Infrastructure & Error Handling
 
-### Objective
+### Summary
 
-Fix failing E2E tests and improve error handling mechanisms to ensure robust application behavior across all environments.
+Fixed failing E2E tests and improved error handling mechanisms.
 
 ### Key Changes
 
-#### 1. AuthErrorBoundary Console Error Fix
+- **AuthErrorBoundary**: Modified error logging to only occur in development mode (eliminated console errors in tests)
+- **Sidebar Backdrop Click**: Increased z-index values to prevent click interception (merged into Sidebar Implementation)
+- **Auth Error Handling Tests**: Updated to use network request interception for realistic error simulation
+- **Sidebar Test Authentication**: Updated test helpers to create users before testing
 
-- **Issue**: AuthErrorBoundary was logging errors to console in production, causing E2E tests to fail
-- **Solution**: Modified error logging to only occur in development mode
-- **Impact**: Eliminated console error failures in page snapshot tests
-- **Files Modified**: `src/components/AuthErrorBoundary.tsx`
-
-#### 2. Sidebar Backdrop Click Fix
-
-- **Issue**: Sidebar backdrop clicks were being intercepted by other elements due to z-index conflicts
-- **Solution**: Increased z-index values for backdrop (z-30) and sidebar (z-40) to ensure proper layering
-- **Impact**: Fixed sidebar backdrop click functionality across all devices
-- **Files Modified**: `src/components/organisms/Navigation/Sidebar.tsx`
-
-#### 3. Auth Error Handling Test Improvements
-
-- **Issue**: Error boundary navigation test was failing due to incorrect error simulation
-- **Solution**: Updated test to use network request interception instead of JavaScript error throwing
-- **Impact**: More realistic error simulation and better test reliability
-- **Files Modified**: `tests/e2e/auth-error-handling.spec.ts`
-
-#### 4. Sidebar Test Authentication Flow
-
-- **Issue**: Sidebar tests were failing due to non-existent test users
-- **Solution**: Updated test helper to create users before testing login flow
-- **Impact**: Reliable authentication flow testing
-- **Files Modified**: `tests/e2e/sidebar.spec.ts`
-
-### Test Results
-
-- **Before**: 48 failed E2E tests, 365 passed
-- **After**: Significant reduction in failures, all page snapshot tests now passing
-- **Coverage**: Maintained comprehensive cross-browser and mobile device testing
+**Impact**: Significant reduction in test failures, all page snapshot tests passing. (Note: These fixes are now consolidated in the "E2E Test Infrastructure" section above.)
 
 ---
 
@@ -424,124 +539,14 @@ Fix failing E2E tests and improve error handling mechanisms to ensure robust app
 **Type**: Enhancement  
 **Scope**: Testing Infrastructure
 
-### Objective
+### Summary
 
-Expand Playwright testing coverage to include multiple browsers and mobile device simulation for comprehensive cross-platform validation.
+Expanded Playwright testing coverage to include multiple browsers and mobile device simulation. Later optimized to 3 device configurations (see [Playwright Test Configuration Optimization](#playwright-test-configuration-optimization)).
 
-### Key Changes
+**Initial Implementation**: 9 device configurations (Chrome, Firefox, Safari, Pixel 5, Pixel 7, iPhone 12, iPhone 13, Galaxy Tab S4, iPad Pro)  
+**Optimized Configuration**: Reduced to 3 devices (Chrome Desktop, Android Pixel 5, iOS iPhone 12) for 67% faster test execution
 
-#### 1. Enhanced Playwright Configuration
-
-- **Multi-Browser Support**: Added Firefox and WebKit (Safari) browser testing
-- **Mobile Device Simulation**: Integrated Android and iOS device emulation
-- **Tablet Support**: Added Android and iOS tablet configurations
-- **Device Coverage**: 9 total testing environments
-
-#### 2. Browser Support Matrix
-
-```typescript
-// Desktop Browsers
-- chromium (Chrome)
-- firefox (Firefox)
-- webkit (Safari)
-
-// Mobile Devices - Android
-- android-pixel5 (Google Pixel 5)
-- android-pixel7 (Google Pixel 7)
-
-// Mobile Devices - iOS
-- ios-iphone12 (iPhone 12)
-- ios-iphone13 (iPhone 13)
-
-// Tablet Devices
-- android-tablet (Galaxy Tab S4)
-- ios-tablet (iPad Pro)
-```
-
-#### 3. Mobile Device Simulation Features
-
-- **Viewport Emulation**: Accurate screen dimensions and pixel density
-- **User Agent Simulation**: Device-specific browser identification
-- **Touch Events**: Mobile interaction patterns
-- **Orientation Support**: Portrait/landscape testing capabilities
-
-#### 4. Testing Commands
-
-```bash
-# Run all browsers and devices
-npx playwright test
-
-# Run specific browser
-npx playwright test --project=firefox
-
-# Run specific mobile device
-npx playwright test --project=android-pixel5
-
-# Run iOS simulation
-npx playwright test --project=ios-iphone13
-
-# Run tablet testing
-npx playwright test --project=android-tablet
-```
-
-### Technical Implementation
-
-#### Playwright Configuration Updates
-
-```typescript
-projects: [
-  // Desktop Browsers
-  { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-  { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-  { name: 'webkit', use: { ...devices['Desktop Safari'] } },
-
-  // Mobile Devices - Android
-  { name: 'android-pixel5', use: { ...devices['Pixel 5'] } },
-  { name: 'android-pixel7', use: { ...devices['Pixel 7'] } },
-
-  // Mobile Devices - iOS
-  { name: 'ios-iphone12', use: { ...devices['iPhone 12'] } },
-  { name: 'ios-iphone13', use: { ...devices['iPhone 13'] } },
-
-  // Tablet Devices
-  { name: 'android-tablet', use: { ...devices['Galaxy Tab S4'] } },
-  { name: 'ios-tablet', use: { ...devices['iPad Pro'] } },
-]
-```
-
-### Benefits
-
-#### 1. Comprehensive Coverage
-
-- **Cross-Browser Compatibility**: Ensures functionality across Chrome, Firefox, and Safari
-- **Mobile-First Validation**: Tests responsive design and mobile interactions
-- **Device-Specific Testing**: Validates touch interfaces and mobile UX patterns
-
-#### 2. Quality Assurance
-
-- **Regression Prevention**: Catches browser-specific bugs early
-- **Mobile UX Validation**: Ensures optimal mobile user experience
-- **Performance Testing**: Validates performance across different devices
-
-#### 3. Development Workflow
-
-- **Parallel Testing**: All 9 environments run simultaneously
-- **Selective Testing**: Run specific browser/device combinations
-- **CI/CD Integration**: Automated cross-platform validation
-
-### Test Results
-
-- **Total Test Coverage**: 486 tests across 9 environments
-- **Mobile Validation**: ✅ Android Pixel 5 simulation successful
-- **Cross-Browser**: ✅ Firefox and WebKit integration complete
-- **Device Matrix**: ✅ All 9 environments configured and operational
-
-### Future Enhancements
-
-- **Real Device Testing**: Integration with physical Android/iOS devices
-- **Performance Metrics**: Device-specific performance benchmarking
-- **Accessibility Testing**: Mobile accessibility validation
-- **Visual Regression**: Cross-device visual comparison testing
+**Impact**: Comprehensive cross-platform validation, maintained core platform coverage with improved performance.
 
 ---
 
@@ -619,614 +624,55 @@ projects: [
 
 ### Latest Activity (December 2024)
 
-#### Mobile Sidebar Z-Index Fix ✅
+#### Sidebar Implementation & Fixes ✅
 
-**Conversation**: Fix mobile sidebar z-index issue where sidebar appears behind content
-**Status**: Complete | All tests passing | Mobile UX improved
+**Summary**: Created sidebar component for authentication-aware navigation and fixed z-index stacking context issues
 
-**Objective**:
-Resolve z-index stacking context conflict where the mobile sidebar (z-50) appeared behind some content elements, particularly on the root page where HeroSection content (z-10) was visible over the sidebar.
+**Key Changes**:
 
-**Root Cause Analysis**:
+- **Sidebar Component** (`src/components/organisms/Navigation/Sidebar.tsx`): New sliding sidebar with burger menu, focus trapping, ESC key support, accessibility features
+- **Z-Index Fix**: Resolved stacking context conflict by removing CSS `transform`, using position-based animation, and establishing proper z-index hierarchy (`z-20` for sidebar, `z-50` for mobile navigation, `z-10` for header)
+- **Navigation Updates**: Integrated `useAuth` hook, moved logout to sidebar, created new pages (Settings, Invite, Contact, About)
+- **Backdrop Click Fix**: Increased z-index values to prevent click interception
 
-1. **Sidebar Z-Index**: `z-50` (lines 117, 128 in `Sidebar.tsx`)
-2. **Mobile Bottom Navigation Z-Index**: `z-50` (line 63 in `MobileBottomNavigation.tsx`)
-3. **Navigation Component Z-Index**: `z-10` (line 98 in `Navigation.tsx`)
-4. **HeroSection Content Z-Index**: `z-10` (line 19 in `HeroSection.tsx`)
-5. **HeroSection Parent**: `position: relative` (line 12 in `HeroSection.tsx`)
+**Impact**: Improved mobile UX, consistent navigation across all pages, better accessibility. All tests passing.
 
-**The Problem**:
+#### Authentication Enhancements ✅
 
-1. The sidebar used CSS `transform` which created an isolated stacking context
-2. The HeroSection `<section>` element had `position: relative`, creating its own stacking context
-3. The `headline-cta` div inside HeroSection had `relative z-10`, which only affected elements within the HeroSection's stacking context
-4. Even with sidebar `z-20` and `headline-cta` `z-10`, they were in different stacking contexts, causing the overlap issue
+**Summary**: Comprehensive authentication improvements including error handling, E2E testing infrastructure, and account management
 
-**Solution Implemented**:
+**Key Changes**:
 
-- **Removed CSS Transform**: Eliminated `transform` property from sidebar that was creating isolated stacking context
-- **Used Position-Based Animation**: Replaced `translate-x-full` with `right-[-100%]` for slide animation
-- **Removed Unnecessary Z-Index**: Removed `relative z-10` from `headline-cta` as it wasn't needed (grid items don't overlap)
-- **Set Appropriate Sidebar Z-Index**: Changed from `z-50` to `z-20` for proper layering
-- **Added Inline Styles**: Added `style={{ zIndex: 20 }}` as fallback for maximum browser compatibility
-- **Updated Tests**: Modified test expectations to match new CSS classes
+- **Error Handling**: Single error display strategy via `AuthErrorDisplay`, removed duplicate toast notifications
+- **useAuth Hook**: Created custom hook for Firebase authentication with `login`, `signup`, `logout`, `resetPassword` functions
+- **E2E Testing**: Integrated Firebase Auth Emulator for isolated testing (auth on port 9099, UI on port 4000)
+- **Account Management**: Password reset and account deletion with confirmation modals (Modal atom component created)
+- **Page Access Control**: Authentication guards implemented for protected pages
 
-**Technical Implementation**:
+**Impact**: Better UX with clean error display, robust E2E test coverage, complete account management workflow
 
-```typescript
-// Before: transform creates isolated stacking context
-className={`fixed top-0 right-0 h-full w-full max-w-sm bg-pairup-darkBlue shadow-2xl z-50 transform transition-transform duration-300 ease-out ${
-  isOpen ? 'translate-x-0' : 'translate-x-full'
-}`}
+#### E2E Test Infrastructure ✅
 
-// After: position-based animation with appropriate z-index
-className={`fixed top-0 right-0 h-full w-full max-w-sm bg-pairup-darkBlue shadow-2xl z-20 transition-all duration-300 ease-out ${
-  isOpen ? 'right-0' : 'right-[-100%]'
-}`}
-```
+**Summary**: Comprehensive E2E testing improvements including page snapshots, test fixes, and CI/CD optimization
 
-**Files Modified**:
+**Key Changes**:
 
-- `src/components/organisms/Navigation/Sidebar.tsx` - Removed transform, updated animation method, set appropriate z-index
-- `src/components/organisms/Landing/HeroSection.tsx` - Removed unnecessary `relative z-10` from `headline-cta`
-- `src/components/organisms/Navigation/__tests__/Sidebar.test.tsx` - Updated test expectations for new CSS classes
-- `src/components/organisms/Landing/__tests__/HeroSection.test.tsx` - Updated snapshot
+- **Test Fixes**: Replaced `networkidle` waits with element-based strategies, fixed `beforeEach` syntax errors
+- **Page Snapshots**: Created test suite for all 15 pages (6 public, 8 protected) with visual regression testing
+- **CI/CD Optimization**: Moved E2E tests from GitHub Actions to Husky pre-commit hooks for faster, more reliable CI
+- **Test Helpers**: Created `createTestImageBuffer()` helper for reusable test image generation
+- **Race Condition Fixes**: Fixed timing issues in profile image upload tests by waiting for component re-render
 
-**Benefits**:
+**Impact**: More reliable tests, faster CI/CD pipeline, comprehensive page coverage
 
-- **Fixed Stacking Context Issue**: Removed transform property that was creating isolated stacking context
-- **Improved Mobile UX**: Sidebar now properly appears above all content on mobile devices
-- **Appropriate Z-Index**: Set to `z-20` (just above `headline-cta`'s `z-10`) instead of excessive `z-[9999]`
-- **Consistent Layering**: Clear z-index hierarchy established without stacking context conflicts
-- **Smooth Animation**: Position-based animation maintains visual quality without transform side effects
-- **No Breaking Changes**: All existing functionality preserved with updated implementation
+#### UI Improvements & Component Refinements ✅
 
-**Test Results**:
+**Summary**: NetworkStatus UI improvement, navigation consistency on legal pages
 
-- **Unit Tests**: ✅ 9/9 sidebar tests passing (100%)
-- **Sidebar-Specific Tests**: ✅ All functionality tests passing
-- **Animation Tests**: ✅ Updated to match new CSS classes
-- **Linting**: ✅ Zero warnings or errors
+**Key Changes**:
 
-**Z-Index Hierarchy Established**:
-
-- **Sidebar**: `z-20` (modal overlay)
-- **Mobile Bottom Navigation**: `z-50` (navigation layer)
-- **Navigation Component**: `z-10` (header layer)
-- **Content Elements**: No z-index needed (normal flow)
-
-**Root Cause Resolution**:
-
-The issue was **nested CSS stacking contexts** creating isolation between elements:
-
-1. **Transform Issue**: The sidebar's `transform` property created a new stacking context, isolating it from page content
-2. **Nested Positioning**: HeroSection's `position: relative` created a parent stacking context
-3. **Isolated Child**: The `headline-cta` with `relative z-10` was only relative to siblings within HeroSection, not to the sidebar
-
-**Why z-index comparisons failed**: Even though sidebar had `z-20` and `headline-cta` had `z-10`, they were in **different stacking contexts** - like comparing heights of objects in different rooms. The sidebar's transform isolated it, and the HeroSection's position isolated its children.
-
-**Solution**: Removed unnecessary positioning (`relative z-10` from `headline-cta`) and transform from sidebar, allowing proper z-index hierarchy.
-
----
-
-#### Authentication Error Handling Enhancement ✅
-
-**Conversation**: Implement comprehensive authentication error handling with single error display strategy
-**Status**: Complete | All unit tests passing | E2E tests 95.2% passing | Zero linting issues
-
-**Objective**:
-Resolve duplicate error message issues in authentication forms by implementing a single error display strategy, eliminating confusing duplicate notifications while maintaining comprehensive error handling capabilities.
-
-**Key Changes Implemented**:
-
-1. **Single Error Display Strategy**:
-   - Removed toast notifications for authentication errors
-   - Consolidated all auth errors to display via `AuthErrorDisplay` component
-   - Kept toast notifications for validation errors (form validation)
-   - Maintained success toasts for successful operations
-
-2. **Enhanced useAuth Hook Error State Management**:
-   - Modified `login()` and `signup()` functions to set `authError` state
-   - Added `originalError` to `AuthResult` type to preserve Firebase error context
-   - Updated `executeWithRetry()` to return original error objects
-   - Fixed error message processing to prevent double-conversion
-
-3. **Simplified AuthErrorDisplay Component**:
-   - Removed redundant error descriptions for specific auth errors
-   - Only shows descriptions for generic/unexpected errors
-   - Prevents duplicate information display
-   - Conditional rendering based on error type
-
-4. **Updated Test Expectations**:
-   - Modified E2E tests to expect errors in AuthErrorDisplay instead of toasts
-   - Updated unit tests to reflect new component behavior
-   - Removed misaligned E2E test "Auth error boundary displays for authentication failures"
-   - Fixed test assertions to match actual rendered content
-
-**Technical Implementation**:
-
-```typescript
-// Before: Duplicate error display
-toast.error(result.error) // Toast notification
-setLoginError(result.error) // Local state
-// AuthErrorDisplay also showed error
-
-// After: Single error display
-// Error is now handled by authError state in useAuth hook
-if (!result.success && result.originalError) {
-  const authError = createAuthError(result.originalError)
-  setAuthError(authError)
-}
-```
-
-**Files Modified**:
-
-- `src/hooks/useAuth.ts` - Enhanced error state management
-- `src/components/molecules/Auth/email-login-form.tsx` - Removed duplicate error handling
-- `src/components/molecules/Auth/email-signup-form.tsx` - Removed duplicate error handling
-- `src/components/molecules/Auth/AuthErrorDisplay.tsx` - Simplified error descriptions
-- `tests/e2e/auth.spec.ts` - Updated test expectations
-- `src/components/molecules/Auth/__tests__/AuthErrorDisplay.test.tsx` - Updated unit tests
-
-**Benefits**:
-
-- **Clean Error Display**: Single, focused error message per authentication failure
-- **No Duplicate Information**: Eliminated redundant error descriptions
-- **Consistent Behavior**: All auth errors now display in the same location
-- **Better Accessibility**: Clear error context without overwhelming users
-- **Reliable Testing**: E2E tests no longer flaky due to duplicate elements
-
-**Test Results**:
-
-- **Unit Tests**: 99/99 passing (100%)
-- **E2E Tests**: 40/42 passing (95.2%)
-- **Linting**: Zero warnings or errors
-- **User Experience**: Significantly improved error clarity
-
----
-
-#### Network Status UI Improvement ✅
-
-**Conversation**: Modify NetworkStatus component to only show offline indicator
-**Status**: Complete | All tests passing | Cleaner UI experience
-
-**Objective**:
-Remove the "Online" status indicator from the NetworkStatus component to reduce visual noise and follow better UX practices. Users should only see notifications when action is needed (offline state).
-
-**Key Changes Implemented**:
-
-1. **Offline-Only Display**:
-   - Modified `NetworkStatus` component to return `null` when online
-   - Removed "Online" indicator and green status badge
-   - Kept offline indicator with red styling and warning message
-
-2. **Code Changes**:
-
-   ```typescript
-   // Before: Showed both online and offline states
-   return (
-     <div className="bg-green-500 text-white px-3 py-1 rounded-full">
-       <Wifi className="h-3 w-3" />
-       <span className="text-xs font-medium">Online</span>
-     </div>
-   )
-
-   // After: Only show offline state
-   return null // When online
-   ```
-
-3. **Test Updates**:
-   - Updated unit tests to expect `null` when online
-   - Modified E2E tests to verify offline indicator disappears when online
-   - Removed expectations for "Online" text in tests
-
-4. **Benefits**:
-   - Cleaner UI with less visual noise
-   - Follows common UX patterns (only show problems, not normal states)
-   - Users only see notifications when action is needed
-   - Maintains offline detection functionality
-
-**Files Modified**:
-
-- `src/components/molecules/Auth/NetworkStatus.tsx` - Component behavior
-- `src/components/molecules/Auth/__tests__/NetworkStatus.test.tsx` - Unit tests
-- `tests/e2e/auth-error-handling.spec.ts` - E2E tests
-
-**Test Results**:
-
-- ✅ All unit tests passing (14/14 NetworkStatus tests)
-- ✅ E2E tests passing (Network status indicator test)
-- ✅ Zero linting issues
-- ✅ Cleaner UI experience achieved
-
----
-
-#### CI/CD Pipeline Optimization ✅
-
-**Conversation**: Remove E2E setup from GitHub pipeline deploy.yml and introduce Husky for pre-commit E2E testing
-**Status**: Complete | GitHub Actions workflow created | Husky pre-commit hooks configured
-
-**Objective**:
-Optimize the CI/CD pipeline by removing E2E tests from GitHub Actions (which can be slow and flaky) and instead run them locally via Husky pre-commit hooks to ensure code quality before commits.
-
-**Key Changes Implemented**:
-
-1. **Created GitHub Actions Workflow** (`.github/workflows/deploy.yml`):
-   - Quality checks: linting, unit tests, and building on every push/PR
-   - GitHub Pages deployment: automatic deployment to GitHub Pages on main branch pushes
-   - Excluded E2E tests from CI pipeline for faster, more reliable deployments
-   - Configured with proper Node.js 20.x setup and dependency caching
-
-2. **Installed and Configured Husky**:
-   - Added Husky as dev dependency for Git hooks management
-   - Created pre-commit hook that runs E2E tests before each commit
-   - Updated package.json with prepare script for Husky initialization
-   - Pre-commit hook runs `npm run test:e2e` to ensure all functionality works locally
-
-3. **Updated Documentation**:
-   - Enhanced README.md with detailed E2E testing section
-   - Documented new testing strategy: local E2E via Husky, CI focuses on unit tests/building
-   - Removed Firebase-specific deployment documentation
-
-**Benefits**:
-
-- **Faster CI/CD**: GitHub Actions now focuses on essential checks (lint, test, build)
-- **Reliable E2E**: E2E tests run locally where environment is controlled and stable
-- **Quality Assurance**: Pre-commit hooks prevent broken code from being committed
-- **Better Developer Experience**: Clear separation between local testing and CI validation
-
-**Technical Details**:
-
-- GitHub Actions workflow includes quality checks and GitHub Pages deployment
-- Husky pre-commit hook runs Playwright E2E tests before commits
-- All existing E2E test scripts remain unchanged and functional
-
-#### Comprehensive E2E Page Snapshots ✅
-
-**Conversation**: Ensure we have E2E tests that snapshot every page in our app in its base state
-**Status**: Complete | 15/15 tests passing | All pages covered with snapshots and console error checking
-
-**Objective**:
-Create comprehensive E2E tests that snapshot every page in the app, validate consistent rendering, and check for console errors.
-
-**Key Changes Implemented**:
-
-1. **Created Page Snapshots E2E Test Suite** (`tests/e2e/page-snapshots.spec.ts`):
-   - ✅ Comprehensive test coverage for all 14 app pages
-   - ✅ Full-page screenshot snapshots for visual regression testing
-   - ✅ Console error monitoring on all pages
-   - ✅ Authentication flow helpers for protected pages
-   - ✅ Protected page redirect validation
-
-2. **Updated Playwright Configuration** (`playwright.config.ts`):
-   - ✅ Changed default reporter from 'html' to 'list' for non-blocking terminal output
-   - ✅ Added support for HTML reporter via `E2E_REPORT=html` environment variable
-   - ✅ Headless execution by default
-
-3. **Updated Package Scripts** (`package.json`):
-   - ✅ `npm run test:e2e` - Runs all E2E tests (happy path + error handling)
-   - ✅ `E2E_REPORT=html npm run test:e2e` - Runs tests with HTML reporter for debugging
-
-**Pages Tested**:
-
-- **Public Pages (6)**: Index, Login, Signup, Terms of Service, Privacy Policy, Not Found (404)
-- **Protected Pages (8)**: Profile, Events, Events Create, Messenger, Settings, Invite, Contact Us, About
-
-**Test Results**: All 15 tests passing (12.8s execution time)
-
-**Technical Decisions**:
-
-- Used `getByRole('heading')` selectors to avoid duplicate text matching
-- Added explicit timeouts for console error checking
-- Implemented proper cleanup with logout after each protected page test
-- Generated 15 full-page screenshots for visual regression tracking
-
-#### Account Management Features ✅
-
-**Conversation**: Implement password reset and account deletion in account controls
-**Status**: Complete | All tests passing | Full E2E coverage
-
-**Objective**:
-Implement complete account management functionality including password reset flow and account deletion with safety confirmations.
-
-**Key Changes Implemented**:
-
-1. **Created Modal Atom Component** (`src/components/atoms/Modal.tsx`):
-   - ✅ Reusable modal component with configurable sizes (sm, md, lg)
-   - ✅ Optional icon and actions support
-   - ✅ Backdrop blur and overlay click handling
-   - ✅ Portal rendering for accessibility
-   - ✅ Full ARIA attributes for screen readers
-   - ✅ Uses Tailwind for all styling
-
-2. **Password Reset Implementation** (`src/components/molecules/Auth/account-controls.tsx`):
-   - ✅ Modal displays to prompt user for email confirmation
-   - ✅ Integrates with `useAuth.resetPassword()` hook
-   - ✅ Pre-fills user's current email address
-   - ✅ Loading states with spinner during submission
-   - ✅ Success toast: "Password reset email sent!"
-   - ✅ Error handling with user-friendly messages
-   - ✅ Form validation for empty email
-   - ✅ Uses Button atom component with loading prop
-   - ✅ Uses LabeledInput for consistent form styling
-
-3. **Account Deletion Implementation** (`src/components/molecules/Auth/account-controls.tsx`):
-   - ✅ Delete confirmation modal with safety measures
-   - ✅ User must type "delete" to enable deletion button
-   - ✅ Visual warning with list of what will be deleted
-   - ✅ Deletes Firebase Auth user (Firestore cleanup handled by server)
-   - ✅ Success toast: "Account deleted successfully"
-   - ✅ Redirects to home page after deletion
-   - ✅ Error handling with detailed error messages
-   - ✅ Loading states during deletion process
-
-4. **Comprehensive E2E Test Coverage** (`tests/e2e/account-management.spec.ts`):
-   - ✅ Navigate to Settings page via sidebar
-   - ✅ Password reset modal displays correctly
-   - ✅ Password reset with valid email shows success
-   - ✅ Password reset form validation works
-   - ✅ Delete account confirmation modal displays correctly
-   - ✅ Delete account confirmation text validation works
-   - ✅ Delete account works with correct confirmation
-   - ✅ Account controls buttons are all visible and functional
-
-**Code Quality**:
-
-- All buttons use Button atom component for consistency
-- Modal component is reusable and leverages existing components
-- No linter errors
-- Full TypeScript type safety
-- Comprehensive error handling
-- Proper loading states throughout
-
-**Dependencies**:
-
-- `@/components/atoms/Modal` - New modal atom component
-- `@/components/atoms/button` - Button component with loading states
-- `@/components/molecules/Form/form-fields` - LabeledInput for form consistency
-- Firebase Auth (`deleteUser`, `sendPasswordResetEmail`)
-
-#### Navigation Consistency on Legal Pages ✅
-
-**Conversation**: Make sure all pages include the navigation bar
-**Status**: Complete | Build successful | All linting passing
-
-**Objective**:
-Ensure consistent navigation experience across all non-auth, non-error pages by adding Navigation and MobileBottomNavigation to legal pages.
-
-**Key Changes Implemented**:
-
-1. **Terms of Service Page** (`src/pages/terms-of-service.tsx`):
-   - ✅ Added Navigation component import and rendering
-   - ✅ Added MobileBottomNavigation component import and rendering
-   - ✅ Adjusted container padding to `pt-24 pb-20 md:pb-8` for fixed navigation bars
-   - ✅ Maintained existing page header with Logo, FileText icon, and title
-   - ✅ Consistent layout structure matching other authenticated pages
-
-2. **Privacy Policy Page** (`src/pages/privacy-policy.tsx`):
-   - ✅ Added Navigation component import and rendering
-   - ✅ Added MobileBottomNavigation component import and rendering
-   - ✅ Adjusted container padding to `pt-24 pb-20 md:pb-8` for fixed navigation bars
-   - ✅ Maintained existing page header with Logo, Shield icon, and title
-   - ✅ Consistent layout structure matching other authenticated pages
-
-3. **Pages Excluded** (as per requirements):
-   - ✅ `/signup` and `/login` - Kept clean without navigation (auth pages)
-   - ✅ `/404` - Kept simple with just Return Home button
-
-**Technical Implementation**:
-
-- Following the established pattern from other pages (profile, events, messenger, settings, etc.)
-- Navigation component positioned at the top of the page
-- MobileBottomNavigation component positioned at the bottom
-- Container padding accounts for:
-  - Fixed top navigation bar (`pt-24`)
-  - Fixed mobile bottom navigation (`pb-20` on mobile, `md:pb-8` on desktop)
-- Preserved existing page content and structure
-
-**Result**:
-All non-auth, non-error pages now have consistent navigation, allowing users to easily navigate from legal pages back to the main app.
-
-**Files Modified**:
-
-- `src/pages/terms-of-service.tsx` - Added navigation components
-- `src/pages/privacy-policy.tsx` - Added navigation components
-
-#### Authentication-Aware Navigation with Burger Menu ✅
-
-**Conversation**: Implement authentication-based navigation with burger menu sidebar
-**Status**: Complete | Build successful | All linting passing
-
-**Objective**:
-Update navigation bar to show different UI based on authentication state with a burger menu for logged-in users containing settings, invite, contact, about, privacy policy, terms, and logout options.
-
-**Key Changes Implemented**:
-
-1. **Navigation Component Updates** (`src/components/organisms/Navigation/Navigation.tsx`):
-   - ✅ Integrated `useAuth` hook for real-time authentication state tracking
-   - ✅ Added burger menu button for logged-in users (both mobile and desktop)
-   - ✅ Removed standalone logout button, moved to sidebar
-   - ✅ Implemented `useCallback` for optimal re-rendering
-   - ✅ Added comprehensive error handling with try-finally blocks
-   - ✅ Proper state management with loading states
-
-2. **Sidebar Component Creation** (`src/components/organisms/Navigation/Sidebar.tsx`):
-   - ✅ New organism component with clean separation of concerns
-   - ✅ Sliding animation from right with CSS-based visibility
-   - ✅ Focus trapping for accessibility
-   - ✅ ESC key support for closing sidebar
-   - ✅ Menu items: Settings, Invite, Contact, About, Privacy Policy, Terms, Logout
-   - ✅ Micro-animations (rotating icons, hover effects, smooth transitions)
-   - ✅ Memory leak prevention with proper event listener cleanup
-
-3. **New Pages Created**:
-   - ✅ `/settings` (`src/pages/settings.tsx`) - Account controls and settings
-   - ✅ `/invite` (`src/pages/invite.tsx`) - Invite a friend (placeholder with TODO)
-   - ✅ `/contact-us` (`src/pages/contact-us.tsx`) - Contact form (placeholder with TODO)
-   - ✅ `/about` (`src/pages/about.tsx`) - About us page (placeholder with TODO)
-   - All pages include authentication guards using `useRequireAuth`
-
-4. **Router Updates** (`src/App.tsx`):
-   - ✅ Added routes for all new pages
-   - ✅ Lazy loading for code splitting
-   - ✅ Proper route ordering
-
-5. **Profile Page Cleanup** (`src/pages/profile.tsx`):
-   - ✅ Removed AccountControls component (moved to settings page)
-   - ✅ Maintained profile-specific functionality
-
-**Code Review Fixes Applied**:
-
-- ✅ Fixed useEffect dependency issues with useCallback
-- ✅ Added proper error handling in async operations
-- ✅ Fixed memory leak risk in event listener cleanup
-- ✅ Removed early return to allow animation lifecycle
-- ✅ Enhanced accessibility with aria-hidden when sidebar closed
-
-**Technical Achievements**:
-
-- **Component Separation**: Clean extraction of Sidebar into separate organism
-- **Performance**: Optimized re-renders with useCallback
-- **Accessibility**: Full keyboard navigation and screen reader support
-- **Animations**: Smooth transitions and micro-animations throughout
-- **Error Handling**: Comprehensive try-catch-finally blocks
-- **Code Quality**: Zero lint errors, successful build, type-safe
-
-**Files Modified**:
-
-- `src/components/organisms/Navigation/Navigation.tsx` - Refactored with useAuth integration
-- `src/components/organisms/Navigation/Sidebar.tsx` - New component (196 lines)
-- `src/pages/settings.tsx` - New page
-- `src/pages/invite.tsx` - New page
-- `src/pages/contact-us.tsx` - New page
-- `src/pages/about.tsx` - New page
-- `src/pages/profile.tsx` - Removed AccountControls
-- `src/App.tsx` - Added new routes
-
-**Architecture Impact**: Improved user experience with authentication-aware UI while maintaining clean code architecture
-
----
-
-#### E2E Authentication Implementation with Firebase Emulator ✅
-
-**Conversation**: Implement comprehensive end-to-end authentication testing with Firebase Auth Emulator
-**Status**: Complete | 47 unit tests + E2E auth tests passing | All CI checks green
-
-**Objective**:
-Create a robust authentication system with E2E test coverage using Firebase Auth Emulator for isolated, automated testing of authentication flows including signup, login, logout, and session persistence.
-
-**Key Changes Implemented**:
-
-1. **useAuth Hook Creation** (`src/hooks/useAuth.ts`):
-   - Custom React hook for Firebase authentication
-   - Functions: `login`, `signup`, `logout`, `resetPassword`
-   - Auth state management with `user` and `loading` states
-   - Comprehensive error handling with user-friendly messages
-   - Integrated `onAuthStateChanged` for real-time state updates
-   - Null safety for Firebase configuration edge cases
-
-2. **Component Integration**:
-   - **EmailSignupForm**: Integrated `useAuth.signup()`, added validation, navigation, and toast notifications
-   - **EmailLoginForm**: Integrated `useAuth.login()`, added validation, navigation, and toast notifications
-   - **AccountControls**: Integrated `useAuth.logout()`, added navigation and toast notifications
-   - **ProfilePage**: Now uses `useAuth().user` to pass real user data to child components
-
-3. **Firebase Emulator Setup**:
-   - `firebase.json`: Added emulator configuration (auth on port 9099, UI on port 4000)
-   - `src/lib/firebase.ts`: Added automatic emulator connection for localhost/dev mode
-   - `package.json`: Added scripts for emulator management and E2E testing
-   - Checks for existing emulator connection to prevent duplicate connections
-
-4. **E2E Test Suite** (`tests/e2e/auth.spec.ts`):
-   - **Test Coverage**:
-     - Complete signup → logout → login flow
-     - Session persistence after page reload
-     - Session sharing across tabs
-     - Invalid credentials error handling
-     - Duplicate email error handling
-     - Console error monitoring
-   - **Best Practices**:
-     - Serial test execution to prevent race conditions
-     - Explicit waits and scrolling for element visibility
-     - Force clicks for elements that might be covered
-     - Comprehensive timeout configurations
-
-5. **Playwright Configuration** (`playwright.config.ts`):
-   - Dual web server configuration (emulator + dev server)
-   - Automatic server startup and shutdown
-   - `reuseExistingServer` for local development convenience
-   - Configured for parallel execution in CI, serial in E2E auth tests
-
-6. **Documentation**:
-   - `tests/e2e/README.md`: Comprehensive test documentation
-   - `Docs/E2E-Auth-Implementation-Summary.md`: Implementation summary
-   - `Docs/useauth-implementation-review.md`: Code review findings (Grade: B+)
-   - Updated `Docs/testing-recommendations.md` with E2E approach
-
-**Technical Achievements**:
-
-- **Isolated Testing Environment**: Firebase Auth Emulator provides clean test isolation
-- **Automatic Cleanup**: Test accounts removed when emulator stops
-- **Fast Execution**: Local emulator eliminates network latency
-- **Real Browser Testing**: Session persistence and cross-tab testing
-- **Error Monitoring**: Built-in console error detection in tests
-- **Production Safety**: Emulator only in dev/localhost, never in production
-
-**Code Quality**:
-
-- **Build**: Successful (1.42s, zero errors)
-- **Linting**: Zero lint errors
-- **Tests**: 47/47 passing (100% pass rate) + E2E auth tests
-- **Type Safety**: Full TypeScript coverage with strict typing
-- **Format**: Prettier compliant
-
-**Architecture Assessment**: B+ (Good with recommended improvements)
-
-**Positive Highlights**:
-
-1. ✅ Clean separation of concerns with `useAuth` hook
-2. ✅ Comprehensive E2E test coverage with emulator
-3. ✅ Excellent error message mapping
-4. ✅ Consistent user feedback with toast notifications
-5. ✅ Automatic test cleanup with emulator
-6. ✅ Production-safe configuration
-
-**Recommended Improvements** (from code review):
-
-1. **Critical**: Implement Firestore profile creation after signup (currently profile data is lost)
-2. **High**: Add authentication guard to profile page (redirect to login if unauthenticated)
-3. **Medium**: Implement actual password reset flow (function exists but UI handler is empty)
-4. **Medium**: Remove dst="sign-out-button") click, replace with consistent locator pattern
-5. **Low**: Add loading state to profile page while auth is initializing
-6. **Low**: Move test helpers to centralized file for reusability
-
-**Files Modified**:
-
-- `src/hooks/useAuth.ts` - Created authentication hook
-- `src/lib/firebase.ts` - Added emulator connection logic
-- `src/pages/profile.tsx` - Integrated useAuth hook
-- `src/components/molecules/Auth/email-signup-form.tsx` - Auth integration
-- `src/components/molecules/Auth/email-login-form.tsx` - Auth integration
-- `src/components/molecules/Auth/account-controls.tsx` - Auth integration
-- `firebase.json` - Emulator configuration
-- `package.json` - Emulator and test scripts
-- `playwright.config.ts` - Web server configuration
-- `tests/e2e/auth.spec.ts` - Comprehensive E2E tests
-- `tests/e2e/test-helpers.ts` - Test constants
-- `tests/e2e/README.md` - Test documentation
-
-**Next Steps**:
-
-1. Implement Firestore profile data persistence after signup
-2. Add authentication guards to protected routes
-3. Complete password reset flow integration
-4. Add loading states throughout auth flow
-5. Consider adding unit tests for useAuth hook (currently removed due to complexity)
-
-**Documentation**:
-
-- E2E implementation summary: `Docs/E2E-Auth-Implementation-Summary.md`
-- Code review: `Docs/useauth-implementation-review.md`
+- **NetworkStatus**: Removed "Online" indicator, now only shows offline state (better UX pattern)
+- **Navigation Consistency**: Added Navigation and MobileBottomNavigation to Terms of Service and Privacy Policy pages
 
 ---
 
@@ -1598,65 +1044,16 @@ After implementing Firestore-backed chat persistence, 8 tests in `useChat.test.t
 
 ## December 2024 - Authentication & Page Access Control
 
-**Date**: December 2024  
-**Branch**: `create-events-page`  
-**Focus**: Profile page authentication fencing and E2E test validation
+**Summary**: Implemented authentication guards for protected pages and improved E2E test reliability
 
-### Key Changes Implemented
+**Key Changes**:
 
-1. **Authentication Guard Implementation**:
-   - ✅ Profile page properly fenced with `useRequireAuth` hook
-   - ✅ Events, Events Create, and Messenger pages now protected with authentication guards
-   - ✅ About and Contact pages made public (accessible without authentication)
-   - ✅ Consistent loading states across all protected pages
+- **Protected Pages**: Profile, Events, Events Create, Messenger, Settings, Invite now require authentication
+- **Public Pages**: About and Contact made public, Terms of Service and Privacy Policy accessible without auth
+- **Authentication Guards**: Consistent `useRequireAuth` hook usage across protected pages
+- **E2E Test Fixes**: Fixed linter errors, updated test helpers, improved test reliability
 
-2. **E2E Test Suite Fixes**:
-   - ✅ Fixed 7 linter errors in `account-management.spec.ts`
-   - ✅ Replaced missing `loginUser` function with `authenticateUser` helper
-   - ✅ Updated protected pages test to exclude public pages
-   - ✅ Added new test for public pages accessibility
-   - ✅ All E2E tests now passing consistently
-
-3. **Page Access Control**:
-   - **Protected Pages**: `/profile`, `/events`, `/events/create`, `/messenger`, `/settings`, `/invite`
-   - **Public Pages**: `/`, `/login`, `/signup`, `/about`, `/contact-us`, `/terms-of-service`, `/privacy-policy`
-   - ✅ Proper redirect behavior for unauthenticated users
-   - ✅ Loading spinners during authentication state resolution
-
-4. **Code Quality Improvements**:
-   - ✅ Zero TypeScript errors across all modified files
-   - ✅ Zero linter warnings
-   - ✅ Consistent authentication patterns across pages
-   - ✅ Updated component tree documentation
-
-### Technical Implementation
-
-**Authentication Flow**:
-
-```typescript
-// Protected pages use useRequireAuth hook
-const { loading } = useRequireAuth()
-
-if (loading) {
-  return <LoadingSpinner />
-}
-// Page content only renders when authenticated
-```
-
-**E2E Test Pattern**:
-
-```typescript
-// Consistent authentication in tests
-const user = await authenticateUser(page)
-// Tests use returned user object for assertions
-```
-
-### Test Results
-
-- **Account Management Tests**: ✅ All passing
-- **Protected Page Redirect Tests**: ✅ All passing
-- **Public Page Access Tests**: ✅ All passing
-- **Authentication Flow Tests**: ✅ All passing
+**Impact**: Consistent authentication patterns, better security, reliable E2E tests. All tests passing.
 
 ---
 
@@ -2825,162 +2222,6 @@ src/lib/firebase/
 - **Bug Resolution**: < 48 hours for critical issues
 - **Feature Delivery**: 1-2 week sprints for major features
 - **Test Coverage**: Maintain > 85% coverage
-
----
-
-## Project Architecture Overview
-
-This section provides AI developers with comprehensive context about the PairUp Events platform architecture, design system, and development patterns.
-
-### Platform Identity & Mission
-
-**PairUp Events** is a social platform that connects pairs of people (2×2) for shared activities and experiences. The core innovation is the **2-meets-2 model** - matching two pairs of friends/couples/families rather than individuals, creating more comfortable and balanced social encounters.
-
-**Key Differentiators**:
-
-- **Pair-based matching** instead of individual dating or large group events
-- **AI-powered event creation** through natural language conversation
-- **Trust and safety focus** with comprehensive moderation and privacy controls
-- **Real-world experiences** emphasizing curiosity, learning, and shared adventures
-
-### Technical Architecture Summary
-
-#### Frontend Architecture
-
-```
-📁 src/
-├── 🎨 components/           # Atomic Design Components
-│   ├── 🔬 atoms/           # Basic building blocks (Button, Input, Icon)
-│   ├── 🧩 molecules/       # Composite components (Form, Card, Navigation)
-│   ├── 🏢 organisms/       # Complex UI sections (Chat, EventForm)
-│   └── 📄 templates/       # Page layouts and structures
-├── 🎣 hooks/              # Custom React hooks (useAuth, useChat, useFormState)
-├── 🔧 lib/                # Firebase services and utilities
-│   └── 🔥 firebase/       # Modular Firebase service layer
-├── 📄 pages/              # Route components with business logic
-├── 🗂️ types/              # TypeScript type definitions
-├── 🎛️ contexts/           # React contexts (Auth, UserProfile)
-└── ⚙️ utils/              # Helper functions and utilities
-```
-
-#### Component Architecture (Atomic Design)
-
-- **Atoms**: Reusable UI primitives (buttons, inputs, icons)
-- **Molecules**: Component combinations (forms, cards, navigation items)
-- **Organisms**: Complex UI sections (chat interface, event creation forms)
-- **Templates**: Page-level layouts and structural components
-- **Pages**: Route-level components with business logic integration
-
-#### State Management Strategy
-
-- **Local State**: React useState for component-specific state
-- **Shared State**: React Context for 2-level prop drilling (Auth, UserProfile)
-- **Server State**: Direct Firebase integration with service layer abstraction
-- **Form State**: Custom useFormState hook with validation integration
-
-#### Data Architecture (Firestore)
-
-```
-🔥 Firestore Collections:
-├── 👤 users/{userId}                    # Private user profiles
-│   └── events/{eventId}                 # Draft events subcollection
-├── 🌐 public_profiles/{userId}          # Public profile data
-├── 🎪 events/{eventId}                  # Published events (2×2 pairs)
-├── 📍 events_listings/{eventId}         # Discovery feed projection
-├── 🗺️ events_geo/{eventId}              # Location-based queries
-├── 💬 events/{eventId}/messages/        # Chat messages (sharded)
-├── 🔔 users/{userId}/notifications/     # Batched notifications
-└── ⚠️ user_reports/{reportId}           # Moderation reports
-```
-
-#### AI Integration Architecture
-
-- **Gemini 2.0 Flash**: Primary AI model for conversational event creation
-- **Structured Prompts**: `src/constants/aiPrompts.ts` for consistent behavior
-- **Response Parsing**: Custom extraction with `EVENT_DATA_START/END` markers
-- **Fallback Strategy**: Multiple parsing attempts for AI response reliability
-- **Cost Optimization**: Message batching reduces API calls by 75%
-
-#### Design System Architecture
-
-- **WCAG 2.2 AA Compliant**: Full accessibility implementation
-- **Mobile-First Responsive**: 640px+ breakpoints with adaptive layouts
-- **Component Tokens**: Tailwind-based design system with semantic naming
-- **Visual Identity**: Warm, trustworthy design encouraging real-world connection
-- **Motion Design**: Subtle organic animations with reduced-motion support
-
-### Development Workflow & Standards
-
-#### Quality Gates
-
-- **TypeScript Strict Mode**: `noUnusedLocals`, `noUnusedParameters`, `strict: true`
-- **Testing**: Vitest + React Testing Library with 90%+ coverage
-- **Linting**: ESLint with comprehensive rules and formatting
-- **Accessibility**: Automated axe-core checks and manual WCAG validation
-- **Performance**: Core Web Vitals monitoring and bundle optimization
-
-#### Code Standards
-
-- **Component Naming**: `kebab-case` files, `PascalCase` components
-- **Import Organization**: External → Internal absolute → Relative paths
-- **TypeScript**: Strict typing with exported prop types for all components
-- **Error Handling**: Centralized logging with user-friendly messages
-- **Testing**: Co-located tests with `data-testid` selection strategy
-
-#### Git Workflow
-
-- **Branch Strategy**: `main` (production), `create-events-page` (features)
-- **Commit Conventions**: `feat:`, `fix:`, `refactor:`, `docs:`, `chore:`
-- **Code Review**: AI-assisted review with comprehensive documentation
-- **CI/CD**: Automated testing, linting, and deployment validation
-
-### Key Technical Decisions & Rationale
-
-1. **Atomic Design Pattern**: Enables component reusability and consistent UI patterns
-2. **Firebase Service Layer**: Modular services with dependency injection for testability
-3. **AI-First Event Creation**: Conversational interface reduces friction vs traditional forms
-4. **2-Meets-2 Model**: Unique social matching creates balanced, comfortable interactions
-5. **Privacy by Design**: Public/private data separation with clear access controls
-6. **Cost Optimization**: Batch operations and derived collections minimize Firebase costs
-7. **Accessibility First**: WCAG 2.2 AA ensures inclusive user experience
-
-### Current Technical Debt & Next Steps
-
-#### Critical Issues (Must Fix)
-
-1. **Hook Decomposition**: Split 477-line `useChat` hook into focused responsibilities
-2. **Type Consolidation**: Eliminate duplicate `Message` interfaces across files
-3. **Error Handling**: Add user feedback for all error states
-
-#### Architecture Improvements
-
-1. **Service Abstraction**: Create Firebase dependency interfaces for better testing
-2. **Validation Extraction**: Move validation logic from hooks to utility functions
-3. **Component Simplification**: Remove unnecessary wrapper components
-
-#### Performance Optimizations
-
-1. **Bundle Splitting**: Implement lazy loading for route-based code splitting
-2. **Caching Strategy**: Add React Query for server state management
-3. **Image Optimization**: Implement responsive images and lazy loading
-
-### Testing Strategy
-
-- **Unit Tests**: Individual component and hook testing with mocked dependencies
-- **Integration Tests**: Full user flow testing with Firebase emulators
-- **E2E Tests**: Playwright for critical user journeys (planned)
-- **Accessibility Tests**: Automated axe-core integration and manual validation
-- **Performance Tests**: Lighthouse CI for Core Web Vitals monitoring
-
-### Deployment & Infrastructure
-
-- **Firebase Hosting**: Static site deployment with PWA capabilities
-- **Firebase Functions**: Serverless backend for complex business logic (planned)
-- **GitHub Actions**: Automated CI/CD with quality gate validation
-- **Monitoring**: Sentry error tracking and Firebase Performance Monitoring
-- **Analytics**: Google Analytics with privacy-compliant event tracking
-
-This architecture overview provides comprehensive context for AI developers to understand the project's technical foundation, design principles, and development standards. The platform successfully combines modern React architecture with Firebase backend services to create a scalable, accessible, and user-friendly social platform.
 
 ---
 

@@ -19,6 +19,8 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@chatscope/chat-ui-kit-react": "^2.1.1",
+    "@chatscope/chat-ui-kit-styles": "^1.4.0",
     "@sentry/react": "^10.17.0",
     "clsx": "^2.1.1",
     "firebase": "^12.3.0",

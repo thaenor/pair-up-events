@@ -70,10 +70,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onLogout, isLoggingO
 
   // Trap focus within sidebar
   useEffect(() => {
-    if (!isOpen) return
-
     const currentRef = sidebarRef.current
     if (!currentRef) return
+
+    if (!isOpen) {
+      // When sidebar closes, blur any focused element inside to prevent aria-hidden focus conflict
+      if (currentRef.contains(document.activeElement)) {
+        ;(document.activeElement as HTMLElement)?.blur()
+      }
+      return
+    }
 
     const focusableElements = currentRef.querySelectorAll<HTMLElement>(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'

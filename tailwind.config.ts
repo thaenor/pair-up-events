@@ -64,6 +64,11 @@ export default {
           cyan: '#27E9F3',
           yellow: '#FECC08',
           cream: '#F5E6C8',
+          lightGray: '#F2F5F7',
+          lightCyan: '#DFFBFD',
+          lightCream: '#FCF7ED',
+          gray: '#E0E0E0',
+          darkGray: '#8B9AA2',
         },
       },
       borderRadius: {

@@ -165,18 +165,23 @@ const EventPreviewCard: React.FC<EventPreviewCardProps> = ({ eventData, onEdit, 
           {onEdit && (
             <button
               onClick={onEdit}
-              className="flex-1 px-3 md:px-4 py-2 text-xs md:text-sm font-medium text-pairup-darkBlue bg-white border-2 border-pairup-darkBlue rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex-1 px-3 md:px-4 py-3 md:py-2 text-xs md:text-sm font-medium text-pairup-darkBlue bg-white border-2 border-pairup-darkBlue rounded-lg hover:bg-gray-50 transition-colors min-h-[44px] touch-manipulation"
+              aria-label="Edit event details"
             >
               Edit
             </button>
           )}
           {onConfirm && (
-            <button
-              onClick={onConfirm}
-              className="flex-1 px-3 md:px-4 py-2 text-xs md:text-sm font-medium text-white bg-pairup-darkBlue rounded-lg hover:bg-opacity-90 transition-colors"
-            >
-              Create Event
-            </button>
+            <div className="flex-1">
+              <p className="text-xs text-gray-600 mb-2">Send this link to your pair to confirm the event</p>
+              <button
+                onClick={onConfirm}
+                className="w-full px-3 md:px-4 py-3 md:py-2 text-xs md:text-sm font-medium text-white bg-pairup-darkBlue rounded-lg hover:bg-opacity-90 transition-colors min-h-[44px] touch-manipulation"
+                aria-label="Copy invite link"
+              >
+                Copy invite link
+              </button>
+            </div>
           )}
         </div>
       )}
