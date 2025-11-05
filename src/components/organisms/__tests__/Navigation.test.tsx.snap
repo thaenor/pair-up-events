@@ -1,0 +1,142 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Navigation > should match snapshot 1`] = `
+<nav
+  aria-label="Main navigation"
+  class="py-4 w-full absolute top-0 left-0 z-10 bg-pairup-darkBlue shadow-2xl"
+  data-testid="main-navigation"
+>
+  <div
+    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between"
+  >
+    <div
+      class="flex items-center gap-2"
+    >
+      <img
+        alt="Pair Up Events logo"
+        class="h-6 w-6 object-contain"
+        src="/PUE_logo_transparent.png"
+      />
+      <span
+        class="text-base font-bold"
+      >
+        <span
+          class="text-pairup-cyan"
+        >
+          Pair
+        </span>
+        <span
+          class="text-pairup-yellow"
+        >
+          Up Events
+        </span>
+      </span>
+    </div>
+    <div
+      class="hidden md:flex items-center gap-6"
+      role="menubar"
+    >
+      <a
+        aria-label="Learn how PairUp works"
+        class="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
+        href="#how-it-works"
+        role="menuitem"
+      >
+        How It Works
+      </a>
+      <a
+        aria-label="Learn about PairUp benefits"
+        class="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
+        href="#benefits"
+        role="menuitem"
+      >
+        Benefits
+      </a>
+      <a
+        aria-label="Join Early Access"
+        class="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
+        href="#early-access"
+        role="menuitem"
+      >
+        Early Access
+      </a>
+    </div>
+    <div
+      class="flex items-center justify-center gap-4 mr-4"
+    >
+      <button
+        aria-label="Navigate to login page"
+        class="flex items-center gap-2 text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-4 py-2 font-medium"
+        data-testid="login-button"
+      >
+        <svg
+          class="lucide lucide-log-in w-4 h-4"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"
+          />
+          <polyline
+            points="10 17 15 12 10 7"
+          />
+          <line
+            x1="15"
+            x2="3"
+            y1="12"
+            y2="12"
+          />
+        </svg>
+        Log In
+      </button>
+      <button
+        aria-label="Navigate to signup page"
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[5px] font-medium transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 px-6 py-3 text-base bg-pairup-yellow text-pairup-darkBlue hover:opacity-90"
+        data-testid="signup-button"
+      >
+        <svg
+          class="lucide lucide-user-plus w-4 h-4"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+          />
+          <circle
+            cx="9"
+            cy="7"
+            r="4"
+          />
+          <line
+            x1="19"
+            x2="19"
+            y1="8"
+            y2="14"
+          />
+          <line
+            x1="22"
+            x2="16"
+            y1="11"
+            y2="11"
+          />
+        </svg>
+        Sign Up
+      </button>
+    </div>
+  </div>
+</nav>
+`;

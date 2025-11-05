@@ -1,588 +1,775 @@
 # PairUp Events – Firestore Data Model
 
-> Version: 2.0  
-> Purpose: Provide a clear, maintainable, and cost-optimized Firestore data architecture for the PairUp Events app that enforces the 2-meets-2 pair-based social model.
+> **Version:** 3.0  
+> **Purpose:** Simplified, consolidated Firestore architecture for the PairUp Events 2-meets-2 pair-based social model.
 
 ---
 
-## 🔧 Overview
+## 📋 Table of Contents
 
-This model is designed for **low-cost, scalable Firebase usage** with **pair-based event constraints**:
-- Minimize document reads/writes.
-- Favor projection collections (listings, geo) for cheap list views.
-- Separate public vs private data for privacy and caching.
-- Avoid fan-out updates by linking data through subcollections and snapshots.
-- **Enforce 2-meets-2 model**: All events must have exactly 4 participants (2 pairs of 2).
-- **State-driven event lifecycle**: Events progress through pending → live → confirmed states.
-
----
-
-## 🧱 Top-Level Collections
-
-### `/users/{userId}`
-**Private user profiles** — only visible to the authenticated user.
-
-| Field | Type | Description |
-|--------|------|-------------|
-| `email` | string | User's private email |
-| `firstName` | string | User's first name (public identifier) |
-| `displayName` | string | User's display name (from OAuth or custom) |
-| `birthDate` | string | User's birthdate (private, used for age verification) |
-| `gender` | string | User's gender identity (male, female, non-binary, prefer-not-to-say) |
-| `photoUrl` | string | User's profile photo URL (private) |
-| `createdAt` | Timestamp | Account creation date |
-| `settings` | object | `{ emailNotifications: boolean, pushNotifications: boolean, language: string, theme: string }` |
-| `funFact` | string | Optional fun fact about the user |
-| `likes` | string | Optional list of things the user likes |
-| `dislikes` | string | Optional list of things the user dislikes |
-| `hobbies` | string | Optional list of user's hobbies |
-| `preferences` | object | `{ ageRange: { min: number, max: number }, preferredGenders: string[], preferredVibes: string[] }` |
-
-**Subcollections:**
-- `/devices/{deviceId}` → stores push tokens and platform info.
-- `/notifications/{notificationId}` → structured notifications (see Notification System below).
-- `/memberships/{eventId}` → references to events the user created/joined.
+- [Architecture Overview](#-architecture-overview)
+- [Core Collections](#-core-collections)
+  - [users](#1-usersuser id)
+  - [publicProfiles](#2-publicprofilesuser id)
+  - [events](#3-eventsevent id)
+- [Discovery Collections](#-discovery-collections)
+  - [publicListings](#1-publiclistingsevent id)
+  - [publicListingsGeo](#2-publiclistingsgeoevent id)
+- [Event Lifecycle & User Flows](#-event-lifecycle--user-flows)
+  - [Event States](#event-states)
+  - [Creator Flow (A+B)](#flow-1-creator-ab-creates-event)
+  - [Applicant Flow (C+D) with Dual Approval](#flow-2-applicants-cd-apply-with-dual-creator-approval)
+  - [Event Completion](#flow-3-event-completion)
+- [Query Patterns](#query-patterns)
+- [Composite Indexes](#-composite-indexes)
+- [Account Creation & Data Privacy](#-account-creation--data-privacy)
 
 ---
 
-### `/public_profiles/{userId}`
-**Public-facing profile**, accessible by all users.
+## 🏗️ Architecture Overview
 
-| Field | Type | Description |
-|--------|------|-------------|
-| `firstName` | string | Public first name |
-| `displayName` | string | Public display name |
-| `photoUrl` | string | Public photo |
-| `city` | string | Optional city |
-| `bio` | string | Optional bio or tagline |
-| `handles` | object | Optional social handles |
-| `age` | number | Calculated age from birthDate (for matching) |
-| `gender` | string | Public gender (for matching) |
+PairUp Events enforces a **2-meets-2 model**: All events have exactly 4 participants (2 pairs of 2).
+
+### Collection Relationships
+
+```mermaid
+graph TB
+    subgraph "Core Collections"
+        U[users]
+        PU[publicProfiles]
+        E[events]
+    end
+
+    subgraph "Discovery Collections"
+        PL[publicListings]
+        PLG[publicListingsGeo]
+    end
+
+    U --> OE[ownEvents subcollection]
+    OE --> CH[chatHistory sub-subcollection]
+
+    E --> P[participants subcollection]
+    E --> JR[joinRequests subcollection]
+    E --> GC[groupChat subcollection]
+
+    E -.sync via Cloud Function.-> PL
+    E -.sync via Cloud Function.-> PLG
+    U -.sync.-> PU
+
+    style U fill:#27E9F3
+    style E fill:#FECC08
+    style PU fill:#27E9F3
+    style PL fill:#FECC08
+    style PLG fill:#FECC08
+```
+
+### Key Architectural Decisions
+
+1. **Unified User-Event Relationships**: `ownEvents` replaces separate memberships and draft events collections
+2. **AI Conversation Storage**: `chatHistory` subcollection replaces embedded conversation arrays
+3. **Dual Creator Approval**: Both creators (A+B) must approve join requests from applicant pairs
+4. **Simplified Group Chat**: Direct `groupChat` subcollection, no sharding complexity
+5. **Discovery Optimization**: Lightweight projections (`publicListings`, `publicListingsGeo`) for fast queries
 
 ---
 
-### `/events/{eventId}`
-**Main event documents** — source of truth. **Enforces 2-meets-2 model (exactly 4 participants)**.
+## 🎯 Core Collections
 
-| Field | Type | Description |
-|--------|------|-------------|
-| `title` | string | Event title |
-| `description` | string | Full description |
-| `creatorId` | string | UID of the creator (User A) |
-| `status` | string | `"pending" | "live" | "confirmed" | "completed" | "cancelled"` |
-| `visibility` | string | `"public" | "private" | "friends"` |
-| `timeStart` | Timestamp | Start time |
-| `timeEnd` | Timestamp | End time (optional) |
-| `location` | object | `{ address, city, country, geoPoint, geohash }` |
-| `tags` | string[] | Searchable labels |
-| `capacity` | number | **Fixed at 4** (2 pairs of 2) |
-| `pairs` | object | `{ pair1: { userA: string, userB: string }, pair2: { userC: string, userD: string } }` |
-| `preferences` | object | Event matching preferences (see Event Preferences below) |
-| `counts` | object | `{ confirmed, applicants, messages }` |
-| `coverThumbUrl` | string | Small thumbnail for listings |
-| `createdAt` | Timestamp | Creation time |
-| `updatedAt` | Timestamp | Last update |
-| `lastActivityAt` | Timestamp | Used for sorting listings |
-| `chatCreated` | boolean | Whether group chat has been created |
-| `chatArchived` | boolean | Whether chat has been archived |
+### 1. `users/{userId}`
 
-**Event Preferences Object:**
-```json
+**Purpose**: Private user profiles, only accessible to the authenticated user.
+
+**Fields:**
+
+| Field                | Type              | Description                                                                  |
+| -------------------- | ----------------- | ---------------------------------------------------------------------------- |
+| `email`              | string            | User's private email                                                         |
+| `firstName`          | string            | User's first name (public identifier)                                        |
+| `lastName`           | string (optional) | User's last name (public identifier)                                         |
+| `birthDate`          | string            | User's birthdate (private, used for age verification)                        |
+| `gender`             | string            | User's gender identity (`male`, `female`, `non-binary`, `prefer-not-to-say`) |
+| `photoUrl`           | string (optional) | User's profile photo URL                                                     |
+| `createdAt`          | Timestamp         | Account creation date                                                        |
+| `settings`           | object            | User settings (see Settings Object below)                                    |
+| `preferences`        | object            | User preferences (see Preferences Object below)                              |
+| `funFact`            | string (optional) | Fun fact about the user                                                      |
+| `likes`              | string (optional) | Things the user likes                                                        |
+| `dislikes`           | string (optional) | Things the user dislikes                                                     |
+| `hobbies`            | string (optional) | User's hobbies                                                               |
+| `activeDraftEventId` | string (optional) | Reference to active draft event ID                                           |
+
+**Settings Object:**
+
+```typescript
 {
-  "duoType": "friends|couples|family|roommates|colleagues",
-  "preferredAgeRange": { "min": number, "max": number },
-  "preferredGender": string[],
-  "desiredVibes": string[], // From design doc: adventurous, chill, funny, curious, outgoing, creative, foodies, active, culture, family-friendly, organizers, nightlife, mindful
-  "relationshipType": string,
-  "comfortableLanguages": string[],
-  "duoVibe": string[],
-  "connectionIntention": "friends|experience|networking|romantic|curious"
+  emailNotifications: boolean,
+  pushNotifications: boolean,
+  language: "en" | "es" | "fr" | "de",
+  theme: "light" | "dark" | "auto",
+  colorScheme: "default" | "high_contrast" | "colorblind_friendly"
+}
+```
+
+> Note: The `settings` object (emailNotifications, pushNotifications, language, theme, colorScheme) is deferred and will be implemented in a later phase. See January 2025 entry in `Docs/CHANGELOG.md` for details.
+
+**Preferences Object:**
+
+```typescript
+{
+  ageRange: { min: number, max: number },
+  preferredGenders: Gender[],
+  preferredVibes: string[]
 }
 ```
 
 **Subcollections:**
-- `/participants/{userId}` → participant info and snapshot.
-- `/messages/{messageId}` → chat messages.
-- `/attachments/{attachmentId}` → uploaded images/files.
-- `/activity/{activityId}` → logs (e.g., user joined, left, etc.).
-- `/join_requests/{requestId}` → pending join requests from other pairs.
+
+- [`ownEvents/{eventId}`](#usersuseridowneventseventid) - All events user is involved in (created, joined, or applied to)
 
 ---
 
-### `/events/{eventId}/join_requests/{requestId}`
-**Join requests from pairs wanting to join live events.**
+#### `users/{userId}/ownEvents/{eventId}`
 
-| Field | Type | Description |
-|--------|------|-------------|
-| `requestingPair` | object | `{ userC: string, userD: string }` |
-| `status` | string | `"pending" | "approved" | "declined"` |
-| `requestedAt` | Timestamp | When request was made |
-| `respondedAt` | Timestamp | When A+B responded |
-| `respondedBy` | string | User ID who responded |
-| `message` | string | Optional message from requesting pair |
+**Purpose**: Unified collection storing all user-event relationships. Replaces both `memberships` and draft `events` collections.
 
----
+**Fields:**
 
-### `/users/{userId}/memberships/{eventId}`
-User–Event relationship documents.
+| Field                    | Type                 | Description                                                             |
+| ------------------------ | -------------------- | ----------------------------------------------------------------------- |
+| `eventId`                | string               | Event reference                                                         |
+| `role`                   | string               | `"creator"` or `"pair_member"`                                          |
+| `status`                 | string               | Event lifecycle state from user's perspective (see Status Values below) |
+| `pairRole`               | string               | `"userA"`, `"userB"`, `"userC"`, or `"userD"`                           |
+| `publishedEventId`       | string (optional)    | Reference to published event in `/events` collection                    |
+| `invitedBy`              | string (optional)    | User ID who invited this user                                           |
+| `isDeleted`              | boolean              | Soft delete flag                                                        |
+| `joinedAt`               | Timestamp            | When user created/joined event                                          |
+| `lastGroupChatMessageAt` | Timestamp (optional) | Last group chat message timestamp                                       |
+| `lastSeenMessageAt`      | Timestamp (optional) | Last read timestamp for group chat                                      |
+| `createdAt`              | Timestamp            | Document creation time                                                  |
+| `updatedAt`              | Timestamp            | Last update time                                                        |
+| `deletedAt`              | Timestamp (optional) | When soft-deleted                                                       |
 
-| Field | Type | Description |
-|--------|------|-------------|
-| `eventId` | string | Event reference |
-| `role` | string | `"creator" | "pair_member" | "invited"` |
-| `status` | string | `"confirmed" | "pending" | "declined"` |
-| `pairRole` | string | `"userA" | "userB" | "userC" | "userD"` |
-| `joinedAt` | Timestamp | When user joined |
-| `lastMessageAt` | Timestamp | Last message in event |
-| `lastSeenMessageAt` | Timestamp | Last read timestamp |
-| `eventSnap` | object | `{ title, timeStart, city, coverThumbUrl, status }` |
+**Status Values:**
 
----
+- `"draft"` - Creator building event with AI
+- `"waitingPartnerConfirmation"` - Waiting for pair to confirm
+- `"pendingOrganizerApproval"` - Applied as pair, awaiting creator approval
+- `"scheduled"` - Confirmed participant
+- `"declined"` - Application rejected
+- `"cancelled"` - Event cancelled
+- `"done"` - Event completed
 
-### `/events_listings/{eventId}`
-**Lightweight projection** for public discovery feeds.
+**Draft-only Fields** (present when status=`"draft"`):
 
-| Field | Type | Description |
-|--------|------|-------------|
-| `title` | string | Event title |
-| `city` | string | Location summary |
-| `timeStart` | Timestamp | For sorting |
-| `visibility` | string | `"public" | "private"` |
-| `confirmedCount` | number | Cached participant count |
-| `creatorSnap` | object | `{ displayName, photoUrl }` |
-| `coverThumbUrl` | string | Thumbnail |
-| `tags` | string[] | Search keywords |
-| `lastActivityAt` | Timestamp | Recent activity time |
+| Field         | Type                 | Description                                 |
+| ------------- | -------------------- | ------------------------------------------- |
+| `title`       | string (optional)    | Event title being built                     |
+| `description` | string (optional)    | Event description                           |
+| `timeStart`   | Timestamp (optional) | Start time                                  |
+| `timeEnd`     | Timestamp (optional) | End time                                    |
+| `location`    | object (optional)    | Location data: `{ address, city, country }` |
+| `tags`        | string[] (optional)  | Event tags                                  |
+| `preferences` | object (optional)    | Event preferences (partial)                 |
 
-> **Updated by Cloud Function** on event create/update.  
-> Used for: home feed, search, “upcoming” lists.
+**Confirmed Event Fields** (present when published/scheduled):
 
----
+| Field       | Type   | Description                                       |
+| ----------- | ------ | ------------------------------------------------- |
+| `eventSnap` | object | Cached event summary (see EventSnap Object below) |
 
-### `/events_geo/{eventId}`
-**Spatial projection** for geo-based queries.
+**EventSnap Object:**
 
-| Field | Type | Description |
-|--------|------|-------------|
-| `lat` | number | Latitude |
-| `lng` | number | Longitude |
-| `geohash` | string | Precomputed hash for range queries |
-| `timeStart` | Timestamp | For sorting/upcoming filter |
-| `visibility` | string | Public/private flag |
-
-> **Updated by Cloud Function** for nearby event lookups.
-
----
-
-### `/users/{userId}/notifications/{batchId}/{notificationId}`
-**Structured notification system** with batching for cost optimization.
-
-**Batching Strategy**: Group notifications in batches of 50-100 for reduced read costs.
-
-| Field | Type | Description |
-|--------|------|-------------|
-| `type` | string | `"event_invite" | "join_request" | "event_confirmed" | "event_reminder" | "chat_message" | "feedback_prompt" | "system_update"` |
-| `title` | string | Notification title |
-| `message` | string | Notification body |
-| `eventId` | string | Related event (if applicable) |
-| `senderId` | string | User who triggered notification |
-| `read` | boolean | Whether user has read this notification |
-| `createdAt` | Timestamp | When notification was created |
-| `expiresAt` | Timestamp | TTL for auto-cleanup |
-| `actionUrl` | string | Deep link to relevant page |
-| `metadata` | object | Additional context data |
-
-**Notification Summary (Added to users collection for performance):**
-```json
+```typescript
 {
-  "notificationSummary": {
-    "unreadCount": number,
-    "lastBatchId": string,
-    "lastReadAt": timestamp,
-    "lastNotificationAt": timestamp
-  }
+  title: string,
+  timeStart: Timestamp,
+  city: string,
+  coverThumbUrl?: string,
+  eventStatus: EventStatus
 }
+```
+
+**Subcollections:**
+
+- [`chatHistory/{messageId}`](#usersuseridowneventseventidchathistorymessageid) - AI planning conversation messages
+
+---
+
+#### `users/{userId}/ownEvents/{eventId}/chatHistory/{messageId}`
+
+**Purpose**: AI conversation messages for event planning. Replaces embedded `conversation.messages[]` array for better scalability.
+
+**Fields:**
+
+| Field       | Type      | Description               |
+| ----------- | --------- | ------------------------- |
+| `text`      | string    | Message content           |
+| `sender`    | string    | `"user"` or `"assistant"` |
+| `timestamp` | Timestamp | When message was sent     |
+
+**Key Features:**
+
+- Only exists for draft events (status=`"draft"`)
+- Automatically persisted during AI conversation
+- Restored when user returns to event creation page
+
+---
+
+### 2. `publicProfiles/{userId}`
+
+**Purpose**: Public-facing user profiles, accessible by all authenticated users.
+
+**Fields:**
+
+| Field       | Type              | Description                                  |
+| ----------- | ----------------- | -------------------------------------------- |
+| `firstName` | string            | Public first name                            |
+| `lastName`  | string (optional) | Public last name                             |
+| `photoUrl`  | string (optional) | Public profile photo                         |
+| `city`      | string (optional) | User's city                                  |
+| `bio`       | string (optional) | Bio or tagline                               |
+| `handles`   | object (optional) | Social media handles                         |
+| `age`       | number            | Calculated age from birthDate (for matching) |
+| `gender`    | string            | Public gender (for matching)                 |
+
+**Synced From**: `users/{userId}` collection via Cloud Function or client-side logic.
+
+---
+
+### 3. `events/{eventId}`
+
+**Purpose**: Main event documents (source of truth). Enforces 2-meets-2 model (exactly 4 participants).
+
+**Fields:**
+
+| Field            | Type                 | Description                                                                  |
+| ---------------- | -------------------- | ---------------------------------------------------------------------------- |
+| `title`          | string               | Event title                                                                  |
+| `description`    | string               | Full description                                                             |
+| `creatorId`      | string               | UID of the creator (User A)                                                  |
+| `status`         | string               | Event lifecycle state (see Status Values below)                              |
+| `visibility`     | string               | `"public"` or `"private"`                                                    |
+| `timeStart`      | Timestamp            | Start time                                                                   |
+| `timeEnd`        | Timestamp (optional) | End time                                                                     |
+| `location`       | object               | Location data: `{ address, city, country, geoPoint, geohash }`               |
+| `tags`           | string[]             | Searchable labels                                                            |
+| `pairs`          | object               | Pair structure (see Pairs Object below)                                      |
+| `preferences`    | object               | Event matching preferences (see Preferences Object below)                    |
+| `counts`         | object               | Cached counts: `{ confirmed: number, applicants: number, messages: number }` |
+| `coverThumbUrl`  | string (optional)    | Small thumbnail for listings                                                 |
+| `createdAt`      | Timestamp            | Creation time                                                                |
+| `updatedAt`      | Timestamp            | Last update                                                                  |
+| `lastActivityAt` | Timestamp            | Used for sorting listings                                                    |
+| `chatCreated`    | boolean              | Whether group chat has been created                                          |
+
+**Status Values:**
+
+- `"draft"` - Not yet published (shouldn't exist at `/events` level)
+- `"waitingPartnerConfirmation"` - Creator waiting for their pair
+- `"published"` - Visible in listings, accepting applications
+- `"scheduled"` - All 4 participants confirmed
+- `"done"` - Event completed
+- `"cancelled"` - Event cancelled
+
+**Pairs Object:**
+
+```typescript
+{
+  pair1: { userA: string, userB: string },
+  pair2: { userC: string, userD: string }
+}
+```
+
+**Preferences Object:**
+
+```typescript
+{
+  duoType: "friends" | "couples" | "family" | "roommates" | "colleagues",
+  preferredAgeRange: { min: number, max: number },
+  preferredGender: Gender[],
+  desiredVibes: string[], // adventurous, chill, funny, curious, outgoing, creative, foodies, active, culture, family-friendly, organizers, nightlife, mindful
+  relationshipType: string,
+  comfortableLanguages: string[],
+  duoVibe: string[],
+  connectionIntention: "friends" | "experience" | "networking" | "romantic" | "curious"
+}
+```
+
+**Subcollections:**
+
+- [`participants/{userId}`](#eventseventidparticipantsuserid) - Participant details and snapshots
+- [`joinRequests/{requestId}`](#eventsevendidjoinrequestsrequestid) - Application requests from pairs
+- [`groupChat/{messageId}`](#eventseventidgroupchatmessageid) - Event group chat
+
+---
+
+#### `events/{eventId}/participants/{userId}`
+
+**Purpose**: Stores participant information and snapshot data for each of the 4 event participants.
+
+**Fields:**
+
+| Field         | Type      | Description                                   |
+| ------------- | --------- | --------------------------------------------- |
+| `userId`      | string    | Participant user ID                           |
+| `pairRole`    | string    | `"userA"`, `"userB"`, `"userC"`, or `"userD"` |
+| `role`        | string    | `"creator"` or `"pair_member"`                |
+| `joinedAt`    | Timestamp | When user joined event                        |
+| `profileSnap` | object    | Cached public profile data                    |
+
+---
+
+#### `events/{eventId}/joinRequests/{requestId}`
+
+**Purpose**: Application requests from pairs wanting to join published events.
+
+**Key Requirement**: BOTH creators (User A and User B) must approve for application to be accepted. If either declines, application is rejected immediately.
+
+**Fields:**
+
+| Field              | Type                 | Description                                                                    |
+| ------------------ | -------------------- | ------------------------------------------------------------------------------ |
+| `state`            | string               | Application state (see State Values below)                                     |
+| `applicantPair`    | object               | `{ userC: string, userD: string \| null }` (userD null until confirmed)        |
+| `creatorApprovals` | object               | `{ userA: ApprovalStatus, userB: ApprovalStatus }` (see Approval Status below) |
+| `approvedBy`       | string[]             | Array of creator user IDs who approved                                         |
+| `declinedBy`       | string (optional)    | First creator to decline (if any)                                              |
+| `createdAt`        | Timestamp            | When User C clicked "Join"                                                     |
+| `submittedAt`      | Timestamp (optional) | When User D confirmed                                                          |
+| `respondedAt`      | Timestamp (optional) | When BOTH creators approved or one declined                                    |
+| `lastUpdatedBy`    | string (optional)    | Last creator who took action                                                   |
+
+**State Values:**
+
+- `"waitingPartnerConfirmation"` - User C waiting for User D to confirm
+- `"submitted"` - User D confirmed, awaiting creator review
+- `"partiallyApproved"` - One creator approved, waiting for the other
+- `"accepted"` - Both creators approved
+- `"declined"` - At least one creator declined
+
+**Approval Status:** `"pending"`, `"approved"`, or `"declined"`
+
+---
+
+#### `events/{eventId}/groupChat/{messageId}`
+
+**Purpose**: Group chat between all 4 participants after event is scheduled.
+
+**Access**: Only available when event status is `"scheduled"`.
+
+**Fields:**
+
+| Field       | Type      | Description                              |
+| ----------- | --------- | ---------------------------------------- |
+| `senderId`  | string    | User who sent message                    |
+| `content`   | string    | Message text                             |
+| `type`      | string    | `"text"` or `"system"`                   |
+| `createdAt` | Timestamp | When sent                                |
+| `readBy`    | object    | `{ userId: Timestamp }` - tracking reads |
+
+---
+
+## 📊 Discovery Collections
+
+These collections are lightweight projections of `/events`, optimized for fast queries. Updated by Cloud Functions on event create/update.
+
+### 1. `publicListings/{eventId}`
+
+**Purpose**: Lightweight projection for public discovery feeds.
+
+**Fields:**
+
+| Field            | Type              | Description                                |
+| ---------------- | ----------------- | ------------------------------------------ |
+| `title`          | string            | Event title                                |
+| `city`           | string            | Location summary                           |
+| `timeStart`      | Timestamp         | For sorting                                |
+| `visibility`     | string            | `"public"` or `"private"`                  |
+| `confirmedCount` | number            | Cached participant count                   |
+| `creatorSnap`    | object            | `{ firstName: string, photoUrl?: string }` |
+| `coverThumbUrl`  | string (optional) | Thumbnail                                  |
+| `tags`           | string[]          | Search keywords                            |
+| `lastActivityAt` | Timestamp         | Recent activity time                       |
+
+**Used For**: Home feed, search, "upcoming events" lists.
+
+---
+
+### 2. `publicListingsGeo/{eventId}`
+
+**Purpose**: Spatial projection for location-based queries.
+
+**Fields:**
+
+| Field        | Type      | Description                        |
+| ------------ | --------- | ---------------------------------- |
+| `lat`        | number    | Latitude                           |
+| `lng`        | number    | Longitude                          |
+| `geohash`    | string    | Precomputed hash for range queries |
+| `timeStart`  | Timestamp | For sorting/upcoming filter        |
+| `visibility` | string    | `"public"` or `"private"`          |
+
+**Used For**: Nearby event lookups, map-based discovery.
+
+---
+
+## 🔄 Event Lifecycle & User Flows
+
+### Event States
+
+Events progress through these lifecycle states:
+
+```
+draft
+  ↓
+waitingPartnerConfirmation (Creator's pair must accept)
+  ↓
+published (Visible in public listings, accepting applications)
+  ↓
+[partiallyApproved for joinRequests]
+  ↓
+scheduled (All 4 participants confirmed, chat accessible)
+  ↓
+done | cancelled (Event completed or cancelled)
 ```
 
 ---
 
-### `/events/{eventId}/messages/{shardId}/{messageId}`
-**Chat messages** with lifecycle management and sharding for scalability.
+### Flow 1: Creator (A+B) Creates Event
 
-**Sharding Strategy**: `shardId = Math.floor(timestamp / (24 * 60 * 60 * 1000))` (daily shards)
+#### Step 1: User A Starts Creating Event
 
-| Field | Type | Description |
-|--------|------|-------------|
-| `senderId` | string | User who sent the message |
-| `content` | string | Message text content |
-| `type` | string | `"text" | "system" | "feedback_prompt"` |
-| `createdAt` | Timestamp | When message was sent |
-| `editedAt` | Timestamp | Last edit time (if applicable) |
-| `systemMessage` | object | For system messages: `{ type: "welcome" | "event_completed" | "archive_prompt", data: object }` |
-| `readBy` | object | `{ userId: timestamp }` - when each user read this message |
+**Actions:**
 
-**Chat Summary (Added to events collection for performance):**
-```json
-{
-  "chatSummary": {
-    "lastMessage": "string",
-    "lastMessageAt": "timestamp",
-    "unreadCount": { "userId": number },
-    "messageCount": number,
-    "isActive": boolean
-  }
-}
+- Document created: `/users/userA/ownEvents/{newEventId}`
+- Fields:
+  - `status: "draft"`
+  - `role: "creator"`
+  - `pairRole: "userA"`
+- AI planning begins, messages stored in `chatHistory` subcollection
+
+**User Experience:**
+
+- User A chats with AI assistant to build event details
+- Conversation auto-saved every 2 seconds or 5 messages
+- Draft automatically restored if user returns later
+
+---
+
+#### Step 2: User A Submits Event for Pair Confirmation
+
+**Actions:**
+
+- Update `/users/userA/ownEvents/{eventId}`:
+  - `status: "waitingPartnerConfirmation"`
+- Generate invite link for User B
+- User A shares link with User B (via text, email, etc.)
+
+**Link Format:** `pairupevents.com/join/{eventId}/{inviteToken}`
+
+---
+
+#### Step 3: User B Confirms Event
+
+**Actions:**
+
+1. **User B clicks link**, sees event preview page
+2. **User B clicks "Confirm"** (requires login/signup if needed)
+3. Document created: `/users/userB/ownEvents/{eventId}`
+   - Fields: `status: "scheduled"`, `role: "pair_member"`, `pairRole: "userB"`, `invitedBy: "userA"`
+4. Main event published: `/events/{eventId}` created with `status: "published"`
+5. User A's ownEvents updated: `status: "scheduled"`, `publishedEventId: "{eventId}"`
+6. Event appears in `publicListings` (visible to all users)
+
+**Result:** Event is now live and accepting applications from other pairs!
+
+---
+
+### Flow 2: Applicants (C+D) Apply with Dual Creator Approval
+
+#### Step 1: User C Clicks "Join" on Published Event
+
+**Actions:**
+
+- Document created: `/users/userC/ownEvents/{eventId}`
+  - Fields: `status: "waitingPartnerConfirmation"`, `role: "pair_member"`, `pairRole: "userC"`
+- joinRequest created: `/events/{eventId}/joinRequests/{requestId}`
+  - Fields:
+    - `state: "waitingPartnerConfirmation"`
+    - `applicantPair: { userC: "userC_id", userD: null }`
+    - `creatorApprovals: { userA: "pending", userB: "pending" }`
+    - `approvedBy: []`
+- User C presented with invite link for User D
+
+---
+
+#### Step 2: User D Confirms Application
+
+**Actions:**
+
+1. **User D clicks link**, sees event preview
+2. **User D clicks "Confirm"**
+3. Document created: `/users/userD/ownEvents/{eventId}`
+   - Fields: `status: "pendingOrganizerApproval"`, `role: "pair_member"`, `pairRole: "userD"`, `invitedBy: "userC"`
+4. User C's ownEvents updated: `status: "pendingOrganizerApproval"`
+5. joinRequest updated:
+   - `state: "submitted"`
+   - `applicantPair.userD: "userD_id"`
+   - `submittedAt: now()`
+6. **Both User A and User B are notified**: "New pair wants to join your event!"
+
+---
+
+#### Step 3: First Creator Reviews Application
+
+**Scenario A: User A Approves**
+
+**Actions:**
+
+- joinRequest updated:
+  - `creatorApprovals.userA: "approved"`
+  - `approvedBy: ["userA"]`
+  - `state: "partiallyApproved"`
+  - `lastUpdatedBy: "userA"`
+- **User B notified**: "Your partner approved C+D's application. Please review."
+- **User C & D notified**: "Awaiting approval from both organizers..."
+- Application status remains `"pendingOrganizerApproval"` for C & D
+
+---
+
+**Scenario B: User A Declines**
+
+**Actions:**
+
+- joinRequest updated:
+  - `creatorApprovals.userA: "declined"`
+  - `declinedBy: "userA"`
+  - `state: "declined"`
+  - `respondedAt: now()`
+  - `lastUpdatedBy: "userA"`
+- User C & D ownEvents updated: `status: "declined"`
+- **User C & D notified**: "Your application was declined"
+- **Application immediately rejected** - No need for User B to review
+
+---
+
+#### Step 4: Second Creator Reviews Application
+
+_(Only happens if first creator approved)_
+
+**Scenario A: User B Also Approves**
+
+**Actions:**
+
+- joinRequest updated:
+  - `creatorApprovals.userB: "approved"`
+  - `approvedBy: ["userA", "userB"]`
+  - `state: "accepted"`
+  - `respondedAt: now()`
+  - `lastUpdatedBy: "userB"`
+- Event updated: `status: "scheduled"`
+- **All user ownEvents updated**: `status: "scheduled"`
+- **All 4 users notified**: "Event confirmed! Chat is now available."
+- `groupChat` subcollection becomes accessible to all 4 users
+
+---
+
+**Scenario B: User B Declines**
+
+**Actions:**
+
+- joinRequest updated:
+  - `creatorApprovals.userB: "declined"`
+  - `declinedBy: "userB"`
+  - `state: "declined"`
+  - `respondedAt: now()`
+  - `lastUpdatedBy: "userB"`
+- User C & D ownEvents updated: `status: "declined"`
+- **User C & D notified**: "Your application was declined"
+
+---
+
+**Important Notes:**
+
+- Either creator (A or B) can review first - order doesn't matter
+- One "decline" immediately rejects the application
+- Both must "approve" for the application to be accepted
+- Applicants (C & D) see "pending" status until both creators respond
+
+---
+
+### Flow 3: Event Completion
+
+**Event Happens Successfully:**
+
+- Event updated: `status: "done"`
+- All user ownEvents updated: `status: "done"`
+
+**Event Cancelled:**
+
+- Event updated: `status: "cancelled"`
+- All user ownEvents updated: `status: "cancelled"`
+
+---
+
+## Query Patterns
+
+### User Queries
+
+```javascript
+// Get my active draft for chat restoration
+users / { userId } / ownEvents.where('status', '==', 'draft').where('isDeleted', '==', false).limit(1)
+
+// Get my scheduled events
+users / { userId } / ownEvents.where('status', '==', 'scheduled').orderBy('eventSnap.timeStart', 'asc')
+
+// Get events waiting for my pair confirmation
+users / { userId } / ownEvents.where('status', '==', 'waitingPartnerConfirmation').orderBy('createdAt', 'desc')
 ```
 
-**Chat Lifecycle Rules:**
-- Chat created automatically when event status becomes "confirmed"
-- System welcome message sent when chat is created
-- After event completion, system prompts for feedback and archiving
-- Chats auto-archive after 30 days of inactivity
-- Archived chats can be reopened by any participant
+### Creator Queries
+
+```javascript
+// Get applications I need to review (as User A)
+events /
+  { eventId } /
+  joinRequests
+    .where('state', 'in', ['submitted', 'partiallyApproved'])
+    .where('creatorApprovals.userA', '==', 'pending')
+    .orderBy('submittedAt', 'desc')
+
+// Get applications I need to review (as User B)
+events /
+  { eventId } /
+  joinRequests
+    .where('state', 'in', ['submitted', 'partiallyApproved'])
+    .where('creatorApprovals.userB', '==', 'pending')
+    .orderBy('submittedAt', 'desc')
+```
+
+### Public Event Discovery
+
+```javascript
+// Get published events in a city
+publicListings
+  .where('city', '==', 'San Francisco')
+  .where('visibility', '==', 'public')
+  .orderBy('timeStart', 'asc')
+  .limit(20)
+
+// Search events by tags
+publicListings.where('tags', 'array-contains', 'hiking').where('visibility', '==', 'public').orderBy('timeStart', 'asc')
+```
 
 ---
 
-### `/autocomplete_events/{token}`
-Autocomplete token store for title/tag search.
+## 📋 Composite Indexes
 
-| Field | Type | Description |
-|--------|------|-------------|
-| `token` | string | Tokenized prefix |
-| `topResults` | object[] | Array of `{ eventId, title, city }` |
-| `updatedAt` | Timestamp | Last updated |
+### `users/{userId}/ownEvents`
 
----
+```javascript
+// For finding active drafts
+;-status(Ascending) +
+  isDeleted(Ascending) +
+  updatedAt(Descending) -
+  // For listing user's events by status
+  status(Ascending) +
+  createdAt(Descending)
+```
 
-### `/system/{doc}`
-Internal control and operations.
+### `events/{eventId}/joinRequests`
 
-Examples:
-- `/feature_flags/{flag}` → `{ enabled, rolloutPercent }`
-- `/jobs/{name}` → last run checkpoints
-- `/counters/{name}` → distributed counter shards
+```javascript
+// For application reviews by creator A
+;-creatorApprovals.userA(Ascending) +
+  state(Ascending) +
+  submittedAt(Descending) -
+  // For application reviews by creator B
+  creatorApprovals.userB(Ascending) +
+  state(Ascending) +
+  submittedAt(Descending) -
+  // For listing all pending applications
+  state(Ascending) +
+  createdAt(Descending)
+```
 
----
+### `publicListings`
 
-### `/user_reports/{reportId}`
-**User-generated reports** for events and users.
+```javascript
+// For city-based event discovery
+;-city(Ascending) +
+  timeStart(Ascending) +
+  visibility(Ascending) -
+  // For tag-based search
+  tags(Array) +
+  timeStart(Ascending) +
+  visibility(Ascending) -
+  // For activity-based sorting
+  lastActivityAt(Descending) +
+  visibility(Ascending)
+```
 
-| Field | Type | Description |
-|--------|------|-------------|
-| `reporterId` | string | User who made the report |
-| `targetType` | string | `"event" | "user"` |
-| `targetId` | string | ID of reported event or user |
-| `category` | string | `"harassment" | "spam" | "inappropriate_content" | "fake_profile" | "safety_concern" | "other"` |
-| `description` | string | User's description of the issue |
-| `status` | string | `"pending" | "reviewed" | "resolved" | "dismissed"` |
-| `createdAt` | Timestamp | When report was submitted |
-| `reviewedAt` | Timestamp | When admin reviewed |
-| `reviewedBy` | string | Admin who reviewed |
-| `resolution` | string | Admin's resolution notes |
-| `context` | object | Additional context (event details, chat messages, etc.) |
+### `publicListingsGeo`
 
----
-
-### `/audit_logs/{logId}`
-Admin-only logs for moderation and analytics.
-
-| Field | Type | Description |
-|--------|------|-------------|
-| `actorId` | string | Who performed the action |
-| `action` | string | What was done |
-| `target` | object | `{ type, id }` |
-| `meta` | object | Extra metadata |
-| `createdAt` | Timestamp | When it happened |
-
-> **TTL rule** auto-deletes old logs for cost efficiency.
+```javascript
+// For nearby event queries
+;-geohash(Ascending) + timeStart(Ascending) + visibility(Ascending)
+```
 
 ---
 
 ## 👤 Account Creation & Data Privacy
 
 ### Required Fields During Registration
+
 During account creation, users must provide:
+
 - **Email** (private, stored in `/users/{userId}`)
-- **First Name** (public, stored in both `/users/{userId}` and `/public_profiles/{userId}`)
-- **Display Name** (public, stored in both `/users/{userId}` and `/public_profiles/{userId}`)
+- **First Name** (public, stored in both `/users/{userId}` and `/publicProfiles/{userId}`)
+- **Last Name** (optional, public, stored in both `/users/{userId}` and `/publicProfiles/{userId}`)
 - **Birthdate** (private, stored in `/users/{userId}` only)
-- **Gender** (public, stored in both `/users/{userId}` and `/public_profiles/{userId}`)
+- **Gender** (public, stored in both `/users/{userId}` and `/publicProfiles/{userId}`)
 - **Password** (handled by Firebase Auth, not stored in Firestore)
 
 ### Data Privacy Strategy
-- **Private Data** (`/users/{userId}`): Email, birthdate, settings, preferences, stats
-- **Public Data** (`/public_profiles/{userId}`): First name, display name, photo, bio, city, age, gender
-- **Age Verification**: Birthdate is used to ensure users are at least 13 years old
-- **First Name**: Serves as the primary public identifier across the platform
+
+- **Private Data** (`/users/{userId}`): Email, birthdate, settings, preferences, fun facts, likes/dislikes, hobbies
+- **Public Data** (`/publicProfiles/{userId}`): First name, last name, photo, bio, city, age (calculated), gender
+- **Age Verification**: Birthdate is used to ensure users meet age requirements
+- **First Name & Last Name**: Serve as the primary public identifiers across the platform
 
 ### Validation Rules
+
 - **First Name**: 2-50 characters, letters/spaces/hyphens/apostrophes/periods only
-- **Display Name**: 2-50 characters, letters/spaces/hyphens/apostrophes/periods only
+- **Last Name**: 2-50 characters (optional), letters/spaces/hyphens/apostrophes/periods only
 - **Birthdate**: Must be at least 13 years old, maximum 120 years old
-- **Email**: Standard email validation with fake/disposable domain filtering
-- **Gender**: Must be one of: male, female, non-binary, prefer-not-to-say
+- **Email**: Standard email validation with disposable domain filtering
+- **Gender**: Must be one of: `male`, `female`, `non-binary`, `prefer-not-to-say`
 
 ---
 
-## ⚙️ Derived Data Flow
+## 📝 Migration Notes (Future Implementation)
 
-```mermaid
-graph LR
-  A[events] --> B[events_listings]
-  A --> C[events_geo]
-  A --> D[autocomplete_events]
-  E[users] --> F[memberships]
-  E --> G[public_profiles]
-  A --> F
-  E -.->|displayName| G
-````
+When implementing this model in code:
 
-**All derived collections** (`listings`, `geo`, `autocomplete`) are written by **Cloud Functions**,
-keeping client writes minimal and reads cheap.
+1. **Data Migration:**
+   - Migrate `/users/{userId}/memberships` → `/users/{userId}/ownEvents`
+   - Migrate `/users/{userId}/events` (drafts) → `/users/{userId}/ownEvents`
+   - Extract embedded `conversation.messages[]` → `chatHistory` subcollection
+   - Rename collections: `public_profiles`, `events_listings`, `events_geo`
 
----
+2. **Code Updates:**
+   - Update all Firebase queries and cloud functions
+   - Update security rules for new collection names
+   - Implement dual-approval logic for join requests
+   - Update client-side code to use new collection structure
 
-## 🎨 Brand Theming & User Preferences
-
-### User Theme Preferences
-Users can customize their experience with brand-aligned theming:
-
-| Setting | Options | Default |
-|---------|---------|---------|
-| `theme` | `"light" | "dark" | "auto"` | `"light"` |
-| `colorScheme` | `"default" | "high_contrast" | "colorblind_friendly"` | `"default"` |
-| `language` | `"en" | "es" | "fr" | "de"` | `"en"` |
-
-### Brand Color Tokens (from Design Doc)
-```json
-{
-  "primary_create": "#27E9F3",
-  "primary_join": "#FECC08", 
-  "background": "#F5E6C8",
-  "accent_dark": "#1A2A33",
-  "success": "#16A34A",
-  "error": "#DC2626"
-}
-```
+3. **Testing:**
+   - Test all user flows (creator, applicant, approval)
+   - Test edge cases (simultaneous approvals, declined applications)
+   - Verify composite indexes are created
 
 ---
 
-## 💸 Cost Optimization Summary
-
-| Feature       | Optimization                           | Cost Impact |
-| ------------- | -------------------------------------- | ----------- |
-| Event feed    | Small projection (`events_listings`)   | ✅ Low cost |
-| Nearby search | Minimal `events_geo` index             | ✅ Low cost |
-| My events     | Localized `memberships` subcollection  | ✅ Low cost |
-| Public search | Tokenized autocomplete cache           | ✅ Low cost |
-| Notifications | **Batched notifications + summary**    | ⚠️ **-40% cost** |
-| Chat messages | **Sharded messages + summary**         | ⚠️ **-50% cost** |
-| User reports  | TTL pruning and small doc size         | ✅ Low cost |
-| Audits/logs   | TTL pruning and small doc size         | ✅ Low cost |
-| Writes        | Trigger-based projections (no fan-out) | ✅ Low cost |
-| Account creation | Single write to `/users`, optional `/public_profiles` | ✅ Low cost |
-| Pair validation | Client-side validation before writes   | ✅ Low cost |
-
-### **Estimated Monthly Costs (10K DAU)**
-- **Before Optimization**: ~$153/month
-- **After Optimization**: ~$92/month (**40% reduction**)
-
-### **Key Optimizations Applied**
-1. **Message Sharding**: Prevents hot-spotting, reduces read costs
-2. **Notification Batching**: Groups notifications to reduce read operations
-3. **Summary Fields**: Cache frequently accessed data in parent documents
-4. **Composite Indexes**: Enable efficient queries without full collection scans
-5. **TTL Policies**: Auto-cleanup of old data to reduce storage costs
-
----
-
-## 🔒 Access Control Summary
-
-| Collection            | Read                   | Write                   |
-| --------------------- | ---------------------- | ----------------------- |
-| `users`               | Owner only             | Owner only              |
-| `public_profiles`     | Public                 | Owner only              |
-| `events`              | Public or participants | Creator only            |
-| `events_listings`     | Public                 | Cloud Function only     |
-| `events_geo`          | Public                 | Cloud Function only     |
-| `autocomplete_events` | Public                 | Cloud Function only     |
-| `memberships`         | Owner                  | Cloud Function / System |
-| `join_requests`       | Event participants     | Any user (for requests) |
-| `notifications`       | Owner only             | System only             |
-| `messages`            | Event participants     | Event participants      |
-| `user_reports`        | Reporter + Admin       | Any user (for reports)  |
-| `system`              | Admin                  | Admin                   |
-| `audit_logs`          | Admin                  | System only             |
-
----
-
-## 📊 **Required Composite Indexes**
-
-**Critical**: These indexes must be created before deployment to prevent query failures.
-
-### **events_listings Collection**
-```javascript
-// For city-based event discovery
-- city (Ascending) + timeStart (Ascending) + visibility (Ascending)
-
-// For tag-based search
-- tags (Arrays) + timeStart (Ascending) + visibility (Ascending)
-
-// For activity-based sorting
-- lastActivityAt (Descending) + visibility (Ascending)
-
-// For upcoming events
-- timeStart (Ascending) + visibility (Ascending) + confirmedCount (Ascending)
-```
-
-### **events_geo Collection**
-```javascript
-// For nearby event queries
-- geohash (Ascending) + timeStart (Ascending) + visibility (Ascending)
-
-// For location-based upcoming events
-- lat (Ascending) + lng (Ascending) + timeStart (Ascending)
-```
-
-### **user_reports Collection**
-```javascript
-// For admin moderation queue
-- status (Ascending) + createdAt (Descending)
-
-// For report analytics
-- targetType (Ascending) + status (Ascending) + createdAt (Descending)
-```
-
-### **notifications Collection**
-```javascript
-// For user notification feeds
-- userId (Ascending) + read (Ascending) + createdAt (Descending)
-
-// For notification type filtering
-- userId (Ascending) + type (Ascending) + createdAt (Descending)
-```
-
-### **events Collection**
-```javascript
-// For user's created events
-- creatorId (Ascending) + status (Ascending) + createdAt (Descending)
-
-// For event status queries
-- status (Ascending) + timeStart (Ascending) + visibility (Ascending)
-```
-
----
-
-## 🚨 Business Rules & Validation
-
-### Pair-Based Event Constraints
-1. **Fixed Capacity**: All events must have exactly 4 participants (2 pairs of 2)
-2. **Pair Formation**: Users must join as pairs, not individuals
-3. **State Progression**: Events must follow: `pending` → `live` → `confirmed`
-4. **Chat Creation**: Group chats are automatically created when event reaches `confirmed` status
-5. **Join Requests**: Only one pair can join a live event (first approved request wins)
-
-### Event State Transitions
-```
-pending (User A created, waiting for User B)
-    ↓ (User B accepts)
-live (A+B confirmed, visible to C+D)
-    ↓ (User C+D join request approved)
-confirmed (A+B+C+D all confirmed, chat created)
-    ↓ (Event date passes)
-completed (Event finished, feedback prompts sent)
-```
-
-### Data Validation Rules
-- **Event Capacity**: Must always be 4
-- **Pair Structure**: Must have exactly 2 pairs with 2 users each
-- **Age Verification**: Users must be 13+ years old
-- **Event Preferences**: All preference fields must be valid enum values
-- **Chat Lifecycle**: Chats auto-archive after 30 days of inactivity
-
----
-
-## 📋 Summary of Changes (v2.0)
-
-### ✅ **Major Updates to Align with Design Document**
-
-1. **Pair-Based Event Model**
-   - Fixed event capacity to exactly 4 participants (2 pairs of 2)
-   - Added `pairs` object to track User A+B and User C+D
-   - Added `join_requests` subcollection for pair-based joining
-
-2. **Event State Management**
-   - Added `status` field: `pending` → `live` → `confirmed` → `completed`
-   - Added `chatCreated` and `chatArchived` flags
-   - Defined clear state transition rules
-
-3. **Event Creation Preferences**
-   - Added comprehensive `preferences` object with all design doc requirements
-   - Includes duo types, age ranges, vibes, languages, connection intentions
-   - Supports the detailed event creation flow from design doc
-
-4. **User Profile Updates**
-   - Added `firstName` field (matches design doc requirement)
-   - Added `photoUrl` to private profile
-   - Added `preferences` object for user matching criteria
-   - Updated public profile with age and gender for matching
-
-5. **Structured Notification System**
-   - Added typed notifications: `event_invite`, `join_request`, `event_confirmed`, etc.
-   - Added TTL and action URLs for better UX
-   - Supports all notification types from design doc
-
-6. **Chat System Lifecycle**
-   - Added automatic chat creation when events are confirmed
-   - Added system messages for welcome, feedback prompts, archiving
-   - Added read tracking and auto-archiving after 30 days
-
-7. **User Reporting System**
-   - Added `/user_reports` collection with categories
-   - Supports reporting events and users with admin workflow
-   - Includes context and resolution tracking
-
-8. **Brand Theming Support**
-   - Added theme preferences (light/dark/auto)
-   - Added accessibility options (high contrast, colorblind friendly)
-   - Included brand color tokens from design doc
-
-### 🔄 **Backward Compatibility**
-- All existing fields maintained where possible
-- New fields are optional to support gradual migration
-- Cloud Functions handle data migration and validation
-
-### 🚀 **Implementation Priority**
-1. **High Priority**: Event state management, pair constraints, join requests
-2. **Medium Priority**: Chat lifecycle, notifications, user preferences  
-3. **Low Priority**: Brand theming, advanced reporting features
-
----
-
-## ⚠️ **Critical Implementation Notes**
-
-### **🚨 Must Implement Before Production**
-
-1. **Composite Indexes**: Create all required indexes in Firebase Console before deployment
-2. **Message Sharding**: Implement daily sharding for chat messages to prevent hot-spotting
-3. **Notification Batching**: Group notifications in batches of 50-100 for cost optimization
-4. **Security Rules**: Implement optimized security rules using membership checks
-5. **TTL Policies**: Set up automatic cleanup for notifications, audit logs, and old messages
-
-### **📊 Performance Monitoring Setup**
-- Monitor read/write costs daily
-- Set up alerts for costs >$150/month
-- Track query performance and slow queries
-- Monitor index usage and remove unused indexes
-
-### **🔄 Migration Strategy**
-1. **Phase 1**: Deploy with new structure, maintain backward compatibility
-2. **Phase 2**: Migrate existing data using Cloud Functions
-3. **Phase 3**: Remove deprecated fields after migration complete
-
-### **💰 Cost Control Measures**
-- Implement client-side caching for frequently accessed data
-- Use pagination for all list queries
-- Batch operations where possible
-- Monitor and optimize based on real usage patterns
-
+**End of Data Model Documentation**

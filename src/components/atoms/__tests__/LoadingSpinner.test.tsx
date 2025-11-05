@@ -1,23 +1,25 @@
-import { render } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, it, expect } from 'vitest'
+import { render } from '@testing-library/react'
+import LoadingSpinner from '../LoadingSpinner'
 
-import LoadingSpinner from "../LoadingSpinner";
+describe('LoadingSpinner', () => {
+  it('should match snapshot - default size', () => {
+    const { container } = render(<LoadingSpinner />)
+    expect(container.firstChild).toMatchSnapshot()
+  })
 
-describe("LoadingSpinner", () => {
-  it("renders with default medium size classes", () => {
-    const { container } = render(<LoadingSpinner />);
+  it('should match snapshot - small size', () => {
+    const { container } = render(<LoadingSpinner size="sm" />)
+    expect(container.firstChild).toMatchSnapshot()
+  })
 
-    const icon = container.querySelector("svg");
-    expect(icon).toBeInTheDocument();
-    expect(icon).toHaveClass("animate-spin", "text-pairup-cyan", "h-6", "w-6");
-  });
+  it('should match snapshot - large size', () => {
+    const { container } = render(<LoadingSpinner size="lg" />)
+    expect(container.firstChild).toMatchSnapshot()
+  })
 
-  it("applies the size specific classes", () => {
-    const { container } = render(<LoadingSpinner size="xl" className="custom" />);
-
-    const icon = container.querySelector("svg");
-    expect(icon).toBeInTheDocument();
-    expect(icon).toHaveClass("h-12", "w-12");
-    expect(icon).toHaveClass("custom");
-  });
-});
+  it('should match snapshot - with custom label', () => {
+    const { container } = render(<LoadingSpinner aria-label="Custom loading" />)
+    expect(container.firstChild).toMatchSnapshot()
+  })
+})

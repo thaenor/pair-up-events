@@ -1,0 +1,359 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ProfilePreferencesForm > should match snapshot 1`] = `
+<form
+  class="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg p-6 mb-8"
+>
+  <h3
+    class="text-lg font-semibold text-pairup-darkBlue mb-4"
+  >
+    Preferences
+  </h3>
+  <div
+    class="mb-6"
+  >
+    <label
+      class="block text-sm font-medium text-pairup-darkBlue mb-2"
+      for="funFact"
+    >
+      Fun Fact About You
+    </label>
+    <textarea
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+      id="funFact"
+      placeholder="Share something interesting about yourself..."
+      rows="3"
+    >
+      Test fun fact
+    </textarea>
+  </div>
+  <div
+    class="mb-6"
+  >
+    <label
+      class="block text-sm font-medium text-pairup-darkBlue mb-2"
+    >
+      Hobbies & Interests
+    </label>
+    <div
+      class="grid grid-cols-2 gap-2"
+    >
+      <label
+        class="flex items-center space-x-2"
+      >
+        <input
+          checked=""
+          class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+          type="checkbox"
+        />
+        <span
+          class="text-sm text-pairup-darkBlue"
+        >
+          Sports
+        </span>
+      </label>
+      <label
+        class="flex items-center space-x-2"
+      >
+        <input
+          class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+          type="checkbox"
+        />
+        <span
+          class="text-sm text-pairup-darkBlue"
+        >
+          Music
+        </span>
+      </label>
+      <label
+        class="flex items-center space-x-2"
+      >
+        <input
+          class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+          type="checkbox"
+        />
+        <span
+          class="text-sm text-pairup-darkBlue"
+        >
+          Art
+        </span>
+      </label>
+      <label
+        class="flex items-center space-x-2"
+      >
+        <input
+          class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+          type="checkbox"
+        />
+        <span
+          class="text-sm text-pairup-darkBlue"
+        >
+          Reading
+        </span>
+      </label>
+      <label
+        class="flex items-center space-x-2"
+      >
+        <input
+          class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+          type="checkbox"
+        />
+        <span
+          class="text-sm text-pairup-darkBlue"
+        >
+          Cooking
+        </span>
+      </label>
+      <label
+        class="flex items-center space-x-2"
+      >
+        <input
+          class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+          type="checkbox"
+        />
+        <span
+          class="text-sm text-pairup-darkBlue"
+        >
+          Travel
+        </span>
+      </label>
+      <label
+        class="flex items-center space-x-2"
+      >
+        <input
+          class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+          type="checkbox"
+        />
+        <span
+          class="text-sm text-pairup-darkBlue"
+        >
+          Gaming
+        </span>
+      </label>
+      <label
+        class="flex items-center space-x-2"
+      >
+        <input
+          class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+          type="checkbox"
+        />
+        <span
+          class="text-sm text-pairup-darkBlue"
+        >
+          Photography
+        </span>
+      </label>
+      <label
+        class="flex items-center space-x-2"
+      >
+        <input
+          class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+          type="checkbox"
+        />
+        <span
+          class="text-sm text-pairup-darkBlue"
+        >
+          Dancing
+        </span>
+      </label>
+      <label
+        class="flex items-center space-x-2"
+      >
+        <input
+          class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+          type="checkbox"
+        />
+        <span
+          class="text-sm text-pairup-darkBlue"
+        >
+          Hiking
+        </span>
+      </label>
+    </div>
+  </div>
+  <div
+    class="mb-6"
+  >
+    <label
+      class="block text-sm font-medium text-pairup-darkBlue mb-2"
+    >
+      Preferred Vibes
+    </label>
+    <div
+      class="grid grid-cols-2 gap-2"
+    >
+      <label
+        class="flex items-center space-x-2"
+      >
+        <input
+          checked=""
+          class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+          type="checkbox"
+        />
+        <span
+          class="text-sm text-pairup-darkBlue"
+        >
+          Adventurous
+        </span>
+      </label>
+      <label
+        class="flex items-center space-x-2"
+      >
+        <input
+          class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+          type="checkbox"
+        />
+        <span
+          class="text-sm text-pairup-darkBlue"
+        >
+          Chill
+        </span>
+      </label>
+      <label
+        class="flex items-center space-x-2"
+      >
+        <input
+          class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+          type="checkbox"
+        />
+        <span
+          class="text-sm text-pairup-darkBlue"
+        >
+          Funny
+        </span>
+      </label>
+      <label
+        class="flex items-center space-x-2"
+      >
+        <input
+          class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+          type="checkbox"
+        />
+        <span
+          class="text-sm text-pairup-darkBlue"
+        >
+          Curious
+        </span>
+      </label>
+      <label
+        class="flex items-center space-x-2"
+      >
+        <input
+          class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+          type="checkbox"
+        />
+        <span
+          class="text-sm text-pairup-darkBlue"
+        >
+          Outgoing
+        </span>
+      </label>
+      <label
+        class="flex items-center space-x-2"
+      >
+        <input
+          class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+          type="checkbox"
+        />
+        <span
+          class="text-sm text-pairup-darkBlue"
+        >
+          Creative
+        </span>
+      </label>
+      <label
+        class="flex items-center space-x-2"
+      >
+        <input
+          class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+          type="checkbox"
+        />
+        <span
+          class="text-sm text-pairup-darkBlue"
+        >
+          Foodies
+        </span>
+      </label>
+      <label
+        class="flex items-center space-x-2"
+      >
+        <input
+          class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+          type="checkbox"
+        />
+        <span
+          class="text-sm text-pairup-darkBlue"
+        >
+          Active
+        </span>
+      </label>
+      <label
+        class="flex items-center space-x-2"
+      >
+        <input
+          class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+          type="checkbox"
+        />
+        <span
+          class="text-sm text-pairup-darkBlue"
+        >
+          Culture
+        </span>
+      </label>
+      <label
+        class="flex items-center space-x-2"
+      >
+        <input
+          class="rounded border-gray-300 text-pairup-cyan focus:ring-pairup-cyan"
+          type="checkbox"
+        />
+        <span
+          class="text-sm text-pairup-darkBlue"
+        >
+          Mindful
+        </span>
+      </label>
+    </div>
+  </div>
+  <div
+    class="mb-6"
+  >
+    <label
+      class="block text-sm font-medium text-pairup-darkBlue mb-2"
+    >
+      Preferred Age Range
+    </label>
+    <div
+      class="flex gap-2"
+    >
+      <input
+        class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+        max="100"
+        min="18"
+        placeholder="Min"
+        type="number"
+        value="25"
+      />
+      <span
+        class="flex items-center text-pairup-darkBlue/60"
+      >
+        to
+      </span>
+      <input
+        class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+        max="100"
+        min="18"
+        placeholder="Max"
+        type="number"
+        value="35"
+      />
+    </div>
+  </div>
+  <button
+    class="w-full px-4 py-2 bg-pairup-cyan text-pairup-darkBlue rounded-md hover:bg-pairup-cyan/90 focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:opacity-50"
+    type="submit"
+  >
+    Save Preferences
+  </button>
+</form>
+`;

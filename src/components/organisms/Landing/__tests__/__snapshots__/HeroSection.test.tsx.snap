@@ -1,0 +1,149 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`HeroSection > should match snapshot 1`] = `
+<section
+  aria-labelledby="hero-heading"
+  class="relative min-h-screen flex items-center justify-center bg-pairup-cream md:mt-0"
+>
+  <div
+    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 md:pt-20"
+  >
+    <div
+      class="grid md:grid-cols-2 gap-6 items-center"
+    >
+      <div
+        class="animate-fade-in mt-16 sm:mt-64 md:mt-0"
+        id="headline-cta"
+        style="animation-delay: 0.2s;"
+      >
+        <h1
+          class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
+          id="hero-heading"
+        >
+          <span
+            class="text-pairup-darkBlue font-bold"
+          >
+            Grab your friend
+          </span>
+          <br />
+          <span
+            class="text-pairup-darkBlue font-normal"
+          >
+            and meet another pair.
+          </span>
+        </h1>
+        <p
+          class="text-xl mb-8 text-pairup-darkBlue/90 max-w-lg"
+        >
+          Some activities are better as a group of 4.
+          <br />
+          Create your listing and connect with like-minded duos to meet up for shared experiences.
+        </p>
+        <div
+          class="flex flex-col items-center sm:items-start sm:flex-row gap-4"
+        >
+          <a
+            aria-label="Create a new listing (opens in new tab)"
+            class="btn-cta btn-cta--cyan"
+            data-testid="create-listing-link"
+            href="https://forms.gle/F6xptEXPLA8wEpTp7"
+            id="create-listing-btn"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Create a new listing
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-arrow-right"
+              fill="none"
+              height="18"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 12h14"
+              />
+              <path
+                d="m12 5 7 7-7 7"
+              />
+            </svg>
+          </a>
+          <button
+            aria-label="Search for existing listings"
+            class="btn-cta btn-cta--yellow"
+            data-testid="search-listings-button"
+            id="search-listing-btn"
+          >
+            Search for existing listings
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-arrow-right"
+              fill="none"
+              height="18"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 12h14"
+              />
+              <path
+                d="m12 5 7 7-7 7"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div
+        class="relative w-full mt-8 sm:mt-10 md:mt-0 animate-fade-in flex items-center justify-center"
+        id="hero-image"
+        style="animation-delay: 0.5s;"
+      >
+        <picture
+          class="w-full max-w-2xl"
+        >
+          <source
+            srcset="/image-web.png"
+            type="image/webp"
+          />
+          <img
+            alt="Two pairs meeting up for an activity"
+            class="w-full h-auto object-contain max-h-[420px] md:max-h-[560px]"
+            loading="lazy"
+            sizes="(min-width: 768px) 50vw, 100vw"
+            src="/image-web.png"
+          />
+        </picture>
+      </div>
+    </div>
+  </div>
+  <div
+    class="hidden md:flex absolute bottom-10 left-1/2 transform -translate-x-1/2 justify-center"
+    id="bouncy-thing"
+  >
+    <a
+      aria-hidden="true"
+      class="animate-bounce"
+      href="#how-it-works"
+      tabindex="-1"
+    >
+      <div
+        class="w-8 h-12 border-2 border-pairup-darkBlue/50 rounded-full flex justify-center"
+      >
+        <div
+          class="w-2 h-2 bg-pairup-darkBlue/50 rounded-full mt-2"
+        />
+      </div>
+    </a>
+  </div>
+</section>
+`;

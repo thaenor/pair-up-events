@@ -1,123 +1,142 @@
 {
-    "projectName": "pairup-events",
-    "version": "1.0.0",
-    "description": "Cursor AI agent directives for the PairUp-events web app. Ensures consistent TypeScript + React code aligned with Firestore and Atomic Design architecture.",
-  
-    "language": "typescript-react",
-    "framework": "vite-react",
-  
-    "preferences": {
-      "architecture": "atomic-design",
-      "firestoreOptimization": true,
-      "contextualDocs": true,
-      "testingEnforcement": true,
-      "typescriptStrict": true,
-      "tailwindOnly": true
-    },
-  
-    "structure": {
-      "componentsDir": "src/components",
-      "hooksDir": "src/hooks",
-      "libDir": "src/lib",
-      "firebaseDir": "src/lib/firebase",
-      "typesDir": "src/types",
-      "testsDir": "src/__tests__",
-      "docsDir": "docs"
-    },
-  
-    "docs": {
-      "contextualizer": "docs/agents.md",
-      "designDoc": "docs/Design-doc.md",
-      "implementationPlans": "docs/implementation-plans/",
-      "lookupPriority": [
-        "docs/agents.md",
-        "docs/Design-doc.md",
-        "docs/FIREBASE_SETUP.md",
-        "docs/config.md",
-        "docs/data-model.md",
-        "docs/"
-      ]
-    },
-  
-    "commands": {
-      "lint": "npm run lint -- --fix",
-      "test": "npm test",
-      "build": "npm run build"
-    },
-  
-    "rules": {
-      "naming": "kebab-case",
-      "exportStyle": "named",
-      "useClsxAndTwMerge": true,
-      "noInlineStyles": true,
-      "propsMustBeTyped": true,
-      "useErrorBoundary": true,
-      "requireTests": true
-    },
-  
-    "testing": {
-      "framework": "vitest",
-      "library": "react-testing-library",
-      "coLocate": true,
-      "selector": "data-testid"
-    },
-  
-    "firestore": {
-      "optimizeReads": true,
-      "guidelines": {
-        "noNewTopLevelCollections": true,
-        "batchWritesPreferred": true,
-        "cachedReadsPreferred": true,
-        "minimizeSnapshots": true
-      }
-    },
-  
-    "reviewAgent": {
-      "enabled": true,
-      "focusAreas": [
-        "Type safety",
-        "Component conventions",
-        "Firestore cost efficiency",
-        "Tailwind ordering and merge patterns",
-        "Naming consistency",
-        "Unused imports and dead code"
-      ],
-      "reportFormat": "markdown",
-      "reportPath": "docs/reports/cursor-review.md",
-      "suggestAutoFixes": true
-    },
-  
-    "collaboration": {
-      "defaultAgent": "code",
-      "agents": {
-        "code": {
-          "role": "Full-stack TypeScript developer",
-          "style": "direct, pragmatic, readable",
-          "behaviors": [
-            "readContextBeforeAction",
-            "explainTradeoffsWhenUncertain",
-            "followProjectConventionsStrictly"
-          ]
-        },
-        "reviewer": {
-          "role": "Senior code reviewer",
-          "style": "critical, precise, pattern-aware",
-          "behaviors": [
-            "highlightInconsistencies",
-            "recommendRefactors",
-            "validateAgainstDocs"
-          ]
-        },
-        "designer": {
-          "role": "UI/UX collaborator",
-          "style": "structured, concise, atomic-oriented",
-          "behaviors": [
-            "useTailwindOnly",
-            "respectAtomicHierarchy",
-            "preserveAccessibility"
-          ]
-        }
+  "projectName": "pairup-events",
+  "version": "1.1.0",
+  "description": "Cursor AI agent directives for the PairUp-events web app. Ensures consistent TypeScript + React code aligned with Firestore and Atomic Design architecture.",
+
+  "language": "typescript-react",
+  "framework": "vite-react",
+
+  "preferences": {
+    "architecture": "atomic-design",
+    "firestoreOptimization": true,
+    "contextualDocs": true,
+    "testingEnforcement": true,
+    "typescriptStrict": true,
+    "tailwindOnly": true,
+    "mandatoryProtocol": true,
+    "dryPrinciple": true,
+    "meaningfulCommentsOnly": true
+  },
+
+  "structure": {
+    "componentsDir": "src/components",
+    "hooksDir": "src/hooks",
+    "libDir": "src/lib",
+    "firebaseDir": "src/lib/firebase",
+    "typesDir": "src/types",
+    "testsDir": "src/__tests__",
+    "docsDir": "docs"
+  },
+
+  "docs": {
+    "contextualizer": "docs/agents.md",
+    "designDoc": "docs/Design-doc.md",
+    "implementationPlans": "docs/implementation-plans/",
+    "lookupPriority": [
+      "docs/CHANGELOG.md",
+      "docs/agents.md",
+      "docs/Design-doc.md",
+      "docs/data-model.md",
+      "docs/FIREBASE_SETUP.md",
+      "docs/config.md",
+      "docs/"
+    ]
+  },
+
+  "commands": {
+    "lint": "npm run lint -- --fix",
+    "test": "npm test",
+    "build": "npm run build"
+  },
+
+  "rules": {
+    "naming": "kebab-case",
+    "exportStyle": "named",
+    "useClsxAndTwMerge": true,
+    "noInlineStyles": true,
+    "propsMustBeTyped": true,
+    "useErrorBoundary": true,
+    "requireTests": true
+  },
+
+  "testing": {
+    "framework": "vitest",
+    "library": "react-testing-library",
+    "coLocate": true,
+    "selector": "data-testid"
+  },
+
+  "firestore": {
+    "optimizeReads": true,
+    "guidelines": {
+      "noNewTopLevelCollections": true,
+      "batchWritesPreferred": true,
+      "cachedReadsPreferred": true,
+      "minimizeSnapshots": true
+    }
+  },
+
+  "reviewAgent": {
+    "enabled": true,
+    "focusAreas": [
+      "Type safety",
+      "Component conventions",
+      "Firestore cost efficiency",
+      "Tailwind ordering and merge patterns",
+      "Naming consistency",
+      "Unused imports and dead code",
+      "DRY principle compliance",
+      "Documentation updates",
+      "Meaningful comments only"
+    ],
+    "reportFormat": "markdown",
+    "reportPath": "docs/reports/cursor-review.md",
+    "suggestAutoFixes": true
+  },
+
+  "protocol": {
+    "mandatorySteps": ["readContextDocs", "updateChangelog", "runQualityChecks", "selfCodeReview", "dryAnalysis"],
+    "contextDocs": ["docs/CHANGELOG.md", "docs/agents.md", "docs/Design-doc.md", "docs/data-model.md"],
+    "qualityCommand": "npm run ci",
+    "changelogPath": "docs/CHANGELOG.md",
+    "commentPolicy": "meaningfulOnly"
+  },
+
+  "collaboration": {
+    "defaultAgent": "code",
+    "agents": {
+      "code": {
+        "role": "Full-stack TypeScript developer",
+        "style": "direct, pragmatic, readable",
+        "behaviors": [
+          "readContextBeforeAction",
+          "explainTradeoffsWhenUncertain",
+          "followProjectConventionsStrictly",
+          "readChangelogAndAgentsDocs",
+          "updateChangelogWithChanges",
+          "runQualityChecksAfterImplementation",
+          "performSelfCodeReview",
+          "applyDryPrinciple",
+          "writeMeaningfulCommentsOnly"
+        ]
+      },
+      "reviewer": {
+        "role": "Senior code reviewer",
+        "style": "critical, precise, pattern-aware",
+        "behaviors": [
+          "highlightInconsistencies",
+          "recommendRefactors",
+          "validateAgainstDocs",
+          "checkDryCompliance",
+          "verifyDocumentationUpdates",
+          "validateQualityChecks"
+        ]
+      },
+      "designer": {
+        "role": "UI/UX collaborator",
+        "style": "structured, concise, atomic-oriented",
+        "behaviors": ["useTailwindOnly", "respectAtomicHierarchy", "preserveAccessibility"]
       }
     }
   }
-  
+}

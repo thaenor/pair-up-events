@@ -1,0 +1,174 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Footer > should match snapshot 1`] = `
+<footer
+  aria-label="Site footer"
+  class="py-12 bg-pairup-darkBlue"
+  role="contentinfo"
+>
+  <div
+    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+  >
+    <div
+      class="flex flex-col md:flex-row justify-between items-center"
+    >
+      <div
+        class="mb-6 md:mb-0"
+      >
+        <div
+          class="flex items-center gap-2"
+        >
+          <img
+            alt="Pair Up Events logo"
+            class="h-6 w-6 object-contain"
+            src="/PUE_logo_transparent.png"
+          />
+          <span
+            class="text-base font-bold"
+          >
+            <span
+              class="text-pairup-cyan"
+            >
+              Pair
+            </span>
+            <span
+              class="text-pairup-yellow"
+            >
+              Up Events
+            </span>
+          </span>
+        </div>
+        <p
+          class="text-sm text-pairup-cream/70 mt-2"
+        >
+          You and your friend meet another pair for a shared activity
+        </p>
+      </div>
+      <nav
+        aria-label="Footer navigation"
+        class="grid md:grid-cols-3 gap-8 text-center md:text-left"
+      >
+        <div>
+          <h3
+            class="text-sm font-semibold mb-3 text-pairup-yellow"
+          >
+            Platform
+          </h3>
+          <ul
+            class="space-y-2 text-sm"
+          >
+            <li>
+              <a
+                aria-label="Navigate to the How it Works section"
+                class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                href="#how-it-works"
+              >
+                How it Works
+              </a>
+            </li>
+            <li>
+              <a
+                aria-label="Learn how to create an event in the Early Access section"
+                class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                href="#early-access"
+              >
+                Create an Event
+              </a>
+            </li>
+            <li>
+              <a
+                aria-label="Join an event by signing up through the Early Access section"
+                class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                href="#early-access"
+              >
+                Join an Event
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h3
+            class="text-sm font-semibold mb-3 text-pairup-yellow"
+          >
+            Company
+          </h3>
+          <ul
+            class="space-y-2 text-sm"
+          >
+            <li>
+              <a
+                aria-label="Discover more about Pair Up Events in the Benefits section"
+                class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                href="#benefits"
+              >
+                About Us
+              </a>
+            </li>
+            <li>
+              <a
+                aria-label="Find our contact form in the Early Access section"
+                class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                href="#early-access"
+              >
+                Contact
+              </a>
+            </li>
+            <li>
+              <a
+                aria-label="See why it's great to work with us in the Benefits section"
+                class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                href="#benefits"
+              >
+                Careers
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h3
+            class="text-sm font-semibold mb-3 text-pairup-yellow"
+          >
+            Legal
+          </h3>
+          <ul
+            class="space-y-2 text-sm"
+          >
+            <li>
+              <a
+                aria-label="Review our privacy policy and data handling practices"
+                class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                href="/privacy-policy"
+              >
+                Privacy Policy
+              </a>
+            </li>
+            <li>
+              <a
+                aria-label="Read our terms of service and user agreement"
+                class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                href="/terms-of-service"
+              >
+                Terms of Service
+              </a>
+            </li>
+            <li>
+              <a
+                aria-label="Learn more about our approach in the Benefits section"
+                class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                href="#benefits"
+              >
+                Cookie Policy
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div
+      class="border-t border-pairup-darkBlueAlt/30 mt-12 pt-8 text-center text-sm text-pairup-cream/50"
+    >
+      © 2025 Pair Up Events. All rights reserved.
+    </div>
+  </div>
+</footer>
+`;

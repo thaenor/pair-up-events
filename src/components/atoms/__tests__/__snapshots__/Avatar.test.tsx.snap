@@ -1,0 +1,29 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Avatar > should match snapshot with image 1`] = `
+<div
+  aria-label="Avatar for John Doe"
+  class="h-10 w-10 text-base bg-gray-200 text-gray-700 rounded-full flex items-center justify-center overflow-hidden "
+  role="img"
+>
+  <img
+    alt="John Doe"
+    class="w-full h-full object-cover"
+    src="/test.jpg"
+  />
+</div>
+`;
+
+exports[`Avatar > should match snapshot with initials 1`] = `
+<div
+  aria-label="Avatar for John Doe"
+  class="h-10 w-10 text-base bg-black text-white rounded-full flex items-center justify-center overflow-hidden "
+  role="img"
+>
+  <span
+    class="font-semibold select-none"
+  >
+    JD
+  </span>
+</div>
+`;

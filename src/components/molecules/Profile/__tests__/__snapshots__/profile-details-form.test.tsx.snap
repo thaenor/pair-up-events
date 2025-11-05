@@ -1,0 +1,144 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ProfileDetailsForm > should match snapshot 1`] = `
+<form
+  class="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg p-6 mb-8"
+>
+  <h3
+    class="text-lg font-semibold text-pairup-darkBlue mb-4"
+  >
+    Personal Details
+  </h3>
+  <div
+    class="grid grid-cols-2 gap-4 mb-4"
+  >
+    <div>
+      <label
+        class="block text-sm font-medium text-pairup-darkBlue mb-2"
+        for="firstName"
+      >
+        First Name
+      </label>
+      <input
+        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+        id="firstName"
+        placeholder="Enter your first name"
+        type="text"
+        value="John"
+      />
+    </div>
+    <div>
+      <label
+        class="block text-sm font-medium text-pairup-darkBlue mb-2"
+        for="lastName"
+      >
+        Last Name
+      </label>
+      <input
+        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+        id="lastName"
+        placeholder="Enter your last name"
+        type="text"
+        value="Doe"
+      />
+    </div>
+  </div>
+  <div
+    class="mb-4"
+  >
+    <label
+      class="block text-sm font-medium text-pairup-darkBlue mb-2"
+      for="email"
+    >
+      Email Address
+    </label>
+    <input
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+      id="email"
+      placeholder="Enter your email"
+      type="email"
+      value="john@example.com"
+    />
+  </div>
+  <div
+    class="grid grid-cols-2 gap-4 mb-4"
+  >
+    <div>
+      <label
+        class="block text-sm font-medium text-pairup-darkBlue mb-2"
+        for="birthDate"
+      >
+        Birth Date
+      </label>
+      <input
+        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+        id="birthDate"
+        type="date"
+        value="1990-01-01"
+      />
+    </div>
+    <div>
+      <label
+        class="block text-sm font-medium text-pairup-darkBlue mb-2"
+        for="gender"
+      >
+        Gender
+      </label>
+      <select
+        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+        id="gender"
+      >
+        <option
+          value=""
+        >
+          Select gender
+        </option>
+        <option
+          value="male"
+        >
+          Male
+        </option>
+        <option
+          value="female"
+        >
+          Female
+        </option>
+        <option
+          value="non-binary"
+        >
+          Non-binary
+        </option>
+        <option
+          value="prefer-not-to-say"
+        >
+          Prefer not to say
+        </option>
+      </select>
+    </div>
+  </div>
+  <div
+    class="mb-4"
+  >
+    <label
+      class="block text-sm font-medium text-pairup-darkBlue mb-2"
+      for="bio"
+    >
+      Bio
+    </label>
+    <textarea
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pairup-cyan"
+      id="bio"
+      placeholder="Tell us about yourself..."
+      rows="3"
+    >
+      Test bio
+    </textarea>
+  </div>
+  <button
+    class="w-full px-4 py-2 bg-pairup-cyan text-pairup-darkBlue rounded-md hover:bg-pairup-cyan/90 focus:outline-none focus:ring-2 focus:ring-pairup-cyan disabled:opacity-50"
+    type="submit"
+  >
+    Save Details
+  </button>
+</form>
+`;

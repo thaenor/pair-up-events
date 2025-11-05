@@ -1,0 +1,204 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TabButton > should match snapshot - not selected 1`] = `
+<button
+  aria-selected="false"
+  class="flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60 border-transparent text-pairup-darkBlue/60 hover:text-pairup-darkBlue hover:border-gray-300"
+  role="tab"
+  type="button"
+>
+  Tab 1
+</button>
+`;
+
+exports[`TabButton > should match snapshot - selected 1`] = `
+<button
+  aria-selected="true"
+  class="flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60 border-pairup-cyan text-pairup-cyan"
+  role="tab"
+  type="button"
+>
+  Tab 1
+</button>
+`;
+
+exports[`TabButton > should match snapshot - with icon 1`] = `
+<button
+  aria-selected="false"
+  class="flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60 border-transparent text-pairup-darkBlue/60 hover:text-pairup-darkBlue hover:border-gray-300"
+  role="tab"
+  type="button"
+>
+  <span
+    class="mr-2"
+  >
+    <span>
+      🎯
+    </span>
+  </span>
+  Tab 1
+</button>
+`;
+
+exports[`Tabs > should match snapshot - basic tabs 1`] = `
+<div
+  class=""
+>
+  <div
+    aria-orientation="horizontal"
+    class="flex"
+    role="tablist"
+  >
+    <button
+      aria-controls="tabpanel-1"
+      aria-selected="true"
+      class="py-3 px-4 text-sm font-medium border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60 border-pairup-cyan text-pairup-cyan flex-1"
+      id="tab-1"
+      role="tab"
+      type="button"
+    >
+      Tab 1
+    </button>
+    <button
+      aria-controls="tabpanel-2"
+      aria-selected="false"
+      class="py-3 px-4 text-sm font-medium border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60 border-transparent text-pairup-darkBlue/60 hover:text-pairup-darkBlue hover:border-gray-300 flex-1"
+      id="tab-2"
+      role="tab"
+      type="button"
+    >
+      Tab 2
+    </button>
+    <button
+      aria-controls="tabpanel-3"
+      aria-selected="false"
+      class="py-3 px-4 text-sm font-medium border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60 border-transparent text-pairup-darkBlue/60 hover:text-pairup-darkBlue hover:border-gray-300 flex-1"
+      id="tab-3"
+      role="tab"
+      type="button"
+    >
+      Tab 3
+    </button>
+  </div>
+  <div
+    aria-labelledby="tab-1"
+    class=""
+    id="tabpanel-1"
+    role="tabpanel"
+  >
+    <div>
+      Content 1
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Tabs > should match snapshot - second tab selected 1`] = `
+<div
+  class=""
+>
+  <div
+    aria-orientation="horizontal"
+    class="flex"
+    role="tablist"
+  >
+    <button
+      aria-controls="tabpanel-1"
+      aria-selected="false"
+      class="py-3 px-4 text-sm font-medium border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60 border-transparent text-pairup-darkBlue/60 hover:text-pairup-darkBlue hover:border-gray-300 flex-1"
+      id="tab-1"
+      role="tab"
+      type="button"
+    >
+      Tab 1
+    </button>
+    <button
+      aria-controls="tabpanel-2"
+      aria-selected="true"
+      class="py-3 px-4 text-sm font-medium border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60 border-pairup-cyan text-pairup-cyan flex-1"
+      id="tab-2"
+      role="tab"
+      type="button"
+    >
+      Tab 2
+    </button>
+    <button
+      aria-controls="tabpanel-3"
+      aria-selected="false"
+      class="py-3 px-4 text-sm font-medium border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60 border-transparent text-pairup-darkBlue/60 hover:text-pairup-darkBlue hover:border-gray-300 flex-1"
+      id="tab-3"
+      role="tab"
+      type="button"
+    >
+      Tab 3
+    </button>
+  </div>
+  <div
+    aria-labelledby="tab-2"
+    class=""
+    id="tabpanel-2"
+    role="tabpanel"
+  >
+    <div>
+      Content 2
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Tabs > should match snapshot - with icons 1`] = `
+<div
+  class=""
+>
+  <div
+    aria-orientation="horizontal"
+    class="flex"
+    role="tablist"
+  >
+    <button
+      aria-controls="tabpanel-1"
+      aria-selected="true"
+      class="py-3 px-4 text-sm font-medium border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60 border-pairup-cyan text-pairup-cyan flex-1"
+      id="tab-1"
+      role="tab"
+      type="button"
+    >
+      <span
+        class="mr-2"
+      >
+        <span>
+          📝
+        </span>
+      </span>
+      Tab 1
+    </button>
+    <button
+      aria-controls="tabpanel-2"
+      aria-selected="false"
+      class="py-3 px-4 text-sm font-medium border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pairup-cyan disabled:cursor-not-allowed disabled:opacity-60 border-transparent text-pairup-darkBlue/60 hover:text-pairup-darkBlue hover:border-gray-300 flex-1"
+      id="tab-2"
+      role="tab"
+      type="button"
+    >
+      <span
+        class="mr-2"
+      >
+        <span>
+          ⚙️
+        </span>
+      </span>
+      Tab 2
+    </button>
+  </div>
+  <div
+    aria-labelledby="tab-1"
+    class=""
+    id="tabpanel-1"
+    role="tabpanel"
+  >
+    <div>
+      Content 1
+    </div>
+  </div>
+</div>
+`;

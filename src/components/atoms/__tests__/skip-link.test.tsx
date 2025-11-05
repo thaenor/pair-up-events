@@ -1,25 +1,20 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, it, expect } from 'vitest'
+import { render } from '@testing-library/react'
+import SkipLink from '../skip-link'
 
-import SkipLink from "../skip-link";
+describe('SkipLink', () => {
+  it('should match snapshot - default', () => {
+    const { container } = render(<SkipLink targetId="main-content" />)
+    expect(container.firstChild).toMatchSnapshot()
+  })
 
-describe("SkipLink", () => {
-  it("renders the default label and target", () => {
-    render(<SkipLink targetId="main-content" />);
+  it('should match snapshot - with custom label', () => {
+    const { container } = render(<SkipLink targetId="main-content" label="Skip to content" />)
+    expect(container.firstChild).toMatchSnapshot()
+  })
 
-    const link = screen.getByRole("link", { name: /skip to main content/i });
-    expect(link).toHaveAttribute("href", "#main-content");
-    expect(link).toHaveClass("sr-only");
-    expect(link).toHaveAttribute("tabindex", "1");
-  });
-
-  it("allows custom label and classes", () => {
-    render(
-      <SkipLink targetId="primary" label="Jump ahead" className="extra-class" />
-    );
-
-    const link = screen.getByRole("link", { name: "Jump ahead" });
-    expect(link).toHaveAttribute("href", "#primary");
-    expect(link.className).toContain("extra-class");
-  });
-});
+  it('should match snapshot - with custom className', () => {
+    const { container } = render(<SkipLink targetId="main-content" className="custom-class" />)
+    expect(container.firstChild).toMatchSnapshot()
+  })
+})

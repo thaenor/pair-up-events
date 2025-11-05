@@ -1,0 +1,87 @@
+rules_version = '2';
+
+// Firestore Security Rules for Pair Up Events
+// These rules control access to data stored in Firestore
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // ─────────── USER PROFILES ───────────
+    // Path: users/{userId}
+    // Private user profiles, only accessible to the authenticated user
+    match /users/{userId} {
+      // Basic access: users can read and create their own profile
+      allow read, create: if isOwner(userId);
+      
+      // Profile updates: owners can update except for immutable fields
+      allow update: if isOwner(userId) && isValidProfileUpdate();
+      
+      // Deletion handled by backend only
+      allow delete: if false;
+    }
+
+    // ─────────── PUBLIC PROFILES ───────────
+    // Path: publicProfiles/{userId}
+    // Public-facing user profiles, accessible by all authenticated users
+    match /publicProfiles/{userId} {
+      // Anyone authenticated can read public profiles
+      allow read: if request.auth != null;
+      
+      // Only the profile owner can create/update their public profile
+      allow create, update: if isOwner(userId);
+      
+      // No deletion allowed (handled by backend)
+      allow delete: if false;
+    }
+
+    // ─────────── DRAFT EVENTS ───────────
+    // Path: users/{userId}/ownEvents/{eventId}
+    // Draft events created by users during event creation flow
+    match /users/{userId}/ownEvents/{eventId} {
+      // Only the event owner can read and create their own draft events
+      allow read, create: if isOwner(userId);
+      
+      // Only the event owner can update their own draft events
+      allow update: if isOwner(userId);
+      
+      // Soft deletion handled by setting isDeleted flag (no hard delete)
+      allow delete: if false;
+
+      // ─────────── CHAT HISTORY ───────────
+      // Path: users/{userId}/ownEvents/{eventId}/chatHistory/{messageId}
+      // Chat messages for AI-powered event creation conversation
+      match /chatHistory/{messageId} {
+        // Only the event owner can read and create chat messages
+        allow read, create: if isOwner(userId);
+        
+        // Chat messages are immutable once created (no updates)
+        allow update: if false;
+        
+        // Chat messages are not deleted (preserve conversation history)
+        allow delete: if false;
+      }
+    }
+
+    // ─────────── RULE FUNCTIONS ───────────
+    function isValidProfileUpdate() {
+      // Prevents tampering with system fields
+      // Email and createdAt cannot be changed once set
+      let emailUnchanged = !('email' in request.resource.data.keys()) || 
+                          request.resource.data.email == resource.data.email;
+      let createdAtUnchanged = !('createdAt' in request.resource.data.keys()) || 
+                              request.resource.data.createdAt == resource.data.createdAt;
+      return emailUnchanged && createdAtUnchanged;
+    }
+
+    // Deny all other access by default
+  }
+}

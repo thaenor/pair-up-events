@@ -7,14 +7,32 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies
 node_modules
-dist
-dist-ssr
-*.local
+
+# Build artifacts
+dist/
+dist-ssr/
+
+# TypeScript incremental compilation cache
+*.tsbuildinfo
+tsconfig.*.tsbuildinfo
+
+# Environment files
 .env
+.env.local
+.env.development
+.env.development.local
+.env.test.local
+.env.production
+.env.production.local
 
 # Coverage reports
 coverage/
+
+# Testing artifacts
+test-results/
+playwright-report/
 
 # Editor directories and files
 .vscode/*
@@ -26,3 +44,20 @@ coverage/
 *.njsproj
 *.sln
 *.sw?
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+
+# Firebase
+.firebase/
+firebase-debug.log

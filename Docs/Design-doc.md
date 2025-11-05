@@ -24,6 +24,7 @@ It serves as the foundation for consistent interface design, component hierarchy
 ---
 
 # **1. Product Overview**
+
 Pair Up Events is a social event platform that allows two pairs of people to connect and meet through shared activities.
 Each "pair" represents two users who join the platform together (friends, couple, family duo, etc.).
 The core system enables users to create, share, and join events, encouraging real-world interaction through fun, curiosity-driven activities.
@@ -82,13 +83,13 @@ Roommates or colleagues
 Matching logic remains pair-based, not individual-based.
 
 **Target Users:**
-| User Segment                    | Description                                          | Motivation                          |
+| User Segment | Description | Motivation |
 | ------------------------------- | ---------------------------------------------------- | ----------------------------------- |
-| **Young Professionals (20–35)** | People seeking new experiences outside their routine | Fun, novelty, social discovery      |
-| **Friends or Couples**          | Duos looking to meet others with similar energy      | Shared adventures, mutual interests |
-| **Expats & Newcomers**          | People integrating into a new city or culture        | Authentic, local experiences        |
-| **Families & Themed Pairs**     | Parent-child, siblings, twins, etc.                  | Playful learning and shared bonding |
-| **Activity Enthusiasts**        | Users who enjoy active, experiential socializing     | Real-world engagement               |
+| **Young Professionals (20–35)** | People seeking new experiences outside their routine | Fun, novelty, social discovery |
+| **Friends or Couples** | Duos looking to meet others with similar energy | Shared adventures, mutual interests |
+| **Expats & Newcomers** | People integrating into a new city or culture | Authentic, local experiences |
+| **Families & Themed Pairs** | Parent-child, siblings, twins, etc. | Playful learning and shared bonding |
+| **Activity Enthusiasts** | Users who enjoy active, experiential socializing | Real-world engagement |
 
 ## 🤝 Pair Up Events — Primary Use Cases
 
@@ -100,12 +101,12 @@ There are no individual participants — every confirmed event involves **two du
 
 ## 👥 User Roles
 
-| Label | Description |
-|--------|--------------|
-| **User A** | Creator of a new event or experience. Starts the process by choosing an activity idea, location, and date. |
-| **User B** | The first invited user who joins User A’s event to form a confirmed duo. |
+| Label      | Description                                                                                                              |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **User A** | Creator of a new event or experience. Starts the process by choosing an activity idea, location, and date.               |
+| **User B** | The first invited user who joins User A’s event to form a confirmed duo.                                                 |
 | **User C** | A user who discovers a live event (created by A + B) through the Explore page and decides to join it with their own duo. |
-| **User D** | The partner of User C — confirms participation, finalizing the group of four. |
+| **User D** | The partner of User C — confirms participation, finalizing the group of four.                                            |
 
 Each confirmed event = **1 Duo (A+B)** + **1 Duo (C+D)**.
 
@@ -114,6 +115,7 @@ Each confirmed event = **1 Duo (A+B)** + **1 Duo (C+D)**.
 ## 🧩 Primary Use Cases
 
 ### **Use Case 1 — Explore Experiences**
+
 - Users (logged-in or logged-out) browse activity cards in their city.
 - Two types of cards exist:
   1. **Default PairUp Templates** → inspire users to create a new event.
@@ -125,6 +127,7 @@ Each confirmed event = **1 Duo (A+B)** + **1 Duo (C+D)**.
 ---
 
 ### **Use Case 2 — Create an Event (User A Flow)**
+
 1. User A chooses a default template or starts from scratch.
 2. Completes event form (activity, date, city, vibe, etc.).
 3. Invites a partner (User B) via a unique link.
@@ -136,6 +139,7 @@ Each confirmed event = **1 Duo (A+B)** + **1 Duo (C+D)**.
 ---
 
 ### **Use Case 3 — Join an Event as Duo (User C + D Flow)**
+
 1. User C discovers a live event (A+B) in Explore.
 2. Sends a “Join Request” for their duo.
 3. Invites their own partner (User D) via link.
@@ -148,6 +152,7 @@ Each confirmed event = **1 Duo (A+B)** + **1 Duo (C+D)**.
 ---
 
 ### **Use Case 4 — Event Confirmation and Group Chat**
+
 - When both duos (A+B and C+D) are confirmed, a **group chat** is automatically created.
 - All four participants can communicate to plan details.
 - Chat includes a built-in **report** feature for users or events.
@@ -157,6 +162,7 @@ Each confirmed event = **1 Duo (A+B)** + **1 Duo (C+D)**.
 ---
 
 ### **Use Case 5 — Event Completion and Feedback**
+
 - After the event date passes:
   - System prompts all participants to rate the other duo and leave feedback.
   - Message displayed in chat:
@@ -175,6 +181,7 @@ Each confirmed event = **1 Duo (A+B)** + **1 Duo (C+D)**.
 ---
 
 ### **Use Case 6 — Automatic Chat Lifecycle**
+
 - Chats inactive for **30 days** automatically move to “Archived.”
 - This keeps the chat list clean while preserving history.
 - Users can reopen archived chats at any time.
@@ -184,9 +191,10 @@ Each confirmed event = **1 Duo (A+B)** + **1 Duo (C+D)**.
 ---
 
 ### **Use Case 7 — Reporting and Moderation**
+
 - Users can report:
-  - An event  
-  - Another user  
+  - An event
+  - Another user
 - Accessible from:
   - Direct chat
   - Event detail page
@@ -199,7 +207,9 @@ Each confirmed event = **1 Duo (A+B)** + **1 Duo (C+D)**.
 ---
 
 ### **Use Case 8 — Notifications**
+
 Triggered across web and email:
+
 - Event invites (B and D)
 - Join requests (A+B)
 - Confirmations, acceptances, declines
@@ -213,6 +223,7 @@ Triggered across web and email:
 ---
 
 ### **Use Case 9 — Profile and Settings**
+
 - Users manage profile info, language, and privacy preferences.
 - Access support, guides, and feedback.
 - Log out and data privacy options included.
@@ -224,29 +235,30 @@ Triggered across web and email:
 ## ⚙️ Platform Characteristics
 
 - **Platform Type:** Web (desktop + mobile browser responsive)
-- **Access Levels:**  
-  - Logged-out users → limited visibility (blurred details)  
-  - Logged-in users → full access  
-- **Moderation:**  
-  - Self-service creation (no manual approval, similar to Meetup)  
-  - Admin dashboard for user/event reports  
-- **Data Fencing:**  
-  - Location & date blurred for logged-out users (city visible)  
-  - Clear “Visible to logged-in users” indicator improves UX transparency  
+- **Access Levels:**
+  - Logged-out users → limited visibility (blurred details)
+  - Logged-in users → full access
+- **Moderation:**
+  - Self-service creation (no manual approval, similar to Meetup)
+  - Admin dashboard for user/event reports
+- **Data Fencing:**
+  - Location & date blurred for logged-out users (city visible)
+  - Clear “Visible to logged-in users” indicator improves UX transparency
 
 ---
 
 **Summary:**
 Pair Up Events enables users to:
-1. Discover experiences in their city.  
-2. Create or join an event as a duo.  
-3. Meet another duo to share that experience.  
+
+1. Discover experiences in their city.
+2. Create or join an event as a duo.
+3. Meet another duo to share that experience.
 4. Chat, rate, and optionally stay connected afterward — all within a safe, intuitive flow.
 
 ---
 
-
 **Supported Platforms:**
+
 - Web (PWA-first, responsive)
 - Mobile Web (installable via “Add to Home Screen”)
 - Desktop (for event management)
@@ -266,61 +278,65 @@ Pair Up Events enables users to:
 
 # **3. User Personas**
 
-| **Persona Name** | **Profile Summary** | **Example Pair** | **Goals** | **Pain Points** |
-|------------------|--------------------|------------------|------------|-----------------|
-| **1. The Curious Duo (Friends)** | Two friends in their mid-20s who love exploring new activities and meeting interesting people. They seek spontaneous, real-world experiences beyond typical nightlife or dating apps. | Lena (25, graphic designer) & Amira (26, student) | - Discover unique, local activities beyond bars or parties.<br>- Meet other friendly pairs to expand their social circle.<br>- Plan and coordinate fun weekends easily.<br>- Feel safe and comfortable meeting new people as a pair. | - Existing social apps focus on dating or large groups.<br>- Event platforms feel impersonal or cluttered.<br>- Hard to find events matching both friends’ interests.<br>- Time wasted on planning across multiple apps. |
-| **2. The Adventurous Couple** | A couple in their late 20s–30s who want to add novelty to their shared time together. They’re not seeking romance elsewhere but want to connect with other couples for shared adventures or creative activities. | Marco (31, engineer) & Sophie (29, marketing manager) | - Discover other couples with similar energy.<br>- Find creative weekend ideas and new activities.<br>- Host or join double-date-style experiences naturally. | - Hard to meet other couples organically.<br>- Most couple apps focus on parenting or advice, not social fun.<br>- Organizing meetups feels like too much effort. |
-| **3. The Newcomer Pair (Expats or New Locals)** | Two friends or flatmates who have moved to a new city and want to build a social circle. They’re eager to meet locals through authentic, low-pressure experiences. | Carlos (27, architect) & Diego (28, product designer) | - Meet locals naturally.<br>- Explore the city through shared activities.<br>- Build a genuine, lasting social circle. | - Cultural and language barriers make meeting people hard.<br>- Local event options feel impersonal or untrustworthy.<br>- Fear of attending large or mismatched events. |
-| **4. The Parent & Child Duo** | A parent with a young child seeking social, family-oriented meetups where the **child is the main focus**. The parent’s goal is to connect with other parents while giving their child social experiences with peers. | Julia (34, mother) & Mia (8, daughter) | - Find playdates or family events where children can interact.<br>- Connect with other parents in similar life stages.<br>- Discover weekend or outdoor activities for kids.<br>- Create lasting friendships through shared family time. | - Most family platforms are child-focused but lack parent-to-parent socialization.<br>- Hard to find age-matching children for playdates.<br>- Scheduling or safety concerns with unfamiliar families.<br>- Limited family events outside playgrounds or schools. |
-| **5. The Sibling / Twin Duo** | Two siblings or twins looking to meet **other sibling pairs** for unique “duo-to-duo” experiences. They’re curious about connecting with others who share similar family dynamics or sibling energy. | Anna (24) & Lara (24), identical twins | - Meet other twins or siblings for group activities.<br>- Explore “duo energy” through team or partner-based events.<br>- Create a sense of community around sibling experiences.<br>- Participate in playful or competitive pair events (e.g., escape rooms, sports, trivia). | - Very few opportunities to meet other sibling pairs.<br>- Mainstream events aren’t designed for “pair identity.”<br>- Hard to find experiences celebrating sibling connection.<br>- Lack of platforms promoting twin/sibling meetups. |
-
+| **Persona Name**                                | **Profile Summary**                                                                                                                                                                                                   | **Example Pair**                                      | **Goals**                                                                                                                                                                                                                                                                      | **Pain Points**                                                                                                                                                                                                                                                   |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1. The Curious Duo (Friends)**                | Two friends in their mid-20s who love exploring new activities and meeting interesting people. They seek spontaneous, real-world experiences beyond typical nightlife or dating apps.                                 | Lena (25, graphic designer) & Amira (26, student)     | - Discover unique, local activities beyond bars or parties.<br>- Meet other friendly pairs to expand their social circle.<br>- Plan and coordinate fun weekends easily.<br>- Feel safe and comfortable meeting new people as a pair.                                           | - Existing social apps focus on dating or large groups.<br>- Event platforms feel impersonal or cluttered.<br>- Hard to find events matching both friends’ interests.<br>- Time wasted on planning across multiple apps.                                          |
+| **2. The Adventurous Couple**                   | A couple in their late 20s–30s who want to add novelty to their shared time together. They’re not seeking romance elsewhere but want to connect with other couples for shared adventures or creative activities.      | Marco (31, engineer) & Sophie (29, marketing manager) | - Discover other couples with similar energy.<br>- Find creative weekend ideas and new activities.<br>- Host or join double-date-style experiences naturally.                                                                                                                  | - Hard to meet other couples organically.<br>- Most couple apps focus on parenting or advice, not social fun.<br>- Organizing meetups feels like too much effort.                                                                                                 |
+| **3. The Newcomer Pair (Expats or New Locals)** | Two friends or flatmates who have moved to a new city and want to build a social circle. They’re eager to meet locals through authentic, low-pressure experiences.                                                    | Carlos (27, architect) & Diego (28, product designer) | - Meet locals naturally.<br>- Explore the city through shared activities.<br>- Build a genuine, lasting social circle.                                                                                                                                                         | - Cultural and language barriers make meeting people hard.<br>- Local event options feel impersonal or untrustworthy.<br>- Fear of attending large or mismatched events.                                                                                          |
+| **4. The Parent & Child Duo**                   | A parent with a young child seeking social, family-oriented meetups where the **child is the main focus**. The parent’s goal is to connect with other parents while giving their child social experiences with peers. | Julia (34, mother) & Mia (8, daughter)                | - Find playdates or family events where children can interact.<br>- Connect with other parents in similar life stages.<br>- Discover weekend or outdoor activities for kids.<br>- Create lasting friendships through shared family time.                                       | - Most family platforms are child-focused but lack parent-to-parent socialization.<br>- Hard to find age-matching children for playdates.<br>- Scheduling or safety concerns with unfamiliar families.<br>- Limited family events outside playgrounds or schools. |
+| **5. The Sibling / Twin Duo**                   | Two siblings or twins looking to meet **other sibling pairs** for unique “duo-to-duo” experiences. They’re curious about connecting with others who share similar family dynamics or sibling energy.                  | Anna (24) & Lara (24), identical twins                | - Meet other twins or siblings for group activities.<br>- Explore “duo energy” through team or partner-based events.<br>- Create a sense of community around sibling experiences.<br>- Participate in playful or competitive pair events (e.g., escape rooms, sports, trivia). | - Very few opportunities to meet other sibling pairs.<br>- Mainstream events aren’t designed for “pair identity.”<br>- Hard to find experiences celebrating sibling connection.<br>- Lack of platforms promoting twin/sibling meetups.                            |
 
 ---
 
 # **4. User Journey & Flows (Web Platform)**
 
 ### Core Journeys
- 
+
 ## 🧭 Primary Navigation (for logged-in users)
-1. **Explore** — Browse and search events  
-2. **Events** — Manage created and joined events  
-3. **Chat** — Interact with other duos  
-4. **Profile** — Edit user info, access settings & feedback  
+
+1. **Explore** — Browse and search events
+2. **Events** — Manage created and joined events
+3. **Chat** — Interact with other duos
+4. **Profile** — Edit user info, access settings & feedback
 
 ---
 
 ## 🧱 a) Landing Page (Logged-out Users)
 
 ### Main Goals
+
 - Inspire users to explore events.
 - Convert visitors to sign-ups.
 
 ### Visible Elements
-- **Search bar:** Search by city.  
+
+- **Search bar:** Search by city.
 - **Activity cards:**
-  - Image + title  
-  - Date → “Visible to logged-in users” (blurred)  
-  - Location → City visible, exact place blurred  
-  - If user-created: “Created by [Firstname]”  
-  - If default listing: “Create this experience” button  
-  - If user-created: “View event” button  
-  - **Share button:** Always functional  
+  - Image + title
+  - Date → “Visible to logged-in users” (blurred)
+  - Location → City visible, exact place blurred
+  - If user-created: “Created by [Firstname]”
+  - If default listing: “Create this experience” button
+  - If user-created: “View event” button
+  - **Share button:** Always functional
 
 ### Interactions
-| Action | Behavior |
-|--------|-----------|
+
+| Action        | Behavior                  |
+| ------------- | ------------------------- |
 | Click any CTA | Redirects to sign-up page |
-| Click Share | Copies event link |
+| Click Share   | Copies event link         |
 
 ---
 
 ## 🧩 b) Sign-Up Flow
 
 ### Methods
-- Facebook  
-- Apple  
-- Google  
-- Email + password  
+
+- Facebook
+- Apple
+- Google
+- Email + password
 
 After sign-up → redirected to **Profile page (first-time setup)**.
 
@@ -329,112 +345,138 @@ After sign-up → redirected to **Profile page (first-time setup)**.
 ## 🧍‍♀️ c) Profile Page
 
 ### Fields
-- Profile picture  
-- First name  
-- Age  
-- Gender  
-- “Fun fact about me”  
-- “I like”  
-- “I dislike”  
-- “Hobbies”  
+
+- Profile picture
+- First name
+- Age
+- Gender
+- “Fun fact about me”
+- “I like”
+- “I dislike”
+- “Hobbies”
 
 ### Extended Navigation
+
 Accessible via burger menu:
-- Settings  
-- Privacy Policy  
-- Location  
-- Language  
-- Support Center  
-- Feedback  
-- Guide  
-- Log out  
+
+- Settings
+- Privacy Policy
+- Location
+- Language
+- Support Center
+- Feedback
+- Guide
+- Log out
 
 ---
 
 ## 🔍 d) Explore Page (Logged-in Users)
 
 ### Search Functionality
+
 - **City and activity type** .
 - Shows:
-  - Default PairUp templates  
-  - Real (live) events created by user duos  
+  - Default PairUp templates
+  - Real (live) events created by user duos
 
 ### Card Types
 
 #### - Default PairUp Templates
+
 - No duo yet (only concept)
-- **CTA:** “Create this experience”  
-- Opens pre-filled “Create Event” form  
-- **Share:** Always functional  
+- **CTA:** “Create this experience”
+- Opens pre-filled “Create Event” form
+- **Share:** Always functional
 
 #### - Real User-Created Events
+
 - Duo confirmed (User A + B)
-- **CTA:** “View event”  
-- **Share:** Always functional  
+- **CTA:** “View event”
+- **Share:** Always functional
 - Date & location → blurred (“Visible to logged-in users”)
 
 ### Event Card Interactions
-| User State | Interaction | Behavior |
-|-------------|--------------|-----------|
+
+| User State | Interaction     | Behavior             |
+| ---------- | --------------- | -------------------- |
 | Logged out | Any interaction | Redirects to Sign Up |
-| Logged in | Click CTA | Opens event details |
-| Logged in | Click Share | Copies link |
+| Logged in  | Click CTA       | Opens event details  |
+| Logged in  | Click Share     | Copies link          |
 
 ---
 
 ## 🎟️ e) Events Page
 
 ### State A: Empty
+
 > “No events yet. Create your first experience!”  
-[**CTA → Create Event**]
+> [**CTA → Create Event**]
 
 ---
 
 ### Create Event Flow
 
-#### Page 1: Event Details
-- Upload image  
-- Activity (text input/dropdown)  
-- Date (exact or flexible + comment)  
-- Suggested location (city + place)  
-- Country  
-- Cost indicator (optional)  
-- **Next → Who do you want to meet?**
+#### Tab 1: Event Details
 
-#### Page 2: Who do you want to meet?
-- Duo type (Friends, Couples, etc.)  
-- Preferred age range  
-- Preferred gender  
-- Desired vibe(s):  
-  - Adventurous  
-  - Chill & Relaxed  
-  - Funny & Playful  
-  - Curious & Open-Minded  
-  - Outgoing & Social  
-  - Creative  
-  - Foodies  
-  - Active & Sporty  
-  - Culture Lovers  
-  - Family-Friendly  
-  - Organizers  
-  - Nightlife Lovers  
-  - Mindful & Calm  
+- Upload image
+- Activity (text input/dropdown)
+- Date (exact or flexible + comment)
+- Suggested location (city + place)
+- Country
+- Cost indicator (optional)
+- **Button: Who is your duo?**
 
-#### Duo Info
-- Who is your duo? (names)  
-- Relationship type  
-- Comfortable languages  
-- Duo vibe (multi-select)  
-- Connection intention:
-  - Just making new friends  
-  - Sharing an experience  
-  - Networking  
-  - Open to romantic sparks  
-  - Just curious  
+#### Tab 2: Your Duo
+
+- What is the first name of your duo? (Text box for first name)
+- What is the age of your duo? (Text box for age)
+- What is the gender? (dropdown:female, male, non-binary, prefer not to say)
+- What type of pair are you? (dropdown:friend, partner, child, parent, sibling)
+- What languages do you both feel comfortable using? (Select all that apply)
+  (dropdown with the most used global languages: english, spanish, french, german, portuguese, italian, dutch... + text field to add additional)
+- How would you describe your vibe as a duo? (Select all that apply) ( - Adventurous
+  - Chill & Relaxed
+  - Funny & Playful
+  - Curious & Open-Minded
+  - Outgoing & Social
+  - Creative
+  - Foodies
+  - Active & Sporty
+  - Culture Lovers
+  - Family-Friendly
+  - Organizers
+  - Nightlife Lovers
+  - Mindful & Calm)
+- What’s your intention for connecting with another pair? (Select all that apply)
+  (dropdown: Just making new friends, Sharing an experience, Networking, Open to romantic sparks, Just curious + textbox with 'other')
+  - **Button: Preferences: Their Duo**
+
+#### Tab 3: Their Duo
+
+- Duo type (Friends, Couples, parents, siblings, no preference.)
+- Preferred age range (textbox for number dash textbox for number )
+- Is there a gender mix you’d feel most comfortable meeting with? (Select genders same as above)
+- Desired vibe(s):
+  - Adventurous
+  - Chill & Relaxed
+  - Funny & Playful
+  - Curious & Open-Minded
+  - Outgoing & Social
+  - Creative
+  - Foodies
+  - Active & Sporty
+  - Culture Lovers
+  - Family-Friendly
+  - Organizers
+  - Nightlife Lovers
+  - Mindful & Calm
+
+(Optional) Anything you’d like the other duo to know in advance? (Eg. Hows your availability or would you like to bring a child or a pet) (Textbox: This information is public)
 
 #### Final Step
+
 > “Copy link and invite your duo to join this event.”  
-[**Copy Invite Link**]
+> [**Copy Invite Link**]
 
 User A → Event appears in **Events tab (Pending)**.
 
@@ -442,59 +484,66 @@ User A → Event appears in **Events tab (Pending)**.
 
 ## 🔗 f) Invite Flow
 
-- User A can share the link with multiple potential User Bs.  
-- **First to accept** = official User B.  
+- User A can share the link with multiple potential User Bs.
+- **First to accept** = official User B.
 - Later invitees see:
   > “This event already has a duo. Create this as a new experience and make it your own!”  
-  [**CTA → Create this experience**]
+  > [**CTA → Create this experience**]
 
 ---
 
 ## ✅ g) Event Confirmation Flow
 
 ### When User B accepts
-- Event = **Live**  
+
+- Event = **Live**
 - Notifications:
-  - Browser  
-  - In-app  
-  - Email  
+  - Browser
+  - In-app
+  - Email
 
 ### When User B declines
-- User A notified  
+
+- User A notified
 - Option to invite another duo (auto-filled form)
 
 ---
 
 ## 🌍 h) User C (Joining a Live Event)
 
-- Sees listings in Explore (city-based)  
-- Blurred date & location until logged in  
-- CTA: “View event” → triggers sign-up if not logged in  
+- Sees listings in Explore (city-based)
+- Blurred date & location until logged in
+- CTA: “View event” → triggers sign-up if not logged in
 
 ### Event Details (for User C)
-- Full details visible  
-- “Request to join” → invite their duo (User D)  
-- First D to accept = confirmed pair  
-- Request sent to A + B  
+
+- Full details visible
+- “Request to join” → invite their duo (User D)
+- First D to accept = confirmed pair
+- Request sent to A + B
 
 ### User A + B Review
-- Notification + alert  
-- Can approve or decline  
 
-If approved →  
+- Notification + alert
+- Can approve or decline
+
+If approved →
+
 > “🎉 The 4 of you are going to [activity-name]!”  
-Chat auto-created.
+> Chat auto-created.
 
 ---
 
 ## 💬 i) Chat System Flow
 
 ### Chat Creation
-- Trigger: Event confirmed (A+B+C+D)  
+
+- Trigger: Event confirmed (A+B+C+D)
 - System message:
-  > “Welcome [A], [B], [C], and [D]! Has anyone done this activity before? 😊”  
+  > “Welcome [A], [B], [C], and [D]! Has anyone done this activity before? 😊”
 
 **Chat Features**
+
 - Text + emojis (files optional later)
 - Report user/event
 - Mute notifications
@@ -504,57 +553,67 @@ Chat auto-created.
 ### Chat Navigation
 
 #### - Active Chats
+
 - List of active event chats:
-  - Activity name  
-  - City  
-  - Last message preview (bold if unread)  
-  - Timestamp  
+  - Activity name
+  - City
+  - Last message preview (bold if unread)
+  - Timestamp
 
 **Empty State:**
+
 > “No active chats yet. Start exploring or create a new experience here!”  
-[**CTA → Create Experience**]
+> [**CTA → Create Experience**]
 
 #### - Archived Chats (collapsible)
+
 - Label: “Past Events ▼”
-- Collapsed by default  
+- Collapsed by default
 
 Each archived chat shows:
-- Activity name  
-- **Date (dimmed)** → visually lighter text = past event indicator  
-- Last message preview  
+
+- Activity name
+- **Date (dimmed)** → visually lighter text = past event indicator
+- Last message preview
 - **Button:** “Reopen chat”
 
 **Reopen Chat →**
-- Moves to *Active Chats*  
-- Notifications reactivated  
+
+- Moves to _Active Chats_
+- Notifications reactivated
 - Full message history visible
 
 ---
 
 ### After Event Completion
+
 - System message:
   > “Hope you had a great experience! 🌟  
   > You can rate the other duo and leave a short comment.  
   > Want to keep this chat open or archive it? Archived chats will be muted.”
 
 **Buttons:**
-- Keep Chat Open → stays active  
-- Archive Chat → moves to “Past Events,” muted  
 
-*Archiving is silent (no notification to others).*
+- Keep Chat Open → stays active
+- Archive Chat → moves to “Past Events,” muted
+
+_Archiving is silent (no notification to others)._
 
 ---
 
 ### Automatic Archiving (Soft Expiration)
-- Chats inactive for **30 days** → auto-archived  
-- Keeps chat overview tidy  
-- Archived chats always retrievable  
+
+- Chats inactive for **30 days** → auto-archived
+- Keeps chat overview tidy
+- Archived chats always retrievable
 - No notifications sent
 
 ---
 
 ### Before Event
-Chat tab visible but empty.  
+
+Chat tab visible but empty.
+
 > “No active chats yet. Start exploring or create a new experience here!”
 
 ---
@@ -562,14 +621,16 @@ Chat tab visible but empty.
 ## ⚠️ j) Reporting System
 
 ### Users can report:
+
 - An **event**
 - An **individual user**
 
 **Flow:**
-1. Click “Report”  
-2. Choose reason (harassment, spam, etc.)  
-3. Optional comment  
-4. Sent to moderation dashboard  
+
+1. Click “Report”
+2. Choose reason (harassment, spam, etc.)
+3. Optional comment
+4. Sent to moderation dashboard
 5. Confirmation message:
    > “Thanks for letting us know — our team will review this shortly.”
 
@@ -577,24 +638,24 @@ Chat tab visible but empty.
 
 ## 🔔 k) Notifications
 
-- Bell icon → new invites, confirmations, updates  
-- Browser push notifications for changes  
-- Email for confirmed matches + reminders  
+- Bell icon → new invites, confirmations, updates
+- Browser push notifications for changes
+- Email for confirmed matches + reminders
 
 ---
 
 ## 🗂️ l) System States Overview
 
-| State | Description | Visibility |
-|--------|--------------|-------------|
-| Logged out | Sees blurred events | Landing page |
-| Logged in, no events | Explore + empty Events & Chat | All tabs visible |
-| Event pending | A created event, B not yet joined | Events tab |
-| Event live | A+B confirmed | Explore & Events |
-| Event joined | A+B+C+D confirmed | Chat active |
-| Event completed | Past event date | Archive prompt |
-| Chat inactive 30+ days | Auto-archived | “Past Events” section |
-| Reported | Hidden for reporter, flagged for moderation | Admin only |
+| State                  | Description                                 | Visibility            |
+| ---------------------- | ------------------------------------------- | --------------------- |
+| Logged out             | Sees blurred events                         | Landing page          |
+| Logged in, no events   | Explore + empty Events & Chat               | All tabs visible      |
+| Event pending          | A created event, B not yet joined           | Events tab            |
+| Event live             | A+B confirmed                               | Explore & Events      |
+| Event joined           | A+B+C+D confirmed                           | Chat active           |
+| Event completed        | Past event date                             | Archive prompt        |
+| Chat inactive 30+ days | Auto-archived                               | “Past Events” section |
+| Reported               | Hidden for reporter, flagged for moderation | Admin only            |
 
 ---
 
@@ -607,45 +668,43 @@ Chat tab visible but empty.
 High-Level Structure
 
 **- Explore**
-  - Default Activity Cards
-      - Card Preview (CTA: "Create this experience")
-      - Share Link (always active)
-  - User-Generated Events
-    - Event Card (CTA: "View event")
-    - Blurred Date + Location (logged-out users)
-    - Share Link (always active)
-  - Filters
-    - City (initial scope)
-  - States
-    - Logged-out View (restricted visibility)
-    - Logged-in View (full interaction)
-**- Events**
-  - My Events
-    - Upcoming Events
-    - Past Events
-  - Create Event Flow
-    - Select Template or Custom
-    - Add Title, Description, Date, City
-    - Invite User(s) via share link
-    - Confirm Duo (User B accepts)
-    - Publish (visible to Users C + D)
-  - Event States
-    - Draft
-    - Awaiting Duo Confirmation
-    - Active Event
-    - Completed Event
-    - Cancelled
-  - Reporting
-    - Report Event (for moderation)
-**- Chat**
+
+- Default Activity Cards
+  - Card Preview (CTA: "Create this experience")
+  - Share Link (always active)
+- User-Generated Events
+  - Event Card (CTA: "View event")
+  - Blurred Date + Location (logged-out users)
+  - Share Link (always active)
+- Filters
+  - City (initial scope)
+- States - Logged-out View (restricted visibility) - Logged-in View (full interaction)
+  **- Events**
+- My Events
+  - Upcoming Events
+  - Past Events
+- Create Event Flow
+  - Select Template or Custom
+  - Add Title, Description, Date, City
+  - Invite User(s) via share link
+  - Confirm Duo (User B accepts)
+  - Publish (visible to Users C + D)
+- Event States
+  - Draft
+  - Awaiting Duo Confirmation
+  - Active Event
+  - Completed Event
+  - Cancelled
+- Reporting - Report Event (for moderation)
+  **- Chat**
 - Active Chats
-   - Group Chat (A+B and C+D)
-   - System Messages (reminders, event updates)
-   - Post-Event Prompt
-   - Options: Keep Chat Open / Archive Chat
+  - Group Chat (A+B and C+D)
+  - System Messages (reminders, event updates)
+  - Post-Event Prompt
+  - Options: Keep Chat Open / Archive Chat
 - Empty State
-   - Message: “No active chats yet. Start exploring or create a new experience here!”
-   - CTA: Create an experience
+  - Message: “No active chats yet. Start exploring or create a new experience here!”
+  - CTA: Create an experience
 - Archived Chats (collapsible)
   - Label: Past Events ▼
   - Chat Card
@@ -656,7 +715,7 @@ High-Level Structure
   - Reopen Chat → moves to Active Chats, notifications reactivated
 - Soft Expiration
   - After 30 days inactivity → Moves to Archived
-**- Profile**
+    **- Profile**
 - My Profile
   - Name, Picture, Bio, What I like, What I don't like, Hobbies
   - Settings & Support
@@ -667,9 +726,8 @@ High-Level Structure
     - Feedback
     - How PairUp Works Guide
     - Log Out
-  - Reporting
-    - Report User (from profile or chat)
-**- System-Level Elements**
+  - Reporting - Report User (from profile or chat)
+    **- System-Level Elements**
   - Top Navigation Bar
     - Explore
     - Events
@@ -693,16 +751,19 @@ Navigation uses a responsive `Navigation` organism with adaptive links and user 
 # **6. Component Design System**
 
 ---
+
 meta:
-  section: "Component Design System"
-  version: "1.0"
-  related_sections: ["Design Tokens & Theming", "Accessibility & UX", "Animations & Micro-interactions"]
-  updated: "2025-10-16"
+section: "Component Design System"
+version: "1.0"
+related_sections: ["Design Tokens & Theming", "Accessibility & UX", "Animations & Micro-interactions"]
+updated: "2025-10-16"
+
 ---
 
 ## Component Design System – Pair Up Events
 
 ### Design Principles
+
 - Components are **modular and reusable** across web and future mobile platforms.
 - Design is **playful, inviting, and warm-organic**, aligned with brand tone.
 - All components reference **design tokens** (colors, typography, spacing) from the Design Tokens & Theming section.
@@ -712,6 +773,7 @@ meta:
 ---
 
 ### Component Naming Conventions
+
 - **Base Components:** Use descriptive, generic names for reusability (e.g., `ButtonPrimary`, `CardBasic`).
 - **Feature Components:** Include purpose in name (e.g., `EventCard`, `PairProfileCard`).
 - **Variants:** Append variant descriptor (e.g., `ButtonPrimaryCreate`, `ButtonSecondaryFind`).
@@ -722,7 +784,8 @@ meta:
 ### Components
 
 #### Component: Button
-```json
+
+````json
 {
   "category": "UI element",
   "description": "Triggers actions. Used for primary, secondary, and neutral actions.",
@@ -918,8 +981,8 @@ meta:
 # **7. Visual Design**
 ## 🎨 Visual Design
 
-The visual identity of **Pair Up Events** reflects *warmth, trust, and curiosity*.  
-It invites users to explore real-world experiences in a *modern, organic* interface that feels both *encouraging and authentic*.  
+The visual identity of **Pair Up Events** reflects *warmth, trust, and curiosity*.
+It invites users to explore real-world experiences in a *modern, organic* interface that feels both *encouraging and authentic*.
 The system combines photography of real people in motion with card-based floating UI elements to create a natural flow between digital and human interaction.
 
 ```json
@@ -1028,8 +1091,8 @@ The system combines photography of real people in motion with card-based floatin
 
 # **8. Accessibility & UX**
 
-Accessibility and usability are at the core of **Pair Up Events**, ensuring that every user — regardless of ability, device, or comfort level — can enjoy seamless, inclusive interaction.  
-The system adheres to **WCAG 2.2 AA standards**, prioritizing clarity, control, and comfort.  
+Accessibility and usability are at the core of **Pair Up Events**, ensuring that every user — regardless of ability, device, or comfort level — can enjoy seamless, inclusive interaction.
+The system adheres to **WCAG 2.2 AA standards**, prioritizing clarity, control, and comfort.
 It’s designed to feel **warm, trustworthy, and supportive**, helping users focus on connection, not complexity.
 
 ```json
@@ -1110,7 +1173,7 @@ It’s designed to feel **warm, trustworthy, and supportive**, helping users foc
 
 # **9. Responsive Design**
 
-The Responsive Design section defines how Pair Up Events adapts across viewports — from desktop web to future mobile — preserving layout, accessibility, and the playful, warm-organic visual tone.  
+The Responsive Design section defines how Pair Up Events adapts across viewports — from desktop web to future mobile — preserving layout, accessibility, and the playful, warm-organic visual tone.
 Design is **mobile-first in behavior** but web-first in current implementation: components are responsive by default and include explicit adaptive rules for smaller screens.
 
 ```json
@@ -1272,21 +1335,24 @@ Example:
   --color-primary: #60a5fa;
   --color-background: #0f172a;
 }
-```
+````
 
 # **12. Branding Guidelines**
 
 ### 🎭 Tone & Voice
+
 Pair Up Events speaks with **warmth, energy, and inclusivity**.
 We want users to feel like they’re part of something active and welcoming — a social brand built around real-world connection.
 
 **Voice Attributes:**
+
 - Friendly, conversational, and human
 - Confident but never corporate
 - Encouraging rather than directive
 - Honest and transparent about privacy and safety
 
 **Examples:**
+
 - ✅ “Let’s make something fun happen.”
 - ✅ “Invite your friends — they’ll love it.”
 - ❌ “Submit your request to organize an event.”
@@ -1296,12 +1362,14 @@ We want users to feel like they’re part of something active and welcoming — 
 ### 🖋️ Logo Usage
 
 **Primary Logo:**
+
 - The full “Pair Up Events” logotype with icon.
 - Preferred placement: top-left corner of navigation bar.
 - Clear space: maintain padding equal to the logo height on all sides.
 - Minimum size: 24px height for mobile, 40px for desktop.
 
 **Variants:**
+
 - **Light Mode:** Use the colored logo.
 - **Dark Mode:** Use the white or monochrome variant.
 - **Icon-only:** Use only the mark (without text) for compact spaces, favicons, or app icons.
@@ -1313,15 +1381,15 @@ SVG preferred for web. PNG for fallbacks.
 
 ### 🧭 Color Usage
 
-| Color | Hex | Purpose |
-|--------|-----|----------|
-| Primary | `#3B82F6` | Action buttons, links |
-| Secondary | `#9333EA` | Highlights, decorative accents |
-| Accent | `#FBBF24` | Toasts, interactive highlights |
-| Background | `#FFFFFF` / `#0F172A` | Light / Dark mode backgrounds |
-| Neutral | `#F3F4F6` | Card backgrounds, surfaces |
-| Success | `#16A34A` | Confirmations and positive messages |
-| Error | `#DC2626` | Errors, alerts, validation feedback |
+| Color      | Hex                   | Purpose                             |
+| ---------- | --------------------- | ----------------------------------- |
+| Primary    | `#3B82F6`             | Action buttons, links               |
+| Secondary  | `#9333EA`             | Highlights, decorative accents      |
+| Accent     | `#FBBF24`             | Toasts, interactive highlights      |
+| Background | `#FFFFFF` / `#0F172A` | Light / Dark mode backgrounds       |
+| Neutral    | `#F3F4F6`             | Card backgrounds, surfaces          |
+| Success    | `#16A34A`             | Confirmations and positive messages |
+| Error      | `#DC2626`             | Errors, alerts, validation feedback |
 
 > Always maintain **4.5:1 contrast ratio** for text and interactive elements.
 
@@ -1358,13 +1426,13 @@ SVG preferred for web. PNG for fallbacks.
 
 ### 🧠 Brand Personality Summary
 
-| Trait | Description |
-|--------|--------------|
-| **Friendly** | Feels like a helpful friend, not a company. |
-| **Energetic** | Encourages action and fun. |
-| **Trustworthy** | Privacy-first, clear about what happens with user data. |
-| **Simple** | Removes friction and avoids clutter. |
-| **Optimistic** | Makes users feel like socializing is easy and rewarding. |
+| Trait           | Description                                              |
+| --------------- | -------------------------------------------------------- |
+| **Friendly**    | Feels like a helpful friend, not a company.              |
+| **Energetic**   | Encourages action and fun.                               |
+| **Trustworthy** | Privacy-first, clear about what happens with user data.  |
+| **Simple**      | Removes friction and avoids clutter.                     |
+| **Optimistic**  | Makes users feel like socializing is easy and rewarding. |
 
 ---
 
@@ -1373,22 +1441,26 @@ SVG preferred for web. PNG for fallbacks.
 The following improvements are planned to evolve both product design and brand maturity:
 
 ### 🌈 Visual & UX Enhancements
+
 - Dynamic theme editor (user-chosen color palettes or accessibility presets)
 - Animated onboarding flow with motion-driven storytelling
 - Enhanced event discovery with tags, filters, and location cues
 - Realtime UI feedback for invitations and group chat reactions
 
 ### ⚙️ Design System Evolution
+
 - Introduce Figma → Tailwind design token sync
 - Expand `useAccessibility` and `useErrorReporting` hooks to UI system level
 - Create a shared component library (`@pairup/ui`) for web and internal tools
 
 ### 📱 Cross-Platform Consistency
+
 - Introduce mobile-native design tokens
 - Implement adaptive layouts for foldable and tablet devices
 - Unify iconography and color behavior between PWA and native builds
 
 ### ♿ Accessibility Roadmap
+
 - Integrate automated accessibility audits (axe-core CI pipeline)
 - Live-region announcements for navigation and content changes
 - Keyboard shortcuts for power users and screen-reader optimizations

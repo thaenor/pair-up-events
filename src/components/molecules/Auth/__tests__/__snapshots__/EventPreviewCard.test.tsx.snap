@@ -1,0 +1,297 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`EventPreviewCard > should match snapshot - basic event 1`] = `
+<div
+  class="bg-pairup-cream border-2 border-pairup-darkBlue rounded-lg p-3 md:p-4 my-2 md:my-4 w-full max-w-md"
+>
+  <div
+    class="mb-3"
+  >
+    <div
+      class="flex items-center gap-2 mb-2"
+    >
+      <span
+        class="text-xl md:text-2xl"
+      >
+        📅
+      </span>
+      <h3
+        class="text-base md:text-lg font-bold text-pairup-darkBlue"
+      >
+        Coffee Meetup
+      </h3>
+    </div>
+    <p
+      class="text-xs md:text-sm text-gray-700 italic"
+    >
+      A nice coffee meetup
+    </p>
+  </div>
+  <div
+    class="space-y-2 text-xs md:text-sm"
+  >
+    <div
+      class="flex items-start gap-2"
+    >
+      <span
+        class="text-base md:text-lg"
+      >
+        🎯
+      </span>
+      <div>
+        <span
+          class="font-semibold text-pairup-darkBlue"
+        >
+          Activity:
+        </span>
+        <span
+          class="ml-2 text-gray-800"
+        >
+          Coffee
+        </span>
+      </div>
+    </div>
+    <div
+      class="flex items-start gap-2"
+    >
+      <span
+        class="text-base md:text-lg"
+      >
+        🕐
+      </span>
+      <div>
+        <span
+          class="font-semibold text-pairup-darkBlue"
+        >
+          When:
+        </span>
+        <span
+          class="ml-2 text-gray-800"
+        >
+          2024-12-25 at 10:00
+        </span>
+      </div>
+    </div>
+    <div
+      class="flex items-start gap-2"
+    >
+      <span
+        class="text-base md:text-lg"
+      >
+        📍
+      </span>
+      <div>
+        <span
+          class="font-semibold text-pairup-darkBlue"
+        >
+          Where:
+        </span>
+        <span
+          class="ml-2 text-gray-800"
+        >
+          123 Main St, New York
+        </span>
+      </div>
+    </div>
+    <div
+      class="flex items-start gap-2"
+    >
+      <span
+        class="text-base md:text-lg"
+      >
+        ✨
+      </span>
+      <div
+        class="flex-1"
+      >
+        <span
+          class="font-semibold text-pairup-darkBlue"
+        >
+          Preferences:
+        </span>
+        <div
+          class="ml-2 text-gray-800"
+        >
+          <div
+            class="capitalize"
+          >
+            friends
+          </div>
+          <div
+            class="flex flex-wrap gap-1 mt-1"
+          >
+            <span
+              class="bg-pairup-darkBlue text-white px-2 py-0.5 rounded-full text-xs capitalize"
+            >
+              chill
+            </span>
+          </div>
+          <div
+            class="text-xs mt-1"
+          >
+            Age range: 
+            25
+            -
+            35
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`EventPreviewCard > should match snapshot - with edit and confirm handlers 1`] = `
+<div
+  class="bg-pairup-cream border-2 border-pairup-darkBlue rounded-lg p-3 md:p-4 my-2 md:my-4 w-full max-w-md"
+>
+  <div
+    class="mb-3"
+  >
+    <div
+      class="flex items-center gap-2 mb-2"
+    >
+      <span
+        class="text-xl md:text-2xl"
+      >
+        📅
+      </span>
+      <h3
+        class="text-base md:text-lg font-bold text-pairup-darkBlue"
+      >
+        Coffee Meetup
+      </h3>
+    </div>
+    <p
+      class="text-xs md:text-sm text-gray-700 italic"
+    >
+      A nice coffee meetup
+    </p>
+  </div>
+  <div
+    class="space-y-2 text-xs md:text-sm"
+  >
+    <div
+      class="flex items-start gap-2"
+    >
+      <span
+        class="text-base md:text-lg"
+      >
+        🎯
+      </span>
+      <div>
+        <span
+          class="font-semibold text-pairup-darkBlue"
+        >
+          Activity:
+        </span>
+        <span
+          class="ml-2 text-gray-800"
+        >
+          Coffee
+        </span>
+      </div>
+    </div>
+    <div
+      class="flex items-start gap-2"
+    >
+      <span
+        class="text-base md:text-lg"
+      >
+        🕐
+      </span>
+      <div>
+        <span
+          class="font-semibold text-pairup-darkBlue"
+        >
+          When:
+        </span>
+        <span
+          class="ml-2 text-gray-800"
+        >
+          2024-12-25 at 10:00
+        </span>
+      </div>
+    </div>
+    <div
+      class="flex items-start gap-2"
+    >
+      <span
+        class="text-base md:text-lg"
+      >
+        📍
+      </span>
+      <div>
+        <span
+          class="font-semibold text-pairup-darkBlue"
+        >
+          Where:
+        </span>
+        <span
+          class="ml-2 text-gray-800"
+        >
+          123 Main St, New York
+        </span>
+      </div>
+    </div>
+    <div
+      class="flex items-start gap-2"
+    >
+      <span
+        class="text-base md:text-lg"
+      >
+        ✨
+      </span>
+      <div
+        class="flex-1"
+      >
+        <span
+          class="font-semibold text-pairup-darkBlue"
+        >
+          Preferences:
+        </span>
+        <div
+          class="ml-2 text-gray-800"
+        >
+          <div
+            class="capitalize"
+          >
+            friends
+          </div>
+          <div
+            class="flex flex-wrap gap-1 mt-1"
+          >
+            <span
+              class="bg-pairup-darkBlue text-white px-2 py-0.5 rounded-full text-xs capitalize"
+            >
+              chill
+            </span>
+          </div>
+          <div
+            class="text-xs mt-1"
+          >
+            Age range: 
+            25
+            -
+            35
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="flex gap-2 mt-3 md:mt-4 pt-3 border-t border-gray-300"
+  >
+    <button
+      class="flex-1 px-3 md:px-4 py-2 text-xs md:text-sm font-medium text-pairup-darkBlue bg-white border-2 border-pairup-darkBlue rounded-lg hover:bg-gray-50 transition-colors"
+    >
+      Edit
+    </button>
+    <button
+      class="flex-1 px-3 md:px-4 py-2 text-xs md:text-sm font-medium text-white bg-pairup-darkBlue rounded-lg hover:bg-opacity-90 transition-colors"
+    >
+      Create Event
+    </button>
+  </div>
+</div>
+`;

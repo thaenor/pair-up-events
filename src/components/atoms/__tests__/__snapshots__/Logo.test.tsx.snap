@@ -1,0 +1,91 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Logo > should match snapshot - default 1`] = `
+<div
+  class="flex items-center gap-2"
+>
+  <img
+    alt="Pair Up Events logo"
+    class="h-6 w-6 object-contain"
+    src="/PUE_logo_transparent.png"
+  />
+  <span
+    class="text-base font-bold"
+  >
+    <span
+      class="text-pairup-cyan"
+    >
+      Pair
+    </span>
+    <span
+      class="text-pairup-yellow"
+    >
+      Up Events
+    </span>
+  </span>
+</div>
+`;
+
+exports[`Logo > should match snapshot - hero size 1`] = `
+<div
+  class="flex items-center gap-2"
+>
+  <img
+    alt="Pair Up Events logo"
+    class="h-64 w-64 md:h-80 md:w-80 object-contain"
+    src="/PUE_logo_transparent.png"
+  />
+  <span
+    class="text-4xl md:text-5xl lg:text-6xl font-bold"
+  >
+    <span
+      class="text-pairup-cyan"
+    >
+      Pair
+    </span>
+    <span
+      class="text-pairup-yellow"
+    >
+      Up Events
+    </span>
+  </span>
+</div>
+`;
+
+exports[`Logo > should match snapshot - large size 1`] = `
+<div
+  class="flex items-center gap-2"
+>
+  <img
+    alt="Pair Up Events logo"
+    class="h-8 w-8 object-contain"
+    src="/PUE_logo_transparent.png"
+  />
+  <span
+    class="text-lg font-bold"
+  >
+    <span
+      class="text-pairup-cyan"
+    >
+      Pair
+    </span>
+    <span
+      class="text-pairup-yellow"
+    >
+      Up Events
+    </span>
+  </span>
+</div>
+`;
+
+exports[`Logo > should match snapshot - without text 1`] = `
+<div
+  class="flex items-center gap-2"
+>
+  <img
+    alt="Pair Up Events logo"
+    class="h-6 w-6 object-contain"
+    src="/PUE_logo_transparent.png"
+  />
+</div>
+`;

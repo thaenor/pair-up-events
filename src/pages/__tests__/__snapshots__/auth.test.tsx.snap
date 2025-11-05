@@ -1,0 +1,588 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AuthPage > should match snapshot 1`] = `
+<div
+  class="grid grid-cols-1 md:grid-cols-2 h-screen"
+  data-testid="auth-layout"
+>
+  <div
+    class="bg-[#1A2833] p-8 flex flex-col justify-center items-center order-2 md:order-1"
+    data-testid="auth-layout-left"
+  >
+    <div
+      class="w-full max-w-sm"
+    >
+      <img
+        alt="PairUp Events"
+        class="h-12 mb-8"
+        src="/Logo.png"
+      />
+      <h1
+        class="text-4xl font-bold text-white mb-8"
+      >
+        Create Account
+      </h1>
+      <form
+        class="w-full max-w-sm space-y-6"
+        data-testid="signup-form"
+      >
+        <div
+          class="bg-pairup-cyan/10 border border-pairup-cyan/30 rounded-md p-3 mb-4"
+        >
+          <p
+            class="text-sm text-pairup-cream"
+          >
+            Join PairUp Events! Create your account to start connecting with other pairs and organizing amazing activities.
+          </p>
+        </div>
+        <div
+          class="bg-red-50 border border-red-200 rounded-lg p-4 "
+          data-testid="auth-error-display"
+        >
+          <div
+            class="flex items-start"
+          >
+            <div
+              class="flex-shrink-0 text-red-500"
+            >
+              <svg
+                class="lucide lucide-triangle-alert h-5 w-5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"
+                />
+                <path
+                  d="M12 9v4"
+                />
+                <path
+                  d="M12 17h.01"
+                />
+              </svg>
+            </div>
+            <div
+              class="ml-3 flex-1"
+            >
+              <h3
+                class="text-sm font-medium text-red-800"
+              >
+                Something went wrong
+              </h3>
+              <div
+                class="mt-1 text-sm text-red-700"
+              >
+                <p>
+                  An unexpected error occurred. Please try again
+                </p>
+                <p
+                  class="mt-1 text-red-600"
+                >
+                  An unexpected error occurred. Please try again.
+                </p>
+              </div>
+              <div
+                class="mt-3 flex space-x-3"
+              >
+                <button
+                  aria-disabled="false"
+                  class="inline-flex items-center justify-center gap-2 font-medium rounded-md transition-colors disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 text-sm px-3 py-1.5 h-8 hover:bg-pairup-cyan/10 focus:ring-pairup-cyan text-red-600 hover:text-red-800"
+                  type="button"
+                >
+                  <span
+                    class="flex items-center gap-2"
+                    data-testid="button-content"
+                  >
+                    Dismiss
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="grid grid-cols-2 gap-4"
+        >
+          <div
+            class="space-y-2"
+          >
+            <label
+              class="block text-sm font-medium text-white"
+              for="firstName"
+            >
+              First Name
+               
+              <span
+                class="text-red-400"
+              >
+                *
+              </span>
+            </label>
+            <div
+              class="relative"
+            >
+              <div
+                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+              >
+                <svg
+                  class="lucide lucide-user h-5 w-5 text-gray-400"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+                  />
+                  <circle
+                    cx="12"
+                    cy="7"
+                    r="4"
+                  />
+                </svg>
+              </div>
+              <input
+                class="block w-full pl-10 pr-3 py-3 border rounded-md bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors border-gray-500"
+                data-testid="signup-first-name"
+                id="firstName"
+                placeholder="John"
+                type="text"
+                value=""
+              />
+            </div>
+          </div>
+          <div
+            class="space-y-2"
+          >
+            <label
+              class="block text-sm font-medium text-white"
+              for="lastName"
+            >
+              Last Name
+               
+              <span
+                class="text-red-400"
+              >
+                *
+              </span>
+            </label>
+            <div
+              class="relative"
+            >
+              <div
+                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+              >
+                <svg
+                  class="lucide lucide-user h-5 w-5 text-gray-400"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+                  />
+                  <circle
+                    cx="12"
+                    cy="7"
+                    r="4"
+                  />
+                </svg>
+              </div>
+              <input
+                class="block w-full pl-10 pr-3 py-3 border rounded-md bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors border-gray-500"
+                data-testid="signup-last-name"
+                id="lastName"
+                placeholder="Doe"
+                type="text"
+                value=""
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="space-y-2"
+        >
+          <label
+            class="block text-sm font-medium text-white"
+            for="email"
+          >
+            Email Address
+             
+            <span
+              class="text-red-400"
+            >
+              *
+            </span>
+          </label>
+          <div
+            class="relative"
+          >
+            <div
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+            >
+              <svg
+                class="lucide lucide-mail h-5 w-5 text-gray-400"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  height="16"
+                  rx="2"
+                  width="20"
+                  x="2"
+                  y="4"
+                />
+                <path
+                  d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"
+                />
+              </svg>
+            </div>
+            <input
+              class="block w-full pl-10 pr-3 py-3 border rounded-md bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors border-gray-500"
+              data-testid="signup-email"
+              id="email"
+              placeholder="john@example.com"
+              type="email"
+              value=""
+            />
+          </div>
+        </div>
+        <div
+          class="space-y-2"
+        >
+          <label
+            class="block text-sm font-medium text-white"
+            for="password"
+          >
+            Password 
+            <span
+              class="text-red-400"
+            >
+              *
+            </span>
+          </label>
+          <div
+            class="relative"
+          >
+            <div
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+            >
+              <svg
+                class="lucide lucide-lock h-5 w-5 text-gray-400"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  height="11"
+                  rx="2"
+                  ry="2"
+                  width="18"
+                  x="3"
+                  y="11"
+                />
+                <path
+                  d="M7 11V7a5 5 0 0 1 10 0v4"
+                />
+              </svg>
+            </div>
+            <input
+              class="block w-full pl-10 pr-12 py-3 border rounded-md bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors border-gray-500"
+              data-testid="signup-password"
+              id="password"
+              placeholder="Create a password"
+              type="password"
+              value=""
+            />
+            <button
+              aria-label="Show password"
+              class="absolute inset-y-0 right-0 pr-3 flex items-center"
+              type="button"
+            >
+              <svg
+                class="lucide lucide-eye h-5 w-5 text-gray-400 hover:text-white transition-colors"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"
+                />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="3"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div
+          class="space-y-2"
+        >
+          <label
+            class="block text-sm font-medium text-white"
+            for="confirmPassword"
+          >
+            Confirm Password 
+            <span
+              class="text-red-400"
+            >
+              *
+            </span>
+          </label>
+          <div
+            class="relative"
+          >
+            <div
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+            >
+              <svg
+                class="lucide lucide-lock h-5 w-5 text-gray-400"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  height="11"
+                  rx="2"
+                  ry="2"
+                  width="18"
+                  x="3"
+                  y="11"
+                />
+                <path
+                  d="M7 11V7a5 5 0 0 1 10 0v4"
+                />
+              </svg>
+            </div>
+            <input
+              class="block w-full pl-10 pr-12 py-3 border rounded-md bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors border-gray-500"
+              data-testid="signup-confirm-password"
+              id="confirmPassword"
+              placeholder="Confirm your password"
+              type="password"
+              value=""
+            />
+            <button
+              aria-label="Show password"
+              class="absolute inset-y-0 right-0 pr-3 flex items-center"
+              type="button"
+            >
+              <svg
+                class="lucide lucide-eye h-5 w-5 text-gray-400 hover:text-white transition-colors"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"
+                />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="3"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div
+          class="space-y-2"
+        >
+          <label
+            class="block text-sm font-medium text-white"
+            for="birthDate"
+          >
+            Birth Date
+             
+            <span
+              class="text-red-400"
+            >
+              *
+            </span>
+          </label>
+          <div
+            class="relative"
+          >
+            <div
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+            >
+              <svg
+                class="lucide lucide-calendar h-5 w-5 text-gray-400"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M8 2v4"
+                />
+                <path
+                  d="M16 2v4"
+                />
+                <rect
+                  height="18"
+                  rx="2"
+                  width="18"
+                  x="3"
+                  y="4"
+                />
+                <path
+                  d="M3 10h18"
+                />
+              </svg>
+            </div>
+            <input
+              class="block w-full pl-10 pr-3 py-3 border rounded-md bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors border-gray-500"
+              data-testid="signup-birth-date"
+              id="birthDate"
+              type="date"
+              value=""
+            />
+          </div>
+        </div>
+        <div
+          class="space-y-2"
+        >
+          <label
+            class="block text-sm font-medium text-white"
+            for="gender"
+          >
+            Gender 
+            <span
+              class="text-red-400"
+            >
+              *
+            </span>
+          </label>
+          <select
+            class="block w-full pl-3 pr-3 py-3 border rounded-md bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:border-transparent transition-colors border-gray-500"
+            data-testid="signup-gender"
+            id="gender"
+          >
+            <option
+              value=""
+            >
+              Select gender
+            </option>
+            <option
+              value="male"
+            >
+              Male
+            </option>
+            <option
+              value="female"
+            >
+              Female
+            </option>
+            <option
+              value="non-binary"
+            >
+              Non-binary
+            </option>
+            <option
+              value="prefer-not-to-say"
+            >
+              Prefer not to say
+            </option>
+          </select>
+        </div>
+        <button
+          class="w-full flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-pairup-darkBlue bg-pairup-cyan hover:bg-pairup-cyan/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pairup-cyan disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          data-testid="signup-submit-button"
+          type="submit"
+        >
+          Create Account
+        </button>
+        <div
+          class="text-center"
+        >
+          <p
+            class="text-sm text-gray-400"
+          >
+            Already have an account?
+             
+            <a
+              class="text-pairup-cyan hover:underline font-medium"
+              data-testid="signup-login-link"
+              href="/login"
+            >
+              Sign in here
+            </a>
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div
+    class="order-1 md:order-2"
+    data-testid="auth-layout-images"
+  >
+    <img
+      alt="PairUp Events"
+      class="w-full h-auto object-cover md:hidden"
+      src="/Header Logo Mobile.png"
+    />
+    <img
+      alt="PairUp Events"
+      class="hidden md:block w-full h-full object-cover"
+      src="/Header Logo Desktop.png"
+    />
+  </div>
+</div>
+`;
