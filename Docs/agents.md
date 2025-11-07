@@ -292,15 +292,15 @@ import { Navigation } from '@/components/organisms'
 
 ## 12. Available Cursor Commands
 
-### 12.1. @prompt-generator
+### 12.1. /prompt-generator
 
 **Purpose**: Transforms rough feature requests into refined, context-rich implementation specifications.
 
 **Usage**:
 
 ```
-@prompt-generator [your request]
-@prompt-generator --backlog [your request]
+/prompt-generator [your request]
+/prompt-generator --backlog [your request]
 ```
 
 **What it does**:
@@ -322,7 +322,7 @@ import { Navigation } from '@/components/organisms'
 
 **Documentation**:
 
-- Command definition: `.cursorrules`
+- Command definition: `.cursor/commands/prompt-generator.md`
 - Example output: `Docs/agents-temp/EXAMPLE-prompt-2025-11-07-sample-task.md`
 - Temp folder info: `Docs/agents-temp/README.md`
 
@@ -336,7 +336,7 @@ import { Navigation } from '@/components/organisms'
 
 **Recent Updates (v1.4):**
 
-- Added `@prompt-generator` cursor command for requirement refinement and context gathering
+- Added `/prompt-generator` cursor command for requirement refinement and context gathering
 - Created `Docs/agents-temp/` directory for generated implementation prompts
 - Enhanced backlog workflow with automated research and complexity estimation
 - Added Section 12: Available Cursor Commands

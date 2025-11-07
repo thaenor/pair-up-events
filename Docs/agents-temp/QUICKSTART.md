@@ -1,6 +1,6 @@
-# Quick Start: Using @prompt-generator
+# Quick Start: Using /prompt-generator
 
-## What is @prompt-generator?
+## What is /prompt-generator?
 
 A Cursor command that transforms rough feature requests into detailed, context-rich implementation specifications. It acts as both a Product Manager and Senior Engineer to refine your ideas.
 
@@ -11,7 +11,7 @@ A Cursor command that transforms rough feature requests into detailed, context-r
 When you're ready to start work immediately:
 
 ```
-@prompt-generator Please add dark mode toggle to settings
+/prompt-generator Please add dark mode toggle to settings
 ```
 
 **Output**: Creates `Docs/agents-temp/prompt-[timestamp]-add-dark-mode-toggle.md` with:
@@ -27,7 +27,7 @@ When you're ready to start work immediately:
 When you want to track the task for later:
 
 ```
-@prompt-generator --backlog Please add dark mode toggle to settings
+/prompt-generator --backlog Please add dark mode toggle to settings
 ```
 
 **Output**: Adds structured entry to `Docs/Backlog.md` with research, complexity, and impact analysis.
@@ -66,7 +66,7 @@ Creates either:
 **You type**:
 
 ```
-@prompt-generator Remove the email field from user profiles
+/prompt-generator Remove the email field from user profiles
 ```
 
 **Agent asks** (batched questions):
@@ -141,12 +141,12 @@ If the agent detects suboptimal patterns, it will:
 
 1. Review the backlog entry in `Docs/Backlog.md`
 2. Prioritize with team
-3. Use `@prompt-generator [backlog item]` when ready to implement
+3. Use `/prompt-generator [backlog item]` when ready to implement
 
 ## Files Created by This Agent
 
 ```
-.cursorrules                                      # Command definition
+.cursor/commands/prompt-generator.md              # Command definition
 Docs/agents-temp/README.md                        # Directory purpose
 Docs/agents-temp/QUICKSTART.md                    # This file
 Docs/agents-temp/EXAMPLE-*.md                     # Example output
@@ -156,10 +156,10 @@ Docs/agents-temp/prompt-[timestamp]-[task].md     # Your generated prompts
 ## Related Documentation
 
 - **Agent Rules**: `Docs/agents.md` (Section 12)
-- **Command Definition**: `.cursorrules`
+- **Command Definition**: `.cursor/commands/prompt-generator.md`
 - **Example Output**: `Docs/agents-temp/EXAMPLE-prompt-2025-11-07-sample-task.md`
 - **Backlog Format**: `Docs/Backlog.md`
 
 ---
 
-**Questions?** Check `.cursorrules` for full command documentation.
+**Questions?** Check `.cursor/commands/prompt-generator.md` for full command documentation.
