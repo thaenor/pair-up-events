@@ -261,7 +261,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw error
       }
     },
-    [user?.uid, userProfile, refreshProfile]
+    [user?.uid]
   )
 
   /**
