@@ -290,11 +290,56 @@ import { Navigation } from '@/components/organisms'
 
 ---
 
-### Document Version: `PairUp-events Codex Contextualizer v1.3`
+## 12. Available Cursor Commands
+
+### 12.1. @prompt-generator
+
+**Purpose**: Transforms rough feature requests into refined, context-rich implementation specifications.
+
+**Usage**:
+
+```
+@prompt-generator [your request]
+@prompt-generator --backlog [your request]
+```
+
+**What it does**:
+
+1. **PM Persona**: Clarifies requirements, defines acceptance criteria and definition of done
+2. **Engineer Persona**: Analyzes codebase, identifies patterns, builds technical context
+3. **Output**: Generates detailed implementation prompt or backlog entry
+
+**When to use**:
+
+- You have a rough idea but need it refined into actionable specs
+- Want to ensure all context is gathered before implementation
+- Need to add a well-researched entry to the backlog
+
+**Output locations**:
+
+- Without `--backlog`: Creates file in `Docs/agents-temp/prompt-[timestamp]-[task].md`
+- With `--backlog`: Adds structured entry to `Docs/Backlog.md`
+
+**Documentation**:
+
+- Command definition: `.cursorrules`
+- Example output: `Docs/agents-temp/EXAMPLE-prompt-2025-11-07-sample-task.md`
+- Temp folder info: `Docs/agents-temp/README.md`
+
+---
+
+### Document Version: `PairUp-events Codex Contextualizer v1.4`
 
 **Maintained by:** PairUp Engineering
-**Last Updated:** 2025-01-28
+**Last Updated:** 2025-11-07
 **Scope:** Applies to all automated or AI-assisted code operations within the PairUp-events repository.
+
+**Recent Updates (v1.4):**
+
+- Added `@prompt-generator` cursor command for requirement refinement and context gathering
+- Created `Docs/agents-temp/` directory for generated implementation prompts
+- Enhanced backlog workflow with automated research and complexity estimation
+- Added Section 12: Available Cursor Commands
 
 **Recent Updates (v1.3):**
 
