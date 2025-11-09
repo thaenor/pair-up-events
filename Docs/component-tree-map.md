@@ -105,8 +105,7 @@ Index
     │   ├── HeroSection
     │   │   └── Button-like CTA links (Create listing, Search listings)
     │   ├── HowItWorksSection
-    │   ├── BenefitsSection
-    │   └── EarlyAccessSection
+    │   └── BenefitsSection
     ├── Footer (showFooter=true)
     │   └── Multiple links and social icons
     └── MobileBottomNavigation
@@ -562,8 +561,7 @@ Located in: `src/components/organisms/`
 
 2. **HowItWorksSection** (`HowItWorksSection.tsx`)
 3. **BenefitsSection** (`BenefitsSection.tsx`)
-4. **EarlyAccessSection** (`EarlyAccessSection.tsx`)
-5. **Footer** (`Footer.tsx`)
+4. **Footer** (`Footer.tsx`)
 
 #### Events Organisms (`src/components/organisms/Events/`)
 

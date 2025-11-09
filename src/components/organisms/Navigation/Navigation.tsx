@@ -182,14 +182,6 @@ const Navigation: React.FC = React.memo(() => {
               >
                 Benefits
               </a>
-              <a
-                href="#early-access"
-                className="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
-                aria-label="Join Early Access"
-                role="menuitem"
-              >
-                Early Access
-              </a>
             </div>
 
             <div className="flex items-center justify-center gap-4 mr-4">
