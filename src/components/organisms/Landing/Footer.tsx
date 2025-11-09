@@ -44,8 +44,8 @@ const footerLinkGroups: Array<{
       },
       {
         label: 'Contact',
-        targetId: 'early-access',
-        ariaLabel: 'Find our contact form in the Early Access section',
+        href: '/contact-us',
+        ariaLabel: 'Navigate to the contact page',
       },
       {
         label: 'Careers',
