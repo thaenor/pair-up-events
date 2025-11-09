@@ -3,6 +3,7 @@ import { getApp, getApps, initializeApp, type FirebaseApp } from 'firebase/app'
 import { getAuth, type Auth, connectAuthEmulator } from 'firebase/auth'
 import { getFirestore, type Firestore, connectFirestoreEmulator } from 'firebase/firestore'
 import { getStorage, type FirebaseStorage, connectStorageEmulator } from 'firebase/storage'
+import { initializeAppCheckService, enableAppCheckDebugMode } from './appcheck'
 
 /**
  * Firebase project configuration object
@@ -112,6 +113,12 @@ const initializeFirebase = (): FirebaseResources => {
 }
 
 const { app, auth, db, storage } = initializeFirebase()
+
+if (import.meta.env.DEV) {
+  enableAppCheckDebugMode()
+}
+
+initializeAppCheckService()
 
 /**
  * Connect to Firebase Emulators when running locally
