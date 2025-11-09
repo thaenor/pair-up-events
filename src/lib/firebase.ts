@@ -118,6 +118,8 @@ if (import.meta.env.DEV) {
   enableAppCheckDebugMode()
 }
 
+// if there are App Check errors with the emulator let's add a check on this line
+// if (!shouldUseEmulator) {
 initializeAppCheckService()
 
 /**

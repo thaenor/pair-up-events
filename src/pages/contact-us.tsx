@@ -91,8 +91,8 @@ const ContactUsPage: React.FC = () => {
           <section className="space-y-4">
             <h2 className="text-2xl font-semibold text-pairup-darkBlue">Follow and support our social channels.</h2>
             <p className="text-lg text-pairup-darkBlue/80 leading-relaxed">
-              This platform lives from activity! Bring pairup events under the people. As more people know about it, as
-              more likely will you find a duo that matches your vibe!
+              This platform lives from activity! Bring pairup events to the people. As more people know about it, the
+              more likely you will find a duo that matches your vibe!
             </p>
           </section>
 
