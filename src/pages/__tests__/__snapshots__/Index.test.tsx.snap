@@ -509,7 +509,7 @@ exports[`Index > should match snapshot 1`] = `
                   aria-label="Create a new listing"
                   class="btn-cta btn-cta--cyan"
                   data-testid="create-listing-link"
-                  href="/event/create"
+                  href="/events/create"
                   id="create-listing-btn"
                 >
                   Create a new listing

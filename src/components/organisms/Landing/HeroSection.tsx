@@ -28,7 +28,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onScrollToEarlyAccess }) => {
             <div className="flex flex-col items-center sm:items-start sm:flex-row gap-4">
               <a
                 id="create-listing-btn"
-                href="/event/create"
+                href="/events/create"
                 className="btn-cta btn-cta--cyan"
                 data-testid="create-listing-link"
                 aria-label="Create a new listing"

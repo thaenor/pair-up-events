@@ -9,7 +9,7 @@ import ErrorBoundary from '@/components/ErrorBoundary'
 import useRequireAuth from '@/hooks/useRequireAuth'
 import useAuth from '@/hooks/useAuth'
 import { useUserProfile } from '@/contexts/UserContext'
-import { getGeminiModel, EVENT_ORGANIZER_SYSTEM_PROMPT, INITIAL_GREETING } from '@/lib/ai'
+import { getGeminiModel, INITIAL_GREETING } from '@/lib/ai'
 import {
   createDraftEvent,
   loadDraftEvent,
@@ -20,6 +20,7 @@ import {
 import { validateEventData, mapEventPreviewToDraft } from '@/entities/event/event-validation'
 import type { ChatMessageData, EventPreviewData } from '@/entities/event/event'
 import ChatInterface from '@/components/organisms/Events/ChatInterface'
+import { EVENT_ORGANIZER_SYSTEM_PROMPT } from '../lib/system-prompt'
 
 /**
  * Parses event data from AI response text
