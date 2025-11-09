@@ -560,9 +560,9 @@ exports[`LandingPageLayout > should match snapshot - with navigation and footer 
               </li>
               <li>
                 <a
-                  aria-label="Find our contact form in the Early Access section"
+                  aria-label="Navigate to the contact page"
                   class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
-                  href="#early-access"
+                  href="/contact-us"
                 >
                   Contact
                 </a>

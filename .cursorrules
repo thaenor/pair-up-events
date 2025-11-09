@@ -1,0 +1,11 @@
+# PairUp Events - Cursor Rules
+
+This file contains project-specific rules and conventions for AI-assisted development.
+
+**Note**: Cursor commands are defined in `.cursor/commands/` directory. Use `/` prefix to invoke them (e.g., `/prompt-generator`, `/qa`, `/documentation`).
+
+For detailed project conventions and agent guidelines, see:
+- `Docs/agents.md` - Main agent operational guidelines
+- `Docs/data-model.md` - Data structure documentation
+- `Docs/CHANGELOG.md` - Project change history
+- `.cursor/commands/` - Available Cursor commands

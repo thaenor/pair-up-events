@@ -506,13 +506,11 @@ exports[`Index > should match snapshot 1`] = `
                 class="flex flex-col items-center sm:items-start sm:flex-row gap-4"
               >
                 <a
-                  aria-label="Create a new listing (opens in new tab)"
+                  aria-label="Create a new listing"
                   class="btn-cta btn-cta--cyan"
                   data-testid="create-listing-link"
-                  href="https://forms.gle/F6xptEXPLA8wEpTp7"
+                  href="/events/create"
                   id="create-listing-btn"
-                  rel="noopener noreferrer"
-                  target="_blank"
                 >
                   Create a new listing
                   <svg
@@ -1125,9 +1123,9 @@ exports[`Index > should match snapshot 1`] = `
               </li>
               <li>
                 <a
-                  aria-label="Find our contact form in the Early Access section"
+                  aria-label="Navigate to the contact page"
                   class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
-                  href="#early-access"
+                  href="/contact-us"
                 >
                   Contact
                 </a>

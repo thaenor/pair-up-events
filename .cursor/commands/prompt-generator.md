@@ -1,0 +1,285 @@
+# Prompt Generator Command
+
+**Purpose**: Transforms rough user prompts into refined, context-rich implementation specifications.
+
+**Trigger**: `/prompt-generator [user prompt]` or `/prompt-generator --backlog [user prompt]`
+
+**Process**:
+
+### Phase 1: Information Gathering (Product Manager Persona)
+
+1. **Clarity Assessment**
+   - Evaluate if request is ambiguous or has multiple interpretations
+   - If unclear, ask batched clarifying questions (efficient for LLM processing):
+     - What is the user-facing goal?
+     - Which user persona is affected?
+     - Are there edge cases or error scenarios to consider?
+     - Any performance/security/accessibility requirements?
+   - Wait for user response before proceeding
+
+2. **Requirements Definition**
+   - **User Story**: Write concise user story ("As a [persona], I want [goal], so that [benefit]")
+   - **Acceptance Criteria**: List measurable success conditions
+     - Functional requirements
+     - UI/UX requirements
+     - Technical requirements
+   - **Definition of Done**:
+     - Code implemented and follows project conventions
+     - Tests written and passing
+     - Documentation updated if needed
+     - `npm run ci` passes
+   - **Out of Scope**: Explicitly state what is NOT included
+
+### Phase 2: Context Building (Senior Engineer Persona)
+
+1. **Codebase Analysis**
+   - Identify relevant areas using smart threshold:
+     - Read files <200 lines fully
+     - Scan larger files for relevant sections (classes, functions, types)
+   - Key areas to investigate:
+     - **Data Model**: Check `Docs/data-model.md`, `src/types/`, `src/entities/`
+     - **Similar Features**: Search for comparable implementations
+     - **Related Components**: Identify affected atoms/molecules/organisms
+     - **State Management**: Review hooks and contexts
+     - **Firebase Integration**: Check `src/lib/firebase/` patterns
+     - **Existing Tests**: Review test patterns in affected areas
+
+2. **Pattern & Architecture Validation**
+   - Verify if existing patterns support the requirement
+   - **If patterns are suboptimal**:
+     - Flag the concern explicitly
+     - Explain why current pattern is insufficient
+     - Suggest 2-3 alternatives with trade-offs
+     - Recommend next steps (e.g., "We should refactor X before implementing Y")
+     - Stop and wait for user decision
+
+3. **Context Compilation**
+   - Gather only essential context (avoid clutter):
+     - Relevant type definitions
+     - Key architectural patterns
+     - Naming conventions
+     - Code locations
+     - Dependencies/imports
+   - Document findings:
+     - **Affected Files**: List with brief description
+     - **Key Types/Interfaces**: Relevant data structures
+     - **Dependencies**: Related components/hooks/services
+     - **Complexity Estimate**: Simple (1-3 files) | Medium (4-8 files) | Complex (9+ files or architectural change)
+
+### Phase 3: Prompt Generation
+
+1. **Output Decision**
+   - If `--backlog` flag or "add to backlog" mentioned → Update `Docs/Backlog.md`
+   - Otherwise → Create file in `Docs/agents-temp/` folder
+
+2. **Generate Implementation Prompt** (for Composer/Developer Agent)
+
+   **Template Structure**:
+
+   ```markdown
+   # [Feature/Task Name]
+
+   ## Overview
+
+   [Brief description of what needs to be implemented]
+
+   ## User Story
+
+   [From Phase 1]
+
+   ## Acceptance Criteria
+
+   [From Phase 1]
+
+   ## Technical Context
+
+   ### Affected Areas
+
+   - **Files to Modify**: [List with line ranges if known]
+   - **New Files to Create**: [List with proposed locations]
+   - **Key Types**: [Relevant interfaces/types]
+
+   ### Architecture Patterns
+
+   [Describe patterns to follow from codebase analysis]
+
+   - Component structure: [atom/molecule/organism]
+   - State management: [hooks/context pattern]
+   - Data flow: [Firebase/service layer pattern]
+   - Styling: [Tailwind patterns observed]
+
+   ### Code References
+
+   [Include small code snippets of similar implementations]
+
+   ### Data Model Impact
+
+   [Any Firestore schema changes needed]
+
+   ## Implementation Steps
+
+   1. [Step-by-step breakdown]
+   2. [Include test requirements]
+   3. [Include validation steps]
+
+   ## Testing Requirements
+
+   - Unit tests: [Specific test cases]
+   - E2E tests: [If applicable]
+   - Manual testing: [Edge cases to verify]
+
+   ## Definition of Done
+
+   [From Phase 1, plus specific technical criteria]
+
+   ## Complexity: [Simple | Medium | Complex]
+
+   ## Estimated Files: [Number]
+   ```
+
+3. **Generate Backlog Entry** (if flagged for backlog)
+
+   **Template Structure**:
+
+   ```markdown
+   ### [Task Name]
+
+   **Location**: [Primary file paths]
+   **Issue/Enhancement**: [Clear problem statement or enhancement description]
+   **Fix**: [Proposed solution approach]
+   **Impact**: [User impact or business value]
+   **Complexity**: [Simple | Medium | Complex] - [Brief reasoning]
+   **Research Summary**:
+
+   - Affected components: [List]
+   - Related patterns: [Brief description]
+   - Dependencies: [List if any]
+     **Related Files**: [Additional files to consider]
+   ```
+
+### Implementation Rules
+
+1. **Always read before analyzing**:
+   - `Docs/agents.md` - Project conventions
+   - `Docs/data-model.md` - Data structure
+   - `Docs/CHANGELOG.md` - Recent changes
+   - `codex.config.json` - Architecture rules
+
+2. **File size thresholds**:
+   - <200 lines: Read fully
+   - 200-500 lines: Read selectively with grep/codebase_search
+   - > 500 lines: Use codebase_search with targeted queries
+
+3. **Question batching strategy**:
+   - Batch all clarifying questions (more efficient than iterative)
+   - Group by category (functional, technical, scope)
+   - Provide context for each question
+   - Give examples of possible answers
+
+4. **Context gathering priorities**:
+   - HIGH: Type definitions, data model, similar implementations
+   - MEDIUM: Related components, state management patterns
+   - LOW: Styling patterns, configuration files
+
+5. **Architectural concern handling**:
+   - If current pattern is suboptimal but workable: Note in prompt, proceed
+   - If current pattern blocks implementation: STOP, flag concern, wait for decision
+   - If no clear pattern exists: Suggest pattern based on similar features
+
+### Output Locations
+
+- **Backlog Entry**: Append to `Docs/Backlog.md` under appropriate priority section
+- **Detailed Prompt**: Save to `Docs/agents-temp/prompt-[timestamp]-[task-slug].md`
+- **Create folder**: If `Docs/agents-temp/` doesn't exist, create it first
+
+### Example Usage
+
+**User**: `/prompt-generator Please remove the last name field`
+
+**Agent Response**:
+
+```
+## 🔍 Information Gathering
+
+I need to clarify a few things about this request:
+
+1. **Scope**: Should we remove lastName from:
+   - Just the UI (profile forms, display components)?
+   - Backend data model (Firestore user documents)?
+   - Both UI and backend?
+
+2. **Data Migration**: For existing users with lastName data:
+   - Keep the data but hide it?
+   - Delete the data?
+   - Migrate to another field (e.g., combine with firstName)?
+
+3. **Impact Areas**:
+   - Authentication/signup forms?
+   - Profile display/edit pages?
+   - Any places where we display user names?
+
+4. **Related Fields**: Should we also update:
+   - displayName logic?
+   - Search/autocomplete functionality?
+
+Please provide answers so I can build the complete context.
+```
+
+**After User Responds**:
+
+```
+## ✅ Requirements Defined
+
+**User Story**: As a user, I want to register and manage my profile with only a first name, so that the signup process is simpler and more privacy-friendly.
+
+**Acceptance Criteria**:
+- [ ] SignUp form removes lastName field
+- [ ] Profile edit form removes lastName field
+- [ ] User type updated to make lastName optional
+- [ ] Existing displayName logic uses firstName only
+- [ ] All user displays show firstName only
+- [ ] Tests updated for new user model
+- [ ] Migration strategy for existing users documented
+
+---
+
+## 🔨 Context Analysis
+
+**Complexity**: Medium (5-7 files, type changes, migration consideration)
+
+**Affected Areas**:
+- `src/types/user.ts` - User interface
+- `src/entities/user/user-service.ts` - User CRUD
+- `src/components/molecules/Auth/email-signup-form.tsx` - Signup UI
+- `src/pages/profile.tsx` - Profile edit UI
+- `src/components/organisms/Navigation/` - User display
+- `Docs/data-model.md` - Documentation
+
+**Architecture Notes**:
+- Project uses entity pattern with services
+- Firebase Firestore schema must stay backward compatible
+- Following atomic design: forms are molecules, navigation is organism
+- User type is shared across multiple components
+
+---
+
+## 📄 Generated Prompt
+
+Saved to: `Docs/agents-temp/prompt-2025-11-07-remove-lastname-field.md`
+
+[Full detailed prompt written to file]
+```
+
+---
+
+## Command Invocation
+
+- `/prompt-generator [description]` - Generate detailed implementation prompt
+- `/prompt-generator --backlog [description]` - Add to backlog instead of generating file
+- `/prompt-generator --help` - Show this documentation
+
+---
+
+**Version**: 1.0.0
+**Last Updated**: 2025-11-07
+**Maintained By**: PairUp Engineering

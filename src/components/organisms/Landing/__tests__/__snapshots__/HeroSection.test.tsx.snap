@@ -43,13 +43,11 @@ exports[`HeroSection > should match snapshot 1`] = `
           class="flex flex-col items-center sm:items-start sm:flex-row gap-4"
         >
           <a
-            aria-label="Create a new listing (opens in new tab)"
+            aria-label="Create a new listing"
             class="btn-cta btn-cta--cyan"
             data-testid="create-listing-link"
-            href="https://forms.gle/F6xptEXPLA8wEpTp7"
+            href="/events/create"
             id="create-listing-btn"
-            rel="noopener noreferrer"
-            target="_blank"
           >
             Create a new listing
             <svg

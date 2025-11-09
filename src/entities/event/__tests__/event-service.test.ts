@@ -33,6 +33,10 @@ describe('updateDraftEvent', () => {
     vi.clearAllMocks()
   })
 
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
   it('should return error when db is not initialized', async () => {
     // Spy on db and make it return null
     vi.spyOn(firebaseModule, 'db', 'get').mockReturnValue(null as any)

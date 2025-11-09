@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import EventsCreatePage from '../events-create'
 
@@ -48,12 +48,18 @@ vi.mock('@/lib/ai', () => ({
 vi.mock('@chatscope/chat-ui-kit-styles/dist/default/styles.min.css', () => ({}))
 
 describe('EventsCreatePage', () => {
-  it('should match snapshot', () => {
+  it('should match snapshot', async () => {
     const { container } = render(
       <MemoryRouter>
         <EventsCreatePage />
       </MemoryRouter>
     )
+
+    // Wait for async initialization to complete
+    await waitFor(() => {
+      expect(container.querySelector('[data-testid]') || container.firstChild).toBeTruthy()
+    })
+
     expect(container.firstChild).toMatchSnapshot()
   })
 })
