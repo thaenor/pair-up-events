@@ -11,7 +11,7 @@ import Sidebar from './Sidebar'
  * Main navigation component with authentication-aware UI
  *
  * Displays different navigation based on authentication state:
- * - Logged out: Shows "How It Works", "Benefits", "Early Access" links + Login/Sign Up buttons
+ * - Logged out: Shows "How It Works", "Benefits" links + Login/Sign Up buttons
  * - Logged in: Shows "Explore", "My Events", "Messenger", "My Profile" + burger menu with sidebar
  *
  * @component

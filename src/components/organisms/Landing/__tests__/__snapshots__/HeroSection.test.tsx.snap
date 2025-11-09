@@ -71,10 +71,11 @@ exports[`HeroSection > should match snapshot 1`] = `
               />
             </svg>
           </a>
-          <button
+          <a
             aria-label="Search for existing listings"
             class="btn-cta btn-cta--yellow"
             data-testid="search-listings-button"
+            href="/events"
             id="search-listing-btn"
           >
             Search for existing listings
@@ -98,7 +99,7 @@ exports[`HeroSection > should match snapshot 1`] = `
                 d="m12 5 7 7-7 7"
               />
             </svg>
-          </button>
+          </a>
         </div>
       </div>
       <div

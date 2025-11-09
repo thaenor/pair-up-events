@@ -68,18 +68,18 @@ exports[`Footer > should match snapshot 1`] = `
             </li>
             <li>
               <a
-                aria-label="Learn how to create an event in the Early Access section"
+                aria-label="Navigate to the create event page"
                 class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
-                href="#early-access"
+                href="/events/create"
               >
                 Create an Event
               </a>
             </li>
             <li>
               <a
-                aria-label="Join an event by signing up through the Early Access section"
+                aria-label="Navigate to the events page to join an event"
                 class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
-                href="#early-access"
+                href="/events"
               >
                 Join an Event
               </a>

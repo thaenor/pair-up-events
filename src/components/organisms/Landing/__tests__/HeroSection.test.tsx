@@ -4,7 +4,7 @@ import HeroSection from '../HeroSection'
 
 describe('HeroSection', () => {
   it('should match snapshot', () => {
-    const { container } = render(<HeroSection onScrollToEarlyAccess={() => {}} />)
+    const { container } = render(<HeroSection />)
     expect(container.firstChild).toMatchSnapshot()
   })
 })
