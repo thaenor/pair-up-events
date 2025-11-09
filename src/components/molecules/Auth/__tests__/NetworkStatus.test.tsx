@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, act } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import NetworkStatus from '@/components/molecules/Auth/NetworkStatus'
 
@@ -7,33 +7,49 @@ const mockNavigator = {
   onLine: true,
 }
 
+// Store real addEventListener/removeEventListener so we can spy on them
+const realAddEventListener = window.addEventListener.bind(window)
+const realRemoveEventListener = window.removeEventListener.bind(window)
+
 const mockWindow = {
-  addEventListener: vi.fn(),
-  removeEventListener: vi.fn(),
+  addEventListener: vi.fn((event: string, handler: EventListener) => {
+    realAddEventListener(event, handler)
+  }),
+  removeEventListener: vi.fn((event: string, handler: EventListener) => {
+    realRemoveEventListener(event, handler)
+  }),
 }
 
 Object.defineProperty(window, 'navigator', {
   value: mockNavigator,
   writable: true,
+  configurable: true,
 })
 
 Object.defineProperty(window, 'addEventListener', {
   value: mockWindow.addEventListener,
   writable: true,
+  configurable: true,
 })
 
 Object.defineProperty(window, 'removeEventListener', {
   value: mockWindow.removeEventListener,
   writable: true,
+  configurable: true,
 })
 
 describe('NetworkStatus', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockNavigator.onLine = true
+    // Use fake timers to prevent real setTimeout delays and memory leaks
+    vi.useFakeTimers()
   })
 
   afterEach(() => {
+    // Clean up timers and restore real timers
+    vi.runOnlyPendingTimers()
+    vi.useRealTimers()
     vi.restoreAllMocks()
   })
 
@@ -74,13 +90,8 @@ describe('NetworkStatus', () => {
 
       expect(screen.getByText("You're offline")).toBeInTheDocument()
 
-      // The toast message should appear after a short delay
-      await waitFor(
-        () => {
-          expect(screen.getByText(/No internet connection|You're offline/)).toBeInTheDocument()
-        },
-        { timeout: 2000 }
-      )
+      // The toast message should appear immediately (no delay in component)
+      expect(screen.getByText(/No internet connection|You're offline/)).toBeInTheDocument()
     })
 
     it('should not show offline message when showOfflineMessage is false', () => {
@@ -93,20 +104,31 @@ describe('NetworkStatus', () => {
     })
 
     it('should auto-hide offline message after 5 seconds', async () => {
-      mockNavigator.onLine = false
+      mockNavigator.onLine = true
 
       render(<NetworkStatus showOfflineMessage={true} />)
 
+      // Simulate going offline by triggering the offline event
+      mockNavigator.onLine = false
+      await act(async () => {
+        const offlineEvent = new Event('offline')
+        window.dispatchEvent(offlineEvent)
+      })
+
       // Message should be visible initially
       expect(screen.getByText("You're offline")).toBeInTheDocument()
+      expect(screen.getByText(/No internet connection/)).toBeInTheDocument()
 
-      // Wait for the toast to appear and then disappear
-      await waitFor(
-        () => {
-          expect(screen.getByText("You're offline")).toBeInTheDocument()
-        },
-        { timeout: 1000 }
-      )
+      // Fast-forward timers to trigger auto-hide
+      await act(async () => {
+        vi.advanceTimersByTime(5000)
+      })
+
+      // Message should have disappeared
+      expect(screen.queryByText(/No internet connection/)).not.toBeInTheDocument()
+
+      // Offline indicator should still be visible
+      expect(screen.getByText("You're offline")).toBeInTheDocument()
     })
   })
 

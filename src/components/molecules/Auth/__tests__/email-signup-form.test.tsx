@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
 
-import React from 'react'
 import { render } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import EmailSignupForm from '../email-signup-form'
