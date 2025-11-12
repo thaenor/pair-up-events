@@ -48,7 +48,7 @@ const EventsPage: React.FC = () => {
     navigate('/events/create', { state: { eventId } })
   }
 
-  const handleDeleteEvent = async (eventId: string, eventTitle: string, e: React.MouseEvent) => {
+  const handleDeleteEvent = async (eventId: string, eventTitle: string, e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation() // Prevent event card click from firing
 
     if (!user?.uid) {
@@ -135,17 +135,9 @@ const EventsPage: React.FC = () => {
         ) : (
           <div className="space-y-4">
             {events.map(event => (
-              <div
+              <button
                 key={event.eventId}
                 onClick={() => handleEventClick(event.eventId)}
-                onKeyDown={e => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    handleEventClick(event.eventId)
-                  }
-                }}
-                role="button"
-                tabIndex={0}
                 className="w-full text-left bg-white border-2 border-pairup-darkBlue rounded-lg p-4 md:p-6 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-pairup-darkBlue focus:ring-offset-2 cursor-pointer"
                 aria-label={`View event: ${event.title || event.activity || 'Untitled'}`}
               >
@@ -158,14 +150,23 @@ const EventsPage: React.FC = () => {
                   >
                     {event.status === 'draft' ? 'Draft' : 'Published'}
                   </span>
-                  <button
+                  <div
+                    role="button"
+                    tabIndex={0}
                     onClick={e => handleDeleteEvent(event.eventId, event.title || event.activity || 'Untitled', e)}
-                    className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        handleDeleteEvent(event.eventId, event.title || event.activity || 'Untitled', e)
+                      }
+                    }}
+                    className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 cursor-pointer"
                     aria-label={`Delete event: ${event.title || event.activity || 'Untitled'}`}
                     title="Delete event"
                   >
                     <Trash2 className="w-5 h-5" />
-                  </button>
+                  </div>
                 </div>
 
                 {/* Event Title */}
@@ -211,7 +212,7 @@ const EventsPage: React.FC = () => {
                     </div>
                   )}
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         )}
