@@ -69,7 +69,7 @@ export function useChatMessageBatching({ userId, eventId, onSaveError }: UseChat
       }
 
       // Track event ID at queue time (first message sets it)
-      if (!queuedEventIdRef.current && eventId) {
+      if (!queuedEventIdRef.current) {
         queuedEventIdRef.current = eventId
       }
 

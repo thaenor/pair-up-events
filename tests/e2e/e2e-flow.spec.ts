@@ -825,8 +825,9 @@ test.describe('E2E Happy Path Flow', () => {
         )
       }
 
-      // If neither toast appeared, this indicates the upload didn't complete
-      if (!successVisible && !errorVisible) {
+      // If success toast didn't appear, this indicates the upload didn't complete
+      // Note: errorVisible is guaranteed to be false here (checked above)
+      if (!successVisible) {
         throw new Error(
           'Profile picture upload did not complete - no success or error toast appeared. This may be due to Storage emulator connection issues or the upload operation timing out.'
         )
