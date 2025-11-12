@@ -57,11 +57,12 @@ export function useAIChat(
   // This prevents race conditions where prop updates overwrite local state changes
   // (e.g., user sends message while initialization is still async, or event is created locally)
   useEffect(() => {
-    // Sync when initialization completes AND we have messages to sync
-    // This ensures the initial greeting message is displayed
-    // Check both isInitialized flag and that we have messages to avoid syncing empty arrays
-    if (!hasInitializedRef.current && isInitialized === true && initialMessages.length > 0) {
-      setMessages(initialMessages)
+    if (!hasInitializedRef.current && isInitialized === true) {
+      // Always mark initialization as complete when isInitialized is true
+      // Only sync messages if we have them (avoid overwriting local state with empty array)
+      if (initialMessages.length > 0) {
+        setMessages(initialMessages)
+      }
       setEventId(initialEventId)
       eventIdRef.current = initialEventId
       hasInitializedRef.current = true

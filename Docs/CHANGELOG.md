@@ -81,6 +81,31 @@ This release focuses on improving the AI event creation system by refactoring th
   - **Impact**: Developers can now debug parsing failures easily via console logs. Widget will appear when AI outputs valid EVENT_DATA_START block with title and activity.
   - **Related**: System prompt refactoring, event preferences schema update
 
+- **Initialization Guard Logic Fix** (`src/hooks/useAIChat.ts`)
+  - **Bug Fix**: Initialization guard prevented proper initialization when `initialMessages` was empty, even when `isInitialized === true`
+  - **Root Cause**: Guard condition required both `isInitialized === true` AND `initialMessages.length > 0`, preventing initialization from being marked complete when messages array was empty (edge case when `useChatInitialization` returns early for `!userId`)
+  - **Solution**: Separated initialization completion from message syncing - guard now marks initialization as complete when `isInitialized === true` regardless of message length, but only syncs messages if `initialMessages.length > 0` (prevents overwriting local state with empty array)
+  - **Impact**: Initialization guard now properly completes even when starting with empty messages, preventing infinite guard checks and ensuring proper state management
+  - **Related**: Chat initialization flow, race condition prevention
+
+- **Message Batching Retry Logic Fix** (`src/hooks/useChatMessageBatching.ts`)
+  - **Bug Fix**: Infinite retry loop when message save failures occurred (permanent errors like permission-denied would retry indefinitely)
+  - **Root Cause**: Failed messages were re-queued indefinitely without retry limits or exponential backoff, causing infinite loops and excessive Firestore requests for permanent failures
+  - **Solution**:
+    - Added retry limit (MAX_RETRIES = 3) to prevent infinite loops
+    - Implemented exponential backoff (2s, 4s, 8s delays) to reduce server load
+    - Skip retries for permanent errors (permission-denied, not-found) - these fail immediately
+    - Track retry count per batch using `QueuedBatch` interface
+    - Prioritize retrying failed batches over new messages
+    - After max retries, stop retrying and show user-friendly error message
+  - **Why Re-queueing is Essential**:
+    - Messages must be persisted to Firestore for chat history (users need to see conversation when returning)
+    - Batching reduces Firestore write costs by ~75% (batches every 2s or 5 messages)
+    - Transient network failures should be retried (temporary connectivity issues)
+    - Permanent failures should NOT be retried (permission, not-found errors)
+  - **Impact**: Prevents infinite retry loops, reduces unnecessary Firestore requests, and provides better error handling for permanent vs transient failures
+  - **Related**: Chat history persistence, Firestore cost optimization
+
 - **Code Formatting** (`src/lib/system-prompt.ts`, `src/entities/event/event-validation.ts`)
   - **Issue**: 29 Prettier formatting errors (quote style, line breaks, spacing inconsistencies)
   - **Solution**: Auto-fixed all formatting issues using `npm run format`
