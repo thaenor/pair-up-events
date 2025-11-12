@@ -162,15 +162,36 @@ graph TB
 
 **Draft-only Fields** (present when status=`"draft"`):
 
-| Field         | Type                 | Description                                 |
-| ------------- | -------------------- | ------------------------------------------- |
-| `title`       | string (optional)    | Event title being built                     |
-| `description` | string (optional)    | Event description                           |
-| `timeStart`   | Timestamp (optional) | Start time                                  |
-| `timeEnd`     | Timestamp (optional) | End time                                    |
-| `location`    | object (optional)    | Location data: `{ address, city, country }` |
-| `tags`        | string[] (optional)  | Event tags                                  |
-| `preferences` | object (optional)    | Event preferences (partial)                 |
+| Field         | Type                         | Description                                 |
+| ------------- | ---------------------------- | ------------------------------------------- |
+| `title`       | string (optional)            | Event title being built (inferred by AI)    |
+| `headline`    | string (optional)            | Event headline/subtitle (inferred by AI)    |
+| `description` | string (optional)            | Event description                           |
+| `timeStart`   | Timestamp (optional)         | Start time                                  |
+| `timeEnd`     | Timestamp (optional)         | End time                                    |
+| `location`    | object (optional)            | Location data: `{ address, city, country }` |
+| `tags`        | string[] (optional)          | Event tags                                  |
+| `preferences` | object (optional)            | Event preferences (partial)                 |
+| `chatHistory` | ChatMessageData[] (optional) | AI conversation messages array              |
+
+**ChatMessageData Structure:**
+
+```typescript
+{
+  messageId: string,
+  text: string,
+  sender: 'user' | 'assistant',
+  timestamp: Date,
+  eventData?: EventPreviewData // Optional parsed event data from AI
+}
+```
+
+**Key Features:**
+
+- Chat history stored as array field in draft event document (not subcollection)
+- Automatically persisted during AI conversation with batching (2s delay or 5 message threshold)
+- Restored when user returns to event creation page
+- Reduces Firestore write operations by ~75% through batching
 
 **Confirmed Event Fields** (present when published/scheduled):
 
@@ -189,30 +210,6 @@ graph TB
   eventStatus: EventStatus
 }
 ```
-
-**Subcollections:**
-
-- [`chatHistory/{messageId}`](#usersuseridowneventseventidchathistorymessageid) - AI planning conversation messages
-
----
-
-#### `users/{userId}/ownEvents/{eventId}/chatHistory/{messageId}`
-
-**Purpose**: AI conversation messages for event planning. Replaces embedded `conversation.messages[]` array for better scalability.
-
-**Fields:**
-
-| Field       | Type      | Description               |
-| ----------- | --------- | ------------------------- |
-| `text`      | string    | Message content           |
-| `sender`    | string    | `"user"` or `"assistant"` |
-| `timestamp` | Timestamp | When message was sent     |
-
-**Key Features:**
-
-- Only exists for draft events (status=`"draft"`)
-- Automatically persisted during AI conversation
-- Restored when user returns to event creation page
 
 ---
 

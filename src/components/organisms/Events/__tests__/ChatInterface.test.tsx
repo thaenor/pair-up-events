@@ -333,4 +333,66 @@ describe('ChatInterface', () => {
     )
     expect(container.firstChild).toMatchSnapshot()
   })
+
+  it('should show typing indicator in last AI message when loading', () => {
+    const messages: ChatMessageData[] = [
+      {
+        messageId: '1',
+        text: 'Hello',
+        sender: 'user',
+        timestamp: new Date(),
+      },
+      {
+        messageId: '2',
+        text: 'Hi there!',
+        sender: 'assistant',
+        timestamp: new Date(),
+      },
+    ]
+
+    render(<ChatInterface messages={messages} onSendMessage={mockOnSendMessage} isLoading={true} />)
+    // Typing indicator should be in the last AI message
+    expect(screen.getByTestId('chat-typing-indicator')).toBeInTheDocument()
+  })
+
+  it('should show typing indicator in new message bubble when no AI messages exist', () => {
+    const messages: ChatMessageData[] = [
+      {
+        messageId: '1',
+        text: 'Hello',
+        sender: 'user',
+        timestamp: new Date(),
+      },
+    ]
+
+    render(<ChatInterface messages={messages} onSendMessage={mockOnSendMessage} isLoading={true} />)
+    // Typing indicator should appear in a new message bubble
+    expect(screen.getByTestId('chat-typing-indicator')).toBeInTheDocument()
+  })
+
+  it('should hide typing indicator when loading stops', () => {
+    const messages: ChatMessageData[] = [
+      {
+        messageId: '1',
+        text: 'Hello',
+        sender: 'user',
+        timestamp: new Date(),
+      },
+      {
+        messageId: '2',
+        text: 'Hi there!',
+        sender: 'assistant',
+        timestamp: new Date(),
+      },
+    ]
+
+    // Test with loading state
+    const { unmount } = render(<ChatInterface messages={messages} onSendMessage={mockOnSendMessage} isLoading={true} />)
+    expect(screen.getByTestId('chat-typing-indicator')).toBeInTheDocument()
+    unmount()
+
+    // Test without loading state - typing indicator should not appear
+    render(<ChatInterface messages={messages} onSendMessage={mockOnSendMessage} isLoading={false} />)
+    expect(screen.queryByTestId('chat-typing-indicator')).not.toBeInTheDocument()
+  })
 })

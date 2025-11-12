@@ -55,7 +55,7 @@ describe('validateEventData', () => {
     const invalidData: EventPreviewData = {
       title: 'Test Event',
       activity: 'Hiking',
-      date: '12-25-2024', // Wrong format
+      date: '2024/12/25', // Wrong format (should be DD-MM-YYYY or YYYY-MM-DD)
     }
     expect(validateEventData(invalidData)).toBe(false)
   })
@@ -91,6 +91,16 @@ describe('validateEventData', () => {
 describe('parseDateTime', () => {
   it('should parse date and time correctly', () => {
     const result = parseDateTime('2024-12-25', '14:30')
+    expect(result).toBeInstanceOf(Date)
+    expect(result?.getFullYear()).toBe(2024)
+    expect(result?.getMonth()).toBe(11) // Month is 0-indexed
+    expect(result?.getDate()).toBe(25)
+    expect(result?.getHours()).toBe(14)
+    expect(result?.getMinutes()).toBe(30)
+  })
+
+  it('should parse DD-MM-YYYY date format correctly', () => {
+    const result = parseDateTime('25-12-2024', '14:30')
     expect(result).toBeInstanceOf(Date)
     expect(result?.getFullYear()).toBe(2024)
     expect(result?.getMonth()).toBe(11) // Month is 0-indexed
@@ -250,7 +260,7 @@ describe('mapEventPreviewToDraft', () => {
     expect(result.preferences?.ageRange).toBeUndefined()
   })
 
-  it('should handle location without address', () => {
+  it('should handle location with only city', () => {
     const previewData: EventPreviewData = {
       title: 'Test Event',
       activity: 'Hiking',
@@ -262,6 +272,32 @@ describe('mapEventPreviewToDraft', () => {
     const result = mapEventPreviewToDraft(previewData)
 
     expect(result.location).toEqual({ city: 'San Francisco' })
+  })
+
+  it('should handle location with only address', () => {
+    const previewData: EventPreviewData = {
+      title: 'Test Event',
+      activity: 'Hiking',
+      location: {
+        address: '123 Main St',
+      },
+    }
+
+    const result = mapEventPreviewToDraft(previewData)
+
+    expect(result.location).toEqual({ address: '123 Main St' })
+  })
+
+  it('should handle empty location object', () => {
+    const previewData: EventPreviewData = {
+      title: 'Test Event',
+      activity: 'Hiking',
+      location: {},
+    }
+
+    const result = mapEventPreviewToDraft(previewData)
+
+    expect(result.location).toBeUndefined()
   })
 
   it('should parse date and time correctly', () => {
@@ -293,5 +329,101 @@ describe('mapEventPreviewToDraft', () => {
 
     expect(result.timeStart).toBeInstanceOf(Date)
     expect(result.timeStart?.getHours()).toBe(12) // Defaults to 12:00
+  })
+
+  it('should handle date/time parsing failures gracefully', () => {
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const previewData: EventPreviewData = {
+      title: 'Test Event',
+      activity: 'Hiking',
+      date: '99-99-9999', // Invalid date that will fail parsing
+      time: '25:99', // Invalid time
+    }
+
+    const result = mapEventPreviewToDraft(previewData)
+
+    // The date might be parsed but will be invalid, so timeStart should be undefined
+    // or if it's created, it should be an invalid date
+    if (result.timeStart) {
+      expect(isNaN(result.timeStart.getTime())).toBe(true)
+    } else {
+      expect(result.timeStart).toBeUndefined()
+    }
+    expect(consoleWarnSpy).toHaveBeenCalled()
+    consoleWarnSpy.mockRestore()
+  })
+
+  it('should save all fields when widget appears', () => {
+    const previewData: EventPreviewData = {
+      title: 'Complete Test Event',
+      headline: 'Test headline',
+      description: 'Test description',
+      activity: 'Hiking',
+      date: '25-12-2024',
+      time: '14:30',
+      location: {
+        address: '123 Main St',
+        city: 'San Francisco',
+      },
+      preferences: {
+        duoType: 'friends',
+        desiredVibes: ['adventurous', 'outdoor'],
+        ageRange: {
+          min: 25,
+          max: 35,
+        },
+      },
+    }
+
+    const result = mapEventPreviewToDraft(previewData)
+
+    // Verify all fields are present
+    expect(result.title).toBe('Complete Test Event')
+    expect(result.headline).toBe('Test headline')
+    expect(result.description).toBe('Test description')
+    expect(result.activity).toBe('Hiking')
+    expect(result.timeStart).toBeInstanceOf(Date)
+    expect(result.timeStart?.getFullYear()).toBe(2024)
+    expect(result.timeStart?.getMonth()).toBe(11) // December (0-indexed)
+    expect(result.timeStart?.getDate()).toBe(25)
+    expect(result.timeStart?.getHours()).toBe(14)
+    expect(result.timeStart?.getMinutes()).toBe(30)
+    expect(result.location).toEqual({
+      address: '123 Main St',
+      city: 'San Francisco',
+    })
+    expect(result.preferences?.duoType).toBe('friends')
+    expect(result.preferences?.desiredVibes).toEqual(['adventurous', 'outdoor'])
+    expect(result.preferences?.ageRange).toEqual({ min: 25, max: 35 })
+  })
+
+  it('should save partial data correctly', () => {
+    const previewData: EventPreviewData = {
+      title: 'Partial Event',
+      activity: 'Hiking',
+      date: '25-12-2024',
+      location: {
+        city: 'San Francisco',
+      },
+      preferences: {
+        duoType: 'friends',
+        desiredVibes: ['adventurous'],
+      },
+    }
+
+    const result = mapEventPreviewToDraft(previewData)
+
+    // Verify required fields
+    expect(result.title).toBe('Partial Event')
+    expect(result.activity).toBe('Hiking')
+    // Verify optional fields that are present
+    expect(result.timeStart).toBeInstanceOf(Date)
+    expect(result.location).toEqual({ city: 'San Francisco' })
+    expect(result.preferences?.duoType).toBe('friends')
+    expect(result.preferences?.desiredVibes).toEqual(['adventurous'])
+    // Verify optional fields that are missing
+    expect(result.headline).toBeUndefined()
+    expect(result.description).toBeUndefined()
+    expect(result.preferences?.ageRange).toBeUndefined()
   })
 })

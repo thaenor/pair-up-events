@@ -35,11 +35,12 @@ exports[`ChatInterface > should match snapshot with empty messages 1`] = `
           margin-top: 1.5rem !important;
         }
         
-        /* AI message bubble (incoming) */
+        /* AI message bubble (incoming) - sharp corner at bottom-left (where avatar is) */
         [data-testid="chat-interface-container"] .cs-message--incoming .cs-message__content {
           background-color: #F2F5F7 !important;
           border: 1px solid #1A2A33 !important;
           color: #1A2A33 !important;
+          border-radius: 12px 12px 12px 0px !important;
         }
         
         /* User message bubble (outgoing) */
@@ -133,6 +134,63 @@ exports[`ChatInterface > should match snapshot with empty messages 1`] = `
           background-position: center !important;
           background-repeat: no-repeat !important;
           pointer-events: none !important;
+        }
+        
+        /* Typing indicator styling - ensure it displays properly */
+        [data-testid="chat-interface-container"] .cs-message--incoming .cs-message__custom-content {
+          display: block !important;
+        }
+        
+        [data-testid="chat-interface-container"] .cs-typing-indicator {
+          background-color: #F2F5F7 !important;
+          border: 1px solid #1A2A33 !important;
+          border-radius: 12px 12px 12px 0px !important;
+          padding: 12px 16px !important;
+          display: flex !important;
+          align-items: center !important;
+          gap: 8px !important;
+          min-width: 120px !important;
+        }
+        
+        [data-testid="chat-interface-container"] .cs-typing-indicator__text {
+          color: #1A2A33 !important;
+          font-size: 14px !important;
+        }
+        
+        [data-testid="chat-interface-container"] .cs-typing-indicator__indicator {
+          display: flex !important;
+          gap: 4px !important;
+        }
+        
+        [data-testid="chat-interface-container"] .cs-typing-indicator__dot {
+          width: 8px !important;
+          height: 8px !important;
+          background-color: #1A2A33 !important;
+          border-radius: 50% !important;
+          animation: typing-dot 1.4s infinite ease-in-out !important;
+        }
+        
+        [data-testid="chat-interface-container"] .cs-typing-indicator__dot:nth-child(1) {
+          animation-delay: 0s !important;
+        }
+        
+        [data-testid="chat-interface-container"] .cs-typing-indicator__dot:nth-child(2) {
+          animation-delay: 0.2s !important;
+        }
+        
+        [data-testid="chat-interface-container"] .cs-typing-indicator__dot:nth-child(3) {
+          animation-delay: 0.4s !important;
+        }
+        
+        @keyframes typing-dot {
+          0%, 60%, 100% {
+            opacity: 0.3;
+            transform: scale(0.8);
+          }
+          30% {
+            opacity: 1;
+            transform: scale(1);
+          }
         }
       
   </style>
@@ -282,11 +340,12 @@ exports[`ChatInterface > should match snapshot with loading state 1`] = `
           margin-top: 1.5rem !important;
         }
         
-        /* AI message bubble (incoming) */
+        /* AI message bubble (incoming) - sharp corner at bottom-left (where avatar is) */
         [data-testid="chat-interface-container"] .cs-message--incoming .cs-message__content {
           background-color: #F2F5F7 !important;
           border: 1px solid #1A2A33 !important;
           color: #1A2A33 !important;
+          border-radius: 12px 12px 12px 0px !important;
         }
         
         /* User message bubble (outgoing) */
@@ -380,6 +439,63 @@ exports[`ChatInterface > should match snapshot with loading state 1`] = `
           background-position: center !important;
           background-repeat: no-repeat !important;
           pointer-events: none !important;
+        }
+        
+        /* Typing indicator styling - ensure it displays properly */
+        [data-testid="chat-interface-container"] .cs-message--incoming .cs-message__custom-content {
+          display: block !important;
+        }
+        
+        [data-testid="chat-interface-container"] .cs-typing-indicator {
+          background-color: #F2F5F7 !important;
+          border: 1px solid #1A2A33 !important;
+          border-radius: 12px 12px 12px 0px !important;
+          padding: 12px 16px !important;
+          display: flex !important;
+          align-items: center !important;
+          gap: 8px !important;
+          min-width: 120px !important;
+        }
+        
+        [data-testid="chat-interface-container"] .cs-typing-indicator__text {
+          color: #1A2A33 !important;
+          font-size: 14px !important;
+        }
+        
+        [data-testid="chat-interface-container"] .cs-typing-indicator__indicator {
+          display: flex !important;
+          gap: 4px !important;
+        }
+        
+        [data-testid="chat-interface-container"] .cs-typing-indicator__dot {
+          width: 8px !important;
+          height: 8px !important;
+          background-color: #1A2A33 !important;
+          border-radius: 50% !important;
+          animation: typing-dot 1.4s infinite ease-in-out !important;
+        }
+        
+        [data-testid="chat-interface-container"] .cs-typing-indicator__dot:nth-child(1) {
+          animation-delay: 0s !important;
+        }
+        
+        [data-testid="chat-interface-container"] .cs-typing-indicator__dot:nth-child(2) {
+          animation-delay: 0.2s !important;
+        }
+        
+        [data-testid="chat-interface-container"] .cs-typing-indicator__dot:nth-child(3) {
+          animation-delay: 0.4s !important;
+        }
+        
+        @keyframes typing-dot {
+          0%, 60%, 100% {
+            opacity: 0.3;
+            transform: scale(0.8);
+          }
+          30% {
+            opacity: 1;
+            transform: scale(1);
+          }
         }
       
   </style>
@@ -585,11 +701,12 @@ exports[`ChatInterface > should match snapshot with messages 1`] = `
           margin-top: 1.5rem !important;
         }
         
-        /* AI message bubble (incoming) */
+        /* AI message bubble (incoming) - sharp corner at bottom-left (where avatar is) */
         [data-testid="chat-interface-container"] .cs-message--incoming .cs-message__content {
           background-color: #F2F5F7 !important;
           border: 1px solid #1A2A33 !important;
           color: #1A2A33 !important;
+          border-radius: 12px 12px 12px 0px !important;
         }
         
         /* User message bubble (outgoing) */
@@ -683,6 +800,63 @@ exports[`ChatInterface > should match snapshot with messages 1`] = `
           background-position: center !important;
           background-repeat: no-repeat !important;
           pointer-events: none !important;
+        }
+        
+        /* Typing indicator styling - ensure it displays properly */
+        [data-testid="chat-interface-container"] .cs-message--incoming .cs-message__custom-content {
+          display: block !important;
+        }
+        
+        [data-testid="chat-interface-container"] .cs-typing-indicator {
+          background-color: #F2F5F7 !important;
+          border: 1px solid #1A2A33 !important;
+          border-radius: 12px 12px 12px 0px !important;
+          padding: 12px 16px !important;
+          display: flex !important;
+          align-items: center !important;
+          gap: 8px !important;
+          min-width: 120px !important;
+        }
+        
+        [data-testid="chat-interface-container"] .cs-typing-indicator__text {
+          color: #1A2A33 !important;
+          font-size: 14px !important;
+        }
+        
+        [data-testid="chat-interface-container"] .cs-typing-indicator__indicator {
+          display: flex !important;
+          gap: 4px !important;
+        }
+        
+        [data-testid="chat-interface-container"] .cs-typing-indicator__dot {
+          width: 8px !important;
+          height: 8px !important;
+          background-color: #1A2A33 !important;
+          border-radius: 50% !important;
+          animation: typing-dot 1.4s infinite ease-in-out !important;
+        }
+        
+        [data-testid="chat-interface-container"] .cs-typing-indicator__dot:nth-child(1) {
+          animation-delay: 0s !important;
+        }
+        
+        [data-testid="chat-interface-container"] .cs-typing-indicator__dot:nth-child(2) {
+          animation-delay: 0.2s !important;
+        }
+        
+        [data-testid="chat-interface-container"] .cs-typing-indicator__dot:nth-child(3) {
+          animation-delay: 0.4s !important;
+        }
+        
+        @keyframes typing-dot {
+          0%, 60%, 100% {
+            opacity: 0.3;
+            transform: scale(0.8);
+          }
+          30% {
+            opacity: 1;
+            transform: scale(1);
+          }
         }
       
   </style>

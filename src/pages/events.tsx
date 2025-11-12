@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Calendar, MapPin, Clock } from 'lucide-react'
+import { Plus, Calendar, MapPin, Clock, Trash2 } from 'lucide-react'
 import Navigation from '@/components/organisms/Navigation/Navigation'
 import MobileBottomNavigation from '@/components/organisms/Navigation/MobileBottomNavigation'
 import LoadingSpinner from '@/components/atoms/LoadingSpinner'
 import { Button } from '@/components/atoms/button'
 import useRequireAuth from '@/hooks/useRequireAuth'
 import useAuth from '@/hooks/useAuth'
-import { loadAllEvents } from '@/entities/event/event-service'
+import { loadAllEvents, deleteEvent } from '@/entities/event/event-service'
 import type { DraftEventData } from '@/entities/event/event'
 import { toast } from 'sonner'
 
@@ -46,6 +46,31 @@ const EventsPage: React.FC = () => {
 
   const handleEventClick = (eventId: string) => {
     navigate('/events/create', { state: { eventId } })
+  }
+
+  const handleDeleteEvent = async (eventId: string, eventTitle: string, e: React.MouseEvent) => {
+    e.stopPropagation() // Prevent event card click from firing
+
+    if (!user?.uid) {
+      toast.error('You must be logged in to delete events')
+      return
+    }
+
+    // Confirm deletion
+    const confirmed = window.confirm(`Are you sure you want to delete "${eventTitle || 'this event'}"?`)
+    if (!confirmed) {
+      return
+    }
+
+    const result = await deleteEvent(user.uid, eventId)
+    if (result.success) {
+      toast.success('Event deleted successfully')
+      // Remove the event from the local state
+      setEvents(prevEvents => prevEvents.filter(event => event.eventId !== eventId))
+    } else {
+      toast.error('Failed to delete event. Please try again.')
+      console.error('Failed to delete event:', 'error' in result ? result.error : 'Unknown error')
+    }
   }
 
   const formatDate = (date?: Date): string => {
@@ -110,13 +135,21 @@ const EventsPage: React.FC = () => {
         ) : (
           <div className="space-y-4">
             {events.map(event => (
-              <button
+              <div
                 key={event.eventId}
                 onClick={() => handleEventClick(event.eventId)}
-                className="w-full text-left bg-white border-2 border-pairup-darkBlue rounded-lg p-4 md:p-6 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-pairup-darkBlue focus:ring-offset-2"
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    handleEventClick(event.eventId)
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                className="w-full text-left bg-white border-2 border-pairup-darkBlue rounded-lg p-4 md:p-6 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-pairup-darkBlue focus:ring-offset-2 cursor-pointer"
                 aria-label={`View event: ${event.title || event.activity || 'Untitled'}`}
               >
-                {/* Status Badge */}
+                {/* Status Badge and Delete Button */}
                 <div className="flex items-center justify-between mb-3">
                   <span
                     className={`inline-block px-2 py-1 text-xs font-semibold rounded ${
@@ -125,12 +158,23 @@ const EventsPage: React.FC = () => {
                   >
                     {event.status === 'draft' ? 'Draft' : 'Published'}
                   </span>
+                  <button
+                    onClick={e => handleDeleteEvent(event.eventId, event.title || event.activity || 'Untitled', e)}
+                    className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                    aria-label={`Delete event: ${event.title || event.activity || 'Untitled'}`}
+                    title="Delete event"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
                 </div>
 
                 {/* Event Title */}
                 <h3 className="text-xl md:text-2xl font-bold text-pairup-darkBlue mb-2">
                   {event.title || event.activity || 'Untitled Event'}
                 </h3>
+
+                {/* Event Headline */}
+                {event.headline && <p className="text-gray-600 text-sm md:text-base mb-2 italic">{event.headline}</p>}
 
                 {/* Event Description */}
                 {event.description && (
@@ -167,7 +211,7 @@ const EventsPage: React.FC = () => {
                     </div>
                   )}
                 </div>
-              </button>
+              </div>
             ))}
           </div>
         )}

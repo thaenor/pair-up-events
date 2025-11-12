@@ -21,6 +21,7 @@ import React from 'react'
  */
 export interface EventPreviewData {
   title: string
+  headline?: string
   description?: string
   activity: string
   date?: string

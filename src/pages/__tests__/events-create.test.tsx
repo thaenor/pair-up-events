@@ -33,8 +33,38 @@ vi.mock('@/contexts/UserContext', () => ({
 vi.mock('@/entities/event/event-service', () => ({
   createDraftEvent: vi.fn(),
   loadDraftEvent: vi.fn(() => Promise.resolve({ success: false, error: 'No draft found', errorType: 'not-found' })),
+  loadDraftEventById: vi.fn(() => Promise.resolve({ success: false, error: 'No draft found', errorType: 'not-found' })),
   saveChatMessage: vi.fn(),
   loadChatHistory: vi.fn(),
+}))
+
+// Mock chat initialization hook
+vi.mock('@/hooks/useChatInitialization', () => ({
+  useChatInitialization: () => ({
+    eventId: null,
+    setEventId: vi.fn(),
+    messages: [],
+    setMessages: vi.fn(),
+    isInitializing: false,
+  }),
+}))
+
+// Mock AI chat hook
+vi.mock('@/hooks/useAIChat', () => ({
+  useAIChat: () => ({
+    messages: [],
+    sendMessage: vi.fn(),
+    isLoading: false,
+    eventId: null,
+  }),
+}))
+
+// Mock chat message batching hook
+vi.mock('@/hooks/useChatMessageBatching', () => ({
+  useChatMessageBatching: () => ({
+    queueMessage: vi.fn(),
+    flushQueue: vi.fn(),
+  }),
 }))
 
 // Mock AI functions

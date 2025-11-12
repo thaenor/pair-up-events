@@ -5,10 +5,11 @@ export type { LoadResult, SaveResult } from './event-service'
 export {
   createDraftEvent,
   loadDraftEvent,
-  saveChatMessage,
-  loadChatHistory,
+  loadDraftEventById,
+  saveChatMessagesBatch,
   updateDraftEvent,
   loadAllEvents,
+  deleteEvent,
 } from './event-service'
 
 export { validateEventData, parseDateTime, mapEventPreviewToDraft } from './event-validation'
