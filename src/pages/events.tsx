@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Calendar, MapPin, Clock, Trash2 } from 'lucide-react'
+import { Plus, Calendar, MapPin, Clock, Trash2, AlertTriangle } from 'lucide-react'
 import Navigation from '@/components/organisms/Navigation/Navigation'
 import MobileBottomNavigation from '@/components/organisms/Navigation/MobileBottomNavigation'
 import LoadingSpinner from '@/components/atoms/LoadingSpinner'
 import { Button } from '@/components/atoms/button'
+import Modal from '@/components/atoms/Modal'
 import useRequireAuth from '@/hooks/useRequireAuth'
 import useAuth from '@/hooks/useAuth'
 import { loadAllEvents, deleteEvent } from '@/entities/event/event-service'
@@ -17,6 +18,9 @@ const EventsPage: React.FC = () => {
   const navigate = useNavigate()
   const [events, setEvents] = useState<(DraftEventData & { eventId: string })[]>([])
   const [isLoadingEvents, setIsLoadingEvents] = useState(true)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [eventToDelete, setEventToDelete] = useState<{ id: string; title: string } | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -48,7 +52,7 @@ const EventsPage: React.FC = () => {
     navigate('/events/create', { state: { eventId } })
   }
 
-  const handleDeleteEvent = async (eventId: string, eventTitle: string, e: React.MouseEvent | React.KeyboardEvent) => {
+  const handleDeleteEvent = (eventId: string, eventTitle: string, e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation() // Prevent event card click from firing
 
     if (!user?.uid) {
@@ -56,21 +60,31 @@ const EventsPage: React.FC = () => {
       return
     }
 
-    // Confirm deletion
-    const confirmed = window.confirm(`Are you sure you want to delete "${eventTitle || 'this event'}"?`)
-    if (!confirmed) {
+    // Open confirmation modal
+    setEventToDelete({ id: eventId, title: eventTitle || 'this event' })
+    setShowDeleteModal(true)
+  }
+
+  const confirmDeleteEvent = async () => {
+    if (!user?.uid || !eventToDelete) {
       return
     }
 
-    const result = await deleteEvent(user.uid, eventId)
+    setIsDeleting(true)
+    const result = await deleteEvent(user.uid, eventToDelete.id)
+
     if (result.success) {
       toast.success('Event deleted successfully')
       // Remove the event from the local state
-      setEvents(prevEvents => prevEvents.filter(event => event.eventId !== eventId))
+      setEvents(prevEvents => prevEvents.filter(event => event.eventId !== eventToDelete.id))
+      setShowDeleteModal(false)
+      setEventToDelete(null)
     } else {
       toast.error('Failed to delete event. Please try again.')
       console.error('Failed to delete event:', 'error' in result ? result.error : 'Unknown error')
     }
+
+    setIsDeleting(false)
   }
 
   const formatDate = (date?: Date): string => {
@@ -222,6 +236,55 @@ const EventsPage: React.FC = () => {
         )}
       </div>
       <MobileBottomNavigation />
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          if (!isDeleting) {
+            setShowDeleteModal(false)
+            setEventToDelete(null)
+          }
+        }}
+        title="Delete Event"
+        icon={<AlertTriangle className="w-6 h-6 text-red-500" />}
+        actions={
+          <>
+            <Button
+              variant="ghost"
+              fullWidth
+              onClick={() => {
+                setShowDeleteModal(false)
+                setEventToDelete(null)
+              }}
+              disabled={isDeleting}
+              className="bg-gray-100 hover:bg-gray-200 text-pairup-darkBlue rounded-lg"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              fullWidth
+              onClick={confirmDeleteEvent}
+              loading={isDeleting}
+              disabled={isDeleting}
+              icon={<Trash2 className="w-4 h-4" />}
+              className="rounded-lg"
+            >
+              Delete Event
+            </Button>
+          </>
+        }
+      >
+        <div className="space-y-2">
+          <p className="font-medium text-pairup-darkBlue">
+            Are you sure you want to delete "{eventToDelete?.title || 'this event'}"?
+          </p>
+          <p className="text-sm text-pairup-darkBlue/80">
+            This action cannot be undone. The event will be permanently deleted.
+          </p>
+        </div>
+      </Modal>
     </div>
   )
 }

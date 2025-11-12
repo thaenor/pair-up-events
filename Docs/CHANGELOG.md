@@ -63,6 +63,22 @@ This release focuses on improving the AI event creation system by refactoring th
     - All test files in `src/entities/event/__tests__/`, `src/pages/__tests__/`, `src/components/molecules/Events/__tests__/`
   - **Related**: System prompt refactoring, AI event creation flow
 
+- **Event Deletion Confirmation** (`src/pages/events.tsx`)
+  - **UI Improvement**: Replaced `window.confirm()` with accessible Modal component for event deletion confirmation
+  - **Why**: `window.confirm()` is not accessible, doesn't match app design system, and provides poor user experience
+  - **Implementation**:
+    - Added Modal component from `@/components/atoms/Modal` following existing confirmation modal patterns
+    - Added state management for modal visibility, event to delete, and deletion loading state
+    - Refactored `handleDeleteEvent` to open modal instead of using `window.confirm`
+    - Created `confirmDeleteEvent` function to handle actual deletion with loading state
+    - Modal includes AlertTriangle icon, Cancel button (ghost variant), and Delete button (danger variant with Trash2 icon)
+    - Modal displays event title in confirmation message with warning about permanent deletion
+    - Delete button shows loading state during deletion and is disabled during operation
+  - **Impact**: Improved accessibility, better UX, consistent with design system. No breaking changes.
+  - **Files Modified**:
+    - `src/pages/events.tsx` - Replaced window.confirm with Modal component
+  - **Related**: Modal component, design system consistency
+
 ### Fixed
 
 - **Event Preview Widget Not Generating** (`src/lib/ai/response-parser.ts`, `src/lib/system-prompt.ts`, `src/hooks/useAIChat.ts`)

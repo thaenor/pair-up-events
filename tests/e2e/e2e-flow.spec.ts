@@ -25,6 +25,7 @@ import {
   openSidebar,
   dismissToasts,
   createTestImageBuffer,
+  waitForChatInterfaceReady,
 } from './helpers'
 import { TEST_TIMEOUTS } from './constants'
 
@@ -455,28 +456,13 @@ test.describe('E2E Happy Path Flow', () => {
       await page.goto('/events/create')
       await expect(page).toHaveURL('/events/create')
 
-      // Wait for page to fully load and chat interface to initialize
+      // Wait for page to fully load
       await expect(page.locator('h1:has-text("Create Event")')).toBeVisible({
         timeout: TEST_TIMEOUTS.NAVIGATION,
       })
 
-      // Wait for chat interface to be visible (ensures initialization completes)
-      await expect(page.locator('[data-testid="chat-interface-container"]')).toBeVisible({
-        timeout: TEST_TIMEOUTS.NAVIGATION,
-      })
-
-      // Wait for chat message list to be visible (ensures chat is ready)
-      await expect(page.locator('[data-testid="chat-message-list"]')).toBeVisible({
-        timeout: TEST_TIMEOUTS.NAVIGATION,
-      })
-
-      // Wait for chat message input to be visible (ensures full initialization)
-      await expect(page.locator('[data-testid="chat-message-input"]')).toBeVisible({
-        timeout: TEST_TIMEOUTS.NAVIGATION,
-      })
-
-      // Wait a bit for any async initialization (chat history loading, etc.)
-      await page.waitForTimeout(TEST_TIMEOUTS.NETWORK_IDLE)
+      // Wait for chat interface to be ready
+      await waitForChatInterfaceReady(page)
 
       await takePageSnapshot(page, 'events-create-page')
 

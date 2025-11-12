@@ -421,6 +421,41 @@ export async function createPersistentTestAccount(page: Page) {
 }
 
 /**
+ * Waits for the chat interface to be fully ready by checking that all required
+ * elements are visible simultaneously. This ensures the chat interface has
+ * completed initialization including container, message list, and input field.
+ *
+ * @param page - Playwright page object
+ *
+ * @example
+ * await page.goto('/events/create')
+ * await waitForChatInterfaceReady(page)
+ * // Chat interface is now ready for interaction
+ */
+export async function waitForChatInterfaceReady(page: Page): Promise<void> {
+  await page.waitForFunction(
+    () => {
+      const container = document.querySelector('[data-testid="chat-interface-container"]')
+      const messageList = document.querySelector('[data-testid="chat-message-list"]')
+      const messageInput = document.querySelector('[data-testid="chat-message-input"]')
+
+      return (
+        container &&
+        messageList &&
+        messageInput &&
+        container instanceof HTMLElement &&
+        messageList instanceof HTMLElement &&
+        messageInput instanceof HTMLElement &&
+        container.offsetParent !== null &&
+        messageList.offsetParent !== null &&
+        messageInput.offsetParent !== null
+      )
+    },
+    { timeout: TEST_TIMEOUTS.NAVIGATION }
+  )
+}
+
+/**
  * Creates a test image buffer for E2E profile picture upload tests.
  * Returns a valid 1x1 PNG image buffer that can be used with setInputFiles.
  *
