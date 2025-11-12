@@ -1,6 +1,28 @@
-import { collection, query, where, getDocs, orderBy, addDoc, doc, updateDoc, Timestamp } from 'firebase/firestore'
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  getDoc,
+  orderBy,
+  addDoc,
+  doc,
+  updateDoc,
+  Timestamp,
+  arrayUnion,
+} from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import type { DraftEventData, ChatMessageData } from './event'
+import type { Timestamp as FirestoreTimestamp } from 'firebase/firestore'
+
+// Type for chat message data as stored in Firestore
+interface FirestoreChatMessage {
+  messageId: string
+  text: string
+  sender: 'user' | 'assistant'
+  timestamp: FirestoreTimestamp | Date
+  eventData?: unknown
+}
 
 /**
  * Result type for service operations.
@@ -98,11 +120,21 @@ export async function loadDraftEvent(userId: string): Promise<LoadResult<DraftEv
       createdAt: data.createdAt?.toDate() ?? new Date(),
       updatedAt: data.updatedAt?.toDate() ?? new Date(),
       title: data.title,
+      headline: data.headline,
       description: data.description,
       activity: data.activity,
       timeStart: data.timeStart?.toDate(),
       location: data.location,
       preferences: data.preferences,
+      // Load chat history from array field
+      chatHistory:
+        data.chatHistory?.map((msg: FirestoreChatMessage) => ({
+          messageId: msg.messageId || `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          text: msg.text,
+          sender: msg.sender,
+          timestamp: msg.timestamp instanceof Date ? msg.timestamp : (msg.timestamp?.toDate() ?? new Date()),
+          eventData: msg.eventData,
+        })) || [],
     }
 
     return { success: true, data: draftEvent }
@@ -114,34 +146,105 @@ export async function loadDraftEvent(userId: string): Promise<LoadResult<DraftEv
 }
 
 /**
- * Saves a chat message to Firestore users/{userId}/ownEvents/{eventId}/chatHistory/{messageId}
+ * Loads a specific draft event by eventId
  *
  * @param userId - The unique identifier of the user
- * @param eventId - The unique identifier of the draft event
- * @param message - Chat message data to save (without messageId)
- * @returns A Promise that resolves to SaveResult indicating success or failure
+ * @param eventId - The unique identifier of the event to load
+ * @returns A Promise that resolves to LoadResult with draft event data or error
  */
-export async function saveChatMessage(
+export async function loadDraftEventById(
   userId: string,
-  eventId: string,
-  message: Omit<ChatMessageData, 'messageId'>
-): Promise<SaveResult> {
+  eventId: string
+): Promise<LoadResult<DraftEventData & { eventId: string }>> {
   if (!db) {
     return { success: false, error: 'Firestore database is not initialized', errorType: 'network' }
   }
 
   try {
-    const chatHistoryRef = collection(db, 'users', userId, 'ownEvents', eventId, 'chatHistory')
+    const eventRef = doc(db, 'users', userId, 'ownEvents', eventId)
+    const docSnap = await getDoc(eventRef)
 
-    // Convert Date to Timestamp
-    const firestoreData = {
-      text: message.text,
-      sender: message.sender,
-      timestamp: Timestamp.fromDate(message.timestamp),
-      ...(message.eventData && { eventData: message.eventData }),
+    if (!docSnap.exists()) {
+      return { success: false, error: 'Event not found', errorType: 'not-found' }
     }
 
-    await addDoc(chatHistoryRef, firestoreData)
+    const data = docSnap.data()
+
+    // Convert Firestore Timestamps to Dates
+    const draftEvent: DraftEventData & { eventId: string } = {
+      eventId: docSnap.id,
+      role: data.role,
+      status: data.status,
+      pairRole: data.pairRole,
+      isDeleted: data.isDeleted ?? false,
+      joinedAt: data.joinedAt?.toDate() ?? new Date(),
+      createdAt: data.createdAt?.toDate() ?? new Date(),
+      updatedAt: data.updatedAt?.toDate() ?? new Date(),
+      title: data.title,
+      headline: data.headline,
+      description: data.description,
+      activity: data.activity,
+      timeStart: data.timeStart?.toDate(),
+      location: data.location,
+      preferences: data.preferences,
+      // Load chat history from array field
+      chatHistory:
+        data.chatHistory?.map((msg: FirestoreChatMessage) => ({
+          messageId: msg.messageId || `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          text: msg.text,
+          sender: msg.sender,
+          timestamp: msg.timestamp instanceof Date ? msg.timestamp : (msg.timestamp?.toDate() ?? new Date()),
+          eventData: msg.eventData,
+        })) || [],
+    }
+
+    return { success: true, data: draftEvent }
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : 'Unknown error'
+    console.error(`Failed to load draft event for userId: ${userId}, eventId: ${eventId}`, error)
+    return { success: false, error: errorMsg, errorType: 'network' }
+  }
+}
+
+/**
+ * Saves a batch of chat messages to the draft event's chatHistory array field
+ * Uses arrayUnion() for atomic appends without read-before-write
+ *
+ * @param userId - The unique identifier of the user
+ * @param eventId - The unique identifier of the draft event
+ * @param messages - Array of chat messages to append (without messageId)
+ * @returns A Promise that resolves to SaveResult indicating success or failure
+ */
+export async function saveChatMessagesBatch(
+  userId: string,
+  eventId: string,
+  messages: Omit<ChatMessageData, 'messageId'>[]
+): Promise<SaveResult> {
+  if (!db) {
+    return { success: false, error: 'Firestore database is not initialized', errorType: 'network' }
+  }
+
+  if (messages.length === 0) {
+    return { success: true }
+  }
+
+  try {
+    const eventRef = doc(db, 'users', userId, 'ownEvents', eventId)
+
+    // Convert messages to Firestore format with messageIds
+    const firestoreMessages = messages.map(msg => ({
+      messageId: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      text: msg.text,
+      sender: msg.sender,
+      timestamp: Timestamp.fromDate(msg.timestamp),
+      ...(msg.eventData && { eventData: msg.eventData }),
+    }))
+
+    // Use arrayUnion for atomic append
+    await updateDoc(eventRef, {
+      chatHistory: arrayUnion(...firestoreMessages),
+      updatedAt: Timestamp.fromDate(new Date()),
+    })
 
     return { success: true }
   } catch (error) {
@@ -149,51 +252,21 @@ export async function saveChatMessage(
       if (error.code === 'permission-denied') {
         return {
           success: false,
-          error: 'Permission denied: You do not have permission to save this message.',
+          error: 'Permission denied: You do not have permission to save messages.',
           errorType: 'permission',
+        }
+      }
+      if (error.code === 'not-found') {
+        return {
+          success: false,
+          error: 'Draft event not found',
+          errorType: 'not-found',
         }
       }
     }
     const errorMsg = error instanceof Error ? error.message : 'Unknown error'
-    console.error(`Failed to save chat message for userId: ${userId}, eventId: ${eventId}`, error)
-    return { success: false, error: `Failed to save chat message: ${errorMsg}`, errorType: 'network' }
-  }
-}
-
-/**
- * Loads all chat messages for a draft event, ordered by timestamp ascending
- *
- * @param userId - The unique identifier of the user
- * @param eventId - The unique identifier of the draft event
- * @returns A Promise that resolves to LoadResult with array of chat messages
- */
-export async function loadChatHistory(userId: string, eventId: string): Promise<LoadResult<ChatMessageData[]>> {
-  if (!db) {
-    return { success: false, error: 'Firestore database is not initialized', errorType: 'network' }
-  }
-
-  try {
-    const chatHistoryRef = collection(db, 'users', userId, 'ownEvents', eventId, 'chatHistory')
-    const q = query(chatHistoryRef, orderBy('timestamp', 'asc'))
-
-    const querySnapshot = await getDocs(q)
-
-    const messages: ChatMessageData[] = querySnapshot.docs.map(docSnap => {
-      const data = docSnap.data()
-      return {
-        messageId: docSnap.id,
-        text: data.text,
-        sender: data.sender,
-        timestamp: data.timestamp?.toDate() ?? new Date(),
-        eventData: data.eventData,
-      }
-    })
-
-    return { success: true, data: messages }
-  } catch (error) {
-    const errorMsg = error instanceof Error ? error.message : 'Unknown error'
-    console.error(`Failed to load chat history for userId: ${userId}, eventId: ${eventId}`, error)
-    return { success: false, error: errorMsg, errorType: 'network' }
+    console.error(`Failed to save chat messages batch for userId: ${userId}, eventId: ${eventId}`, error)
+    return { success: false, error: `Failed to save chat messages: ${errorMsg}`, errorType: 'network' }
   }
 }
 
@@ -217,14 +290,34 @@ export async function updateDraftEvent(
   try {
     const eventRef = doc(db, 'users', userId, 'ownEvents', eventId)
 
+    // Build Firestore updates object - explicitly handle all fields
     const firestoreUpdates: Record<string, unknown> = {
-      ...updates,
       updatedAt: Timestamp.fromDate(new Date()),
     }
 
-    // Convert Date fields to Timestamps
-    if (updates.timeStart) {
+    // Copy all fields from updates, handling Date conversion
+    if (updates.title !== undefined) {
+      firestoreUpdates.title = updates.title
+    }
+    if (updates.headline !== undefined) {
+      firestoreUpdates.headline = updates.headline
+    }
+    if (updates.description !== undefined) {
+      firestoreUpdates.description = updates.description
+    }
+    if (updates.activity !== undefined) {
+      firestoreUpdates.activity = updates.activity
+    }
+    if (updates.timeStart !== undefined) {
+      // Convert Date to Timestamp
       firestoreUpdates.timeStart = Timestamp.fromDate(updates.timeStart)
+    }
+    if (updates.location !== undefined) {
+      // Save location object even if partially empty (address or city only)
+      firestoreUpdates.location = updates.location
+    }
+    if (updates.preferences !== undefined) {
+      firestoreUpdates.preferences = updates.preferences
     }
 
     await updateDoc(eventRef, firestoreUpdates)
@@ -233,6 +326,37 @@ export async function updateDraftEvent(
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : 'Unknown error'
     console.error(`Failed to update draft event for userId: ${userId}, eventId: ${eventId}`, error)
+    return { success: false, error: errorMsg, errorType: 'network' }
+  }
+}
+
+/**
+ * Marks an event as deleted (soft delete)
+ *
+ * Updates the event document to set isDeleted to true and updatedAt timestamp.
+ * The event data remains in Firestore but will be filtered out from queries.
+ *
+ * @param userId - The unique identifier of the user
+ * @param eventId - The unique identifier of the event to delete
+ * @returns A Promise that resolves to SaveResult indicating success or failure
+ */
+export async function deleteEvent(userId: string, eventId: string): Promise<SaveResult> {
+  if (!db) {
+    return { success: false, error: 'Firestore database is not initialized', errorType: 'network' }
+  }
+
+  try {
+    const eventRef = doc(db, 'users', userId, 'ownEvents', eventId)
+
+    await updateDoc(eventRef, {
+      isDeleted: true,
+      updatedAt: Timestamp.fromDate(new Date()),
+    })
+
+    return { success: true }
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : 'Unknown error'
+    console.error(`Failed to delete event for userId: ${userId}, eventId: ${eventId}`, error)
     return { success: false, error: errorMsg, errorType: 'network' }
   }
 }
@@ -269,11 +393,20 @@ export async function loadAllEvents(userId: string): Promise<LoadResult<(DraftEv
         createdAt: data.createdAt?.toDate() ?? new Date(),
         updatedAt: data.updatedAt?.toDate() ?? new Date(),
         title: data.title,
+        headline: data.headline,
         description: data.description,
         activity: data.activity,
         timeStart: data.timeStart?.toDate(),
         location: data.location,
         preferences: data.preferences,
+        chatHistory:
+          data.chatHistory?.map((msg: FirestoreChatMessage) => ({
+            messageId: msg.messageId || `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            text: msg.text,
+            sender: msg.sender,
+            timestamp: msg.timestamp instanceof Date ? msg.timestamp : (msg.timestamp?.toDate() ?? new Date()),
+            eventData: msg.eventData,
+          })) || [],
       }
     })
 

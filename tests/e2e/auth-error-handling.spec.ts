@@ -67,8 +67,57 @@ test.describe('Authentication Error Handling', () => {
     await page.selectOption('[data-testid="signup-gender"]', existingUser.gender)
     await page.click('[data-testid="signup-submit-button"]')
 
-    // Wait for successful signup
-    await expect(page).toHaveURL('/profile', { timeout: TEST_TIMEOUTS.NAVIGATION })
+    // Wait for either successful signup (navigate to /profile) or error message
+    // Handle both success and failure cases
+    try {
+      await expect(page).toHaveURL('/profile', { timeout: TEST_TIMEOUTS.NAVIGATION })
+    } catch {
+      // If signup failed, check for various error indicators
+      // Wait a bit for error messages to appear
+      await page.waitForTimeout(2000)
+
+      const authErrorVisible = await page
+        .locator('[data-testid="auth-error-display"]')
+        .isVisible({ timeout: 3000 })
+        .catch(() => false)
+      const signupErrorVisible = await page
+        .locator('text=/signup failed|failed to create|Account created but failed/i')
+        .isVisible({ timeout: 3000 })
+        .catch(() => false)
+      const validationErrorVisible = await page
+        .locator('text=/Invalid data structure|Can only contain letters/i')
+        .isVisible({ timeout: 3000 })
+        .catch(() => false)
+
+      // Check console for error messages that might indicate the issue
+      const consoleErrors: string[] = []
+      page.on('console', msg => {
+        if (msg.type() === 'error' && msg.text().includes('Failed to create user profile')) {
+          consoleErrors.push(msg.text())
+        }
+      })
+
+      if (authErrorVisible || signupErrorVisible || validationErrorVisible) {
+        const errorType = validationErrorVisible ? 'validation' : 'Firestore emulator connection'
+        throw new Error(
+          `Signup failed - ${errorType} issue. Error visible: ${authErrorVisible || signupErrorVisible || validationErrorVisible}. Ensure Firestore emulator is running and CORS is configured.`
+        )
+      }
+
+      // If still on signup page after timeout, check if form is still visible (indicates signup didn't proceed)
+      const signupFormVisible = await page
+        .locator('[data-testid="signup-submit-button"]')
+        .isVisible({ timeout: 2000 })
+        .catch(() => false)
+      if (signupFormVisible) {
+        throw new Error(
+          'Signup did not complete - form still visible after submission. This may indicate Firestore emulator connection issues preventing profile creation.'
+        )
+      }
+
+      // If no error visible but still on signup page, re-throw original timeout error
+      throw new Error('Signup did not complete - navigation to /profile timed out without clear error indication')
+    }
 
     // Logout
     await page.goto('/profile')

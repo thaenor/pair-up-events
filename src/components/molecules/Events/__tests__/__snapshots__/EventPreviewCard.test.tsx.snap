@@ -115,7 +115,14 @@ exports[`EventPreviewCard > should match snapshot with full data 1`] = `
           <div
             class="capitalize"
           >
+            Your duo: 
             friends
+          </div>
+          <div
+            class="capitalize"
+          >
+            Looking for: 
+            couples
           </div>
           <div
             class="flex flex-wrap gap-1 mt-1"

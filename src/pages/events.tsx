@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Calendar, MapPin, Clock } from 'lucide-react'
+import { Plus, Calendar, MapPin, Clock, Trash2, AlertTriangle } from 'lucide-react'
 import Navigation from '@/components/organisms/Navigation/Navigation'
 import MobileBottomNavigation from '@/components/organisms/Navigation/MobileBottomNavigation'
 import LoadingSpinner from '@/components/atoms/LoadingSpinner'
 import { Button } from '@/components/atoms/button'
+import Modal from '@/components/atoms/Modal'
 import useRequireAuth from '@/hooks/useRequireAuth'
 import useAuth from '@/hooks/useAuth'
-import { loadAllEvents } from '@/entities/event/event-service'
+import { loadAllEvents, deleteEvent } from '@/entities/event/event-service'
 import type { DraftEventData } from '@/entities/event/event'
 import { toast } from 'sonner'
 
@@ -17,6 +18,9 @@ const EventsPage: React.FC = () => {
   const navigate = useNavigate()
   const [events, setEvents] = useState<(DraftEventData & { eventId: string })[]>([])
   const [isLoadingEvents, setIsLoadingEvents] = useState(true)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [eventToDelete, setEventToDelete] = useState<{ id: string; title: string } | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -48,6 +52,41 @@ const EventsPage: React.FC = () => {
     navigate('/events/create', { state: { eventId } })
   }
 
+  const handleDeleteEvent = (eventId: string, eventTitle: string, e: React.MouseEvent | React.KeyboardEvent) => {
+    e.stopPropagation() // Prevent event card click from firing
+
+    if (!user?.uid) {
+      toast.error('You must be logged in to delete events')
+      return
+    }
+
+    // Open confirmation modal
+    setEventToDelete({ id: eventId, title: eventTitle || 'this event' })
+    setShowDeleteModal(true)
+  }
+
+  const confirmDeleteEvent = async () => {
+    if (!user?.uid || !eventToDelete) {
+      return
+    }
+
+    setIsDeleting(true)
+    const result = await deleteEvent(user.uid, eventToDelete.id)
+
+    if (result.success) {
+      toast.success('Event deleted successfully')
+      // Remove the event from the local state
+      setEvents(prevEvents => prevEvents.filter(event => event.eventId !== eventToDelete.id))
+      setShowDeleteModal(false)
+      setEventToDelete(null)
+    } else {
+      toast.error('Failed to delete event. Please try again.')
+      console.error('Failed to delete event:', 'error' in result ? result.error : 'Unknown error')
+    }
+
+    setIsDeleting(false)
+  }
+
   const formatDate = (date?: Date): string => {
     if (!date) return 'Date TBD'
     return date.toLocaleDateString('en-US', {
@@ -71,6 +110,10 @@ const EventsPage: React.FC = () => {
     if (location.address) parts.push(location.address)
     if (location.city) parts.push(location.city)
     return parts.join(', ') || 'Location TBD'
+  }
+
+  const getEventDisplayName = (event: DraftEventData & { eventId: string }, fallback: string = 'Untitled'): string => {
+    return event.title || event.activity || fallback
   }
 
   if (loading || isLoadingEvents) {
@@ -113,10 +156,10 @@ const EventsPage: React.FC = () => {
               <button
                 key={event.eventId}
                 onClick={() => handleEventClick(event.eventId)}
-                className="w-full text-left bg-white border-2 border-pairup-darkBlue rounded-lg p-4 md:p-6 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-pairup-darkBlue focus:ring-offset-2"
-                aria-label={`View event: ${event.title || event.activity || 'Untitled'}`}
+                className="w-full text-left bg-white border-2 border-pairup-darkBlue rounded-lg p-4 md:p-6 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-pairup-darkBlue focus:ring-offset-2 cursor-pointer"
+                aria-label={`View event: ${getEventDisplayName(event)}`}
               >
-                {/* Status Badge */}
+                {/* Status Badge and Delete Button */}
                 <div className="flex items-center justify-between mb-3">
                   <span
                     className={`inline-block px-2 py-1 text-xs font-semibold rounded ${
@@ -125,12 +168,32 @@ const EventsPage: React.FC = () => {
                   >
                     {event.status === 'draft' ? 'Draft' : 'Published'}
                   </span>
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    onClick={e => handleDeleteEvent(event.eventId, getEventDisplayName(event), e)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        handleDeleteEvent(event.eventId, getEventDisplayName(event), e)
+                      }
+                    }}
+                    className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 cursor-pointer"
+                    aria-label={`Delete event: ${getEventDisplayName(event)}`}
+                    title="Delete event"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </div>
                 </div>
 
                 {/* Event Title */}
                 <h3 className="text-xl md:text-2xl font-bold text-pairup-darkBlue mb-2">
-                  {event.title || event.activity || 'Untitled Event'}
+                  {getEventDisplayName(event, 'Untitled Event')}
                 </h3>
+
+                {/* Event Headline */}
+                {event.headline && <p className="text-gray-600 text-sm md:text-base mb-2 italic">{event.headline}</p>}
 
                 {/* Event Description */}
                 {event.description && (
@@ -173,6 +236,55 @@ const EventsPage: React.FC = () => {
         )}
       </div>
       <MobileBottomNavigation />
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          if (!isDeleting) {
+            setShowDeleteModal(false)
+            setEventToDelete(null)
+          }
+        }}
+        title="Delete Event"
+        icon={<AlertTriangle className="w-6 h-6 text-red-500" />}
+        actions={
+          <>
+            <Button
+              variant="ghost"
+              fullWidth
+              onClick={() => {
+                setShowDeleteModal(false)
+                setEventToDelete(null)
+              }}
+              disabled={isDeleting}
+              className="bg-gray-100 hover:bg-gray-200 text-pairup-darkBlue rounded-lg"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              fullWidth
+              onClick={confirmDeleteEvent}
+              loading={isDeleting}
+              disabled={isDeleting}
+              icon={<Trash2 className="w-4 h-4" />}
+              className="rounded-lg"
+            >
+              Delete Event
+            </Button>
+          </>
+        }
+      >
+        <div className="space-y-2">
+          <p className="font-medium text-pairup-darkBlue">
+            Are you sure you want to delete "{eventToDelete?.title || 'this event'}"?
+          </p>
+          <p className="text-sm text-pairup-darkBlue/80">
+            This action cannot be undone. The event will be permanently deleted.
+          </p>
+        </div>
+      </Modal>
     </div>
   )
 }

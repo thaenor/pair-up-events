@@ -21,6 +21,328 @@
 
 ## [Unreleased]
 
+### Context
+
+This release focuses on improving the AI event creation system by refactoring the system prompt into a structured JSON format, enhancing brand voice alignment, and refining the event preferences schema to better support the 2-on-2 matching model. The changes make the AI assistant more flexible (allowing product-related questions) while maintaining strict event creation focus, and optimize data collection by leveraging user profile preferences for age range.
+
+### Changed
+
+- **System Prompt Architecture** (`src/lib/system-prompt.ts`)
+  - **Refactoring**: Converted system prompt from markdown string to structured JSON object for better maintainability and machine-readability
+  - **Structure**: Prompt now organized into logical sections (persona, brandVoice, productKnowledge, coreTask, systemMessages, rules, runtimeContext)
+  - **Brand Voice Integration**: Added explicit brand personality traits (Friendly, Energetic, Trustworthy, Simple, Optimistic) and tone guidelines from Design-doc.md
+  - **Product Knowledge**: Expanded with platform mission, core concept, key differentiator, supported duo types, and target audience
+  - **Flexibility**: Relaxed strictness to allow AI to answer product-related questions about PairUp Events platform (secondary focus)
+  - **Age Range Handling**: Moved age range from required to optional field with explicit instruction that it comes from user profile preferences (AI should NOT ask for it)
+  - **Duo Type Schema**: Updated to use `userDuoType` and `preferredDuoType` instead of single `duoType` field
+  - **Why**: Improve maintainability, align with brand identity, provide better context to AI, reduce redundant questions, and support clearer 2-on-2 matching preferences
+  - **Impact**: None (internal refactoring, AI behavior improved but backward compatible)
+  - **Technical Changes**:
+    - Created `systemPromptData` object with structured sections
+    - Exported `EVENT_ORGANIZER_SYSTEM_PROMPT` as stringified JSON with preamble
+    - Updated event schema to reflect new duo type structure
+    - Added runtime context section explaining user info and date injection
+  - **Related**: Event preferences schema update, brand voice documentation
+
+- **Event Preferences Schema** (`src/entities/event/event.ts`, `src/components/molecules/Events/EventPreviewCard.tsx`, `src/entities/event/event-validation.ts`)
+  - **Breaking Change**: Updated `EventPreferences` interface to use separate `userDuoType` and `preferredDuoType` fields instead of single `duoType`
+  - **Schema Update**:
+    - Changed: `duoType: 'friends' | 'couples' | ...` → `userDuoType: 'friends' | 'couples' | ...` and `preferredDuoType: 'friends' | 'couples' | ...`
+    - Changed: `ageRange: { min: number; max: number }` → `ageRange?: { min: number; max: number }` (now optional)
+  - **Why**: Better support for 2-on-2 matching model where users specify both their own duo type and the desired duo type of the other pair they want to meet. Age range made optional since it comes from user profile preferences.
+  - **Impact**: Breaking change - all code using `duoType` must be updated to use `userDuoType` and `preferredDuoType`
+  - **Migration**:
+    - Updated `EventPreviewData` interface to match new structure
+    - Updated `mapEventPreviewToDraft()` to map both duo type fields
+    - Updated `EventPreviewCard` component to display both duo types with labels ("Your duo:" and "Looking for:")
+    - All test files updated to use new schema
+  - **Files Modified**:
+    - `src/entities/event/event.ts` - Updated `EventPreferences` interface
+    - `src/components/molecules/Events/EventPreviewCard.tsx` - Updated interface and display logic
+    - `src/entities/event/event-validation.ts` - Updated mapping function
+    - All test files in `src/entities/event/__tests__/`, `src/pages/__tests__/`, `src/components/molecules/Events/__tests__/`
+  - **Related**: System prompt refactoring, AI event creation flow
+
+- **Event Deletion Confirmation** (`src/pages/events.tsx`)
+  - **UI Improvement**: Replaced `window.confirm()` with accessible Modal component for event deletion confirmation
+  - **Why**: `window.confirm()` is not accessible, doesn't match app design system, and provides poor user experience
+  - **Implementation**:
+    - Added Modal component from `@/components/atoms/Modal` following existing confirmation modal patterns
+    - Added state management for modal visibility, event to delete, and deletion loading state
+    - Refactored `handleDeleteEvent` to open modal instead of using `window.confirm`
+    - Created `confirmDeleteEvent` function to handle actual deletion with loading state
+    - Modal includes AlertTriangle icon, Cancel button (ghost variant), and Delete button (danger variant with Trash2 icon)
+    - Modal displays event title in confirmation message with warning about permanent deletion
+    - Delete button shows loading state during deletion and is disabled during operation
+  - **Impact**: Improved accessibility, better UX, consistent with design system. No breaking changes.
+  - **Files Modified**:
+    - `src/pages/events.tsx` - Replaced window.confirm with Modal component
+  - **Related**: Modal component, design system consistency
+
+### Fixed
+
+- **Event Preview Widget Not Generating** (`src/lib/ai/response-parser.ts`, `src/lib/system-prompt.ts`, `src/hooks/useAIChat.ts`)
+  - **Bug Fix**: Event preview widget was not appearing when AI gathered all event information
+  - **Root Cause**: Silent parsing failures in `extractEventData()` - when markers were missing, JSON was invalid, or required fields (title/activity) were absent, the function returned `null` without logging, making debugging impossible
+  - **Solution**:
+    - Enhanced `extractEventData()` with detailed logging at each failure point:
+      - Logs when markers are not found (with text snippet for debugging)
+      - Logs raw JSON string before parsing
+      - Logs specific missing fields (title vs activity) with parsed object structure
+      - Logs JSON parse errors with error details and JSON string
+      - Logs successful parsing with field summary
+    - Updated system prompt to explicitly require `title` and `activity` fields in EVENT_DATA_START block
+    - Added clarifying comment in `useAIChat.ts` explaining that widget renders based on `parsed.eventData` existence, not validation result
+  - **Testing**: Added 6 new unit tests for edge cases (missing title, missing activity, invalid JSON, missing markers, valid data with optional fields, logging verification)
+  - **Impact**: Developers can now debug parsing failures easily via console logs. Widget will appear when AI outputs valid EVENT_DATA_START block with title and activity.
+  - **Related**: System prompt refactoring, event preferences schema update
+
+- **Initialization Guard Logic Fix** (`src/hooks/useAIChat.ts`)
+  - **Bug Fix**: Initialization guard prevented proper initialization when `initialMessages` was empty, even when `isInitialized === true`
+  - **Root Cause**: Guard condition required both `isInitialized === true` AND `initialMessages.length > 0`, preventing initialization from being marked complete when messages array was empty (edge case when `useChatInitialization` returns early for `!userId`)
+  - **Solution**: Separated initialization completion from message syncing - guard now marks initialization as complete when `isInitialized === true` regardless of message length, but only syncs messages if `initialMessages.length > 0` (prevents overwriting local state with empty array)
+  - **Impact**: Initialization guard now properly completes even when starting with empty messages, preventing infinite guard checks and ensuring proper state management
+  - **Related**: Chat initialization flow, race condition prevention
+
+- **Message Batching Retry Logic Fix** (`src/hooks/useChatMessageBatching.ts`)
+  - **Bug Fix**: Infinite retry loop when message save failures occurred (permanent errors like permission-denied would retry indefinitely)
+  - **Root Cause**: Failed messages were re-queued indefinitely without retry limits or exponential backoff, causing infinite loops and excessive Firestore requests for permanent failures
+  - **Solution**:
+    - Added retry limit (MAX_RETRIES = 3) to prevent infinite loops
+    - Implemented exponential backoff (2s, 4s, 8s delays) to reduce server load
+    - Skip retries for permanent errors (permission-denied, not-found) - these fail immediately
+    - Track retry count per batch using `QueuedBatch` interface
+    - Prioritize retrying failed batches over new messages
+    - After max retries, stop retrying and show user-friendly error message
+  - **Why Re-queueing is Essential**:
+    - Messages must be persisted to Firestore for chat history (users need to see conversation when returning)
+    - Batching reduces Firestore write costs by ~75% (batches every 2s or 5 messages)
+    - Transient network failures should be retried (temporary connectivity issues)
+    - Permanent failures should NOT be retried (permission, not-found errors)
+  - **Impact**: Prevents infinite retry loops, reduces unnecessary Firestore requests, and provides better error handling for permanent vs transient failures
+  - **Related**: Chat history persistence, Firestore cost optimization
+
+- **Code Formatting** (`src/lib/system-prompt.ts`, `src/entities/event/event-validation.ts`)
+  - **Issue**: 29 Prettier formatting errors (quote style, line breaks, spacing inconsistencies)
+  - **Solution**: Auto-fixed all formatting issues using `npm run format`
+  - **Impact**: None (formatting only, no functional changes)
+  - **Related**: Code quality improvements
+
+### Testing
+
+- **Test Suite Updates** (`src/entities/event/__tests__/event-validation.test.ts`, `src/pages/__tests__/parse-event-data.test.ts`, `src/components/molecules/Events/__tests__/EventPreviewCard.test.tsx`)
+  - **Updates**: All test files updated to use new event preferences schema with `userDuoType` and `preferredDuoType`
+  - **Coverage**: Tests updated for:
+    - Event validation mapping (`mapEventPreviewToDraft`)
+    - Event data parsing (`parseEventDataFromResponse`)
+    - Event preview card rendering (display logic for both duo types)
+  - **Test Cases**: Updated 10+ test cases across 3 test files to match new schema
+  - **Why**: Ensure tests reflect new data structure and validate correct behavior
+  - **Impact**: None (test updates only, all tests passing)
+  - **Related**: Event preferences schema update
+
+### Added
+
+- **Event Delete Functionality** (`src/pages/events.tsx`, `src/entities/event/event-service.ts`, `src/entities/event/index.ts`)
+  - **Feature**: Users can now delete events from the events page using a trash icon
+  - **Implementation**: Soft delete - marks events as deleted (`isDeleted: true`) but preserves data in Firestore
+  - **UI Changes**:
+    - Added trash icon (Trash2 from lucide-react) to each event card in the events list
+    - Icon positioned in the top-right corner next to the status badge
+    - Hover effects: gray to red color transition with red background highlight
+    - Confirmation dialog before deletion to prevent accidental deletions
+  - **Technical Changes**:
+    - Created `deleteEvent(userId, eventId)` function in `event-service.ts` to mark events as deleted
+    - Function sets `isDeleted: true` and updates `updatedAt` timestamp
+    - Added `handleDeleteEvent` handler in `events.tsx` with confirmation dialog
+    - Local state updates immediately remove deleted event from view (optimistic UI)
+    - Toast notifications for success and error states
+  - **Data Persistence**: Deleted events remain in Firestore but are filtered out by `loadAllEvents()` query (`where('isDeleted', '==', false)`)
+  - **Why**: Allow users to remove unwanted events from their list while preserving data for potential recovery or analytics
+  - **Impact**: None (additive feature, no breaking changes)
+  - **User Experience**:
+    - Immediate visual feedback (event removed from list)
+    - Confirmation prevents accidental deletions
+    - Success/error toasts provide clear feedback
+  - **Accessibility**:
+    - Proper ARIA labels on delete button
+    - Keyboard accessible (focus ring on focus)
+    - Click event properly stops propagation to prevent card navigation
+  - **Related**: Event management, soft delete pattern
+
+### Documentation
+
+- **E2E Test Port Configuration** (`tests/e2e/README.md`, `playwright.config.ts`, `vite.config.ts`)
+  - **Clarification**: Preview server defaults to port 8080, automatically uses 8081 if 8080 is busy
+  - **Changes**:
+    - Removed explicit `preview.port: 8081` configuration from `vite.config.ts` (Vite automatically increments port if default is busy)
+    - Updated `playwright.config.ts` to default to `http://localhost:8080` (can be overridden with `PLAYWRIGHT_BASE_URL` env var)
+    - Updated E2E test documentation to clarify port behavior (defaults to 8080, uses 8081 if busy)
+  - **Why**: Clarify that 8081 is only used when 8080 is unavailable, not the default
+  - **Impact**: None (documentation and configuration clarification only)
+  - **Related**: E2E test setup documentation
+
+### Added
+
+- **AI Title and Headline Inference** (`src/lib/system-prompt.ts`, `src/pages/events-create.tsx`, `src/pages/events.tsx`, `src/entities/event/event.ts`)
+  - **Feature**: AI now automatically infers a title and headline after its first response to the user's first message
+  - **Storage**: Title and headline are stored in OwnEvent document but not displayed in chat UI
+  - **Display**: Events page now displays headline as subtitle below the title for each event (replaces "Untitled Event" fallback)
+  - **Technical Changes**:
+    - Added `headline?: string` field to `DraftEventData` and `EventPreviewData` interfaces
+    - Updated system prompt to instruct AI to output title/headline in separate TITLE_HEADLINE_START/END block (not in EVENT_DATA_START/END)
+    - Added `parseTitleHeadlineFromResponse()` and `removeTitleHeadlineBlock()` functions to extract and clean title/headline from AI responses
+    - Modified `handleSendMessage` to parse title/headline separately on first AI response, save to database, and remove from visible chat message
+    - Updated `mapEventPreviewToDraft` to include headline mapping
+    - Updated `loadDraftEvent` and `loadAllEvents` to read headline field from Firestore
+    - Added headline display to events page as italic subtitle
+  - **Benefits**:
+    - Events have more informative and engaging titles and headlines
+    - Headlines provide context without cluttering the chat interface
+    - Better event organization and discoverability on events page
+    - Title/headline inference doesn't trigger premature event preview widget
+
+### Fixed
+
+- **Events Page Data Loading** (`src/entities/event/event-service.ts`, `src/pages/events-create.tsx`)
+  - **Bug Fix**: Fixed bug where clicking an event from the events page would load the earliest draft event instead of the selected event
+  - **Solution**: Added `loadDraftEventById()` function to load a specific event by ID using `getDoc()`
+  - **Changes**:
+    - Created `loadDraftEventById(userId, eventId)` function in `event-service.ts` to load specific events by ID
+    - Updated `events-create.tsx` to use `loadDraftEventById()` when `stateEventId` is provided via navigation state
+    - Exported `loadDraftEventById` from event entity index
+  - **Verification**: Confirmed `loadAllEvents()` correctly reads all OwnEvent fields including `chatHistory`, `title`, `description`, `activity`, `timeStart`, `location`, `status`, and all metadata fields
+
+- **AI Chat Race Conditions** (`src/hooks/useAIChat.ts`, `src/hooks/useChatInitialization.ts`, `src/hooks/useChatMessageBatching.ts`, `src/pages/events-create.tsx`)
+  - **Bug Fix**: Resolved 3 critical race conditions in AI chat system that caused message loss and data corruption
+  - **Race Condition #1 - Message Loss**: User messages could be lost if sent during async initialization (props sync overwriting local state)
+  - **Race Condition #2 - Event ID Corruption**: Newly created event IDs could be overwritten by stale prop values during re-renders
+  - **Race Condition #3 - Wrong Event ID in Batching**: Message batching used stale event ID from closure, causing messages to save to wrong event
+  - **Solution**: Implemented initialization guard pattern and event ID tracking
+  - **Technical Changes**:
+    - **useChatInitialization**: Added `isInitialized` flag to track completion of async initialization
+    - **useAIChat**: Added `hasInitializedRef` guard to prevent prop syncing after first initialization (prevents overwrites)
+    - **useAIChat**: Replaced two sync effects (messages and eventId) with single guarded effect that only syncs once on mount
+    - **useChatMessageBatching**: Added `queuedEventIdRef` to track event ID at queue time (not flush time)
+    - **useChatMessageBatching**: Added effect to flush old messages when event ID changes (prevents cross-contamination)
+    - **events-create.tsx**: Updated to pass `isInitialized` flag to `useAIChat` hook
+  - **Architecture Improvement**: Simplified dual state management pattern with clear initialization vs runtime phases
+  - **Benefits**:
+    - User messages never lost during initialization
+    - Event IDs stable throughout lifecycle
+    - Messages always saved to correct event
+    - No stale closures in async operations
+    - Single source of truth per phase (initialization → runtime)
+  - **Impact**: Improved reliability and data integrity for AI chat system
+
+- **Create Event Button Behavior** (`src/hooks/useChatInitialization.ts`)
+  - **Bug Fix**: Fixed issue where "Create New Event" button always resumed the previous conversation instead of starting a fresh chat
+  - **Solution**: Modified `useChatInitialization` to skip loading existing drafts when no `eventIdFromState` is provided
+  - **Changes**:
+    - Removed `loadDraftEvent()` call when navigating to `/events/create` without an event ID
+    - Always start with fresh greeting message when creating a new event
+    - New event is created only when user sends their first message (via `ensureEventId` in `useAIChat`)
+    - Preserved existing behavior when `eventIdFromState` is provided (loading specific event's chat history)
+  - **User Experience**: Clicking "Create New Event" now always shows an empty chat window with only the AI greeting message
+  - **Impact**: Users can now start fresh conversations without resuming previous drafts
+
+### Added
+
+- **Back Button on Create Event Page** (`src/pages/events-create.tsx`)
+  - **Feature**: Added "Back to Events" button on the AI chat page to navigate back to the events list
+  - **Implementation**:
+    - Added ghost variant button with ArrowLeft icon above the page heading
+    - Button navigates to `/events` page when clicked
+    - Uses dark blue color (`text-pairup-darkBlue`) for better contrast with white background
+    - Follows existing Button component patterns and accessibility standards
+  - **User Experience**: Users can easily return to the events list without using browser back button or navigation menu
+  - **Impact**: Improved navigation UX for event creation flow with better visual contrast
+
+### Fixed
+
+- **Date Field Not Populating on Events Page** (`src/entities/event/event-validation.ts`)
+  - **Bug Fix**: Fixed date field not being populated when event details are settled
+  - **Root Cause**: AI outputs dates in DD-MM-YYYY format (per system prompt), but `parseDateTime` function only supported YYYY-MM-DD format
+  - **Changes**:
+    - Updated `parseDateTime` function to support both DD-MM-YYYY (from AI) and YYYY-MM-DD (ISO) formats
+    - Updated `validateEventData` function to accept both date formats
+    - Added test case to verify DD-MM-YYYY format parsing
+  - **User Experience**: Date field now correctly populates on the events page when event details are settled
+  - **Impact**: Events now display correct date information after AI generates event data
+
+- **Typing Indicator Scroll Behavior** (`src/components/organisms/Events/ChatInterface.tsx`)
+  - **Bug Fix**: Fixed typing indicator being pushed upwards with each message instead of staying at the bottom of the chat, while preserving manual scrolling functionality
+  - **Root Cause**: Chat list was not auto-scrolling to bottom when new messages were added or typing indicator appeared
+  - **Changes**:
+    - Added `useEffect` hook to auto-scroll chat list to bottom when messages change or typing indicator appears
+    - Used `requestAnimationFrame` for better scroll timing and DOM synchronization
+    - Implemented smart auto-scroll: only scrolls if user is already near the bottom (within 100px) or if typing indicator appears
+    - Used ref to find scrollable container (`.cs-message-list__scroll-wrapper`) and scroll to bottom
+    - Wrapped MainContainer in a div with ref to access scroll container
+  - **User Experience**: Typing indicator now stays at the bottom of the chat and remains visible while AI is responding, while manual scrolling still works when user scrolls up
+  - **Impact**: Improved UX - users can always see the typing indicator without manually scrolling, and can still scroll up to read previous messages
+
+- **Chat Interface UI Issues** (`src/components/organisms/Events/ChatInterface.tsx`)
+  - **Bug Fix**: Fixed "AI is typing" indicator not displaying properly and corrected AI message bubble sharp corner position
+  - **Changes**:
+    - Added comprehensive CSS styling for typing indicator (background, border, padding, animation)
+    - Fixed AI message bubble border-radius to have sharp corner at bottom-left (where avatar is) instead of top-left
+    - Added styling for `Message.CustomContent` wrapper to ensure typing indicator displays correctly
+    - Typing indicator now matches AI message bubble styling with proper animation
+  - **User Experience**: Typing indicator now displays correctly with animated dots, and AI message bubbles have the correct sharp corner position
+  - **Impact**: Improved visual consistency and user feedback during AI responses
+
+### Changed
+
+- **Typing Indicator Refactor** (`src/components/organisms/Events/ChatInterface.tsx`)
+  - **Feature**: Refactored typing indicator to appear inside the last AI message bubble instead of as a separate message
+  - **Why**: Improve UX by making it feel like the AI is actively typing within its own message rather than as a separate message
+  - **Changes**:
+    - Modified `renderedMessages` logic to show typing indicator inside the last AI message when `isLoading` is true
+    - When loading and there's a last AI message, the typing indicator replaces the message text content
+    - When loading and no AI message exists yet, creates a temporary message bubble with only the typing indicator
+    - Removed separate typing indicator message rendering (previously rendered as standalone Message component)
+    - Added `lastAIMessageIndex` memoized value to efficiently find the last assistant message
+    - Updated `useMemo` dependencies to include `isLoading` and `lastAIMessageIndex`
+  - **Technical Details**:
+    - Typing indicator uses `Message.CustomContent` with `TypingIndicator` component
+    - Temporary message uses key `"typing-indicator-temp"` when no AI messages exist
+    - Messages with `eventData` are not replaced with typing indicator (EventPreviewCard takes precedence)
+  - **User Experience**: Typing indicator now appears inside the AI's message bubble, creating a more natural conversation flow
+  - **Impact**: Improved visual consistency - typing indicator feels integrated with the AI's message rather than separate
+  - **Testing**: Added 3 new tests to verify typing indicator appears in last AI message, appears in new bubble when no AI messages exist, and disappears when loading stops
+  - **Related**: Typing indicator scroll behavior fix, Chat interface UI issues fix
+
+- **Chat History Storage Refactoring** (`src/entities/event/event-service.ts`, `src/pages/events-create.tsx`, `src/hooks/useChatMessageBatching.ts`)
+  - **Feature**: Refactored chat history storage from Firestore subcollection to array field in draft event document
+  - **Storage Path Change**:
+    - **Before**: `users/{userId}/ownEvents/{eventId}/chatHistory/{messageId}` (subcollection)
+    - **After**: `users/{userId}/ownEvents/{eventId}.chatHistory` (array field)
+  - **Technical Changes**:
+    - Added `chatHistory?: ChatMessageData[]` field to `DraftEventData` interface
+    - Removed `saveChatMessage()` and `loadChatHistory()` functions (replaced with batch operations)
+    - Added `saveChatMessagesBatch()` function using `arrayUnion()` for atomic appends
+    - Updated `loadDraftEvent()` to include `chatHistory` array field
+    - Created `useChatMessageBatching` hook with debouncing (2s delay or 5 message threshold)
+    - Updated `events-create.tsx` to use batching hook instead of individual saves
+    - Fixed missing greeting message issue (now saved when draft is created)
+    - Fixed race condition where `eventId` wasn't set before saving first message
+    - Added proper error handling with user feedback and message re-queuing
+  - **Cost Optimization**:
+    - **Before**: N write operations for N messages (1 write per message)
+    - **After**: ~N/5 write operations (batched every 2s or 5 messages)
+    - **Result**: ~75% reduction in Firestore write operations
+  - **Benefits**:
+    - Single document read to load all messages (no query needed)
+    - Atomic batch writes using `arrayUnion()` (no read-before-write)
+    - All messages saved including initial greeting
+    - Better error handling with automatic retry
+    - Reduced network calls and Firebase costs
+  - **Security Rules**: Updated Firestore rules to validate `chatHistory` array field (max 1000 messages)
+  - **Documentation**: Updated `Docs/data-model.md` to reflect new storage structure
+  - **Why**: Improve cost efficiency, fix missing message issues, and simplify data model
+  - **Impact**: Significant reduction in Firebase costs, improved reliability, and better user experience
+
 ### Added
 
 - **Chat Interface Avatars** (`src/components/organisms/Events/ChatInterface.tsx`)
@@ -1083,8 +1405,8 @@ Major pivot from traditional form-based event creation to AI-powered conversatio
 
 - **AI Integration**: Firebase AI SDK with Gemini 2.0 Flash model
 - **Response Parsing**: Custom extraction using `EVENT_DATA_START`/`EVENT_DATA_END` markers
-- **Draft Management**: Automatic conversation persistence in Firestore subcollection
-- **Cost Optimization**: Batched writes reduce Firestore operations by ~75%
+- **Draft Management**: Automatic conversation persistence in Firestore array field (chatHistory) with batching
+- **Cost Optimization**: Batched writes reduce Firestore operations by ~75% (2s delay or 5 message threshold)
 - **Fallback Strategy**: Multiple parsing attempts (markers, JSON blocks, regex patterns)
 
 **AI Prompting Strategy**:

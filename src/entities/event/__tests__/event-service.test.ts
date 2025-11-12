@@ -25,7 +25,7 @@ vi.mock('@/lib/firebase', () => ({
   db: {},
 }))
 
-import { updateDraftEvent, loadAllEvents } from '../event-service'
+import { updateDraftEvent, loadAllEvents, deleteEvent } from '../event-service'
 import * as firebaseModule from '@/lib/firebase'
 
 describe('updateDraftEvent', () => {
@@ -102,6 +102,63 @@ describe('updateDraftEvent', () => {
     vi.mocked(updateDoc).mockRejectedValue(error)
 
     const result = await updateDraftEvent('user1', 'event1', { title: 'Test' })
+
+    expect(result.success).toBe(false)
+    if (!result.success && 'error' in result) {
+      expect(result.error).toBe('Network error')
+      expect(result.errorType).toBe('network')
+    }
+  })
+})
+
+describe('deleteEvent', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('should return error when db is not initialized', async () => {
+    vi.spyOn(firebaseModule, 'db', 'get').mockReturnValue(null as any)
+
+    const result = await deleteEvent('user1', 'event1')
+
+    expect(result.success).toBe(false)
+    if (!result.success && 'error' in result) {
+      expect(result.error).toBe('Firestore database is not initialized')
+      expect(result.errorType).toBe('network')
+    }
+
+    vi.restoreAllMocks()
+  })
+
+  it('should mark event as deleted successfully', async () => {
+    vi.mocked(updateDoc).mockResolvedValue(undefined)
+
+    const result = await deleteEvent('user1', 'event1')
+
+    expect(result.success).toBe(true)
+    expect(updateDoc).toHaveBeenCalled()
+  })
+
+  it('should set isDeleted to true and update updatedAt', async () => {
+    vi.mocked(updateDoc).mockResolvedValue(undefined)
+
+    await deleteEvent('user1', 'event1')
+
+    expect(updateDoc).toHaveBeenCalled()
+    const callArgs = vi.mocked(updateDoc).mock.calls[0]
+    expect(callArgs[1]).toHaveProperty('isDeleted', true)
+    expect(callArgs[1]).toHaveProperty('updatedAt')
+  })
+
+  it('should handle errors gracefully', async () => {
+    const error = new Error('Network error')
+    vi.mocked(updateDoc).mockRejectedValue(error)
+
+    const result = await deleteEvent('user1', 'event1')
 
     expect(result.success).toBe(false)
     if (!result.success && 'error' in result) {

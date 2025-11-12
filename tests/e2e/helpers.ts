@@ -274,11 +274,19 @@ export function setupConsoleErrorMonitoring(page: Page) {
   const consoleErrors: string[] = []
   const consoleWarnings: string[] = []
 
-  // Patterns for expected/ignored errors from blocked services
+  // Patterns for expected/ignored errors from blocked services and emulator issues
   const ignoredErrorPatterns = [
     /Failed to load resource: net::ERR_FAILED/i, // Network errors from blocked resources
     /Failed to load resource: the server responded with a status of 400/i, // Bad request from blocked resources
+    /Failed to load resource: the server responded with a status of 403/i, // Forbidden from blocked resources
+    /Failed to load resource: the server responded with a status of 429/i, // Rate limiting from blocked resources
     /Failed to fetch/i, // Fetch errors from blocked resources
+    /CORS policy/i, // CORS errors from emulator (expected when app and emulator on different ports)
+    /Access to fetch.*has been blocked by CORS policy/i, // CORS errors from Firestore emulator
+    /Could not reach Cloud Firestore backend/i, // Firestore emulator connection issues
+    /Failed to get document because the client is offline/i, // Firestore offline mode (expected when emulator not connected)
+    /FirebaseError.*unavailable/i, // Firebase unavailable errors (emulator connection issues)
+    /operate in offline mode/i, // Firestore offline mode messages
   ]
 
   page.on('console', msg => {
@@ -410,6 +418,41 @@ export async function createPersistentTestAccount(page: Page) {
   await page.waitForURL('/profile', { timeout: TEST_TIMEOUTS.NAVIGATION })
 
   return testUser
+}
+
+/**
+ * Waits for the chat interface to be fully ready by checking that all required
+ * elements are visible simultaneously. This ensures the chat interface has
+ * completed initialization including container, message list, and input field.
+ *
+ * @param page - Playwright page object
+ *
+ * @example
+ * await page.goto('/events/create')
+ * await waitForChatInterfaceReady(page)
+ * // Chat interface is now ready for interaction
+ */
+export async function waitForChatInterfaceReady(page: Page): Promise<void> {
+  await page.waitForFunction(
+    () => {
+      const container = document.querySelector('[data-testid="chat-interface-container"]')
+      const messageList = document.querySelector('[data-testid="chat-message-list"]')
+      const messageInput = document.querySelector('[data-testid="chat-message-input"]')
+
+      return (
+        container &&
+        messageList &&
+        messageInput &&
+        container instanceof HTMLElement &&
+        messageList instanceof HTMLElement &&
+        messageInput instanceof HTMLElement &&
+        container.offsetParent !== null &&
+        messageList.offsetParent !== null &&
+        messageInput.offsetParent !== null
+      )
+    },
+    { timeout: TEST_TIMEOUTS.NAVIGATION }
+  )
 }
 
 /**

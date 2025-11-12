@@ -512,8 +512,23 @@ Located in: `src/components/molecules/`
 #### Events Molecules (`src/components/molecules/Events/`)
 
 1. **EventPreviewCard** (`EventPreviewCard.tsx`)
-   - Displays event data preview
-   - Edit/Confirm action handlers
+   - **Purpose**: Displays a preview of event details before final submission with formatted information and action buttons
+   - **Props**: `eventData: EventPreviewData`, `onEdit?: () => void`, `onConfirm?: () => void`
+   - **State**: None (presentational component)
+   - **Dependencies**: React, Tailwind CSS
+   - **Features**:
+     - Displays event title, description, activity, date/time, location
+     - Shows preferences including user duo type, preferred duo type, desired vibes, and optional age range
+     - Formatting helpers for date/time and location display
+     - Conditional rendering of action buttons (Edit, Copy invite link)
+   - **Data Structure**: Uses `EventPreviewData` interface with updated schema:
+     - `preferences.userDuoType` - User's own duo type (friends, couples, family, roommates, colleagues)
+     - `preferences.preferredDuoType` - Desired duo type of the other pair
+     - `preferences.ageRange` - Optional age range from user profile
+   - **Tests**: ✅ `EventPreviewCard.test.tsx` (updated for new schema)
+   - **Accessibility**: Proper ARIA labels on buttons, keyboard accessible
+   - **Notes**: Updated to display both duo types with labels ("Your duo:" and "Looking for:")
+   - **Last Updated**: 2025-01-XX - Updated to support new event preferences schema with separate duo types
 
 #### Invite Molecules (`src/components/molecules/Invite/`)
 

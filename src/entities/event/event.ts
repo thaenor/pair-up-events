@@ -17,6 +17,7 @@ export interface DraftEventData {
   updatedAt: Date
   // Optional draft fields
   title?: string
+  headline?: string
   description?: string
   activity?: string
   timeStart?: Date
@@ -25,12 +26,14 @@ export interface DraftEventData {
     city?: string
   }
   preferences?: Partial<EventPreferences>
+  // Chat history array - stores AI conversation messages during event creation
+  chatHistory?: ChatMessageData[]
 }
 
 /**
  * Chat message data structure for Firestore
  *
- * Represents a chat message in users/{userId}/ownEvents/{eventId}/chatHistory/{messageId}
+ * Represents a chat message stored in the draft event's chatHistory array field.
  * Used for persisting AI conversation history during event creation.
  */
 export interface ChatMessageData {
@@ -44,13 +47,14 @@ export interface ChatMessageData {
 /**
  * Event preferences structure
  *
- * Defines matching preferences for the event, including duo type,
- * desired vibes, and age range.
+ * Defines matching preferences for the event, including duo types,
+ * desired vibes, and optional age range (from user profile).
  */
 export interface EventPreferences {
-  duoType: 'friends' | 'couples' | 'family' | 'roommates' | 'colleagues'
+  userDuoType: 'friends' | 'couples' | 'family' | 'roommates' | 'colleagues'
+  preferredDuoType: 'friends' | 'couples' | 'family' | 'roommates' | 'colleagues'
   desiredVibes: string[]
-  ageRange: { min: number; max: number }
+  ageRange?: { min: number; max: number }
 }
 
 /**

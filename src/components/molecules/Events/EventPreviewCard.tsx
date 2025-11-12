@@ -13,14 +13,16 @@ import React from 'react'
  * @property {string} [location.address] - Street address
  * @property {string} [location.city] - City name
  * @property {Object} [preferences] - Event preferences
- * @property {string} [preferences.duoType] - Preferred duo type
+ * @property {string} [preferences.userDuoType] - User's own duo type
+ * @property {string} [preferences.preferredDuoType] - Preferred duo type of other pair
  * @property {string[]} [preferences.desiredVibes] - Desired vibes
- * @property {Object} [preferences.ageRange] - Age range
+ * @property {Object} [preferences.ageRange] - Age range (from user profile, optional)
  * @property {number} [preferences.ageRange.min] - Minimum age
  * @property {number} [preferences.ageRange.max] - Maximum age
  */
 export interface EventPreviewData {
   title: string
+  headline?: string
   description?: string
   activity: string
   date?: string
@@ -30,7 +32,8 @@ export interface EventPreviewData {
     city?: string
   }
   preferences?: {
-    duoType?: string
+    userDuoType?: string
+    preferredDuoType?: string
     desiredVibes?: string[]
     ageRange?: {
       min?: number
@@ -135,7 +138,12 @@ const EventPreviewCard: React.FC<EventPreviewCardProps> = ({ eventData, onEdit, 
             <div className="flex-1">
               <span className="font-semibold text-pairup-darkBlue">Preferences:</span>
               <div className="ml-2 text-gray-800">
-                {eventData.preferences.duoType && <div className="capitalize">{eventData.preferences.duoType}</div>}
+                {eventData.preferences.userDuoType && (
+                  <div className="capitalize">Your duo: {eventData.preferences.userDuoType}</div>
+                )}
+                {eventData.preferences.preferredDuoType && (
+                  <div className="capitalize">Looking for: {eventData.preferences.preferredDuoType}</div>
+                )}
                 {eventData.preferences.desiredVibes && eventData.preferences.desiredVibes.length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-1">
                     {eventData.preferences.desiredVibes.map(vibe => (

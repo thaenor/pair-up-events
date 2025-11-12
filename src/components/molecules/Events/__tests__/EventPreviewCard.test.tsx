@@ -16,7 +16,8 @@ describe('EventPreviewCard', () => {
       city: 'San Francisco',
     },
     preferences: {
-      duoType: 'friends',
+      userDuoType: 'friends',
+      preferredDuoType: 'couples',
       desiredVibes: ['adventurous', 'outdoor'],
       ageRange: {
         min: 25,
@@ -34,7 +35,8 @@ describe('EventPreviewCard', () => {
     expect(screen.getByText(/at 14:00/)).toBeInTheDocument()
     expect(screen.getByText(/123 Main St/)).toBeInTheDocument()
     expect(screen.getByText(/San Francisco/)).toBeInTheDocument()
-    expect(screen.getByText('friends')).toBeInTheDocument()
+    expect(screen.getByText(/Your duo: friends/i)).toBeInTheDocument()
+    expect(screen.getByText(/Looking for: couples/i)).toBeInTheDocument()
     expect(screen.getByText('adventurous')).toBeInTheDocument()
     expect(screen.getByText('outdoor')).toBeInTheDocument()
     expect(screen.getByText(/Age range: 25-35/)).toBeInTheDocument()
@@ -108,12 +110,14 @@ describe('EventPreviewCard', () => {
       title: 'Test',
       activity: 'Activity',
       preferences: {
-        duoType: 'couples',
+        userDuoType: 'couples',
+        preferredDuoType: 'couples',
         desiredVibes: ['romantic'],
       },
     }
     render(<EventPreviewCard eventData={dataWithoutAgeRange} />)
-    expect(screen.getByText('couples')).toBeInTheDocument()
+    expect(screen.getByText(/Your duo: couples/i)).toBeInTheDocument()
+    expect(screen.getByText(/Looking for: couples/i)).toBeInTheDocument()
     expect(screen.getByText('romantic')).toBeInTheDocument()
     expect(screen.queryByText(/Age range/)).not.toBeInTheDocument()
   })

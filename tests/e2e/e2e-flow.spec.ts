@@ -25,6 +25,7 @@ import {
   openSidebar,
   dismissToasts,
   createTestImageBuffer,
+  waitForChatInterfaceReady,
 } from './helpers'
 import { TEST_TIMEOUTS } from './constants'
 
@@ -455,6 +456,14 @@ test.describe('E2E Happy Path Flow', () => {
       await page.goto('/events/create')
       await expect(page).toHaveURL('/events/create')
 
+      // Wait for page to fully load
+      await expect(page.locator('h1:has-text("Create Event")')).toBeVisible({
+        timeout: TEST_TIMEOUTS.NAVIGATION,
+      })
+
+      // Wait for chat interface to be ready
+      await waitForChatInterfaceReady(page)
+
       await takePageSnapshot(page, 'events-create-page')
 
       expect(consoleErrors, 'Page should not have console errors').toHaveLength(0)
@@ -551,7 +560,10 @@ test.describe('E2E Happy Path Flow', () => {
       await page.goto('/privacy-policy')
       await expect(page).toHaveURL('/privacy-policy')
 
-      await expect(page.getByRole('heading', { name: 'Privacy Policy' })).toBeVisible()
+      // Wait for the main heading - use text content since it contains an icon
+      await expect(page.locator('h1:has-text("Privacy Policy")')).toBeVisible({
+        timeout: TEST_TIMEOUTS.NAVIGATION,
+      })
 
       await takePageSnapshot(page, 'privacy-policy-page')
 
@@ -765,13 +777,50 @@ test.describe('E2E Happy Path Flow', () => {
         buffer: createTestImageBuffer(),
       })
 
-      // Wait for the success toast (either one indicates upload completion)
+      // Wait for either success toast or error toast (upload may fail due to emulator issues)
       // Note: Both "Profile updated successfully" and "Profile picture uploaded successfully" may appear
-      await expect(
-        page.locator('text=/Profile updated successfully|Profile picture uploaded successfully/').first()
-      ).toBeVisible({
-        timeout: 15000,
-      })
+      const successToast = page
+        .locator('text=/Profile updated successfully|Profile picture uploaded successfully/')
+        .first()
+      const errorToast = page.locator('text=/Failed to upload|error/i').first()
+
+      // Wait for either success or error toast to appear (with timeout)
+      let successVisible = false
+      let errorVisible = false
+
+      try {
+        await Promise.race([
+          successToast.waitFor({ state: 'visible', timeout: 15000 }).then(() => {
+            successVisible = true
+          }),
+          errorToast.waitFor({ state: 'visible', timeout: 15000 }).then(() => {
+            errorVisible = true
+          }),
+        ])
+      } catch {
+        // Neither toast appeared within timeout - check current state
+        successVisible = await successToast.isVisible().catch(() => false)
+        errorVisible = await errorToast.isVisible().catch(() => false)
+      }
+
+      // Check if error toast appeared - if so, fail with clear message
+      if (errorVisible) {
+        const errorText = await errorToast.textContent().catch(() => 'Unknown error')
+        throw new Error(
+          `Profile picture upload failed: ${errorText}. This may be due to Storage emulator connection issues.`
+        )
+      }
+
+      // If success toast didn't appear, this indicates the upload didn't complete
+      // Note: errorVisible is guaranteed to be false here (checked above)
+      if (!successVisible) {
+        throw new Error(
+          'Profile picture upload did not complete - no success or error toast appeared. This may be due to Storage emulator connection issues or the upload operation timing out.'
+        )
+      }
+
+      // Verify success toast is visible
+      await expect(successToast).toBeVisible({ timeout: 2000 })
 
       // Wait for the second toast to appear (both toasts should show)
       await page.waitForTimeout(500)

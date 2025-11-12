@@ -52,24 +52,11 @@ service cloud.firestore {
       allow read, create: if isOwner(userId);
       
       // Only the event owner can update their own draft events
-      allow update: if isOwner(userId);
+      // Chat history is now stored as an array field in the draft event document
+      allow update: if isOwner(userId) && isValidDraftUpdate();
       
       // Soft deletion handled by setting isDeleted flag (no hard delete)
       allow delete: if false;
-
-      // ─────────── CHAT HISTORY ───────────
-      // Path: users/{userId}/ownEvents/{eventId}/chatHistory/{messageId}
-      // Chat messages for AI-powered event creation conversation
-      match /chatHistory/{messageId} {
-        // Only the event owner can read and create chat messages
-        allow read, create: if isOwner(userId);
-        
-        // Chat messages are immutable once created (no updates)
-        allow update: if false;
-        
-        // Chat messages are not deleted (preserve conversation history)
-        allow delete: if false;
-      }
     }
 
     // ─────────── RULE FUNCTIONS ───────────
@@ -81,6 +68,14 @@ service cloud.firestore {
       let createdAtUnchanged = !('createdAt' in request.resource.data.keys()) || 
                               request.resource.data.createdAt == resource.data.createdAt;
       return emailUnchanged && createdAtUnchanged;
+    }
+
+    function isValidDraftUpdate() {
+      // Allow chatHistory array updates
+      // Validate that chatHistory is a list if present, with reasonable size limit
+      return !('chatHistory' in request.resource.data) || 
+             (request.resource.data.chatHistory is list && 
+              request.resource.data.chatHistory.size() <= 1000);
     }
 
     // Deny all other access by default
