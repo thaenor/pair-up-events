@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { parseAIResponse } from '@/lib/ai/response-parser'
 
 describe('parseAIResponse', () => {
@@ -143,5 +143,95 @@ describe('parseAIResponse', () => {
     expect(result.cleanedText).toContain('Goodbye!')
     expect(result.cleanedText).not.toContain('TITLE_HEADLINE_START')
     expect(result.cleanedText).not.toContain('EVENT_DATA_START')
+  })
+
+  describe('extractEventData edge cases', () => {
+    let consoleWarnSpy: ReturnType<typeof vi.spyOn>
+    let consoleErrorSpy: ReturnType<typeof vi.spyOn>
+
+    beforeEach(() => {
+      consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    })
+
+    afterEach(() => {
+      consoleWarnSpy.mockRestore()
+      consoleErrorSpy.mockRestore()
+    })
+
+    it('should return null and log warning when title is missing', () => {
+      const response = `
+        EVENT_DATA_START
+        {
+          "activity": "Coffee",
+          "date": "2025-01-20"
+        }
+        EVENT_DATA_END
+      `
+
+      const result = parseAIResponse(response)
+
+      expect(result.eventData).toBeUndefined()
+      expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('[EventDataParser] Missing required fields'))
+    })
+
+    it('should return null and log warning when activity is missing', () => {
+      const response = `
+        EVENT_DATA_START
+        {
+          "title": "Coffee Meetup",
+          "date": "2025-01-20"
+        }
+        EVENT_DATA_END
+      `
+
+      const result = parseAIResponse(response)
+
+      expect(result.eventData).toBeUndefined()
+      expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('[EventDataParser] Missing required fields'))
+    })
+
+    it('should return null and log error when JSON is invalid', () => {
+      const response = `
+        EVENT_DATA_START
+        { invalid json }
+        EVENT_DATA_END
+      `
+
+      const result = parseAIResponse(response)
+
+      expect(result.eventData).toBeUndefined()
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[EventDataParser]'),
+        expect.objectContaining({
+          error: expect.any(String),
+        })
+      )
+    })
+
+    it('should return null when markers are missing', () => {
+      const response = 'Just a regular message without EVENT_DATA markers.'
+
+      const result = parseAIResponse(response)
+
+      expect(result.eventData).toBeUndefined()
+    })
+
+    it('should successfully parse valid data with missing optional fields', () => {
+      const response = `
+        EVENT_DATA_START
+        {
+          "title": "Coffee Meetup",
+          "activity": "Coffee"
+        }
+        EVENT_DATA_END
+      `
+
+      const result = parseAIResponse(response)
+
+      expect(result.eventData).toBeDefined()
+      expect(result.eventData?.title).toBe('Coffee Meetup')
+      expect(result.eventData?.activity).toBe('Coffee')
+    })
   })
 })

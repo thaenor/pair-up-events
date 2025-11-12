@@ -93,7 +93,8 @@ describe('parseEventDataFromResponse', () => {
           "city": "San Francisco"
         },
         "preferences": {
-          "duoType": "friends",
+          "userDuoType": "friends",
+          "preferredDuoType": "couples",
           "desiredVibes": ["adventurous", "outdoor"],
           "ageRange": {
             "min": 25,
@@ -112,7 +113,8 @@ describe('parseEventDataFromResponse', () => {
     expect(result?.description).toBe('A complete event description')
     expect(result?.location?.address).toBe('123 Main St')
     expect(result?.location?.city).toBe('San Francisco')
-    expect(result?.preferences?.duoType).toBe('friends')
+    expect(result?.preferences?.userDuoType).toBe('friends')
+    expect(result?.preferences?.preferredDuoType).toBe('couples')
     expect(result?.preferences?.desiredVibes).toEqual(['adventurous', 'outdoor'])
     expect(result?.preferences?.ageRange?.min).toBe(25)
     expect(result?.preferences?.ageRange?.max).toBe(35)

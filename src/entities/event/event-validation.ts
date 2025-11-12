@@ -76,10 +76,34 @@ export function parseDateTime(date?: string, time?: string): Date | undefined {
  *
  * Converts AI response format to Firestore draft event format,
  * including date/time parsing and preferences mapping.
+ * Handles the new event preferences schema with separate userDuoType
+ * and preferredDuoType fields, and optional ageRange from user profile.
  * Ensures all fields are explicitly included and handles edge cases.
  *
- * @param eventData - Event preview data from AI
+ * @param eventData - Event preview data from AI with updated schema
  * @returns Partial DraftEventData object for Firestore update
+ *
+ * @example
+ * ```ts
+ * const previewData: EventPreviewData = {
+ *   title: "Coffee Meetup",
+ *   activity: "Coffee",
+ *   preferences: {
+ *     userDuoType: "friends",
+ *     preferredDuoType: "couples",
+ *     desiredVibes: ["chill", "foodies"],
+ *     ageRange: { min: 25, max: 35 } // Optional
+ *   }
+ * }
+ * const draft = mapEventPreviewToDraft(previewData)
+ * ```
+ *
+ * @notes
+ * - Maps both userDuoType and preferredDuoType from preferences
+ * - Only includes ageRange if both min and max are present
+ * - Handles missing optional fields gracefully
+ *
+ * @since 2025-01-XX - Updated for new event preferences schema
  */
 export function mapEventPreviewToDraft(eventData: EventPreviewData) {
   // Parse date/time - log if parsing fails
@@ -105,11 +129,24 @@ export function mapEventPreviewToDraft(eventData: EventPreviewData) {
     }
   }
 
-  // Handle preferences - only include ageRange if both min and max are present
+  // Handle preferences - map new duo type fields and optional ageRange
   const preferences = eventData.preferences
     ? {
-        ...(eventData.preferences.duoType && {
-          duoType: eventData.preferences.duoType as 'friends' | 'couples' | 'family' | 'roommates' | 'colleagues',
+        ...(eventData.preferences.userDuoType && {
+          userDuoType: eventData.preferences.userDuoType as
+            | 'friends'
+            | 'couples'
+            | 'family'
+            | 'roommates'
+            | 'colleagues',
+        }),
+        ...(eventData.preferences.preferredDuoType && {
+          preferredDuoType: eventData.preferences.preferredDuoType as
+            | 'friends'
+            | 'couples'
+            | 'family'
+            | 'roommates'
+            | 'colleagues',
         }),
         ...(eventData.preferences.desiredVibes && {
           desiredVibes: eventData.preferences.desiredVibes,
@@ -133,7 +170,8 @@ export function mapEventPreviewToDraft(eventData: EventPreviewData) {
     timeStart: Date
     location: { address?: string; city?: string }
     preferences: Partial<{
-      duoType: 'friends' | 'couples' | 'family' | 'roommates' | 'colleagues'
+      userDuoType: 'friends' | 'couples' | 'family' | 'roommates' | 'colleagues'
+      preferredDuoType: 'friends' | 'couples' | 'family' | 'roommates' | 'colleagues'
       desiredVibes: string[]
       ageRange: { min: number; max: number }
     }>

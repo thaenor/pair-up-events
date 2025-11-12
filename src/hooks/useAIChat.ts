@@ -147,32 +147,14 @@ export function useAIChat(
         }
       }
 
-      // Update event if eventData is valid
       if (parsed.eventData && validateEventData(parsed.eventData) && currentEventId) {
         const draftUpdates = mapEventPreviewToDraft(parsed.eventData)
-        // Log what fields are being saved for debugging
-        console.log('Saving event data to Firestore:', {
-          eventId: currentEventId,
-          fields: Object.keys(draftUpdates),
-          hasTitle: !!draftUpdates.title,
-          hasHeadline: !!draftUpdates.headline,
-          hasDescription: !!draftUpdates.description,
-          hasActivity: !!draftUpdates.activity,
-          hasTimeStart: !!draftUpdates.timeStart,
-          hasLocation: !!draftUpdates.location,
-          hasPreferences: !!draftUpdates.preferences,
-        })
         const updateResult = await updateDraftEvent(userId, currentEventId, draftUpdates)
         if (!updateResult.success && 'error' in updateResult) {
           console.error('Failed to update draft event:', updateResult.error)
-        } else {
-          console.log('Successfully saved event data to Firestore')
         }
-      } else if (parsed.eventData) {
-        console.warn('Invalid event data received from AI:', parsed.eventData)
       }
 
-      // Create assistant message
       const assistantMessage: ChatMessageData = {
         messageId: `assistant-${Date.now()}`,
         text: parsed.cleanedText,
@@ -240,7 +222,8 @@ export function useAIChat(
           return
         }
 
-        // Use current messages state (including the user message we just added)
+        // Create temporary array for prompt building: include all previous messages plus the user message
+        // Note: messages state hasn't updated yet (setState is async), so we manually include userMessage
         const currentMessages = [...messages, userMessage]
         const prompt = buildAIPrompt(userProfile, currentMessages, text)
 

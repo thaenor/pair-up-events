@@ -150,7 +150,8 @@ describe('mapEventPreviewToDraft', () => {
         city: 'San Francisco',
       },
       preferences: {
-        duoType: 'friends',
+        userDuoType: 'friends',
+        preferredDuoType: 'couples',
         desiredVibes: ['adventurous', 'outdoor'],
         ageRange: {
           min: 25,
@@ -169,7 +170,8 @@ describe('mapEventPreviewToDraft', () => {
       address: '123 Main St',
       city: 'San Francisco',
     })
-    expect(result.preferences?.duoType).toBe('friends')
+    expect(result.preferences?.userDuoType).toBe('friends')
+    expect(result.preferences?.preferredDuoType).toBe('couples')
     expect(result.preferences?.desiredVibes).toEqual(['adventurous', 'outdoor'])
     expect(result.preferences?.ageRange).toEqual({ min: 25, max: 35 })
   })
@@ -194,7 +196,8 @@ describe('mapEventPreviewToDraft', () => {
       title: 'Test Event',
       activity: 'Hiking',
       preferences: {
-        duoType: 'friends',
+        userDuoType: 'friends',
+        preferredDuoType: 'friends',
         ageRange: {
           max: 35,
         },
@@ -203,7 +206,8 @@ describe('mapEventPreviewToDraft', () => {
 
     const result = mapEventPreviewToDraft(previewData)
 
-    expect(result.preferences?.duoType).toBe('friends')
+    expect(result.preferences?.userDuoType).toBe('friends')
+    expect(result.preferences?.preferredDuoType).toBe('friends')
     expect(result.preferences?.ageRange).toBeUndefined()
   })
 
@@ -212,7 +216,8 @@ describe('mapEventPreviewToDraft', () => {
       title: 'Test Event',
       activity: 'Hiking',
       preferences: {
-        duoType: 'friends',
+        userDuoType: 'friends',
+        preferredDuoType: 'friends',
         ageRange: {
           min: 25,
         },
@@ -221,7 +226,8 @@ describe('mapEventPreviewToDraft', () => {
 
     const result = mapEventPreviewToDraft(previewData)
 
-    expect(result.preferences?.duoType).toBe('friends')
+    expect(result.preferences?.userDuoType).toBe('friends')
+    expect(result.preferences?.preferredDuoType).toBe('friends')
     expect(result.preferences?.ageRange).toBeUndefined()
   })
 
@@ -230,7 +236,8 @@ describe('mapEventPreviewToDraft', () => {
       title: 'Test Event',
       activity: 'Hiking',
       preferences: {
-        duoType: 'couples',
+        userDuoType: 'couples',
+        preferredDuoType: 'couples',
         ageRange: {
           min: 25,
           max: 35,
@@ -248,14 +255,16 @@ describe('mapEventPreviewToDraft', () => {
       title: 'Test Event',
       activity: 'Hiking',
       preferences: {
-        duoType: 'friends',
+        userDuoType: 'friends',
+        preferredDuoType: 'friends',
         desiredVibes: ['adventurous'],
       },
     }
 
     const result = mapEventPreviewToDraft(previewData)
 
-    expect(result.preferences?.duoType).toBe('friends')
+    expect(result.preferences?.userDuoType).toBe('friends')
+    expect(result.preferences?.preferredDuoType).toBe('friends')
     expect(result.preferences?.desiredVibes).toEqual(['adventurous'])
     expect(result.preferences?.ageRange).toBeUndefined()
   })
@@ -366,7 +375,8 @@ describe('mapEventPreviewToDraft', () => {
         city: 'San Francisco',
       },
       preferences: {
-        duoType: 'friends',
+        userDuoType: 'friends',
+        preferredDuoType: 'couples',
         desiredVibes: ['adventurous', 'outdoor'],
         ageRange: {
           min: 25,
@@ -392,7 +402,8 @@ describe('mapEventPreviewToDraft', () => {
       address: '123 Main St',
       city: 'San Francisco',
     })
-    expect(result.preferences?.duoType).toBe('friends')
+    expect(result.preferences?.userDuoType).toBe('friends')
+    expect(result.preferences?.preferredDuoType).toBe('couples')
     expect(result.preferences?.desiredVibes).toEqual(['adventurous', 'outdoor'])
     expect(result.preferences?.ageRange).toEqual({ min: 25, max: 35 })
   })
@@ -406,7 +417,8 @@ describe('mapEventPreviewToDraft', () => {
         city: 'San Francisco',
       },
       preferences: {
-        duoType: 'friends',
+        userDuoType: 'friends',
+        preferredDuoType: 'friends',
         desiredVibes: ['adventurous'],
       },
     }
@@ -419,7 +431,8 @@ describe('mapEventPreviewToDraft', () => {
     // Verify optional fields that are present
     expect(result.timeStart).toBeInstanceOf(Date)
     expect(result.location).toEqual({ city: 'San Francisco' })
-    expect(result.preferences?.duoType).toBe('friends')
+    expect(result.preferences?.userDuoType).toBe('friends')
+    expect(result.preferences?.preferredDuoType).toBe('friends')
     expect(result.preferences?.desiredVibes).toEqual(['adventurous'])
     // Verify optional fields that are missing
     expect(result.headline).toBeUndefined()

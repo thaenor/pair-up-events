@@ -76,26 +76,42 @@ function extractTitleHeadline(text: string): { title: string; headline: string }
  * Extracts event data from AI response text
  */
 function extractEventData(text: string): EventPreviewData | null {
-  try {
-    const startMarker = 'EVENT_DATA_START'
-    const endMarker = 'EVENT_DATA_END'
-    const startIdx = text.indexOf(startMarker)
-    const endIdx = text.indexOf(endMarker)
+  const startMarker = 'EVENT_DATA_START'
+  const endMarker = 'EVENT_DATA_END'
+  const startIdx = text.indexOf(startMarker)
+  const endIdx = text.indexOf(endMarker)
 
-    if (startIdx === -1 || endIdx === -1) return null
-
-    const jsonStr = text.substring(startIdx + startMarker.length, endIdx).trim()
-    const parsed = JSON.parse(jsonStr)
-
-    if (!parsed.title || !parsed.activity) {
-      return null
-    }
-
-    return parsed as EventPreviewData
-  } catch (error) {
-    console.error('Failed to parse event data:', error)
+  if (startIdx === -1 || endIdx === -1) {
     return null
   }
+
+  const jsonStr = text.substring(startIdx + startMarker.length, endIdx).trim()
+
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(jsonStr)
+  } catch (error) {
+    console.error('[EventDataParser] JSON parse failed:', {
+      error: error instanceof Error ? error.message : String(error),
+      jsonString: jsonStr.substring(0, 500),
+      jsonLength: jsonStr.length,
+    })
+    return null
+  }
+
+  if (
+    !parsed ||
+    typeof parsed !== 'object' ||
+    !('title' in parsed) ||
+    !('activity' in parsed) ||
+    !parsed.title ||
+    !parsed.activity
+  ) {
+    console.warn('[EventDataParser] Missing required fields: title or activity')
+    return null
+  }
+
+  return parsed as EventPreviewData
 }
 
 /**

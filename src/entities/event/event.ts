@@ -47,13 +47,14 @@ export interface ChatMessageData {
 /**
  * Event preferences structure
  *
- * Defines matching preferences for the event, including duo type,
- * desired vibes, and age range.
+ * Defines matching preferences for the event, including duo types,
+ * desired vibes, and optional age range (from user profile).
  */
 export interface EventPreferences {
-  duoType: 'friends' | 'couples' | 'family' | 'roommates' | 'colleagues'
+  userDuoType: 'friends' | 'couples' | 'family' | 'roommates' | 'colleagues'
+  preferredDuoType: 'friends' | 'couples' | 'family' | 'roommates' | 'colleagues'
   desiredVibes: string[]
-  ageRange: { min: number; max: number }
+  ageRange?: { min: number; max: number }
 }
 
 /**

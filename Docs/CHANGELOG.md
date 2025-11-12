@@ -21,6 +21,85 @@
 
 ## [Unreleased]
 
+### Context
+
+This release focuses on improving the AI event creation system by refactoring the system prompt into a structured JSON format, enhancing brand voice alignment, and refining the event preferences schema to better support the 2-on-2 matching model. The changes make the AI assistant more flexible (allowing product-related questions) while maintaining strict event creation focus, and optimize data collection by leveraging user profile preferences for age range.
+
+### Changed
+
+- **System Prompt Architecture** (`src/lib/system-prompt.ts`)
+  - **Refactoring**: Converted system prompt from markdown string to structured JSON object for better maintainability and machine-readability
+  - **Structure**: Prompt now organized into logical sections (persona, brandVoice, productKnowledge, coreTask, systemMessages, rules, runtimeContext)
+  - **Brand Voice Integration**: Added explicit brand personality traits (Friendly, Energetic, Trustworthy, Simple, Optimistic) and tone guidelines from Design-doc.md
+  - **Product Knowledge**: Expanded with platform mission, core concept, key differentiator, supported duo types, and target audience
+  - **Flexibility**: Relaxed strictness to allow AI to answer product-related questions about PairUp Events platform (secondary focus)
+  - **Age Range Handling**: Moved age range from required to optional field with explicit instruction that it comes from user profile preferences (AI should NOT ask for it)
+  - **Duo Type Schema**: Updated to use `userDuoType` and `preferredDuoType` instead of single `duoType` field
+  - **Why**: Improve maintainability, align with brand identity, provide better context to AI, reduce redundant questions, and support clearer 2-on-2 matching preferences
+  - **Impact**: None (internal refactoring, AI behavior improved but backward compatible)
+  - **Technical Changes**:
+    - Created `systemPromptData` object with structured sections
+    - Exported `EVENT_ORGANIZER_SYSTEM_PROMPT` as stringified JSON with preamble
+    - Updated event schema to reflect new duo type structure
+    - Added runtime context section explaining user info and date injection
+  - **Related**: Event preferences schema update, brand voice documentation
+
+- **Event Preferences Schema** (`src/entities/event/event.ts`, `src/components/molecules/Events/EventPreviewCard.tsx`, `src/entities/event/event-validation.ts`)
+  - **Breaking Change**: Updated `EventPreferences` interface to use separate `userDuoType` and `preferredDuoType` fields instead of single `duoType`
+  - **Schema Update**:
+    - Changed: `duoType: 'friends' | 'couples' | ...` → `userDuoType: 'friends' | 'couples' | ...` and `preferredDuoType: 'friends' | 'couples' | ...`
+    - Changed: `ageRange: { min: number; max: number }` → `ageRange?: { min: number; max: number }` (now optional)
+  - **Why**: Better support for 2-on-2 matching model where users specify both their own duo type and the desired duo type of the other pair they want to meet. Age range made optional since it comes from user profile preferences.
+  - **Impact**: Breaking change - all code using `duoType` must be updated to use `userDuoType` and `preferredDuoType`
+  - **Migration**:
+    - Updated `EventPreviewData` interface to match new structure
+    - Updated `mapEventPreviewToDraft()` to map both duo type fields
+    - Updated `EventPreviewCard` component to display both duo types with labels ("Your duo:" and "Looking for:")
+    - All test files updated to use new schema
+  - **Files Modified**:
+    - `src/entities/event/event.ts` - Updated `EventPreferences` interface
+    - `src/components/molecules/Events/EventPreviewCard.tsx` - Updated interface and display logic
+    - `src/entities/event/event-validation.ts` - Updated mapping function
+    - All test files in `src/entities/event/__tests__/`, `src/pages/__tests__/`, `src/components/molecules/Events/__tests__/`
+  - **Related**: System prompt refactoring, AI event creation flow
+
+### Fixed
+
+- **Event Preview Widget Not Generating** (`src/lib/ai/response-parser.ts`, `src/lib/system-prompt.ts`, `src/hooks/useAIChat.ts`)
+  - **Bug Fix**: Event preview widget was not appearing when AI gathered all event information
+  - **Root Cause**: Silent parsing failures in `extractEventData()` - when markers were missing, JSON was invalid, or required fields (title/activity) were absent, the function returned `null` without logging, making debugging impossible
+  - **Solution**:
+    - Enhanced `extractEventData()` with detailed logging at each failure point:
+      - Logs when markers are not found (with text snippet for debugging)
+      - Logs raw JSON string before parsing
+      - Logs specific missing fields (title vs activity) with parsed object structure
+      - Logs JSON parse errors with error details and JSON string
+      - Logs successful parsing with field summary
+    - Updated system prompt to explicitly require `title` and `activity` fields in EVENT_DATA_START block
+    - Added clarifying comment in `useAIChat.ts` explaining that widget renders based on `parsed.eventData` existence, not validation result
+  - **Testing**: Added 6 new unit tests for edge cases (missing title, missing activity, invalid JSON, missing markers, valid data with optional fields, logging verification)
+  - **Impact**: Developers can now debug parsing failures easily via console logs. Widget will appear when AI outputs valid EVENT_DATA_START block with title and activity.
+  - **Related**: System prompt refactoring, event preferences schema update
+
+- **Code Formatting** (`src/lib/system-prompt.ts`, `src/entities/event/event-validation.ts`)
+  - **Issue**: 29 Prettier formatting errors (quote style, line breaks, spacing inconsistencies)
+  - **Solution**: Auto-fixed all formatting issues using `npm run format`
+  - **Impact**: None (formatting only, no functional changes)
+  - **Related**: Code quality improvements
+
+### Testing
+
+- **Test Suite Updates** (`src/entities/event/__tests__/event-validation.test.ts`, `src/pages/__tests__/parse-event-data.test.ts`, `src/components/molecules/Events/__tests__/EventPreviewCard.test.tsx`)
+  - **Updates**: All test files updated to use new event preferences schema with `userDuoType` and `preferredDuoType`
+  - **Coverage**: Tests updated for:
+    - Event validation mapping (`mapEventPreviewToDraft`)
+    - Event data parsing (`parseEventDataFromResponse`)
+    - Event preview card rendering (display logic for both duo types)
+  - **Test Cases**: Updated 10+ test cases across 3 test files to match new schema
+  - **Why**: Ensure tests reflect new data structure and validate correct behavior
+  - **Impact**: None (test updates only, all tests passing)
+  - **Related**: Event preferences schema update
+
 ### Added
 
 - **Event Delete Functionality** (`src/pages/events.tsx`, `src/entities/event/event-service.ts`, `src/entities/event/index.ts`)
