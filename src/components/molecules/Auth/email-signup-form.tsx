@@ -246,7 +246,23 @@ const EmailSignupForm: React.FC = React.memo(() => {
 
         setPendingProfileCreation(false)
         setLoading(false)
-        navigate('/profile')
+
+        // Check for pending invite and redirect accordingly
+        const pendingInviteData = sessionStorage.getItem('pendingInvite')
+        if (pendingInviteData) {
+          try {
+            const { eventId, inviteCode } = JSON.parse(pendingInviteData)
+            // Clear the pending invite from storage
+            sessionStorage.removeItem('pendingInvite')
+            // Redirect back to accept-invite page
+            navigate(`/accept-invite?eventId=${eventId}&inviteCode=${inviteCode}`)
+          } catch (err) {
+            console.error('Failed to parse pending invite data:', err)
+            navigate('/profile')
+          }
+        } else {
+          navigate('/profile')
+        }
       } catch (error) {
         console.error('Failed to create user profile:', error)
         toast.error('Account created but failed to save profile. Please complete your profile manually.')

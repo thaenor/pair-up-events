@@ -10,10 +10,12 @@ import {
   updateDoc,
   Timestamp,
   arrayUnion,
+  setDoc,
 } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import type { DraftEventData, ChatMessageData } from './event'
 import type { Timestamp as FirestoreTimestamp } from 'firebase/firestore'
+import { createInviteLink, markInviteAsUsed, validateInviteCode } from '../invite/invite-service'
 
 // Type for chat message data as stored in Firestore
 interface FirestoreChatMessage {
@@ -414,6 +416,138 @@ export async function loadAllEvents(userId: string): Promise<LoadResult<(DraftEv
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : 'Unknown error'
     console.error(`Failed to load events for userId: ${userId}`, error)
+    return { success: false, error: errorMsg, errorType: 'network' }
+  }
+}
+
+/**
+ * Publish a draft event and generate an invite link
+ * Transitions the event from draft to shared status and creates a unique invite code
+ *
+ * @param userId - The unique identifier of the user (event creator)
+ * @param eventId - The unique identifier of the event to publish
+ * @returns A Promise that resolves to LoadResult with the invite URL
+ */
+export async function publishEventWithInvite(userId: string, eventId: string): Promise<LoadResult<string>> {
+  if (!db) {
+    return { success: false, error: 'Firestore database is not initialized', errorType: 'network' }
+  }
+
+  try {
+    // Generate invite link (this also creates the invite code document)
+    const inviteUrl = await createInviteLink(eventId, userId)
+
+    // Extract invite code from URL
+    const url = new URL(inviteUrl)
+    const inviteCode = url.searchParams.get('inviteCode')
+
+    if (!inviteCode) {
+      return { success: false, error: 'Failed to generate invite code', errorType: 'validation' }
+    }
+
+    // Update event document with invite fields
+    const eventRef = doc(db, 'users', userId, 'ownEvents', eventId)
+    await updateDoc(eventRef, {
+      inviteCode,
+      shareStatus: 'shared',
+      sharedAt: Timestamp.fromDate(new Date()),
+      updatedAt: Timestamp.fromDate(new Date()),
+    })
+
+    return { success: true, data: inviteUrl }
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : 'Unknown error'
+    console.error(`Failed to publish event with invite for userId: ${userId}, eventId: ${eventId}`, error)
+    return { success: false, error: errorMsg, errorType: 'network' }
+  }
+}
+
+/**
+ * Accept an event invite and join the event
+ * Validates the invite code, creates a copy of the event in the joining user's collection,
+ * and marks the invite as used
+ *
+ * @param inviteCode - The invite code to validate
+ * @param joiningUserId - The user ID of the person accepting the invite
+ * @returns A Promise that resolves to LoadResult with the event ID
+ */
+export async function acceptEventInvite(inviteCode: string, joiningUserId: string): Promise<LoadResult<string>> {
+  if (!db) {
+    return { success: false, error: 'Firestore database is not initialized', errorType: 'network' }
+  }
+
+  try {
+    // Validate invite code
+    const inviteData = await validateInviteCode(inviteCode)
+    if (!inviteData) {
+      return { success: false, error: 'Invalid or expired invite code', errorType: 'validation' }
+    }
+
+    const { eventId, creatorId } = inviteData
+
+    // Prevent creator from accepting their own invite
+    if (creatorId === joiningUserId) {
+      return { success: false, error: 'Cannot accept your own invite', errorType: 'validation' }
+    }
+
+    // Load the original event from creator's collection
+    const eventResult = await loadDraftEventById(creatorId, eventId)
+    if (!eventResult.success) {
+      return { success: false, error: 'Event not found', errorType: 'not-found' }
+    }
+
+    const originalEvent = eventResult.data
+
+    // Create event copy in joining user's collection
+    const now = new Date()
+    const joinedEventData: Omit<DraftEventData, 'eventId'> = {
+      role: 'creator', // Changed from 'joiner' to 'creator' to match schema
+      status: 'draft',
+      pairRole: 'userA', // Changed from 'userB' to 'userA' to match schema
+      isDeleted: false,
+      joinedAt: now,
+      createdAt: now,
+      updatedAt: now,
+      // Copy event details from original
+      title: originalEvent.title,
+      headline: originalEvent.headline,
+      description: originalEvent.description,
+      activity: originalEvent.activity,
+      timeStart: originalEvent.timeStart,
+      location: originalEvent.location,
+      preferences: originalEvent.preferences,
+      // Copy invite fields
+      inviteCode: originalEvent.inviteCode,
+      shareStatus: 'accepted',
+      sharedAt: originalEvent.sharedAt,
+      // Don't copy chat history to the joined user
+    }
+
+    // Create document in joining user's ownEvents subcollection
+    const joiningUserEventsRef = collection(db, 'users', joiningUserId, 'ownEvents')
+    await setDoc(doc(joiningUserEventsRef, eventId), {
+      ...joinedEventData,
+      joinedAt: Timestamp.fromDate(joinedEventData.joinedAt),
+      createdAt: Timestamp.fromDate(joinedEventData.createdAt),
+      updatedAt: Timestamp.fromDate(joinedEventData.updatedAt),
+      ...(joinedEventData.timeStart && { timeStart: Timestamp.fromDate(joinedEventData.timeStart) }),
+      ...(joinedEventData.sharedAt && { sharedAt: Timestamp.fromDate(joinedEventData.sharedAt) }),
+    })
+
+    // Update original event to mark as accepted
+    const originalEventRef = doc(db, 'users', creatorId, 'ownEvents', eventId)
+    await updateDoc(originalEventRef, {
+      shareStatus: 'accepted',
+      updatedAt: Timestamp.fromDate(new Date()),
+    })
+
+    // Mark invite as used
+    await markInviteAsUsed(inviteCode, joiningUserId)
+
+    return { success: true, data: eventId }
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : 'Unknown error'
+    console.error(`Failed to accept event invite for inviteCode: ${inviteCode}`, error)
     return { success: false, error: errorMsg, errorType: 'network' }
   }
 }

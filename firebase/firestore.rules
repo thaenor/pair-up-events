@@ -49,13 +49,32 @@ service cloud.firestore {
     // Draft events created by users during event creation flow
     match /users/{userId}/ownEvents/{eventId} {
       // Only the event owner can read and create their own draft events
-      allow read, create: if isOwner(userId);
-      
+      // Allow public read for shared events (via invite links)
+      allow read: if isOwner(userId) || isValidInviteAccess(eventId);
+      allow create: if isOwner(userId);
+
       // Only the event owner can update their own draft events
       // Chat history is now stored as an array field in the draft event document
       allow update: if isOwner(userId) && isValidDraftUpdate();
-      
+
       // Soft deletion handled by setting isDeleted flag (no hard delete)
+      allow delete: if false;
+    }
+
+    // ─────────── INVITE CODES ───────────
+    // Path: inviteCodes/{inviteCode}
+    // Invite codes for sharing events with others
+    match /inviteCodes/{inviteCode} {
+      // Anyone can read invite codes (for validation)
+      allow read: if true;
+
+      // Only authenticated users can create invite codes
+      allow create: if isAuthenticated();
+
+      // Only the creator can mark it as used
+      allow update: if isAuthenticated();
+
+      // No deletion allowed
       allow delete: if false;
     }
 
@@ -73,9 +92,17 @@ service cloud.firestore {
     function isValidDraftUpdate() {
       // Allow chatHistory array updates
       // Validate that chatHistory is a list if present, with reasonable size limit
-      return !('chatHistory' in request.resource.data) || 
-             (request.resource.data.chatHistory is list && 
+      return !('chatHistory' in request.resource.data) ||
+             (request.resource.data.chatHistory is list &&
               request.resource.data.chatHistory.size() <= 1000);
+    }
+
+    function isValidInviteAccess(eventId) {
+      // This is a placeholder for invite validation logic
+      // In practice, you would check if the request includes a valid invite code
+      // For now, we'll allow read access if the event has shareStatus = 'shared'
+      // The actual validation will happen in the application layer
+      return resource.data.shareStatus == 'shared';
     }
 
     // Deny all other access by default

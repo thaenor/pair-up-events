@@ -43,11 +43,37 @@ const EventsCreatePage: React.FC = () => {
     isInitialized
   )
 
-  // Handle event confirmation
-  const handleConfirmEvent = React.useCallback((eventData: EventPreviewData) => {
-    console.log('Event confirmed:', eventData)
-    // TODO: Implement event confirmation
-  }, [])
+  // Handle event confirmation - generate invite link and copy to clipboard
+  const handleConfirmEvent = React.useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- Parameter required by callback signature
+    async (_eventData: EventPreviewData) => {
+      if (!user?.uid || !eventId) {
+        console.error('User or eventId not available')
+        return
+      }
+
+      try {
+        // Generate invite link
+        const { publishEventWithInvite } = await import('@/entities/event/event-service')
+        const result = await publishEventWithInvite(user.uid, eventId)
+
+        if (result.success) {
+          // Copy to clipboard
+          await navigator.clipboard.writeText(result.data)
+          console.log('Invite link copied to clipboard:', result.data)
+          // TODO: Show success toast
+          alert('Invite link copied to clipboard!')
+        } else {
+          console.error('Failed to generate invite link:', result.error)
+          alert('Failed to generate invite link. Please try again.')
+        }
+      } catch (error) {
+        console.error('Error generating invite link:', error)
+        alert('An error occurred. Please try again.')
+      }
+    },
+    [user?.uid, eventId]
+  )
 
   // Handle chat interface errors gracefully
   const handleChatError = React.useCallback((error: Error, errorInfo: React.ErrorInfo) => {

@@ -43,7 +43,22 @@ const EmailLoginForm: React.FC = React.memo(() => {
       toast.success('Logged in successfully!')
       // Wait a moment for auth state to update before navigating
       setTimeout(() => {
-        navigate('/profile')
+        // Check for pending invite and redirect accordingly
+        const pendingInviteData = sessionStorage.getItem('pendingInvite')
+        if (pendingInviteData) {
+          try {
+            const { eventId, inviteCode } = JSON.parse(pendingInviteData)
+            // Clear the pending invite from storage
+            sessionStorage.removeItem('pendingInvite')
+            // Redirect back to accept-invite page
+            navigate(`/accept-invite?eventId=${eventId}&inviteCode=${inviteCode}`)
+          } catch (err) {
+            console.error('Failed to parse pending invite data:', err)
+            navigate('/profile')
+          }
+        } else {
+          navigate('/profile')
+        }
       }, 100)
     } else {
       // Error is now handled by authError state in useAuth hook
@@ -68,7 +83,22 @@ const EmailLoginForm: React.FC = React.memo(() => {
     if (result.success) {
       toast.success('Logged in successfully!')
       setTimeout(() => {
-        navigate('/profile')
+        // Check for pending invite and redirect accordingly
+        const pendingInviteData = sessionStorage.getItem('pendingInvite')
+        if (pendingInviteData) {
+          try {
+            const { eventId, inviteCode } = JSON.parse(pendingInviteData)
+            // Clear the pending invite from storage
+            sessionStorage.removeItem('pendingInvite')
+            // Redirect back to accept-invite page
+            navigate(`/accept-invite?eventId=${eventId}&inviteCode=${inviteCode}`)
+          } catch (err) {
+            console.error('Failed to parse pending invite data:', err)
+            navigate('/profile')
+          }
+        } else {
+          navigate('/profile')
+        }
       }, 100)
     } else {
       // Error is now handled by authError state in useAuth hook

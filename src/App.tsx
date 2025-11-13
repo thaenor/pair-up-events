@@ -20,6 +20,7 @@ const TermsOfServicePage = lazy(() => import('./pages/terms-of-service'))
 const PrivacyPolicyPage = lazy(() => import('./pages/privacy-policy'))
 const SettingsPage = lazy(() => import('./pages/settings'))
 const InvitePage = lazy(() => import('./pages/invite'))
+const AcceptInvitePage = lazy(() => import('./pages/accept-invite'))
 const ContactUsPage = lazy(() => import('./pages/contact-us'))
 const AboutPage = lazy(() => import('./pages/about'))
 
@@ -53,6 +54,7 @@ const App = () => {
                 <Route path="/messenger" element={<MessengerPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/invite" element={<InvitePage />} />
+                <Route path="/accept-invite" element={<AcceptInvitePage />} />
                 <Route path="/contact-us" element={<ContactUsPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/terms-of-service" element={<TermsOfServicePage />} />

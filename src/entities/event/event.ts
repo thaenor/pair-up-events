@@ -15,6 +15,10 @@ export interface DraftEventData {
   joinedAt: Date
   createdAt: Date
   updatedAt: Date
+  // Invite fields - for sharing events with others
+  inviteCode?: string // 8-12 character unique code (nanoid)
+  shareStatus?: 'draft' | 'shared' | 'accepted' // Event sharing lifecycle
+  sharedAt?: Date // Timestamp when invite link was generated
   // Optional draft fields
   title?: string
   headline?: string
