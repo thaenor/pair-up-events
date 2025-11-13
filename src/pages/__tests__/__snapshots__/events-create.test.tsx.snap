@@ -4,6 +4,14 @@ exports[`EventsCreatePage > should match snapshot 1`] = `
 <div
   class="min-h-screen bg-pairup-cream"
 >
+  <a
+    aria-label="Skip to chat interface"
+    class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-pairup-cyan text-pairup-darkBlue px-4 py-2 rounded-md font-medium z-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pairup-cyan transition-all "
+    href="#chat-interface"
+    tabindex="1"
+  >
+    Skip to chat interface
+  </a>
   <nav
     aria-label="Main navigation"
     class="py-4 w-full absolute top-0 left-0 z-10 bg-pairup-darkBlue shadow-2xl"
@@ -521,16 +529,18 @@ exports[`EventsCreatePage > should match snapshot 1`] = `
       </div>
     </div>
   </nav>
-  <div
+  <main
+    aria-label="Create event page"
     class="container mx-auto px-4 py-8 max-w-4xl pt-24 pb-20 md:pb-8"
+    role="main"
   >
     <div
-      class="mb-4"
+      class="mb-2 md:mb-4"
     >
       <button
         aria-disabled="false"
         aria-label="Back to events"
-        class="inline-flex items-center justify-center gap-2 font-medium rounded-md transition-colors disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 text-sm px-3 py-1.5 h-8 mb-4 text-pairup-darkBlue hover:bg-pairup-darkBlue/10 focus:ring-pairup-darkBlue"
+        class="inline-flex items-center justify-center gap-2 font-medium rounded-md transition-colors disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 text-sm px-3 py-1.5 h-8 mb-2 md:mb-4 text-pairup-darkBlue hover:bg-pairup-darkBlue/10 focus:ring-pairup-darkBlue"
         type="button"
       >
         <span
@@ -568,7 +578,7 @@ exports[`EventsCreatePage > should match snapshot 1`] = `
         class="text-center"
       >
         <h1
-          class="text-3xl md:text-4xl font-bold text-pairup-darkBlue"
+          class="text-2xl md:text-4xl font-bold text-pairup-darkBlue"
         >
           Create Event
         </h1>
@@ -577,6 +587,7 @@ exports[`EventsCreatePage > should match snapshot 1`] = `
     <div
       class="relative w-full rounded-2xl overflow-hidden shadow-md"
       data-testid="chat-interface-container"
+      id="chat-interface"
       style="height: calc(100dvh - 270px);"
     >
       <style>
@@ -586,7 +597,7 @@ exports[`EventsCreatePage > should match snapshot 1`] = `
             height: calc(100dvh - 180px) !important;
           }
         }
-        
+
         /* Message spacing - increase padding between messages */
         [data-testid="chat-interface-container"] .cs-message {
           margin-top: 1rem !important;
@@ -765,9 +776,35 @@ exports[`EventsCreatePage > should match snapshot 1`] = `
             transform: scale(1);
           }
         }
+
+        /* Streaming message styling */
+        [data-testid="chat-interface-container"] .streaming-message {
+          color: #1A2A33 !important;
+          white-space: pre-wrap !important;
+          word-break: break-word !important;
+        }
+
+        /* Blinking cursor animation for streaming */
+        [data-testid="chat-interface-container"] .streaming-cursor {
+          display: inline-block !important;
+          margin-left: 2px !important;
+          color: #1A2A33 !important;
+          font-weight: bold !important;
+          animation: blink-cursor 1s step-end infinite !important;
+        }
+
+        @keyframes blink-cursor {
+          0%, 50% {
+            opacity: 1;
+          }
+          51%, 100% {
+            opacity: 0;
+          }
+        }
       
       </style>
       <div
+        aria-busy="false"
         class="cs-main-container"
       >
         <div
@@ -875,8 +912,14 @@ exports[`EventsCreatePage > should match snapshot 1`] = `
           </div>
         </div>
       </div>
+      <div
+        aria-atomic="true"
+        aria-live="polite"
+        class="sr-only"
+        role="status"
+      />
     </div>
-  </div>
+  </main>
   <nav
     aria-label="Mobile navigation"
     class="fixed bottom-0 left-0 right-0 z-50 bg-pairup-darkBlue border-t border-pairup-cyan/20 md:hidden"

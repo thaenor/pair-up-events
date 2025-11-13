@@ -4,6 +4,7 @@ exports[`ChatInterface > should match snapshot with empty messages 1`] = `
 <div
   class="relative w-full rounded-2xl overflow-hidden shadow-md"
   data-testid="chat-interface-container"
+  id="chat-interface"
   style="height: calc(100dvh - 270px);"
 >
   <style>
@@ -13,7 +14,7 @@ exports[`ChatInterface > should match snapshot with empty messages 1`] = `
             height: calc(100dvh - 180px) !important;
           }
         }
-        
+
         /* Message spacing - increase padding between messages */
         [data-testid="chat-interface-container"] .cs-message {
           margin-top: 1rem !important;
@@ -192,9 +193,35 @@ exports[`ChatInterface > should match snapshot with empty messages 1`] = `
             transform: scale(1);
           }
         }
+
+        /* Streaming message styling */
+        [data-testid="chat-interface-container"] .streaming-message {
+          color: #1A2A33 !important;
+          white-space: pre-wrap !important;
+          word-break: break-word !important;
+        }
+
+        /* Blinking cursor animation for streaming */
+        [data-testid="chat-interface-container"] .streaming-cursor {
+          display: inline-block !important;
+          margin-left: 2px !important;
+          color: #1A2A33 !important;
+          font-weight: bold !important;
+          animation: blink-cursor 1s step-end infinite !important;
+        }
+
+        @keyframes blink-cursor {
+          0%, 50% {
+            opacity: 1;
+          }
+          51%, 100% {
+            opacity: 0;
+          }
+        }
       
   </style>
   <div
+    aria-busy="false"
     class="cs-main-container"
   >
     <div
@@ -302,6 +329,12 @@ exports[`ChatInterface > should match snapshot with empty messages 1`] = `
       </div>
     </div>
   </div>
+  <div
+    aria-atomic="true"
+    aria-live="polite"
+    class="sr-only"
+    role="status"
+  />
 </div>
 `;
 
@@ -309,6 +342,7 @@ exports[`ChatInterface > should match snapshot with loading state 1`] = `
 <div
   class="relative w-full rounded-2xl overflow-hidden shadow-md"
   data-testid="chat-interface-container"
+  id="chat-interface"
   style="height: calc(100dvh - 270px);"
 >
   <style>
@@ -318,7 +352,7 @@ exports[`ChatInterface > should match snapshot with loading state 1`] = `
             height: calc(100dvh - 180px) !important;
           }
         }
-        
+
         /* Message spacing - increase padding between messages */
         [data-testid="chat-interface-container"] .cs-message {
           margin-top: 1rem !important;
@@ -497,9 +531,35 @@ exports[`ChatInterface > should match snapshot with loading state 1`] = `
             transform: scale(1);
           }
         }
+
+        /* Streaming message styling */
+        [data-testid="chat-interface-container"] .streaming-message {
+          color: #1A2A33 !important;
+          white-space: pre-wrap !important;
+          word-break: break-word !important;
+        }
+
+        /* Blinking cursor animation for streaming */
+        [data-testid="chat-interface-container"] .streaming-cursor {
+          display: inline-block !important;
+          margin-left: 2px !important;
+          color: #1A2A33 !important;
+          font-weight: bold !important;
+          animation: blink-cursor 1s step-end infinite !important;
+        }
+
+        @keyframes blink-cursor {
+          0%, 50% {
+            opacity: 1;
+          }
+          51%, 100% {
+            opacity: 0;
+          }
+        }
       
   </style>
   <div
+    aria-busy="true"
     class="cs-main-container"
   >
     <div
@@ -527,6 +587,7 @@ exports[`ChatInterface > should match snapshot with loading state 1`] = `
               class="cs-message__avatar"
             >
               <div
+                aria-hidden="true"
                 class="cs-avatar cs-avatar--md"
                 data-ai-avatar="true"
               >
@@ -663,6 +724,14 @@ exports[`ChatInterface > should match snapshot with loading state 1`] = `
       </div>
     </div>
   </div>
+  <div
+    aria-atomic="true"
+    aria-live="polite"
+    class="sr-only"
+    role="status"
+  >
+    AI is processing your message
+  </div>
 </div>
 `;
 
@@ -670,6 +739,7 @@ exports[`ChatInterface > should match snapshot with messages 1`] = `
 <div
   class="relative w-full rounded-2xl overflow-hidden shadow-md"
   data-testid="chat-interface-container"
+  id="chat-interface"
   style="height: calc(100dvh - 270px);"
 >
   <style>
@@ -679,7 +749,7 @@ exports[`ChatInterface > should match snapshot with messages 1`] = `
             height: calc(100dvh - 180px) !important;
           }
         }
-        
+
         /* Message spacing - increase padding between messages */
         [data-testid="chat-interface-container"] .cs-message {
           margin-top: 1rem !important;
@@ -858,9 +928,35 @@ exports[`ChatInterface > should match snapshot with messages 1`] = `
             transform: scale(1);
           }
         }
+
+        /* Streaming message styling */
+        [data-testid="chat-interface-container"] .streaming-message {
+          color: #1A2A33 !important;
+          white-space: pre-wrap !important;
+          word-break: break-word !important;
+        }
+
+        /* Blinking cursor animation for streaming */
+        [data-testid="chat-interface-container"] .streaming-cursor {
+          display: inline-block !important;
+          margin-left: 2px !important;
+          color: #1A2A33 !important;
+          font-weight: bold !important;
+          animation: blink-cursor 1s step-end infinite !important;
+        }
+
+        @keyframes blink-cursor {
+          0%, 50% {
+            opacity: 1;
+          }
+          51%, 100% {
+            opacity: 0;
+          }
+        }
       
   </style>
   <div
+    aria-busy="false"
     class="cs-main-container"
   >
     <div
@@ -887,6 +983,7 @@ exports[`ChatInterface > should match snapshot with messages 1`] = `
               class="cs-message__avatar"
             >
               <div
+                aria-hidden="true"
                 class="cs-avatar cs-avatar--md"
               >
                 <img
@@ -919,6 +1016,7 @@ exports[`ChatInterface > should match snapshot with messages 1`] = `
               class="cs-message__avatar"
             >
               <div
+                aria-hidden="true"
                 class="cs-avatar cs-avatar--md"
                 data-ai-avatar="true"
               >
@@ -1033,5 +1131,11 @@ exports[`ChatInterface > should match snapshot with messages 1`] = `
       </div>
     </div>
   </div>
+  <div
+    aria-atomic="true"
+    aria-live="polite"
+    class="sr-only"
+    role="status"
+  />
 </div>
 `;

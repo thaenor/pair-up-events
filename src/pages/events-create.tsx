@@ -7,6 +7,7 @@ import MobileBottomNavigation from '@/components/organisms/Navigation/MobileBott
 import LoadingSpinner from '@/components/atoms/LoadingSpinner'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import { Button } from '@/components/atoms/button'
+import SkipLink from '@/components/atoms/skip-link'
 import useRequireAuth from '@/hooks/useRequireAuth'
 import useAuth from '@/hooks/useAuth'
 import { useUserProfile } from '@/contexts/UserContext'
@@ -34,7 +35,7 @@ const EventsCreatePage: React.FC = () => {
   } = useChatInitialization(user?.uid, stateEventId)
 
   // Handle AI chat functionality
-  const { messages, sendMessage, isLoading } = useAIChat(
+  const { messages, sendMessage, isLoading, streamingMessage, isStreaming } = useAIChat(
     user?.uid || '',
     eventId,
     initialMessages,
@@ -74,23 +75,28 @@ const EventsCreatePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-pairup-cream">
+      <SkipLink targetId="chat-interface" label="Skip to chat interface" />
       <Navigation />
-      <div className="container mx-auto px-4 py-8 max-w-4xl pt-24 pb-20 md:pb-8">
-        <div className="mb-4">
+      <main
+        className="container mx-auto px-4 py-8 max-w-4xl pt-24 pb-20 md:pb-8"
+        role="main"
+        aria-label="Create event page"
+      >
+        <div className="mb-2 md:mb-4">
           <Button
             variant="ghost"
             size="sm"
             icon={<ArrowLeft className="w-4 h-4" />}
             onClick={handleBack}
-            className="mb-4 text-pairup-darkBlue hover:bg-pairup-darkBlue/10 focus:ring-pairup-darkBlue"
+            className="mb-2 md:mb-4 text-pairup-darkBlue hover:bg-pairup-darkBlue/10 focus:ring-pairup-darkBlue"
             aria-label="Back to events"
           >
             Back to Events
           </Button>
           <div className="text-center">
-            <h1 className="text-3xl md:text-4xl font-bold text-pairup-darkBlue">Create Event</h1>
+            <h1 className="text-2xl md:text-4xl font-bold text-pairup-darkBlue">Create Event</h1>
             {userProfile?.public?.firstName && (
-              <p className="text-pairup-darkBlue/70 mt-2">
+              <p className="text-pairup-darkBlue/70 mt-1 md:mt-2 hidden md:block">
                 Hey {userProfile.public.firstName}, let's create your event!
               </p>
             )}
@@ -101,10 +107,12 @@ const EventsCreatePage: React.FC = () => {
             messages={messages}
             onSendMessage={sendMessage}
             isLoading={isLoading}
+            streamingMessage={streamingMessage}
+            isStreaming={isStreaming}
             onConfirmEvent={handleConfirmEvent}
           />
         </ErrorBoundary>
-      </div>
+      </main>
       <MobileBottomNavigation />
     </div>
   )

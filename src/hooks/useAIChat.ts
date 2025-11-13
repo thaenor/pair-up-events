@@ -5,7 +5,6 @@ import { createDraftEvent, updateDraftEvent } from '@/entities/event/event-servi
 import { useChatMessageBatching } from '@/hooks/useChatMessageBatching'
 import { validateEventData, mapEventPreviewToDraft } from '@/entities/event/event-validation'
 import { parseAIResponse } from '@/lib/ai/response-parser'
-import { extractResponseText } from '@/lib/ai/response-extractor'
 import { buildAIPrompt } from '@/lib/ai/prompt-builder'
 import type { ChatMessageData, EventPreviewData } from '@/entities/event/event'
 import type { UserProfileData } from '@/entities/user'
@@ -34,6 +33,8 @@ export function useAIChat(
   const [eventId, setEventId] = useState<string | null>(initialEventId)
   const [messages, setMessages] = useState<ChatMessageData[]>(initialMessages)
   const [isLoading, setIsLoading] = useState(false)
+  const [streamingMessage, setStreamingMessage] = useState<string>('')
+  const [isStreaming, setIsStreaming] = useState(false)
 
   // Use ref to track current eventId to prevent race conditions
   const eventIdRef = useRef<string | null>(initialEventId)
@@ -41,8 +42,42 @@ export function useAIChat(
     eventIdRef.current = eventId
   }, [eventId])
 
+  // Ref to track and cancel character-by-character animation
+  const streamingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const streamingCancelledRef = useRef(false)
+
   // Track if props have been synced once (initialization guard pattern)
   const hasInitializedRef = useRef(false)
+
+  /**
+   * Animates text character by character with a typewriter effect
+   * @param text - The full text to animate
+   * @param delayMs - Delay between each character in milliseconds
+   * @returns Promise that resolves when animation completes or is cancelled
+   */
+  const animateTextCharByChar = useCallback((text: string, delayMs: number = 20): Promise<void> => {
+    return new Promise(resolve => {
+      streamingCancelledRef.current = false
+      let currentIndex = 0
+
+      const displayNextChar = () => {
+        if (streamingCancelledRef.current || currentIndex >= text.length) {
+          // Animation complete or cancelled
+          streamingTimeoutRef.current = null
+          resolve()
+          return
+        }
+
+        currentIndex++
+        setStreamingMessage(text.substring(0, currentIndex))
+
+        streamingTimeoutRef.current = setTimeout(displayNextChar, delayMs)
+      }
+
+      // Start animation
+      displayNextChar()
+    })
+  }, [])
 
   // Initialize batching hook
   const { queueMessage } = useChatMessageBatching({
@@ -53,21 +88,49 @@ export function useAIChat(
     },
   })
 
+  // Cleanup: Cancel streaming animation on unmount
+  useEffect(() => {
+    return () => {
+      streamingCancelledRef.current = true
+      if (streamingTimeoutRef.current) {
+        clearTimeout(streamingTimeoutRef.current)
+        streamingTimeoutRef.current = null
+      }
+    }
+  }, [])
+
   // Initialization guard: Only sync props once on mount when initialization completes
   // This prevents race conditions where prop updates overwrite local state changes
   // (e.g., user sends message while initialization is still async, or event is created locally)
   useEffect(() => {
     if (!hasInitializedRef.current && isInitialized === true) {
-      // Always mark initialization as complete when isInitialized is true
-      // Only sync messages if we have them (avoid overwriting local state with empty array)
+      // Wait for initialMessages to be available before syncing
+      // This handles the case where isInitialized becomes true before initialMessages is set
       if (initialMessages.length > 0) {
         setMessages(initialMessages)
+        setEventId(initialEventId)
+        eventIdRef.current = initialEventId
+        hasInitializedRef.current = true
       }
-      setEventId(initialEventId)
-      eventIdRef.current = initialEventId
-      hasInitializedRef.current = true
+      // If initialMessages is empty but isInitialized is true, still mark as initialized
+      // (this handles the case where initialization completes but no messages are available)
+      else {
+        setEventId(initialEventId)
+        eventIdRef.current = initialEventId
+        hasInitializedRef.current = true
+      }
     }
-  }, [initialMessages, initialEventId, isInitialized])
+    // Handle the case where initialMessages becomes available after the guard has run
+    // (e.g., if isInitialized became true before initialMessages was populated)
+    else if (
+      hasInitializedRef.current &&
+      isInitialized === true &&
+      initialMessages.length > 0 &&
+      messages.length === 0
+    ) {
+      setMessages(initialMessages)
+    }
+  }, [initialMessages, initialEventId, isInitialized, messages.length])
 
   /**
    * Creates a user message object
@@ -228,19 +291,46 @@ export function useAIChat(
         const currentMessages = [...messages, userMessage]
         const prompt = buildAIPrompt(userProfile, currentMessages, text)
 
-        // Call AI
-        const result = await model.generateContent(prompt)
-        const responseText = extractResponseText(result)
+        // Call AI with streaming - collect full response first
+        let fullResponseText = ''
 
-        if (!responseText) {
+        const stream = await model.generateContentStream(prompt)
+
+        // Collect all chunks into full response
+        for await (const chunk of stream.stream) {
+          const chunkText = chunk.text()
+          if (chunkText) {
+            fullResponseText += chunkText
+          }
+        }
+
+        if (!fullResponseText) {
           throw new Error('AI returned empty response')
         }
 
-        // Process response using current messages state
-        const { assistantMessage } = await processAIResponse(responseText, currentMessages, currentEventId)
+        // Parse response to extract clean text (strips JSON metadata)
+        const parsed = parseAIResponse(fullResponseText)
+        const cleanText = parsed.cleanedText
 
-        // Add assistant message to UI
-        setMessages(prev => [...prev, assistantMessage])
+        // Animate the clean text character by character
+        setIsStreaming(true)
+        setStreamingMessage('')
+        await animateTextCharByChar(cleanText, 20) // 20ms per character
+
+        // Animation complete
+        setIsStreaming(false)
+        setStreamingMessage('')
+
+        // Process response using current messages state
+        const { assistantMessage } = await processAIResponse(fullResponseText, currentMessages, currentEventId)
+
+        // Add assistant message to UI and stop loading atomically
+        // This prevents race condition where isLoading=true with AI message already in array
+        setMessages(prev => {
+          // Set loading to false synchronously with message addition
+          setIsLoading(false)
+          return [...prev, assistantMessage]
+        })
 
         // Queue assistant message
         queueMessage({
@@ -250,9 +340,17 @@ export function useAIChat(
           eventData: assistantMessage.eventData,
         })
       } catch (error) {
+        // Cancel any ongoing animation
+        streamingCancelledRef.current = true
+        if (streamingTimeoutRef.current) {
+          clearTimeout(streamingTimeoutRef.current)
+          streamingTimeoutRef.current = null
+        }
+
         handleMessageError(error, userMessage.messageId)
-      } finally {
         setIsLoading(false)
+        setIsStreaming(false)
+        setStreamingMessage('')
       }
     },
     [
@@ -265,8 +363,9 @@ export function useAIChat(
       queueMessage,
       processAIResponse,
       handleMessageError,
+      animateTextCharByChar,
     ]
   )
 
-  return { messages, sendMessage, isLoading, eventId }
+  return { messages, sendMessage, isLoading, eventId, streamingMessage, isStreaming }
 }

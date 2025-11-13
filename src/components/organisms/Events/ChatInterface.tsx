@@ -15,6 +15,7 @@ import { useUserProfile } from '@/contexts/UserContext'
 
 // Layout constants for responsive design
 // Mobile: Top nav (~96px) + page header (~80px) + bottom nav (~70px) + buffer (~24px) = ~270px
+// Note: Additional bottom padding is added via CSS to prevent MessageInput overlap with bottom nav
 const MOBILE_HEADER_FOOTER_HEIGHT = 270 // Header + footer height on mobile
 const DESKTOP_HEADER_FOOTER_HEIGHT = 180 // Header + footer height on desktop
 
@@ -25,6 +26,8 @@ interface ChatInterfaceProps {
   messages: ChatMessageData[]
   onSendMessage: (text: string) => void
   isLoading: boolean
+  streamingMessage?: string
+  isStreaming?: boolean
   onConfirmEvent?: (eventData: EventPreviewData) => void
 }
 
@@ -81,6 +84,7 @@ const getMessagePosition = (
 /**
  * Renders avatar component for a message
  * Uses User icon when no profile picture is available or when image fails to load
+ * Avatars are marked as decorative (aria-hidden) since sender info is provided in message aria-label
  */
 const renderAvatar = (
   isUser: boolean,
@@ -93,9 +97,9 @@ const renderAvatar = (
   // For AI avatars, use ChatScope Avatar (logo should always load)
   if (isAI) {
     if (!avatarSrc) {
-      return <Avatar name="AI" size="md" data-ai-avatar="true" />
+      return <Avatar name="AI" size="md" data-ai-avatar="true" aria-hidden="true" />
     }
-    return <Avatar src={avatarSrc} name={avatarName} size="md" data-ai-avatar="true" />
+    return <Avatar src={avatarSrc} name={avatarName} size="md" data-ai-avatar="true" aria-hidden="true" />
   }
 
   // For user avatars, handle missing src or broken images
@@ -109,6 +113,7 @@ const renderAvatar = (
       size="md"
       data-ai-avatar={undefined}
       data-user-fallback={!avatarSrc || imageError ? 'true' : undefined}
+      aria-hidden="true"
     />
   )
 }
@@ -172,7 +177,14 @@ const renderAvatar = (
  * @since 2024-10-01
  * @updated 2025-01-15 - Refactored typing indicator to appear inside last AI message bubble
  */
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, isLoading, onConfirmEvent }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({
+  messages,
+  onSendMessage,
+  isLoading,
+  streamingMessage = '',
+  isStreaming = false,
+  onConfirmEvent,
+}) => {
   const { userProfile } = useUserProfile()
   const [userAvatarError, setUserAvatarError] = useState(false)
   const chatInterfaceContainerRef = React.useRef<HTMLDivElement>(null)
@@ -180,6 +192,19 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
   const handleSend = (text: string) => {
     if (text.trim() && !isLoading) {
       onSendMessage(text.trim())
+
+      // Return focus to input after sending message (for accessibility)
+      // Use setTimeout to ensure DOM has updated after message is sent
+      setTimeout(() => {
+        if (chatInterfaceContainerRef.current) {
+          const inputElement = chatInterfaceContainerRef.current.querySelector(
+            '.cs-message-input__content-editor, .cs-message-input textarea, .cs-message-input input'
+          ) as HTMLElement
+          if (inputElement) {
+            inputElement.focus()
+          }
+        }
+      }, 100)
     }
   }
 
@@ -237,6 +262,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
     return -1
   }, [messages])
 
+  // Check if the last message in the array is from the user (meaning AI is about to respond)
+  const lastMessageIsUser = useMemo(() => {
+    return messages.length > 0 && messages[messages.length - 1].sender === 'user'
+  }, [messages])
+
   // Memoize message rendering to avoid unnecessary re-renders
   const renderedMessages = useMemo(() => {
     const rendered = messages.map((message, index) => {
@@ -244,7 +274,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
       const avatarPosition = isUser ? 'bottom-right' : 'bottom-left'
       const avatarSrc = isUser ? userAvatarSrc : '/PUE_logo_transparent.png'
       const avatarName = isUser ? userAvatarName : 'AI Assistant'
-      const isLastAI = !isUser && index === lastAIMessageIndex && isLoading
+      // Only show typing indicator in last AI message if:
+      // 1. It's the last message in the array (not if user just sent a message)
+      // 2. We're loading
+      // 3. The message doesn't have eventData (event previews shouldn't be replaced)
+      const isLastAI = !isUser && index === lastAIMessageIndex && isLoading && !lastMessageIsUser && !message.eventData
 
       // If message has eventData, render EventPreviewCard in custom message
       if (message.eventData) {
@@ -259,6 +293,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
               position: getMessagePosition(index, messages.length, messages),
             }}
             avatarPosition={avatarPosition}
+            aria-label={`Event preview from AI Assistant for ${message.eventData.title || message.eventData.activity}`}
           >
             {renderAvatar(isUser, avatarSrc, avatarName, isUser ? userAvatarError : false)}
             <Message.CustomContent data-testid={`event-preview-message-${message.messageId}`}>
@@ -272,6 +307,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
       }
 
       // If this is the last AI message and we're loading, show typing indicator instead of text
+      // (but only if the last message in array is also an AI message, not a user message)
       if (isLastAI) {
         return (
           <Message
@@ -285,6 +321,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
             }}
             avatarPosition="bottom-left"
             data-testid="chat-typing-indicator"
+            aria-label="AI Assistant is thinking"
           >
             {renderAvatar(false, avatarSrc, avatarName, false)}
             <Message.CustomContent>
@@ -306,17 +343,57 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
             position: getMessagePosition(index, messages.length, messages),
           }}
           avatarPosition={avatarPosition}
+          aria-label={`Message from ${isUser ? 'You' : 'AI Assistant'}: ${message.text}`}
         >
           {renderAvatar(isUser, avatarSrc, avatarName, isUser ? userAvatarError : false)}
         </Message>
       )
     })
 
-    // If loading and no AI message exists yet, add a temporary message bubble with typing indicator
-    if (isLoading && lastAIMessageIndex === -1) {
+    // If streaming, show the partial AI message with blinking cursor
+    if (isStreaming && streamingMessage) {
+      const lastUserMessage = messages.length > 0 ? messages[messages.length - 1] : null
+      const streamingKey = lastUserMessage
+        ? `streaming-${lastUserMessage.messageId}`
+        : `streaming-initial-${messages.length}`
+
       rendered.push(
         <Message
-          key="typing-indicator-temp"
+          key={streamingKey}
+          model={{
+            message: streamingMessage,
+            sentTime: 'now',
+            sender: 'AI Assistant',
+            direction: 'incoming',
+            position: 'single',
+          }}
+          avatarPosition="bottom-left"
+          data-testid="chat-streaming-message"
+          aria-label={`AI Assistant is typing: ${streamingMessage}`}
+        >
+          {renderAvatar(false, '/PUE_logo_transparent.png', 'AI Assistant', false)}
+          <Message.CustomContent>
+            <div className="streaming-message">
+              {streamingMessage}
+              <span className="streaming-cursor" aria-hidden="true">
+                |
+              </span>
+            </div>
+          </Message.CustomContent>
+        </Message>
+      )
+    }
+    // Otherwise, if loading and (no AI message exists yet OR last message is from user),
+    // add a temporary message bubble with typing indicator
+    else if (isLoading && (lastAIMessageIndex === -1 || lastMessageIsUser)) {
+      // Use stable key based on last user message to prevent positioning issues
+      // This ensures React doesn't incorrectly reconcile the typing indicator
+      const lastUserMessage = messages.length > 0 ? messages[messages.length - 1] : null
+      const stableKey = lastUserMessage ? `typing-${lastUserMessage.messageId}` : `typing-initial-${messages.length}`
+
+      rendered.push(
+        <Message
+          key={stableKey}
           model={{
             message: '',
             sentTime: 'now',
@@ -326,6 +403,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
           }}
           avatarPosition="bottom-left"
           data-testid="chat-typing-indicator"
+          aria-label="AI Assistant is thinking"
         >
           {renderAvatar(false, '/PUE_logo_transparent.png', 'AI Assistant', false)}
           <Message.CustomContent>
@@ -336,10 +414,22 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
     }
 
     return rendered
-  }, [messages, onConfirmEvent, userAvatarSrc, userAvatarName, userAvatarError, isLoading, lastAIMessageIndex])
+  }, [
+    messages,
+    onConfirmEvent,
+    userAvatarSrc,
+    userAvatarName,
+    userAvatarError,
+    isLoading,
+    isStreaming,
+    streamingMessage,
+    lastAIMessageIndex,
+    lastMessageIsUser,
+  ])
 
   return (
     <div
+      id="chat-interface"
       ref={chatInterfaceContainerRef}
       className="relative w-full rounded-2xl overflow-hidden shadow-md"
       style={{
@@ -353,7 +443,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
             height: calc(100dvh - ${DESKTOP_HEADER_FOOTER_HEIGHT}px) !important;
           }
         }
-        
+
         /* Message spacing - increase padding between messages */
         [data-testid="chat-interface-container"] .cs-message {
           margin-top: 1rem !important;
@@ -532,8 +622,33 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
             transform: scale(1);
           }
         }
+
+        /* Streaming message styling */
+        [data-testid="chat-interface-container"] .streaming-message {
+          color: #1A2A33 !important;
+          white-space: pre-wrap !important;
+          word-break: break-word !important;
+        }
+
+        /* Blinking cursor animation for streaming */
+        [data-testid="chat-interface-container"] .streaming-cursor {
+          display: inline-block !important;
+          margin-left: 2px !important;
+          color: #1A2A33 !important;
+          font-weight: bold !important;
+          animation: blink-cursor 1s step-end infinite !important;
+        }
+
+        @keyframes blink-cursor {
+          0%, 50% {
+            opacity: 1;
+          }
+          51%, 100% {
+            opacity: 0;
+          }
+        }
       `}</style>
-      <MainContainer>
+      <MainContainer aria-busy={isLoading}>
         <ChatContainer>
           <MessageList
             scrollBehavior="smooth"
@@ -557,6 +672,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
           />
         </ChatContainer>
       </MainContainer>
+      {/* ARIA live region for status announcements */}
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {isLoading ? 'AI is processing your message' : ''}
+      </div>
     </div>
   )
 }

@@ -25,7 +25,33 @@
 
 This release focuses on improving the AI event creation system by refactoring the system prompt into a structured JSON format, enhancing brand voice alignment, and refining the event preferences schema to better support the 2-on-2 matching model. The changes make the AI assistant more flexible (allowing product-related questions) while maintaining strict event creation focus, and optimize data collection by leveraging user profile preferences for age range.
 
+Additionally, this release includes major mobile UX and accessibility improvements to the chat interface, fixing layout issues and implementing comprehensive WCAG 2.1 AA accessibility features.
+
 ### Changed
+
+- **Chat Interface Mobile Layout & Accessibility** (`src/components/organisms/Events/ChatInterface.tsx`, `src/pages/events-create.tsx`)
+  - **Mobile Layout Fixes**:
+    - Fixed message input box overlapping with bottom navigation bar by adding 70px bottom padding to chat container on mobile
+    - Reduced page header vertical space from ~150px to ~90px on mobile by:
+      - Reducing title size from `text-3xl` to `text-2xl` on mobile (keeping `md:text-4xl` on desktop)
+      - Hiding greeting subtitle on mobile with `hidden md:block`
+      - Reducing spacing on header elements (`mb-4` → `mb-2 md:mb-4`)
+  - **Accessibility Enhancements**:
+    - Added skip link to chat interface for keyboard navigation
+    - Added descriptive `aria-label` to all messages (format: "Message from {sender}: {text}")
+    - Added `aria-label` to event preview messages and typing indicator
+    - Implemented focus management - returns focus to input after sending message
+    - Added `aria-busy` state to chat container when loading
+    - Added `aria-live="polite"` region for status announcements ("AI is processing your message")
+    - Marked decorative avatars as `aria-hidden="true"` since sender info is in message labels
+    - Added semantic `<main>` landmark with `role="main"` and `aria-label` to page structure
+    - Added `id="chat-interface"` for skip link targeting
+  - **Why**: Fix critical mobile UX issues where input was blocked by navigation and header consumed too much screen space. Meet WCAG 2.1 AA accessibility standards for screen reader users and keyboard navigation.
+  - **Impact**: Significantly improved mobile usability and full accessibility compliance. No breaking changes to component APIs.
+  - **Files Modified**:
+    - `src/components/organisms/Events/ChatInterface.tsx` - Layout calculations, ARIA labels, focus management
+    - `src/pages/events-create.tsx` - Header optimization, skip link, semantic landmarks
+  - **Related**: Mobile responsiveness, accessibility compliance, WCAG 2.1 AA standards
 
 - **System Prompt Architecture** (`src/lib/system-prompt.ts`)
   - **Refactoring**: Converted system prompt from markdown string to structured JSON object for better maintainability and machine-readability
@@ -80,6 +106,15 @@ This release focuses on improving the AI event creation system by refactoring th
   - **Related**: Modal component, design system consistency
 
 ### Fixed
+
+- **Initial Greeting Message Missing Text** (`src/hooks/useChatInitialization.ts`)
+  - **Bug Fix**: Initial greeting message was not displaying in the AI chat interface
+  - **Root Cause**: `createGreetingMessage()` function was missing the `text` property, even though `INITIAL_GREETING` constant was imported
+  - **Solution**: Added `text: INITIAL_GREETING` property to the greeting message object
+  - **Impact**: Users now see the initial greeting "Hi! I'm here to help you create an event. What activity would you like to organize?" when starting a new event creation chat
+  - **Files Modified**:
+    - `src/hooks/useChatInitialization.ts` - Added missing `text` property to `createGreetingMessage()`
+  - **Related**: AI chat initialization, event creation flow
 
 - **Event Preview Widget Not Generating** (`src/lib/ai/response-parser.ts`, `src/lib/system-prompt.ts`, `src/hooks/useAIChat.ts`)
   - **Bug Fix**: Event preview widget was not appearing when AI gathered all event information
