@@ -24,13 +24,13 @@ const footerLinkGroups: Array<{
       },
       {
         label: 'Create an Event',
-        targetId: 'early-access',
-        ariaLabel: 'Learn how to create an event in the Early Access section',
+        href: '/events/create',
+        ariaLabel: 'Navigate to the create event page',
       },
       {
         label: 'Join an Event',
-        targetId: 'early-access',
-        ariaLabel: 'Join an event by signing up through the Early Access section',
+        href: '/events',
+        ariaLabel: 'Navigate to the events page to join an event',
       },
     ],
   },

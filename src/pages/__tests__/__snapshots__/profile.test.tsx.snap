@@ -55,14 +55,6 @@ exports[`ProfilePage > should match snapshot 1`] = `
         >
           Benefits
         </a>
-        <a
-          aria-label="Join Early Access"
-          class="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
-          href="#early-access"
-          role="menuitem"
-        >
-          Early Access
-        </a>
       </div>
       <div
         class="flex items-center justify-center gap-4 mr-4"

@@ -55,14 +55,6 @@ exports[`LandingPageLayout > should match snapshot - with navigation and footer 
         >
           Benefits
         </a>
-        <a
-          aria-label="Join Early Access"
-          class="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
-          href="#early-access"
-          role="menuitem"
-        >
-          Early Access
-        </a>
       </div>
       <div
         class="flex items-center justify-center gap-4 mr-4"
@@ -522,18 +514,18 @@ exports[`LandingPageLayout > should match snapshot - with navigation and footer 
               </li>
               <li>
                 <a
-                  aria-label="Learn how to create an event in the Early Access section"
+                  aria-label="Navigate to the create event page"
                   class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
-                  href="#early-access"
+                  href="/events/create"
                 >
                   Create an Event
                 </a>
               </li>
               <li>
                 <a
-                  aria-label="Join an event by signing up through the Early Access section"
+                  aria-label="Navigate to the events page to join an event"
                   class="text-pairup-cream/70 hover:text-pairup-cream duration-300"
-                  href="#early-access"
+                  href="/events"
                 >
                   Join an Event
                 </a>

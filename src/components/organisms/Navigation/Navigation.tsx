@@ -11,7 +11,7 @@ import Sidebar from './Sidebar'
  * Main navigation component with authentication-aware UI
  *
  * Displays different navigation based on authentication state:
- * - Logged out: Shows "How It Works", "Benefits", "Early Access" links + Login/Sign Up buttons
+ * - Logged out: Shows "How It Works", "Benefits" links + Login/Sign Up buttons
  * - Logged in: Shows "Explore", "My Events", "Messenger", "My Profile" + burger menu with sidebar
  *
  * @component
@@ -181,14 +181,6 @@ const Navigation: React.FC = React.memo(() => {
                 role="menuitem"
               >
                 Benefits
-              </a>
-              <a
-                href="#early-access"
-                className="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
-                aria-label="Join Early Access"
-                role="menuitem"
-              >
-                Early Access
               </a>
             </div>
 

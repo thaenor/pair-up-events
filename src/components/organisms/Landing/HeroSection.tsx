@@ -3,10 +3,9 @@ import React from 'react'
 
 interface HeroSectionProps {
   onCreateEvent?: () => void
-  onScrollToEarlyAccess?: () => void
 }
 
-const HeroSection: React.FC<HeroSectionProps> = ({ onScrollToEarlyAccess }) => {
+const HeroSection: React.FC<HeroSectionProps> = () => {
   return (
     <section
       className="relative min-h-screen flex items-center justify-center bg-pairup-cream md:mt-0"
@@ -36,16 +35,16 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onScrollToEarlyAccess }) => {
                 Create a new listing
                 <ArrowRight size={18} aria-hidden="true" />
               </a>
-              <button
+              <a
                 id="search-listing-btn"
+                href="/events"
                 className="btn-cta btn-cta--yellow"
-                onClick={onScrollToEarlyAccess}
                 data-testid="search-listings-button"
                 aria-label="Search for existing listings"
               >
                 Search for existing listings
                 <ArrowRight size={18} aria-hidden="true" />
-              </button>
+              </a>
             </div>
           </div>
           <div
