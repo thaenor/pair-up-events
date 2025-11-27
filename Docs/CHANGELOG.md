@@ -29,6 +29,19 @@ Additionally, this release includes major mobile UX and accessibility improvemen
 
 ### Changed
 
+- **Security: npm Audit Vulnerabilities Fixed** (`package.json`)
+  - **Fixed Vulnerabilities**:
+    - `glob@10.4.5` (High severity): Command injection vulnerability (CVE-2024-43607) - fixed by overriding to `^10.5.0`
+    - `js-yaml@4.1.0` (Moderate severity): Prototype pollution vulnerability (CVE-2021-3918) - fixed by overriding to `^4.1.1`
+  - **Implementation**:
+    - Added npm `overrides` section to force fixed versions of transitive dependencies
+    - Updated `eslint` from `^9.9.0` to `^9.39.1` (latest patch version)
+  - **Why**: Address security vulnerabilities in dev/build-time dependencies to maintain secure development environment
+  - **Impact**: No breaking changes - all CI checks pass, functionality remains intact. Both vulnerabilities were in transitive dependencies (glob via tailwindcss/sucrase, js-yaml via eslint/@eslint/eslintrc)
+  - **Files Modified**:
+    - `package.json` - Added overrides section, updated eslint version
+  - **Validation**: All tests pass (272/272), build succeeds, linting and type checking pass
+
 - **Chat Interface Mobile Layout & Accessibility** (`src/components/organisms/Events/ChatInterface.tsx`, `src/pages/events-create.tsx`)
   - **Mobile Layout Fixes**:
     - Fixed message input box overlapping with bottom navigation bar by adding 70px bottom padding to chat container on mobile
