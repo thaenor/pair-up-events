@@ -1,11 +1,23 @@
 # PairUp Events - Cursor Rules
 
+**Start here**: Read `AGENTS.md` (root directory) for the universal agent entry point and mandatory protocol.
+
 This file contains project-specific rules and conventions for AI-assisted development.
 
-**Note**: Cursor commands are defined in `.cursor/commands/` directory. Use `/` prefix to invoke them (e.g., `/prompt-generator`, `/qa`, `/documentation`).
+## Key Locations
 
-For detailed project conventions and agent guidelines, see:
-- `Docs/agents.md` - Main agent operational guidelines
-- `Docs/data-model.md` - Data structure documentation
-- `Docs/CHANGELOG.md` - Project change history
-- `.cursor/commands/` - Available Cursor commands
+- **`AGENTS.md`** – Universal agent entry point (read this first!)
+- **`Docs/architecture/`** – Factual project knowledge (component standards, Firebase patterns, testing)
+- **`Docs/data-model.md`** – Firestore schema reference
+- **`Docs/CHANGELOG.md`** – Project history and decision log
+- **`.cursor/commands/`** – Cursor IDE commands (thin wrappers, see `.agents/` for actual instructions)
+
+## Quick Navigation
+
+- Component patterns → `Docs/architecture/component-standards.md`
+- Firebase rules → `Docs/architecture/firebase-patterns.md`
+- Testing → `Docs/architecture/testing-standards.md`
+- Design system → `Docs/architecture/design-language.md`
+- State management → `Docs/architecture/state-management.md`
+
+All behavioral instructions for agents are now in AGENTS.md and `.agents/` directory.

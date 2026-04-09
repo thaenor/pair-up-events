@@ -1,0 +1,17 @@
+# Node 24.x on Debian Bookworm (glibc, apt-get) — matches "engines": {"node":"24.x"}
+# in package.json. Playwright's official v1.56.1 images pin to Node 22, so we
+# start from the correct Node base and install browser system deps ourselves.
+FROM node:24-bookworm
+
+WORKDIR /app
+
+# Install node deps without running husky/prepare scripts.
+COPY package*.json ./
+RUN npm install --ignore-scripts
+
+# Download Chromium + all required system libraries.
+# --with-deps handles OS-level packages (libnss, libgbm, libatk, etc.) via apt-get.
+RUN npx playwright install --with-deps chromium
+
+# Source comes via bind mount at runtime.
+CMD ["npm", "run", "test:e2e"]

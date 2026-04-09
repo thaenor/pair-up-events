@@ -22,7 +22,7 @@
  *
  * @see {@link src/lib/ai/prompt-builder.ts} - Builds complete prompt with user context
  * @see {@link src/lib/ai/response-parser.ts} - Parses structured output from AI
- * @see {@link Docs/Design-doc.md} - Brand voice and design guidelines
+ * @see {@link Docs/architecture/design-language.md} - Brand voice and design guidelines
  *
  * @version 2.0.0
  * @since 2025-01-XX - Refactored from markdown string to structured JSON

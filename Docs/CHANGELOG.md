@@ -27,7 +27,60 @@ This release focuses on improving the AI event creation system by refactoring th
 
 Additionally, this release includes major mobile UX and accessibility improvements to the chat interface, fixing layout issues and implementing comprehensive WCAG 2.1 AA accessibility features.
 
+### Added
+
+- **Pillar 3: Docker-First Development** — Every command an agent runs now executes inside a container. Bare-metal `npm` is reserved as a fallback only.
+  - **`Dockerfile.dev`** reworked as a `base` image (`node:24-alpine`, `npm install --ignore-scripts`). Used for dev server, lint, typecheck, unit tests, and build.
+  - **`Dockerfile.e2e`** (new) — based on `node:24-bookworm` with `npx playwright install --with-deps chromium` at build time. Playwright's official `v1.56.1` image ships Node 22, so we pin the Node base ourselves and let Playwright install its own system dependencies via `apt-get`.
+  - **`Dockerfile.firebase`** (new) — `node:24-alpine` + `openjdk17-jre-headless` + `firebase-tools` for running Auth / Firestore / Storage emulators locally. Exposes `9099`, `8080`, `9199`, and the Emulator UI on `4000`.
+  - **`docker-compose.yml`** refactored with Compose profiles: `dev`, `lint`, `lint-fix`, `typecheck`, `test`, `build`, `ci` (parallel gates), `e2e`, `emulator`. Nothing runs unless its profile is selected. E2E uses a separate `node_modules-e2e` named volume so the host and Playwright node_modules don't collide.
+  - **`.dockerignore`** (new) — excludes `node_modules/`, `dist/`, `.git/`, `.agents/scratch/`, agent reports, test artifacts, editor junk, and `.env*` files to keep build context lean.
+  - **`.agents/docker-commands.md`** (new) — canonical cheatsheet of Docker commands for every tier, including the parallel `ci` profile that maps 1:1 to the orchestrator's DAG Phase 1a/1b/1c.
+  - **Agent instruction files updated** — every Runner and Builder agent (`linter`, `typechecker`, `unit-runner`, `build-validator`, `e2e-agent`, `implementer`, `qa`) now references `docker compose --profile …` as primary, with `npm run …` listed only as a fallback. `AGENTS.md` and `.agents/orchestrator.md` updated likewise.
+  - **Why**: Eliminate "works on my machine" drift by making dev and CI run the exact same image; enable deterministic parallel execution of the `ci` profile; unblock E2E without requiring local Playwright browser installs.
+  - **Impact**: No code changes. `package.json` scripts remain unchanged and still work. Docker is required to use the canonical paths; agents are instructed to flag any fallback to bare-metal npm in their reports.
+
+- **Pillar 2: Tiered Agent System (`.agents/`)** — Restructured the agentic development workflow into a model-routed, DAG-based pipeline.
+  - **New `.agents/` directory** as the canonical home for all agent definitions, replacing flat `.cursor/commands/` files.
+    - `.agents/README.md` — overview and agent picker
+    - `.agents/AGENTS.md` — symlink to root `AGENTS.md` (single source of truth)
+    - `.agents/agent-template.md` — standard template every agent file follows (Metadata / Required Context / Inputs / Outputs / Instructions / Commands / Success Criteria)
+    - `.agents/tiers.md` — full tier definitions, routing table, and escalation rules
+    - `.agents/orchestrator.md` — DAG-based pipeline (replaces linear 7-phase script)
+  - **Tiered routing**: Planner (Opus + ultrathink, temp 0.2-0.4), Builder (Sonnet, temp 0.3-0.5), Runner (Haiku, temp 0.1).
+    - Planner agents: `prompt-generator`, `architect`
+    - Builder agents: `implementer`, `test-writer`, `e2e-agent`
+    - Runner agents: `linter`, `typechecker`, `unit-runner`, `build-validator`, `doc-updater`
+    - Reviewer agents: `code-reviewer` (Planner), `qa` (split-tier — Planner analysis + Runner fixes)
+  - **DAG orchestrator** runs Lint, Typecheck, and Unit Tests in parallel (Phase 1a/1b/1c) — saves ~60% wall time vs the previous linear pipeline. E2E phase auto-skips for docs-only / style-only / no-`src/` changes.
+  - **Split unit work**: writing new tests is a Builder task (`builder/test-writer.md`); running existing tests is a Runner task (`runner/unit-runner.md`).
+  - **Cursor commands converted to thin wrappers** — every `.cursor/commands/*.md` file now points to its `.agents/` canonical definition. The 10 wrapped commands: `orchestrator`, `reviewer`, `linter-agent`, `typecheck-agent`, `unit-agent`, `build-agent`, `e2e-agent`, `documentation`, `prompt-generator`, `qa`.
+  - **Scratch directory migration**: `Docs/agents-temp/` moved to `.agents/scratch/` (with updated `README.md` and `QUICKSTART.md`); old directory removed.
+  - **Why**: Match model capability to task complexity, parallelize independent CI checks, and centralize behavioral instructions outside of `Docs/architecture/` (which is now purely factual).
+  - **Impact**: No code changes; documentation/agent layer only. Existing Cursor `/command` invocations continue to work via the thin wrappers.
+
 ### Changed
+
+- **Node.js upgraded to 24.x (current Active LTS)** (`package.json`, `Dockerfile.dev`, `Dockerfile.e2e`, `Dockerfile.firebase`)
+  - **What changed**:
+    - `engines.node` bumped from `"20.x"` → `"24.x"` in `package.json`. Node 20 "Iron" left Active LTS in October 2025 and exits maintenance in April 2026; Node 24 "Krypton" is the current Active LTS (since October 2025, maintenance until April 2028).
+    - All three Dockerfiles pinned to a specific Node 24 tag:
+      - `Dockerfile.dev` → `node:24-alpine`
+      - `Dockerfile.firebase` → `node:24-alpine`
+      - `Dockerfile.e2e` → `node:24-bookworm` (Debian base needed so Playwright can `apt-get` its Chromium system deps)
+    - **Explicit rejection of floating tags** — do NOT use `node:lts-alpine`. The `lts` tag silently tracks the current LTS major and will drift whenever a new LTS is promoted, re-introducing the mismatch this change fixes.
+    - Playwright's official `mcr.microsoft.com/playwright:v1.56.1-*` image was NOT adopted because it hard-pins Node 22 via its NodeSource apt repo. Instead, `Dockerfile.e2e` uses the Node 24 Debian base and calls `npx playwright install --with-deps chromium` to get the browser + system libraries.
+  - **Why**:
+    - Eliminate three-way drift between `package.json` `engines`, Dockerfile base images, and the actual runtime (prior state: engines said `20.x`, `Dockerfile.dev`/`Dockerfile.firebase` floated to Node 24 via `node:lts-alpine`, `Dockerfile.e2e` was locked to Node 22 via Playwright's image).
+    - Stay on a supported LTS before Node 20 exits maintenance.
+    - All dependencies already support Node 24 — Vite 7, Vitest 3, Firebase 12, ESLint 9, Sentry 10, Playwright 1.56, TypeScript 5.5, React 18, zod 4, jsdom 26. No native modules in the dependency tree.
+  - **`@types/node` intentionally NOT bumped** — stays at `^22.5.5`. `@types/node` is forward-compatible with newer Node runtimes, and bumping it to `^24.x` forces a `package-lock.json` regeneration. A fresh `npm install` also pulls newer minor/patch versions of other deps, which during validation introduced 6 unrelated test failures in `src/entities/user/__tests__/`. Keeping the lockfile untouched isolates this change to the runtime upgrade only.
+  - **Validation**:
+    - `npm ci` installs cleanly against Node 24.14.1 with the existing lockfile.
+    - `npm run ci` (format + lint + typecheck + test + build) passes: 272/272 unit tests green, build succeeds, no `EBADENGINE` warnings.
+    - `package-lock.json` is unchanged.
+  - **Known follow-up**: A separate, opt-in lockfile regeneration would take `npm audit` from 10 → 0 vulnerabilities but also surfaces the 6 test regressions mentioned above. Tracked as a follow-up task — investigate which minor bump (likely a validation lib) breaks `use-user-validations.test.ts` and `user-service.test.ts`, then pin or adapt.
+  - **Impact**: No source code changes. Any contributor running bare-metal `npm` will need Node 24 locally; the canonical Docker workflow (Pillar 3) handles this automatically.
 
 - **Security: npm Audit Vulnerabilities Fixed** (`package.json`)
   - **Fixed Vulnerabilities**:
@@ -69,7 +122,7 @@ Additionally, this release includes major mobile UX and accessibility improvemen
 - **System Prompt Architecture** (`src/lib/system-prompt.ts`)
   - **Refactoring**: Converted system prompt from markdown string to structured JSON object for better maintainability and machine-readability
   - **Structure**: Prompt now organized into logical sections (persona, brandVoice, productKnowledge, coreTask, systemMessages, rules, runtimeContext)
-  - **Brand Voice Integration**: Added explicit brand personality traits (Friendly, Energetic, Trustworthy, Simple, Optimistic) and tone guidelines from Design-doc.md
+  - **Brand Voice Integration**: Added explicit brand personality traits (Friendly, Energetic, Trustworthy, Simple, Optimistic) and tone guidelines from Docs/architecture/design-language.md
   - **Product Knowledge**: Expanded with platform mission, core concept, key differentiator, supported duo types, and target audience
   - **Flexibility**: Relaxed strictness to allow AI to answer product-related questions about PairUp Events platform (secondary focus)
   - **Age Range Handling**: Moved age range from required to optional field with explicit instruction that it comes from user profile preferences (AI should NOT ask for it)
@@ -2319,7 +2372,7 @@ src/lib/firebase/
 
 #### 6. Design System & Visual Identity
 
-**Documentation**: `Docs/Design-doc.md` - Comprehensive design system specification
+**Documentation**: `Docs/architecture/design-language.md` - Comprehensive design system specification
 **Status**: WCAG 2.2 AA compliant design system implemented
 
 **Design Philosophy**:

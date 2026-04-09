@@ -1,5 +1,15 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 echo "🔧 Running CI checks before commit..."
-npm run ci
+
+# Pillar 3: run quality gates inside Docker for dev/CI parity.
+# Falls back to bare npm if Docker daemon is not running.
+if docker info > /dev/null 2>&1; then
+  # Replaced --abort-on-container-exit with --abort-on-container-failure
+  # Removed --exit-code-from build
+  docker compose --profile ci up --abort-on-container-failure
+  STATUS=$?
+  docker compose --profile ci down --remove-orphans > /dev/null 2>&1
+  exit $STATUS
+else
+  echo "⚠️  Docker not running — falling back to bare npm (flag this if it happens in CI)"
+  npm run ci
+fi

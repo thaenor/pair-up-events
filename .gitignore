@@ -62,8 +62,8 @@ Desktop.ini
 .firebase/
 firebase-debug.log
 
-# Agent generated temporary prompts
-Docs/agents-temp/*.md
-!Docs/agents-temp/README.md
-!Docs/agents-temp/QUICKSTART.md
-!Docs/agents-temp/EXAMPLE-*.md
+# Agent generated temporary prompts (Pillar 2: now under .agents/scratch/)
+.agents/scratch/*.md
+!.agents/scratch/README.md
+!.agents/scratch/QUICKSTART.md
+!.agents/scratch/EXAMPLE-*.md

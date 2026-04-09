@@ -62,7 +62,7 @@
     "vitest": "^3.2.4"
   },
   "engines": {
-    "node": "20.x"
+    "node": "25.x"
   },
   "overrides": {
     "glob": "^10.5.0",

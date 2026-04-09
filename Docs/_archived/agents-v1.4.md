@@ -1,15 +1,8 @@
-⚠️ **DEPRECATED** — This document has been superseded by:
+# ⚙️ ChatGPT Codex Contextualizer – PairUp-events
 
-- **`AGENTS.md`** (root directory) — Universal agent entry point
-- **`Docs/architecture/`** — Project knowledge split across multiple files
-
-**Purpose (Historical):**
+**Purpose:**
 This document defines the behavioral and coding standards for **ChatGPT Codex** when operating within the **PairUp-events** project.
 Codex acts as an **intelligent code collaborator**, maintaining the architectural integrity, cost-efficiency, and consistency of the Firestore-backed web application.
-
----
-
-# ⚙️ ChatGPT Codex Contextualizer – PairUp-events (v1.4 - Archived)
 
 ---
 

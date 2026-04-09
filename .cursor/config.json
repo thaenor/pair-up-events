@@ -29,17 +29,17 @@
   },
 
   "docs": {
-    "contextualizer": "docs/agents.md",
-    "designDoc": "docs/Design-doc.md",
-    "implementationPlans": "docs/implementation-plans/",
+    "agentEntry": "AGENTS.md",
+    "architectureDir": "docs/architecture/",
     "lookupPriority": [
+      "AGENTS.md",
+      "docs/architecture/project-overview.md",
+      "docs/architecture/component-standards.md",
+      "docs/architecture/firebase-patterns.md",
       "docs/CHANGELOG.md",
-      "docs/agents.md",
-      "docs/Design-doc.md",
       "docs/data-model.md",
-      "docs/FIREBASE_SETUP.md",
-      "docs/config.md",
-      "docs/"
+      "docs/component-tree-map.md",
+      "docs/Backlog.md"
     ]
   },
 
@@ -96,7 +96,7 @@
 
   "protocol": {
     "mandatorySteps": ["readContextDocs", "updateChangelog", "runQualityChecks", "selfCodeReview", "dryAnalysis"],
-    "contextDocs": ["docs/CHANGELOG.md", "docs/agents.md", "docs/Design-doc.md", "docs/data-model.md"],
+    "contextDocs": ["AGENTS.md", "docs/architecture/component-standards.md", "docs/data-model.md", "docs/CHANGELOG.md"],
     "qualityCommand": "npm run ci",
     "changelogPath": "docs/CHANGELOG.md",
     "commentPolicy": "meaningfulOnly"

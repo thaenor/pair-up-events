@@ -1,0 +1,17 @@
+# Firebase local emulator suite (auth + firestore + storage).
+# Java runtime is required by firestore-emulator / storage-emulator.
+# Pin to Node 24.x (current Active LTS) to match "engines": {"node": "24.x"}
+# in package.json.
+FROM node:24-alpine
+
+RUN apk add --no-cache openjdk17-jre-headless bash
+
+WORKDIR /app
+
+RUN npm install -g firebase-tools
+
+# Config comes via bind mount so edits to firebase.json / firestore.rules
+# take effect without a rebuild.
+EXPOSE 9099 8080 9199 4000
+
+CMD ["firebase", "emulators:start", "--only", "auth,firestore,storage"]

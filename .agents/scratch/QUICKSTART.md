@@ -14,7 +14,7 @@ When you're ready to start work immediately:
 /prompt-generator Please add dark mode toggle to settings
 ```
 
-**Output**: Creates `Docs/agents-temp/prompt-[timestamp]-add-dark-mode-toggle.md` with:
+**Output**: Creates `.agents/scratch/prompt-[timestamp]-add-dark-mode-toggle.md` with:
 
 - Refined requirements and acceptance criteria
 - Technical context from codebase analysis
@@ -100,7 +100,7 @@ I need to clarify:
 - Affected: profile.tsx, user display components
 
 📄 Generated Prompt
-Saved to: Docs/agents-temp/prompt-2025-11-07-hide-email-field.md
+Saved to: .agents/scratch/prompt-2026-04-09-hide-email-field.md
 ```
 
 ## Tips for Best Results
@@ -133,9 +133,9 @@ If the agent detects suboptimal patterns, it will:
 
 ### If you generated a prompt file:
 
-1. Review the generated prompt in `Docs/agents-temp/`
-2. Pass it to Composer or implement manually
-3. Delete the temp file after completion
+1. Review the generated prompt in `.agents/scratch/`
+2. Pass it to a Builder-tier agent (`.agents/builder/implementer.md`) or implement manually
+3. Delete the scratch file after completion
 
 ### If you added to backlog:
 
@@ -146,20 +146,23 @@ If the agent detects suboptimal patterns, it will:
 ## Files Created by This Agent
 
 ```
-.cursor/commands/prompt-generator.md              # Command definition
-Docs/agents-temp/README.md                        # Directory purpose
-Docs/agents-temp/QUICKSTART.md                    # This file
-Docs/agents-temp/EXAMPLE-*.md                     # Example output
-Docs/agents-temp/prompt-[timestamp]-[task].md     # Your generated prompts
+.agents/planner/prompt-generator.md               # Canonical agent definition
+.cursor/commands/prompt-generator.md              # Thin Cursor wrapper
+.agents/scratch/README.md                         # Directory purpose
+.agents/scratch/QUICKSTART.md                     # This file
+.agents/scratch/EXAMPLE-*.md                      # Example output
+.agents/scratch/prompt-[timestamp]-[task].md      # Your generated prompts
 ```
 
 ## Related Documentation
 
-- **Agent Rules**: `Docs/agents.md` (Section 12)
-- **Command Definition**: `.cursor/commands/prompt-generator.md`
-- **Example Output**: `Docs/agents-temp/EXAMPLE-prompt-2025-11-07-sample-task.md`
+- **Universal Agent Entry Point**: `AGENTS.md` (root directory)
+- **Canonical Agent Definition**: `.agents/planner/prompt-generator.md`
+- **Cursor Wrapper**: `.cursor/commands/prompt-generator.md`
+- **Example Output**: `.agents/scratch/EXAMPLE-prompt-2025-11-07-sample-task.md`
 - **Backlog Format**: `Docs/Backlog.md`
+- **Architecture Patterns**: `Docs/architecture/`
 
 ---
 
-**Questions?** Check `.cursor/commands/prompt-generator.md` for full command documentation.
+**Questions?** Start with `AGENTS.md` for universal agent guidelines, then check `.agents/planner/prompt-generator.md` for the canonical definition.

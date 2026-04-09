@@ -126,4 +126,16 @@ With the prerequisites in place, you can iterate on the Pair Up Events experienc
 
 ## Agentic Coding Guidelines
 
-This repo is an exercise and a personal test to see how far it is possible to get using agentic coding. We've used Loveable, Gemini, Cursor, Codex and Copilot. Is it Sop? Is it actually decent code? Can it be halfway decent if we prompt it right? Would the users care if it's slop? - those are some answers we will try to figure out.
+This repo is designed to work seamlessly with AI coding assistants. For detailed instructions:
+
+- **Start here**: Read `AGENTS.md` (root directory) — universal entry point for all agents
+- **Architecture docs**: `Docs/architecture/` — factual project knowledge (component standards, Firebase patterns, testing, state management)
+- **Project context**: `Docs/CHANGELOG.md`, `Docs/data-model.md`, `Docs/Backlog.md`
+
+The project uses a **multi-tier agent system**:
+
+- **Planner agents** (Opus/ultrathink) – Architecture, feature planning, code review
+- **Builder agents** (Sonnet) – Implementation, refactoring, test writing
+- **Runner agents** (Haiku) – Lint fixes, formatting, build validation
+
+This is an exercise and a personal test to see how far it is possible to get using agentic coding. We've used Loveable, Gemini, Cursor, Codex and Copilot.

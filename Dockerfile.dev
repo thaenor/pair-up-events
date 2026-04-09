@@ -1,0 +1,24 @@
+# Pin to Node 25.x (Current release, non-LTS) to match "engines": {"node": "25.x"}
+# in package.json. Do NOT use node:alpine — that tag floats and will silently
+# upgrade to the next major version on every pull.
+FROM node:25-alpine AS base
+
+
+WORKDIR /app
+
+
+# Install dependencies layer (cached unless package*.json changes).
+# --ignore-scripts skips husky/prepare so the image builds without git context.
+COPY package*.json ./
+# npm install (not npm ci) so the image builds even before package-lock.json
+# is committed. Once the lock file exists in git, this becomes deterministic.
+# --ignore-scripts skips husky/prepare — no git context inside Docker.
+RUN npm install --ignore-scripts
+
+
+# Source files come via bind mount at runtime — not baked in.
+# This image is used for:
+#   - dev server (profile: dev)
+#   - lint / typecheck / unit tests / build (profile: ci and individual profiles)
+EXPOSE 5173
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

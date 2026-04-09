@@ -19,9 +19,8 @@
     "docs": "docs"
   },
   "docs": {
-    "agentEntry": "AGENTS.md",
-    "architectureDir": "docs/architecture/",
-    "design": "docs/architecture/design-language.md",
+    "contextualizer": "docs/agents.md",
+    "design": "docs/Design-doc.md",
     "implementationPlans": "docs/implementation-plans/"
   },
   "commands": {
@@ -86,11 +85,10 @@
     "readabilityPriority": true,
     "useDocsAsSourceOfTruth": true,
     "docLookupOrder": [
-      "AGENTS.md",
-      "docs/architecture/component-standards.md",
-      "docs/architecture/firebase-patterns.md",
-      "docs/architecture/design-language.md",
+      "docs/agents.md",
+      "docs/Design-doc.md",
       "docs/FIREBASE_SETUP.md",
+      "docs/config.md",
       "docs/data-model.md",
       "docs/"
     ]
@@ -99,7 +97,7 @@
     "enabled": true,
     "trigger": ["pull_request", "pre-merge", "manual"],
     "reviewGoals": [
-      "Enforce project coding standards from AGENTS.md and docs/architecture/",
+      "Enforce project coding standards from docs/agents.md",
       "Verify all TypeScript types are explicit and exported",
       "Detect untested components or hooks",
       "Detect unnecessary Firestore reads/writes",

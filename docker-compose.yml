@@ -1,0 +1,108 @@
+# Pillar 3: Docker-first development.
+#
+# Profiles keep services opt-in — nothing runs unless its profile is selected.
+# Naming reflects agent tiers from .agents/tiers.md.
+#
+# Usage: see .agents/docker-commands.md for the full cheatsheet.
+
+services:
+  # === Development ===
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: npm run dev -- --host 0.0.0.0
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    ports:
+      - '5173:5173'
+    environment:
+      - NODE_ENV=development
+    profiles: ['dev']
+
+  # === Runner Tier — parallel-safe quality gates ===
+  lint:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: sh -c "npm run format:check && npm run lint"
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    profiles: ['lint', 'ci']
+
+  lint-fix:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: sh -c "npm run format && npm run lint -- --fix"
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    profiles: ['lint-fix']
+
+  typecheck:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: npm run typecheck
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    profiles: ['typecheck', 'ci']
+
+  test-unit:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: npm test
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    profiles: ['test', 'ci']
+
+  build:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: npm run build
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    profiles: ['build', 'ci']
+
+  # === Builder Tier — E2E ===
+  test-e2e:
+    build:
+      context: .
+      dockerfile: Dockerfile.e2e
+    command: npm run test:e2e
+    volumes:
+      - .:/app
+      - node_modules-e2e:/app/node_modules
+      - e2e-results:/app/test-results
+    depends_on:
+      - dev
+    profiles: ['e2e']
+
+  # === Infrastructure ===
+  firebase-emulator:
+    build:
+      context: .
+      dockerfile: Dockerfile.firebase
+    ports:
+      - '9099:9099' # Auth
+      - '8080:8080' # Firestore
+      - '9199:9199' # Storage
+      - '4000:4000' # Emulator UI
+    volumes:
+      - .:/app
+      - firebase-data:/app/.firebase
+    profiles: ['emulator', 'dev']
+
+volumes:
+  node_modules:
+  node_modules-e2e:
+  e2e-results:
+  firebase-data:
