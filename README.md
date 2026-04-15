@@ -2,7 +2,33 @@
 
 Vite + React + TypeScript web app backed by Firebase (Auth, Firestore, Storage). Social platform where two pairs (4 people total) meet through shared activities. Deployed to GitHub Pages from `main`.
 
+## Dev Container
+
+ALWAYS run all the commands inside a dev container!
+
+> (already installed) Requires Docker Desktop running and the Dev Containers CLI installed:
+> `npm install -g @devcontainers/cli`
+
+```bash
+# Build & start (first time or after config changes)
+devcontainer up --workspace-folder .
+
+# Enter a shell inside the container
+devcontainer exec --workspace-folder . bash
+
+# Run agents inside the container
+devcontainer exec --workspace-folder . claude
+devcontainer exec --workspace-folder . qwen
+
+# Stop the container
+devcontainer down --workspace-folder .
+```
+
+All dependencies (`node_modules`, Firebase emulators, Playwright browsers, Java) live inside the container and do not affect the host machine.
+
 ## Commands
+
+Note: make sure we are inside a dev container.
 
 ```bash
 npm run dev                 # local dev server — uses Firebase emulators by default

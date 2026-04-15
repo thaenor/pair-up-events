@@ -27,6 +27,7 @@
     "9150": { "label": "Firestore WebChannel" },
     "9199": { "label": "Storage emulator" }
   },
+  "initializeCommand": "docker volume create pair-up-events-node_modules && docker run --rm -v pair-up-events-node_modules:/vol alpine chown -R 1000:1000 /vol",
   "postCreateCommand": "bash .devcontainer/post-create.sh",
   "customizations": {
     "vscode": {

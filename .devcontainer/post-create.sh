@@ -1,13 +1,13 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/bash
+set -e
 
-corepack enable || true
+# Fix workspace ownership
+sudo chown -R node:node /workspaces/pair-up-events
+
+# Enable pnpm via corepack (needs sudo for symlink to /usr/local/bin)
+sudo corepack enable pnpm
+
+# Install deps
 npm install
-npm install -g firebase-tools
 
-# Pre-download Firebase emulator JARs so the first `emulator:start` is instant
-firebase setup:emulators:firestore || true
-firebase setup:emulators:ui || true
-
-# Install Playwright Chromium + system deps inside the container
-npx playwright install --with-deps chromium
+npm install -g @anthropic-ai/claude-code
