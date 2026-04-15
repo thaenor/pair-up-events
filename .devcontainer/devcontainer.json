@@ -1,56 +1,47 @@
-// For format details, see https://aka.ms/devcontainer.json
 {
   "name": "pair-up-events",
-  "dockerComposeFile": "docker-compose.yml",
-  "service": "app",
-  "workspaceFolder": "/workspace",
-
-  // Features to add to the dev container.
-  // https://containers.dev/features
-  "features": {},
-
-  // Forward ports for Vite dev server + Firebase emulators
-  "forwardPorts": [
-    5173,   // Vite dev server
-    4000,   // Firebase Emulator UI
-    8081,   // Firestore emulator
-    9099,   // Auth emulator
-    9199    // Storage emulator
-  ],
-
-  "portsAttributes": {
-    "5173": { "label": "Vite Dev Server", "onAutoForward": "openBrowser" },
-    "4000": { "label": "Firebase Emulator UI" },
-    "8081": { "label": "Firestore Emulator" },
-    "9099": { "label": "Auth Emulator" },
-    "9199": { "label": "Storage Emulator" }
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:24-bookworm",
+  "remoteUser": "node",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "21"
+    }
   },
-
-  // VS Code extensions pre-installed in the container
+  "containerEnv": {
+    "VITE_USE_EMULATOR": "true"
+  },
+  "mounts": [
+    "source=pair-up-events-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
+    "source=pair-up-events-npm,target=/home/node/.npm,type=volume",
+    "source=pair-up-events-firebase,target=/home/node/.cache/firebase,type=volume",
+    "source=pair-up-events-playwright,target=/home/node/.cache/ms-playwright,type=volume"
+  ],
+  "forwardPorts": [5173, 8080, 4000, 4400, 8081, 9099, 9150, 9199],
+  "portsAttributes": {
+    "5173": { "label": "Vite dev server", "onAutoForward": "openBrowser" },
+    "8080": { "label": "Vite preview" },
+    "4000": { "label": "Firebase Emulator UI" },
+    "4400": { "label": "Firebase Emulator Hub" },
+    "8081": { "label": "Firestore emulator" },
+    "9099": { "label": "Auth emulator" },
+    "9150": { "label": "Firestore WebChannel" },
+    "9199": { "label": "Storage emulator" }
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
   "customizations": {
     "vscode": {
       "extensions": [
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
         "bradlc.vscode-tailwindcss",
-        "ms-azuretools.vscode-docker",
-        "firefox-devtools.vscode-firefox-debug",
-        "ms-playwright.playwright"
+        "ms-playwright.playwright",
+        "ms-azuretools.vscode-docker"
       ],
       "settings": {
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.codeActionsOnSave": {
-          "source.fixAll.eslint": "explicit"
-        },
         "typescript.tsdk": "node_modules/typescript/lib"
       }
     }
-  },
-
-  // Run after container is created
-  "postCreateCommand": "npm install && npx playwright install --with-deps chromium",
-
-  // Set the remote user inside the container
-  "remoteUser": "node"
+  }
 }

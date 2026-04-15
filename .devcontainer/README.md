@@ -1,102 +1,98 @@
-# Dev Container — pair-up-events
+# Dev Container
 
-This directory configures a self-contained development environment using
-[Dev Containers](https://containers.dev/). All project dependencies
-(`node_modules`, Firebase emulator JARs, Playwright browser binaries) live
-**inside the container** and never touch your host machine.
+This project can run fully inside a Dev Container so your host machine stays clean.
+Project dependencies, Firebase tooling, emulator assets, Java, and Playwright browser
+binaries live inside the container or Docker volumes instead of polluting your main machine.
+
+## What this setup uses
+
+- Base image: `mcr.microsoft.com/devcontainers/javascript-node:24-bookworm`
+- Java 21 Dev Container feature for Firebase emulators
+- Docker volumes for:
+  - `node_modules`
+  - npm cache
+  - Firebase cache
+  - Playwright cache
+- Port forwarding for:
+  - `5173` Vite dev server
+  - `8080` Vite preview
+  - `4000` Firebase Emulator UI
+  - `4400` Firebase Emulator Hub
+  - `8081` Firestore emulator
+  - `9099` Auth emulator
+  - `9150` Firestore WebChannel
+  - `9199` Storage emulator
 
 ## Prerequisites
 
-| Tool | Version | Notes |
-|------|---------|-------|
-| Docker Desktop (or Docker Engine) | ≥ 24 | Must be running |
-| VS Code | any | + [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) |
+- Docker Desktop or Docker Engine
+- VS Code with the **Dev Containers** extension, or the `devcontainer` CLI
 
-Alternatively, use the **GitHub Codespaces** button — no local Docker needed.
+## Open in the container
 
----
+### VS Code
 
-## Quick Start
+1. Open the repository in VS Code.
+2. Run **Dev Containers: Reopen in Container**.
+3. Wait for the container build and post-create setup to finish.
 
-### Option A — VS Code
-
-1. Open the repo folder in VS Code.
-2. When prompted *"Reopen in Container"*, click it.
-   (Or open Command Palette → **Dev Containers: Reopen in Container**).
-3. VS Code will build the image, start the container, install `npm` packages
-   and Playwright browsers automatically (`postCreateCommand`).
-4. Open a terminal inside VS Code and run your usual scripts:
+### CLI
 
 ```bash
-# Start the Vite dev server (accessible at http://localhost:5173)
-npm run dev
+devcontainer build --workspace-folder .
+devcontainer up --workspace-folder .
+```
 
-# In a second terminal — start Firebase emulators
+## Run the app
+
+Open a shell inside the container and start the services you need.
+
+### Start the Vite app
+
+```bash
+npm run dev
+```
+
+The app is available on forwarded port `5173`.
+
+### Start Firebase emulators
+
+```bash
 npm run emulator:start
-
-# Firebase Emulator UI: http://localhost:4000
 ```
 
-### Option B — Docker Compose (no VS Code)
+The Emulator UI is available on forwarded port `4000`.
+
+## Run tests
 
 ```bash
-# Build and start the container
-docker compose -f .devcontainer/docker-compose.yml up -d --build
-
-# Open a shell inside the container
-docker compose -f .devcontainer/docker-compose.yml exec app bash
-
-# Inside the container shell:
-npm install
-npm run dev
+npm test
+npm run test:e2e
+npm run lint
+npm run typecheck
 ```
 
----
+## Run coding agents inside the container
 
-## Environment Variables
-
-Copy `.devcontainer/.env.example` to `.env.local` in the project root and
-adjust if needed:
+If you use local CLIs for agents, run them from inside the container so they see
+the same isolated toolchain and emulator environment.
 
 ```bash
-cp .devcontainer/.env.example .env.local
+devcontainer exec --workspace-folder . claude
+devcontainer exec --workspace-folder . qwen
 ```
 
-For local development with emulators the defaults work without any Firebase
-credentials. Only `npm run dev:live` (pointing at a real Firebase project)
-requires real API keys.
+## Notes
 
----
+- `VITE_USE_EMULATOR=true` is set automatically in the container config.
+- `node_modules` stays in a Docker volume, not on your host filesystem.
+- Firebase emulator downloads and Playwright browser downloads are also kept
+  in Docker-managed storage.
+- If you change the dev container config, rebuild the container.
 
-## Port Map
-
-| Port | Service |
-|------|---------|
-| 5173 | Vite dev server |
-| 4000 | Firebase Emulator UI |
-| 8081 | Firestore emulator |
-| 9099 | Auth emulator |
-| 9199 | Storage emulator |
-| 9150 | Firestore WebChannel |
-
----
-
-## What's Isolated (Not on Host)
-
-- `node_modules` — stored in a named Docker volume, never written to your disk
-- Playwright browser binaries — installed inside the container image
-- Firebase emulator JARs — downloaded inside the container
-- Java (OpenJDK 17) — only inside the container
-- `firebase-tools` global CLI — only inside the container
-
-## Resetting the Environment
+## Rebuild
 
 ```bash
-# Rebuild the image from scratch (e.g. after Dockerfile changes)
-docker compose -f .devcontainer/docker-compose.yml up -d --build --force-recreate
-
-# Wipe node_modules volume and reinstall
-docker volume rm pair-up-events_node_modules
-docker compose -f .devcontainer/docker-compose.yml up -d
-# Then inside container: npm install
+devcontainer build --workspace-folder . --no-cache
+devcontainer up --workspace-folder .
 ```
