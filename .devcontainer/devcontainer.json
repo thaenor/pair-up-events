@@ -1,0 +1,56 @@
+// For format details, see https://aka.ms/devcontainer.json
+{
+  "name": "pair-up-events",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+
+  // Features to add to the dev container.
+  // https://containers.dev/features
+  "features": {},
+
+  // Forward ports for Vite dev server + Firebase emulators
+  "forwardPorts": [
+    5173,   // Vite dev server
+    4000,   // Firebase Emulator UI
+    8081,   // Firestore emulator
+    9099,   // Auth emulator
+    9199    // Storage emulator
+  ],
+
+  "portsAttributes": {
+    "5173": { "label": "Vite Dev Server", "onAutoForward": "openBrowser" },
+    "4000": { "label": "Firebase Emulator UI" },
+    "8081": { "label": "Firestore Emulator" },
+    "9099": { "label": "Auth Emulator" },
+    "9199": { "label": "Storage Emulator" }
+  },
+
+  // VS Code extensions pre-installed in the container
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "ms-azuretools.vscode-docker",
+        "firefox-devtools.vscode-firefox-debug",
+        "ms-playwright.playwright"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        },
+        "typescript.tsdk": "node_modules/typescript/lib"
+      }
+    }
+  },
+
+  // Run after container is created
+  "postCreateCommand": "npm install && npx playwright install --with-deps chromium",
+
+  // Set the remote user inside the container
+  "remoteUser": "node"
+}
