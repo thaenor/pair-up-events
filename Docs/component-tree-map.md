@@ -1,5 +1,7 @@
 # Component Tree Map
 
+> **Warning — may be stale.** This is a hand-maintained catalog and will drift from the actual codebase. Always verify file paths and component names against `src/` before relying on entries here.
+
 This document provides a complete map of all components in the PairUp Events application, organized by their hierarchy from routes to atoms.
 
 ## App Structure
