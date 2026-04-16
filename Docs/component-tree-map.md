@@ -375,12 +375,12 @@ NotFound
 
 **Component Counts** (Verified December 2024):
 
-- **Atoms**: 5 components
+- **Atoms**: 6 components
 - **Molecules**: 13 components (organized in 5 feature folders: Auth, Profile, Events, Invite, Form)
 - **Organisms**: 9 components (organized in 3 feature folders: Navigation, Landing, Events)
 - **Templates**: 2 components
-- **Pages**: 14 pages (Index, auth, login, profile, events, events-create, messenger, settings, invite, contact-us, about, NotFound, terms-of-service, privacy-policy)
-- **Hooks**: 2 hooks (useAuth, useRequireAuth)
+- **Pages**: 15 pages (Index, auth, login, profile, events, events-create, messenger, settings, invite, accept-invite, contact-us, about, NotFound, terms-of-service, privacy-policy)
+- **Hooks**: 5 hooks (useAuth, useRequireAuth, useAIChat, useChatInitialization, useChatMessageBatching)
 - **Error Boundaries**: 1 component (AuthErrorBoundary)
 
 ### Atoms (Basic Building Blocks)

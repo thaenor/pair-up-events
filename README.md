@@ -30,7 +30,7 @@ Pair Up Events is a marketing site and authentication experience for a social pl
 - **Benefits grid** reinforcing community safety, curated matches, and flexible scheduling.
 - **Testimonials & FAQs** to build trust (see `src/pages/home.tsx`).
 - **Early-access signup** via Brevo embed (`src/lib/config.ts`).
-- **Authentication** at `/login` using Google, Apple, Facebook, and email/password options managed by a shared auth context.
+- **Authentication** at `/login` using Google, Facebook, and email/password options managed by a shared auth context.
 - **Responsive design system** based on atomic components built with Tailwind CSS, shadcn/ui styling primitives, and lucide-react icons.
 
 ## Tech Stack
@@ -76,13 +76,14 @@ Vite prints a local URL (default `http://localhost:5173`). The marketing landing
 src/
 ├── components/        # Atomic design-inspired UI building blocks
 ├── contexts/          # Shared React contexts (e.g., AuthProvider)
+├── entities/          # Domain entities, services, and validation (user, event, invite)
 ├── hooks/             # Reusable custom hooks, including Firebase auth helpers
 ├── lib/               # Firebase config/initialisation and shared utilities
 ├── pages/             # Route-level components (landing page, auth, 404)
 └── tests/             # Vitest test suites
 ```
 
-Design references are available inside [`Designs/`](./Designs/).
+Design references are available inside [`Designs/`](./Docs/Designs/).
 
 ## Testing & Quality Gates
 
