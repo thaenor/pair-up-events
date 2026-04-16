@@ -6,7 +6,7 @@
 | ---------- | ----------------------------------- | --------------------------------------------------------------- |
 | Unit tests | Vitest                              | Active — co-located under `__tests__/` next to each source file |
 | E2E tests  | Playwright + Firebase Auth Emulator | Active — `tests/e2e/`                                           |
-| Pre-commit | Husky                               | Runs E2E locally on each commit                                 |
+| Pre-commit | Husky                               | Runs `npm run ci` (format + lint + typecheck) — E2E not included |
 | CI         | GitHub Actions                      | Runs lint + typecheck + unit tests + build                      |
 
 ## Running Tests
