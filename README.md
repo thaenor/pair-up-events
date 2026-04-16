@@ -1,3 +1,5 @@
+> Why did the developer go broke? Because he used up all his cache.
+
 # Pair Up Events
 
 Vite + React + TypeScript web app backed by Firebase (Auth, Firestore, Storage). Social platform where two pairs (4 people total) meet through shared activities. Deployed to GitHub Pages from `main`.
