@@ -3,11 +3,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Calendar, Clock, MapPin, Target } from 'lucide-react'
 import LoadingSpinner from '@/components/atoms/LoadingSpinner'
 import { Button } from '@/components/atoms/button'
-import useAuth from '@/hooks/useAuth'
+import { useAuth } from '@/hooks/useAuth'
 import { validateInviteCode, getPublicEventPreview } from '@/entities/invite/invite-service'
 import { acceptEventInvite } from '@/entities/event/event-service'
-import type { InviteCodeData } from '@/entities/invite/invite'
-import type { PublicEventPreview } from '@/entities/invite/invite'
+import type { InviteCodeData, PublicEventPreview } from '@/entities/invite/invite'
 
 /**
  * Accept Invite Page

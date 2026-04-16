@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import type { EventPreviewData } from '@/components/molecules/Events/EventPreviewCard'
 
 /**
@@ -60,6 +61,52 @@ export interface EventPreferences {
   desiredVibes: string[]
   ageRange?: { min: number; max: number }
 }
+
+const duoTypeSchema = z.enum(['friends', 'couples', 'family', 'roommates', 'colleagues'])
+
+export const draftEventDataSchema = z.object({
+  eventId: z.string(),
+  role: z.literal('creator'),
+  status: z.string(),
+  pairRole: z.literal('userA'),
+  isDeleted: z.boolean(),
+  joinedAt: z.date(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  inviteCode: z.string().optional(),
+  shareStatus: z.enum(['draft', 'shared', 'accepted']).optional(),
+  sharedAt: z.date().optional(),
+  title: z.string().optional(),
+  headline: z.string().optional(),
+  description: z.string().optional(),
+  activity: z.string().optional(),
+  timeStart: z.date().optional(),
+  location: z
+    .object({
+      address: z.string().optional(),
+      city: z.string().optional(),
+    })
+    .optional(),
+  preferences: z
+    .object({
+      userDuoType: duoTypeSchema.optional(),
+      preferredDuoType: duoTypeSchema.optional(),
+      desiredVibes: z.array(z.string()).optional(),
+      ageRange: z.object({ min: z.number(), max: z.number() }).optional(),
+    })
+    .optional(),
+  chatHistory: z
+    .array(
+      z.object({
+        messageId: z.string(),
+        text: z.string(),
+        sender: z.enum(['user', 'assistant']),
+        timestamp: z.date(),
+        eventData: z.unknown().optional(),
+      })
+    )
+    .optional(),
+})
 
 /**
  * Re-export EventPreviewData for convenience

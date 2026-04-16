@@ -16,7 +16,7 @@ vi.mock('@/lib/firebase', () => ({
 }))
 
 // Import useAuth after mocking
-import useAuth from '@/hooks/useAuth'
+import { useAuth } from '@/hooks/useAuth'
 import { auth } from '@/lib/firebase'
 
 describe('useAuth Hook', () => {

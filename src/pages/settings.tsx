@@ -3,7 +3,7 @@ import Navigation from '@/components/organisms/Navigation/Navigation'
 import MobileBottomNavigation from '@/components/organisms/Navigation/MobileBottomNavigation'
 import AccountControls from '@/components/molecules/Auth/account-controls'
 import LoadingSpinner from '@/components/atoms/LoadingSpinner'
-import useRequireAuth from '@/hooks/useRequireAuth'
+import { useRequireAuth } from '@/hooks/useRequireAuth'
 
 /**
  * Settings Page

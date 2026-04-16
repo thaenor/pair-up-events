@@ -21,11 +21,7 @@ const EarlyAccessSection = () => {
               frameBorder="0"
               scrolling="auto"
               allowFullScreen
-              style={{
-                display: 'block',
-                marginLeft: 'auto',
-                marginRight: 'auto',
-              }}
+              className="block mx-auto"
               title="Brevo Subscription Form"
             ></iframe>
           </div>

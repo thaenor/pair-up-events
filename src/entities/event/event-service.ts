@@ -5,6 +5,7 @@ import {
   getDocs,
   getDoc,
   orderBy,
+  limit,
   addDoc,
   doc,
   updateDoc,
@@ -12,8 +13,10 @@ import {
   arrayUnion,
   setDoc,
 } from 'firebase/firestore'
+import { ZodError } from 'zod'
 import { db } from '@/lib/firebase'
 import type { DraftEventData, ChatMessageData } from './event'
+import { draftEventDataSchema } from './event'
 import type { Timestamp as FirestoreTimestamp } from 'firebase/firestore'
 import { createInviteLink, markInviteAsUsed, validateInviteCode } from '../invite/invite-service'
 
@@ -139,7 +142,17 @@ export async function loadDraftEvent(userId: string): Promise<LoadResult<DraftEv
         })) || [],
     }
 
-    return { success: true, data: draftEvent }
+    try {
+      const validated = draftEventDataSchema.parse(draftEvent)
+      return { success: true, data: validated as DraftEventData & { eventId: string } }
+    } catch (validationError) {
+      if (validationError instanceof ZodError) {
+        const errorMsg = validationError.issues.map(e => e.message).join(', ')
+        console.error(`Validation failed for draft event (userId: ${userId}):`, validationError.issues)
+        return { success: false, error: `Invalid event data structure: ${errorMsg}`, errorType: 'validation' }
+      }
+      throw validationError
+    }
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : 'Unknown error'
     console.error(`Failed to load draft event for userId: ${userId}`, error)
@@ -379,7 +392,7 @@ export async function loadAllEvents(userId: string): Promise<LoadResult<(DraftEv
 
   try {
     const ownEventsRef = collection(db, 'users', userId, 'ownEvents')
-    const q = query(ownEventsRef, where('isDeleted', '==', false), orderBy('createdAt', 'desc'))
+    const q = query(ownEventsRef, where('isDeleted', '==', false), orderBy('createdAt', 'desc'), limit(50))
 
     const querySnapshot = await getDocs(q)
 
@@ -412,7 +425,24 @@ export async function loadAllEvents(userId: string): Promise<LoadResult<(DraftEv
       }
     })
 
-    return { success: true, data: events }
+    const validatedEvents: (DraftEventData & { eventId: string })[] = []
+    for (const event of events) {
+      try {
+        const validated = draftEventDataSchema.parse(event)
+        validatedEvents.push(validated as DraftEventData & { eventId: string })
+      } catch (validationError) {
+        if (validationError instanceof ZodError) {
+          console.error(
+            `Skipping malformed event (userId: ${userId}, eventId: ${event.eventId}):`,
+            validationError.issues
+          )
+        } else {
+          throw validationError
+        }
+      }
+    }
+
+    return { success: true, data: validatedEvents }
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : 'Unknown error'
     console.error(`Failed to load events for userId: ${userId}`, error)

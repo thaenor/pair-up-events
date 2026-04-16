@@ -516,4 +516,4 @@ const getErrorMessage = (code: string): string => {
   }
 }
 
-export default useAuth
+export { useAuth }

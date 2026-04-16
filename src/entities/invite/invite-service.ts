@@ -1,8 +1,10 @@
 import { doc, getDoc, setDoc, Timestamp, updateDoc } from 'firebase/firestore'
 import { nanoid } from 'nanoid'
+import { ZodError } from 'zod'
 import { db } from '@/lib/firebase'
 import type { InviteCodeData, PublicEventPreview } from './invite'
-import type { DraftEventData } from '../event/event'
+import { inviteCodeDataSchema } from './invite'
+import { draftEventDataSchema } from '../event/event'
 
 /**
  * Generate a unique invite code using nanoid
@@ -77,16 +79,25 @@ export async function validateInviteCode(inviteCode: string): Promise<InviteCode
       return null
     }
 
-    const data = inviteCodeSnap.data()
-    const inviteData: InviteCodeData = {
-      inviteCode: data.inviteCode,
-      eventId: data.eventId,
-      creatorId: data.creatorId,
-      createdAt: data.createdAt.toDate(),
-      expiresAt: data.expiresAt.toDate(),
-      isUsed: data.isUsed || false,
-      usedBy: data.usedBy,
-      usedAt: data.usedAt?.toDate(),
+    const raw = inviteCodeSnap.data()
+    const parsed = {
+      inviteCode: raw.inviteCode,
+      eventId: raw.eventId,
+      creatorId: raw.creatorId,
+      createdAt: raw.createdAt.toDate(),
+      expiresAt: raw.expiresAt.toDate(),
+      isUsed: raw.isUsed || false,
+      usedBy: raw.usedBy,
+      usedAt: raw.usedAt?.toDate(),
+    }
+    let inviteData: InviteCodeData
+    try {
+      inviteData = inviteCodeDataSchema.parse(parsed)
+    } catch (validationError) {
+      if (validationError instanceof ZodError) {
+        console.error('Invalid invite code document structure:', validationError.issues)
+      }
+      return null
     }
 
     // Check if expired
@@ -146,16 +157,29 @@ export async function getPublicEventPreview(eventId: string, creatorId: string):
       return null
     }
 
-    const eventData = eventSnap.data() as DraftEventData
+    const raw = eventSnap.data()
+    const partial = draftEventDataSchema.partial().safeParse({
+      ...raw,
+      eventId: eventSnap.id,
+      createdAt: raw.createdAt?.toDate?.() ?? new Date(),
+      updatedAt: raw.updatedAt?.toDate?.() ?? new Date(),
+      joinedAt: raw.joinedAt?.toDate?.() ?? new Date(),
+      timeStart: raw.timeStart?.toDate?.(),
+    })
+
+    if (!partial.success) {
+      console.error('Invalid event document structure for public preview:', partial.error.issues)
+      return null
+    }
 
     // Return only public fields
     return {
-      eventId: eventData.eventId,
-      title: eventData.title,
-      description: eventData.description,
-      activity: eventData.activity,
-      timeStart: eventData.timeStart,
-      location: eventData.location,
+      eventId: partial.data.eventId ?? eventSnap.id,
+      title: partial.data.title,
+      description: partial.data.description,
+      activity: partial.data.activity,
+      timeStart: partial.data.timeStart,
+      location: partial.data.location,
     }
   } catch (error) {
     console.error('Error fetching public event preview:', error)

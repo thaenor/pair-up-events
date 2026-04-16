@@ -3,7 +3,7 @@ import Navigation from '@/components/organisms/Navigation/Navigation'
 import MobileBottomNavigation from '@/components/organisms/Navigation/MobileBottomNavigation'
 import LoadingSpinner from '@/components/atoms/LoadingSpinner'
 import InviteFriendSection from '@/components/molecules/Invite/invite-friend-section'
-import useRequireAuth from '@/hooks/useRequireAuth'
+import { useRequireAuth } from '@/hooks/useRequireAuth'
 
 /**
  * Invite Page

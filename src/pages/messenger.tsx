@@ -2,7 +2,7 @@ import React from 'react'
 import Navigation from '@/components/organisms/Navigation/Navigation'
 import MobileBottomNavigation from '@/components/organisms/Navigation/MobileBottomNavigation'
 import LoadingSpinner from '@/components/atoms/LoadingSpinner'
-import useRequireAuth from '@/hooks/useRequireAuth'
+import { useRequireAuth } from '@/hooks/useRequireAuth'
 
 const MessengerPage: React.FC = () => {
   const { loading } = useRequireAuth()

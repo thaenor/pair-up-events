@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { Camera, Upload, User, Trash2, AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
-import useAuth from '@/hooks/useAuth'
+import { useAuth } from '@/hooks/useAuth'
 import { validateImageFile, compressImage } from '@/lib/image-utils'
 import { uploadProfilePicture, deleteProfilePicture } from '@/lib/storage-service'
 import Modal from '@/components/atoms/Modal'

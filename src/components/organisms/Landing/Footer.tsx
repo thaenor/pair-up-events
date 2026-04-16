@@ -107,7 +107,7 @@ const Footer = () => {
                         <Link
                           to={link.href}
                           aria-label={link.ariaLabel}
-                          className="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                          className="text-pairup-cream/70 hover:text-pairup-cream transition-colors duration-200"
                         >
                           {link.label}
                         </Link>
@@ -116,7 +116,7 @@ const Footer = () => {
                           href={`#${link.targetId}`}
                           onClick={event => handleLinkClick(event, link.targetId!)}
                           aria-label={link.ariaLabel}
-                          className="text-pairup-cream/70 hover:text-pairup-cream duration-300"
+                          className="text-pairup-cream/70 hover:text-pairup-cream transition-colors duration-200"
                         >
                           {link.label}
                         </a>

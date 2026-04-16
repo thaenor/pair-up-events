@@ -1,3 +1,16 @@
+import { z } from 'zod'
+
+export const inviteCodeDataSchema = z.object({
+  inviteCode: z.string(),
+  eventId: z.string(),
+  creatorId: z.string(),
+  createdAt: z.date(),
+  expiresAt: z.date(),
+  isUsed: z.boolean().optional(),
+  usedBy: z.string().optional(),
+  usedAt: z.date().optional(),
+})
+
 /**
  * Invite code data structure for Firestore
  *

@@ -38,7 +38,7 @@ const HowItWorksSection = () => {
           {steps.map((step, index) => (
             <div
               key={index}
-              className="bg-white/30 p-8 rounded-2xl transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+              className="bg-white/30 p-8 rounded-2xl transition-all duration-200 hover:shadow-lg hover:-translate-y-1"
             >
               <div className="mb-6">{step.icon}</div>
               <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
