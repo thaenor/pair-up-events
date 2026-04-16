@@ -8,7 +8,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ left }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 h-screen" data-testid="auth-layout">
       <div
-        className="bg-[#1A2833] p-8 flex flex-col justify-center items-center order-2 md:order-1"
+        className="bg-pairup-darkBlue p-8 flex flex-col justify-center items-center order-2 md:order-1"
         data-testid="auth-layout-left"
       >
         {left}
