@@ -16,6 +16,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "ci": "npm run format && npm run lint && npm run typecheck",
+    "check:size": "npm run build && node scripts/check-bundle-size.mjs",
     "prepare": "husky"
   },
   "dependencies": {
