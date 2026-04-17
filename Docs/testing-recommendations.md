@@ -19,6 +19,8 @@ import EmailLoginForm from '../email-login-form'
 
 describe('EmailLoginForm', () => {
   it('should handle login with useAuth', async () => {
+    const { result } = renderHook(() => useAuth())
+
     render(<EmailLoginForm />)
 
     fireEvent.change(screen.getByLabelText(/email/i), {
@@ -30,7 +32,7 @@ describe('EmailLoginForm', () => {
     fireEvent.click(screen.getByRole('button', { name: /login/i }))
 
     await waitFor(() => {
-      expect(screen.queryByText(/error/i)).not.toBeInTheDocument()
+      expect(result.current.user).toBeTruthy()
     })
   })
 })
@@ -120,9 +122,9 @@ See `tests/e2e/README.md` for more details.
 
 ## Recommended Next Steps
 
-1. **Short term**: Use E2E tests for critical auth flows (already available via `npm run test:e2e`)
-2. **Medium term**: Resolve mock complexity for direct `useAuth` unit tests
-3. **Long term**: Add test coverage metrics to CI pipeline
+1. **Short term**: Use manual testing for auth flows (most reliable)
+2. **Medium term**: Add E2E tests with Playwright for critical auth paths
+3. **Long term**: Consider a dedicated test Firebase project for integration tests
 
 ## Current Status
 
