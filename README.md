@@ -43,7 +43,7 @@ npm run test:e2e            # playwright
 npm run ci                  # format + lint + typecheck — run before every PR
 ```
 
-Node **25.x**. Pre-commit runs `npm run ci` (format + lint + typecheck) via Husky — E2E is not run on commit.
+Node **24.x**. Pre-commit runs `npm run ci` (format + lint + typecheck) via Husky — E2E is not run on commit.
 
 ## Code Layout
 
