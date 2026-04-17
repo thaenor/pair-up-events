@@ -120,7 +120,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onLogout, isLoggingO
     <>
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 bg-black/50 z-30 transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-black/50 z-30 transition-opacity duration-200 ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={onClose}
@@ -132,7 +132,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onLogout, isLoggingO
       {/* Sidebar */}
       <div
         ref={sidebarRef}
-        className={`fixed top-0 right-0 h-full w-full max-w-sm bg-pairup-darkBlue shadow-2xl z-40 transition-all duration-300 ease-out ${
+        className={`fixed top-0 right-0 h-full w-full max-w-sm bg-pairup-darkBlue shadow-2xl z-40 transition-all duration-200 ease-out ${
           isOpen ? 'right-0' : 'right-[-100%]'
         }`}
         role="dialog"

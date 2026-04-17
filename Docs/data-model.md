@@ -740,7 +740,7 @@ During account creation, users must provide:
 
 - **First Name**: 2-50 characters, letters/spaces/hyphens/apostrophes/periods only
 - **Last Name**: 2-50 characters (optional), letters/spaces/hyphens/apostrophes/periods only
-- **Birthdate**: Must be at least 13 years old, maximum 120 years old
+- **Birthdate**: Must be at least 18 years old, maximum 120 years old
 - **Email**: Standard email validation with disposable domain filtering
 - **Gender**: Must be one of: `male`, `female`, `non-binary`, `prefer-not-to-say`
 

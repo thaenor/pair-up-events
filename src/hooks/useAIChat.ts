@@ -29,7 +29,14 @@ export function useAIChat(
   initialMessages: ChatMessageData[],
   userProfile: UserProfileData | null,
   isInitialized?: boolean
-) {
+): {
+  messages: ChatMessageData[]
+  sendMessage: (text: string) => Promise<void>
+  isLoading: boolean
+  eventId: string | null
+  streamingMessage: string
+  isStreaming: boolean
+} {
   const [eventId, setEventId] = useState<string | null>(initialEventId)
   const [messages, setMessages] = useState<ChatMessageData[]>(initialMessages)
   const [isLoading, setIsLoading] = useState(false)

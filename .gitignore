@@ -33,6 +33,7 @@ coverage/
 # Testing artifacts
 test-results/
 playwright-report/
+tests/e2e/screenshots/
 
 # Editor directories and files
 .vscode/*

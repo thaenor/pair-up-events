@@ -4,7 +4,7 @@ import { Compass, Calendar, MessageCircle, User, LogIn, UserPlus, Menu } from 'l
 import { toast } from 'sonner'
 
 import Logo from '../../atoms/Logo'
-import useAuth from '@/hooks/useAuth'
+import { useAuth } from '@/hooks/useAuth'
 import Sidebar from './Sidebar'
 
 /**
@@ -108,7 +108,7 @@ const Navigation: React.FC = React.memo(() => {
             <div className="hidden md:flex items-center gap-6" role="menubar">
               <button
                 onClick={handleNavigateToExplore}
-                className={`flex items-center gap-2 text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1 relative ${isActiveRoute('/') ? 'font-bold' : ''}`}
+                className={`flex items-center gap-2 text-pairup-cream hover:text-pairup-yellow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1 relative ${isActiveRoute('/') ? 'font-bold' : ''}`}
                 aria-label="Explore homepage"
                 role="menuitem"
               >
@@ -117,7 +117,7 @@ const Navigation: React.FC = React.memo(() => {
               </button>
               <button
                 onClick={handleNavigateToEvents}
-                className={`flex items-center gap-2 text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1 relative ${isActiveRoute('/events') ? 'font-bold' : ''}`}
+                className={`flex items-center gap-2 text-pairup-cream hover:text-pairup-yellow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1 relative ${isActiveRoute('/events') ? 'font-bold' : ''}`}
                 aria-label="Navigate to my events"
                 role="menuitem"
               >
@@ -128,7 +128,7 @@ const Navigation: React.FC = React.memo(() => {
               </button>
               <button
                 onClick={handleNavigateToMessenger}
-                className={`flex items-center gap-2 text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1 relative ${isActiveRoute('/messenger') ? 'font-bold' : ''}`}
+                className={`flex items-center gap-2 text-pairup-cream hover:text-pairup-yellow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1 relative ${isActiveRoute('/messenger') ? 'font-bold' : ''}`}
                 aria-label="Navigate to messenger"
                 role="menuitem"
               >
@@ -139,7 +139,7 @@ const Navigation: React.FC = React.memo(() => {
               </button>
               <button
                 onClick={handleNavigateToProfile}
-                className={`flex items-center gap-2 text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1 relative ${isActiveRoute('/profile') ? 'font-bold' : ''}`}
+                className={`flex items-center gap-2 text-pairup-cream hover:text-pairup-yellow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1 relative ${isActiveRoute('/profile') ? 'font-bold' : ''}`}
                 aria-label="Navigate to my profile"
                 role="menuitem"
               >
@@ -168,7 +168,7 @@ const Navigation: React.FC = React.memo(() => {
             <div className="hidden md:flex items-center gap-6" role="menubar">
               <a
                 href="#how-it-works"
-                className="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
+                className="text-pairup-cream hover:text-pairup-yellow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
                 aria-label="Learn how PairUp works"
                 role="menuitem"
               >
@@ -176,7 +176,7 @@ const Navigation: React.FC = React.memo(() => {
               </a>
               <a
                 href="#benefits"
-                className="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
+                className="text-pairup-cream hover:text-pairup-yellow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
                 aria-label="Learn about PairUp benefits"
                 role="menuitem"
               >
@@ -184,7 +184,7 @@ const Navigation: React.FC = React.memo(() => {
               </a>
               <a
                 href="#early-access"
-                className="text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
+                className="text-pairup-cream hover:text-pairup-yellow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-2 py-1"
                 aria-label="Join Early Access"
                 role="menuitem"
               >
@@ -194,7 +194,7 @@ const Navigation: React.FC = React.memo(() => {
 
             <div className="flex items-center justify-center gap-4 mr-4">
               <button
-                className="flex items-center gap-2 text-pairup-cream hover:text-pairup-yellow duration-300 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-4 py-2 font-medium"
+                className="flex items-center gap-2 text-pairup-cream hover:text-pairup-yellow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pairup-cyan focus:ring-offset-2 focus:ring-offset-pairup-darkBlue rounded-md px-4 py-2 font-medium"
                 onClick={handleLogin}
                 aria-label="Navigate to login page"
                 data-testid="login-button"

@@ -38,7 +38,7 @@ const BenefitsSection = () => {
           {benefits.map((benefit, index) => (
             <div
               key={index}
-              className="bg-white/20 p-8 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+              className="bg-white/20 p-8 rounded-2xl backdrop-blur-sm transition-all duration-200 hover:shadow-lg hover:-translate-y-1"
             >
               <div className="mb-6">{benefit.icon}</div>
               <h3 className="text-xl font-semibold mb-3 text-pairup-darkBlue">{benefit.title}</h3>

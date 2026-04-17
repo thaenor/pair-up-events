@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import useAuth from './useAuth'
+import type { User } from 'firebase/auth'
+import { useAuth } from './useAuth'
 
 /**
  * Custom hook that requires authentication for a route
@@ -25,7 +26,7 @@ import useAuth from './useAuth'
  * }
  * ```
  */
-export const useRequireAuth = () => {
+export const useRequireAuth = (): { user: User | null; loading: boolean } => {
   const { user, loading } = useAuth()
   const navigate = useNavigate()
 
@@ -37,5 +38,3 @@ export const useRequireAuth = () => {
 
   return { user, loading }
 }
-
-export default useRequireAuth

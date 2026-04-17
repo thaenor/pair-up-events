@@ -20,7 +20,10 @@ interface QueuedBatch {
   retryCount: number
 }
 
-export function useChatMessageBatching({ userId, eventId, onSaveError }: UseChatMessageBatchingOptions) {
+export function useChatMessageBatching({ userId, eventId, onSaveError }: UseChatMessageBatchingOptions): {
+  queueMessage: (message: Omit<ChatMessageData, 'messageId'>) => void
+  flushQueue: () => Promise<void>
+} {
   const messageQueueRef = useRef<Omit<ChatMessageData, 'messageId'>[]>([])
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
   const isFlushingRef = useRef(false)

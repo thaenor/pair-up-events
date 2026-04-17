@@ -6,8 +6,8 @@ import MobileBottomNavigation from '@/components/organisms/Navigation/MobileBott
 import LoadingSpinner from '@/components/atoms/LoadingSpinner'
 import { Button } from '@/components/atoms/button'
 import Modal from '@/components/atoms/Modal'
-import useRequireAuth from '@/hooks/useRequireAuth'
-import useAuth from '@/hooks/useAuth'
+import { useRequireAuth } from '@/hooks/useRequireAuth'
+import { useAuth } from '@/hooks/useAuth'
 import { loadAllEvents, deleteEvent } from '@/entities/event/event-service'
 import type { DraftEventData } from '@/entities/event/event'
 import { toast } from 'sonner'
@@ -136,7 +136,7 @@ const EventsPage: React.FC = () => {
               variant="primary"
               size="lg"
               icon={<Plus className="w-5 h-5" />}
-              className="min-h-[44px]"
+              className="min-h-11"
               aria-label="Create new event"
             >
               Create New Event

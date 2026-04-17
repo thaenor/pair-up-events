@@ -1,4 +1,14 @@
-import type { EventPreviewData } from './event'
+import type { EventPreviewData, EventPreferences } from './event'
+
+export type DraftEventUpdate = Partial<{
+  title: string
+  headline: string
+  description: string
+  activity: string
+  timeStart: Date
+  location: { address?: string; city?: string }
+  preferences: Partial<Pick<EventPreferences, 'userDuoType' | 'preferredDuoType' | 'desiredVibes' | 'ageRange'>>
+}>
 
 /**
  * Validates event data structure from AI response
@@ -105,7 +115,7 @@ export function parseDateTime(date?: string, time?: string): Date | undefined {
  *
  * @since 2025-01-XX - Updated for new event preferences schema
  */
-export function mapEventPreviewToDraft(eventData: EventPreviewData) {
+export function mapEventPreviewToDraft(eventData: EventPreviewData): DraftEventUpdate {
   // Parse date/time - log if parsing fails
   const timeStart = parseDateTime(eventData.date, eventData.time)
   if (eventData.date && !timeStart) {

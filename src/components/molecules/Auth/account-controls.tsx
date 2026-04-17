@@ -8,7 +8,7 @@ import { Button } from '@/components/atoms/button'
 import Modal from '@/components/atoms/Modal'
 import { LabeledInput } from '@/components/molecules/Form/form-fields'
 import { auth } from '@/lib/firebase'
-import useAuth from '@/hooks/useAuth'
+import { useAuth } from '@/hooks/useAuth'
 
 /**
  * Props for AccountControls component

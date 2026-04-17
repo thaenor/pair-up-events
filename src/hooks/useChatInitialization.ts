@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { loadDraftEventById } from '@/entities/event/event-service'
 import { INITIAL_GREETING } from '@/lib/ai'
@@ -26,7 +26,17 @@ function createGreetingMessage(): ChatMessageData {
  * @param eventIdFromState - Event ID from navigation state (optional)
  * @returns Chat initialization state and setters
  */
-export function useChatInitialization(userId?: string, eventIdFromState?: string) {
+export function useChatInitialization(
+  userId?: string,
+  eventIdFromState?: string
+): {
+  eventId: string | null
+  setEventId: React.Dispatch<React.SetStateAction<string | null>>
+  messages: ChatMessageData[]
+  setMessages: React.Dispatch<React.SetStateAction<ChatMessageData[]>>
+  isInitializing: boolean
+  isInitialized: boolean
+} {
   const [eventId, setEventId] = useState<string | null>(eventIdFromState || null)
   const [messages, setMessages] = useState<ChatMessageData[]>([])
   const [isInitializing, setIsInitializing] = useState(true)

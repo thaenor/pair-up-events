@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 
 import LoadingSpinner from '@/components/atoms/LoadingSpinner'
 import AuthErrorDisplay from './AuthErrorDisplay'
-import useAuth from '@/hooks/useAuth'
+import { useAuth } from '@/hooks/useAuth'
 
 type LoginFormData = {
   email: string

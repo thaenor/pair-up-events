@@ -1,5 +1,7 @@
 # Component Tree Map
 
+> **Warning — may be stale.** This is a hand-maintained catalog and will drift from the actual codebase. Always verify file paths and component names against `src/` before relying on entries here.
+
 This document provides a complete map of all components in the PairUp Events application, organized by their hierarchy from routes to atoms.
 
 ## App Structure
@@ -373,15 +375,15 @@ NotFound
 
 ## Component Categories
 
-**Component Counts** (Verified December 2024):
+**Component Counts** (Verified April 2026):
 
-- **Atoms**: 5 components
+- **Atoms**: 6 components
 - **Molecules**: 13 components (organized in 5 feature folders: Auth, Profile, Events, Invite, Form)
-- **Organisms**: 9 components (organized in 3 feature folders: Navigation, Landing, Events)
+- **Organisms**: 10 components (organized in 3 feature folders: Navigation, Landing, Events)
 - **Templates**: 2 components
-- **Pages**: 14 pages (Index, auth, login, profile, events, events-create, messenger, settings, invite, contact-us, about, NotFound, terms-of-service, privacy-policy)
-- **Hooks**: 2 hooks (useAuth, useRequireAuth)
-- **Error Boundaries**: 1 component (AuthErrorBoundary)
+- **Pages**: 15 pages (Index, auth, login, profile, events, events-create, messenger, settings, invite, accept-invite, contact-us, about, NotFound, terms-of-service, privacy-policy)
+- **Hooks**: 5 hooks (useAuth, useRequireAuth, useAIChat, useChatInitialization, useChatMessageBatching)
+- **Error Boundaries**: 2 components (AuthErrorBoundary, ErrorBoundary)
 
 ### Atoms (Basic Building Blocks)
 
@@ -690,7 +692,7 @@ Located in: `src/components/`
 
 ### TODO Features
 
-See `Docs/Backlog.md` for comprehensive list of pending work, including:
+Pending work includes:
 
 - Profile data persistence to Firestore
 - Password reset flow

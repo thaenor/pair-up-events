@@ -5,7 +5,7 @@ import ProfilePictureUpload from '@/components/molecules/Profile/profile-picture
 import ProfileDetailsForm from '@/components/molecules/Profile/profile-details-form'
 import ProfilePreferencesForm from '@/components/molecules/Profile/profile-preferences-form'
 import LoadingSpinner from '@/components/atoms/LoadingSpinner'
-import useRequireAuth from '@/hooks/useRequireAuth'
+import { useRequireAuth } from '@/hooks/useRequireAuth'
 import { useUserProfile } from '@/contexts/UserContext'
 import { splitUserUpdates } from '@/entities/user/user-data-helpers'
 

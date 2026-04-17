@@ -1,129 +1,103 @@
+> Why did the developer go broke? Because he used up all his cache.
+
 # Pair Up Events
 
-Pair Up Events is a marketing site and authentication experience for a social platform that helps pairs of friends meet other pairs for shared activities. The landing page highlights how the service works, showcases key benefits, and captures early-access sign ups, while a dedicated auth flow supports email and social logins backed by Firebase. This README is designed to orient human contributors and AI coding assistants so they can confidently extend the experience while adhering to the project's conventions.
+Vite + React + TypeScript web app backed by Firebase (Auth, Firestore, Storage). Social platform where two pairs (4 people total) meet through shared activities. Deployed to GitHub Pages from `main`.
 
-## Table of Contents
+## Dev Container
 
-1. [Product Overview](#product-overview)
-2. [Core Features](#core-features)
-3. [Tech Stack](#tech-stack)
-4. [Local Development](#local-development)
-5. [Project Structure](#project-structure)
-6. [Testing & Quality Gates](#testing--quality-gates)
-7. [Deployment Notes](#deployment-notes)
-8. [Supporting Documentation](#supporting-documentation)
-9. [Agentic Coding Guidelines](#agentic-coding-guidelines)
+ALWAYS run all the commands inside a dev container!
 
-## Product Overview
-
-- **Primary goal:** help two-person friend groups discover and schedule activities with another pair to create a four-person hangout.
-- **Experience highlights:**
-  - Story-driven landing page that walks visitors through the pairing journey.
-  - Benefits section emphasising the safety and social ease of meeting as a group of four.
-  - Early-access capture embedded via Brevo (Sendinblue) forms.
-  - Dedicated authentication route offering social and email/password sign in backed by Firebase.
-
-## Core Features
-
-- **Hero & storytelling** blocks with high-impact imagery, persuasive copy, and clear calls to action.
-- **How it Works** section outlining the three-step pairing flow for visitors.
-- **Benefits grid** reinforcing community safety, curated matches, and flexible scheduling.
-- **Testimonials & FAQs** to build trust (see `src/pages/home.tsx`).
-- **Early-access signup** via Brevo embed (`src/lib/config.ts`).
-- **Authentication** at `/login` using Google, Apple, Facebook, and email/password options managed by a shared auth context.
-- **Responsive design system** based on atomic components built with Tailwind CSS, shadcn/ui styling primitives, and lucide-react icons.
-
-## Tech Stack
-
-- [Vite](https://vitejs.dev/) + [React](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
-- [Tailwind CSS](https://tailwindcss.com/) with shadcn-inspired components
-- [Firebase Authentication](https://firebase.google.com/docs/auth) for OAuth and email sign-in
-- [Vitest](https://vitest.dev/) and [Testing Library](https://testing-library.com/) for unit and component tests
-- [ESLint](https://eslint.org/) for static analysis
-
-## Local Development
-
-### Prerequisites
-
-- Node.js 20.x (match the version specified in `package.json`)
-- npm (bundled with Node.js)
-
-### Installation
-
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-2. Copy the environment template and provide your credentials:
-   ```bash
-   cp .env.example .env.local
-   ```
-3. Update `.env.local` with the Firebase and Sentry values for your project. See [FIREBASE_SETUP.md](./FIREBASE_SETUP.md) for step-by-step guidance, including OAuth redirect configuration.
-
-### Running the app
-
-Start the local development server:
+> (already installed) Requires Docker Desktop running and the Dev Containers CLI installed:
+> `npm install -g @devcontainers/cli`
 
 ```bash
-npm run dev
+# Build & start (first time or after config changes)
+devcontainer up --workspace-folder .
+
+# Enter a shell inside the container
+devcontainer exec --workspace-folder . bash
+
+# Run agents inside the container
+devcontainer exec --workspace-folder . claude
+devcontainer exec --workspace-folder . qwen
+
+# Stop the container
+devcontainer down --workspace-folder .
 ```
 
-Vite prints a local URL (default `http://localhost:5173`). The marketing landing page is available at `/`, and the authentication experience is served at `/login`.
+All dependencies (`node_modules`, Firebase emulators, Playwright browsers, Java) live inside the container and do not affect the host machine.
 
-## Project Structure
+## Commands
 
-```
-src/
-├── components/        # Atomic design-inspired UI building blocks
-├── contexts/          # Shared React contexts (e.g., AuthProvider)
-├── hooks/             # Reusable custom hooks, including Firebase auth helpers
-├── lib/               # Firebase config/initialisation and shared utilities
-├── pages/             # Route-level components (landing page, auth, 404)
-└── tests/             # Vitest test suites
-```
-
-Design references are available inside [`Designs/`](./Designs/).
-
-## Testing & Quality Gates
-
-Always ensure that linting, tests, and builds succeed before opening a pull request:
+Note: make sure we are inside a dev container.
 
 ```bash
-npm run ci
+npm run dev                 # local dev server — uses Firebase emulators by default
+npm run dev:live            # dev server against live Firebase (VITE_USE_EMULATOR=false)
+npm run emulator:start      # start auth + firestore + storage emulators
+npm run typecheck           # tsc --noEmit
+npm run lint                # eslint
+npm run test                # vitest run
+npm run test:e2e            # playwright
+npm run ci                  # format + lint + typecheck — run before every PR
 ```
 
-This single command runs all quality checks (linting, testing, and building) that CI pipelines expect to pass. Use this command every time you make changes to validate everything is working as expected.
+Node **24.x**. Pre-commit runs `npm run ci` (format + lint + typecheck) via Husky — E2E is not run on commit.
 
-### E2E Testing
+## Code Layout
 
-E2E tests are run locally using Husky pre-commit hooks to ensure all functionality works before commits are made. The GitHub Actions CI pipeline focuses on unit tests, linting, and building to keep deployment fast and reliable.
+- `src/components/` — atomic design: `atoms` / `molecules` / `organisms`
+- `src/contexts/` — React contexts (auth, etc.)
+- `src/hooks/` — reusable hooks, incl. Firebase auth helpers
+- `src/lib/firebase/` — Firebase config + emulator wiring
+- `src/entities/` — domain entities with Zod validation
+- `src/pages/` — route components
+- `tests/e2e/` — Playwright specs; see `tests/e2e/README.md`
+- `firebase/` — emulator rules and indexes
 
-**Local E2E Testing:**
+## Docs
 
-- E2E tests run automatically before each commit via Husky
-- Manual E2E testing: `npm run test:e2e`
-- For HTML reports: Set `E2E_REPORT=html` environment variable before running `npm run test:e2e`
+| File                                          | Load when…                                                                  |
+| --------------------------------------------- | --------------------------------------------------------------------------- |
+| `Docs/data-model.md`                          | **Any Firestore work** — collections, shapes, query patterns, privacy rules |
+| `Docs/design/visual-design.md`                | Tokens, colours, typography, animations, voice & tone                       |
+| `Docs/design/component-system.md`             | Component variants, tokens, states, behaviour                               |
+| `Docs/design/accessibility-and-responsive.md` | WCAG rules, touch targets, focus states, responsive rules                   |
+| `Docs/product/product-overview.md`            | User roles (A/B/C/D), use cases, platform characteristics                   |
+| `Docs/product/user-flows.md`                  | Event lifecycle diagram, page-by-page flows                                 |
+| `Docs/product/principles-and-personas.md`     | Design principles, user personas                                            |
+| `Docs/component-tree-map.md`                  | Existing component locations — may drift; verify against `src/`             |
+| `Docs/testing.md`                             | Testing strategy, emulator setup                                            |
 
-**CI Pipeline:**
+Config files that matter: `tailwind.config.ts` · `firestore.rules` · `storage.rules` · `firebase.json`
 
-- Unit tests, linting, and building run on every push/PR
-- GitHub Pages deployment happens automatically on main branch pushes
-- E2E tests are excluded from CI to maintain fast deployment cycles
+## Conventions
 
-## Deployment Notes
+- **Zod** for all validation at system boundaries (forms, Firestore reads) — never trust raw input
+- **Firestore** — minimise reads/writes; follow patterns in `Docs/data-model.md` before writing any query
+- **Tailwind-first** — check `tailwind.config.ts` for existing tokens before adding new ones; no raw hex in components
+- **Tests** — co-locate under `__tests__/` next to the source file
+- **Always run `npm run ci`** before declaring any task done
+- **Business logic** — keep in hooks/services; components are for rendering only
+- **Firestore hooks** — never call `getDoc`/`setDoc`/`onSnapshot` directly in component bodies; always go through a hook
 
-- The application is automatically deployed to GitHub Pages on pushes to the main branch.
-- Ensure Firebase Authentication is configured for the providers exposed in the UI.
-- Provide the required Firebase and Sentry environment variables in your deployment platform.
-- If you customise the early access form, update `src/lib/config.ts` with the new Brevo embed URL.
+### Component rules
 
-With the prerequisites in place, you can iterate on the Pair Up Events experience or extend it with additional routes and Firebase-backed functionality.
+- File names: `kebab-case` — e.g. `event-invite-card.tsx`
+- Named exports only — no `default` exports
+- No barrel exports — import directly from the source file; `index.ts` re-exports break Vite tree-shaking
+  ```ts
+  import { useAuth } from '@/hooks/useAuth' // ✅
+  import { useAuth } from '@/hooks' // ❌
+  ```
+- Tailwind class order: Layout & Spacing → Typography → Colour & Border → State variants
 
-## Supporting Documentation
+## Gotchas
 
-- [FIREBASE_SETUP.md](./FIREBASE_SETUP.md) – Firebase project and OAuth configuration steps.
-- [Gemini.md](./Gemini.md) – Full operational protocol for AI coding assistants (reproduced below for convenience).
-
-## Agentic Coding Guidelines
-
-This repo is an exercise and a personal test to see how far it is possible to get using agentic coding. We've used Loveable, Gemini, Cursor, Codex and Copilot. Is it Sop? Is it actually decent code? Can it be halfway decent if we prompt it right? Would the users care if it's slop? - those are some answers we will try to figure out.
+- **Firestore schema changes** — always cross-reference `Docs/data-model.md` and `firebase/` rules; wrong rules silently break security
+- **Auth emulator** — E2E tests depend on the Firebase Auth emulator; changes to auth flows must keep the emulator path working
+- **`.env*` files** — never commit them
+- **Firestore listener leaks** — `onSnapshot` must return its unsubscribe function from `useEffect` cleanup; forgetting this leaks listeners on unmount
+- **Firestore read patterns** — never read an entire collection; always apply `where`/`limit`; batch parallel reads with `Promise.all` instead of sequential `await` loops; use `transaction` for atomic multi-document writes
+- **Bundle size** — gzipped target < 150 KB (good) / > 200 KB (investigate code splitting or dep removal)

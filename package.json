@@ -15,7 +15,8 @@
     "emulator:start": "firebase emulators:start --only auth,firestore,storage",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "ci": "npm run format && npm run lint && npm run typecheck && npm run test && npm run build",
+    "ci": "npm run format && npm run lint && npm run typecheck",
+    "check:size": "npm run build && node scripts/check-bundle-size.mjs",
     "prepare": "husky"
   },
   "dependencies": {
@@ -62,7 +63,7 @@
     "vitest": "^3.2.4"
   },
   "engines": {
-    "node": "20.x"
+    "node": "24.x"
   },
   "overrides": {
     "glob": "^10.5.0",

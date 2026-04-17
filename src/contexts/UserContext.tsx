@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
 import { toast } from 'sonner'
-import useAuth from '@/hooks/useAuth'
+import { useAuth } from '@/hooks/useAuth'
 import {
   loadPrivateUserData,
   loadPublicUserData,
@@ -49,7 +49,7 @@ const UserContext = createContext<UserContextState | null>(null)
  * ```
  */
 // eslint-disable-next-line react-refresh/only-export-components
-export const useUserProfile = () => {
+export const useUserProfile = (): UserContextState => {
   const context = useContext(UserContext)
   if (!context) {
     throw new Error('useUserProfile must be used within UserProvider')

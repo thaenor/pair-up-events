@@ -1,0 +1,69 @@
+// pair-up-events DevContainer
+// Adapted from: https://github.com/anthropics/claude-code/tree/main/.devcontainer
+{
+  "name": "pair-up-events",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "TZ": "${localEnv:TZ:Europe/Berlin}",
+      "CLAUDE_CODE_VERSION": "latest"
+    }
+  },
+  "forwardPorts": [5173, 4000, 9099, 8080, 9199],
+  "portsAttributes": {
+    "5173": {
+      "label": "Vite dev server",
+      "onAutoForward": "openBrowser"
+    },
+    "4000": {
+      "label": "Firebase Emulator UI"
+    },
+    "9099": {
+      "label": "Firebase Auth"
+    },
+    "8080": {
+      "label": "Firestore"
+    },
+    "9199": {
+      "label": "Storage"
+    }
+  },
+  "mounts": [
+    "source=${localEnv:HOME}/.claude,target=/home/node/.claude,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.claude.json,target=/home/node/.claude.json,type=bind,consistency=cached"
+  ],
+  "postCreateCommand": "npm install && npx playwright install chromium --with-deps 2>/dev/null || true",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "[typescript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[typescriptreact]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "typescript.tsdk": "node_modules/typescript/lib",
+        "tailwindCSS.experimental.classRegex": [
+          ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+          ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+        ]
+      },
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "toba.vsfire",
+        "ms-playwright.playwright",
+        "vitest.explorer",
+        "eamodio.gitlens",
+        "anthropic.claude-code"
+      ]
+    }
+  },
+  "initializeCommand": "echo 'Starting pair-up-events devcontainer...'",
+  "runArgs": ["--cap-add=NET_ADMIN", "--cap-add=NET_RAW"],
+  "remoteUser": "node"
+}
